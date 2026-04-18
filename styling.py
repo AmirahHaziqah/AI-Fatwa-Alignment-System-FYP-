@@ -106,9 +106,9 @@ body {{
 
 .block-container {{
     padding-top: 0.7rem !important;
-    padding-left: 1.2rem !important;
-    padding-right: 1.2rem !important;
-    max-width: 1450px !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    max-width: 1100px !important;
     width: 100% !important;
     margin-left: auto !important;
     margin-right: auto !important;
@@ -184,7 +184,7 @@ body {{
 }}
 .sidebar-brand-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.28rem;
+    font-size: 1.18rem;
     line-height: 1.15;
     color: #FFFFFF !important;
     margin-bottom: 0.14rem;
@@ -354,7 +354,7 @@ body {{
 /* ── SIDEBAR PROGRESS ────────────────────────────────── */
 .sidebar-progress-stack {{
     display: grid;
-    gap: 0.28rem;
+    gap: 0.2rem;
 }}
 
 .sidebar-progress-item {{
@@ -365,7 +365,7 @@ body {{
 .sidebar-progress-top {{
     display: flex;
     justify-content: space-between;
-    gap: 0.26rem;
+    gap: 0.18rem;
     font-size: 0.77rem;
 }}
 
@@ -400,7 +400,7 @@ body {{
 
 .sidebar-action-item {{
     display: flex;
-    gap: 0.28rem;
+    gap: 0.2rem;
     align-items: flex-start;
     padding: 0.85rem 0.9rem;
     border-radius: 14px !important;
@@ -481,12 +481,12 @@ body {{
 
 .sidebar-legend-grid {{
     display: grid;
-    gap: 0.26rem;
+    gap: 0.18rem;
 }}
 
 .sidebar-legend-item {{
     display: flex;
-    gap: 0.27rem;
+    gap: 0.19rem;
     align-items: flex-start;
     padding: 0.68rem 0.75rem;
     border-radius: 14px;
@@ -563,12 +563,12 @@ body {{
     box-shadow: 0 10px 28px rgba(59, 29, 74, 0.06) !important;
     display: flex;
     align-items: center;
-    gap: 0.45rem;
+    gap: 0.18rem;
 }}
 
 .header-main h1 {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.85rem;
+    font-size: 1.7rem;
     font-weight: 400;
     color: #773344 !important;
     margin: 0 0 0.35rem 0;
@@ -733,7 +733,7 @@ body {{
     width: 100%;
     height: 100%;
     min-height: 130px;
-    max-height: 200px;
+    max-height: 160px;
     object-fit: cover;
     display: block;
 }}
@@ -841,7 +841,7 @@ body {{
 /* ── SECTION TITLES ──────────────────────────────────── */
 .section-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.48rem;
+    font-size: 1.36rem;
     font-weight: 400;
     color: #773344;
     margin: 1.8rem 0 1.1rem 0;
@@ -873,7 +873,7 @@ body {{
 
 /* ── MESSAGE BOXES ───────────────────────────────────── */
 .msg-box {{
-    padding: 1rem 1.2rem;
+    padding: 0.85rem 1.05rem;
     border-radius: 16px !important;
     margin: 0.85rem 0;
     background: #FFFFFF;
@@ -954,7 +954,7 @@ body {{
 .fatwa-meta-pill {{
     display: inline-flex;
     align-items: center;
-    gap: 0.3rem;
+    gap: 0.22rem;
     padding: 0.3rem 0.65rem;
     border-radius: 6px;
     background: #f5e9e2;
@@ -1057,7 +1057,7 @@ body {{
 .info-grid {{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
-    gap: 0.28rem;
+    gap: 0.2rem;
 }}
 
 .info-item {{
@@ -1287,7 +1287,7 @@ body {{
 .similarity-mini-grid {{
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 0.38rem;
+    gap: 0.2rem;
     margin-bottom: 1.5rem;
 }}
 
@@ -1342,7 +1342,7 @@ body {{
 .similarity-bar-row {{
     display: flex;
     align-items: center;
-    gap: 0.28rem;
+    gap: 0.2rem;
     margin-bottom: 0.2rem;
 }}
 
@@ -1523,7 +1523,7 @@ body {{
     font-family: 'Inter', sans-serif !important;
     line-height: 1.75 !important;
     box-shadow: none !important;
-    min-height: 220px !important;
+    min-height: 165px !important;
 }}
 
 .stTextArea textarea:focus {{
@@ -1641,7 +1641,7 @@ body {{
 .overview-chart-card {{
     background: #FFFFFF;
     border-radius: 18px !important;
-    padding: 1rem 1.2rem 0.85rem 1.2rem;
+    padding: 0.85rem 1.05rem 0.85rem 1.2rem;
     border: 1px solid #D2DCE5 !important;
     box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
     margin-bottom: 0.4rem;
@@ -1664,7 +1664,7 @@ body {{
 .topic-card-grid {{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 0.35rem;
+    gap: 0.18rem;
 }}
 
 .topic-card {{
@@ -1714,7 +1714,7 @@ body {{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 0.28rem;
+    gap: 0.2rem;
     flex-wrap: wrap;
     background: #FFFFFF;
     border: 1px solid #e3b5a4;
@@ -2162,7 +2162,7 @@ body {{
 
 @media (max-width: 620px) {{
     .hero-image-wrap {{
-        height: 220px !important;
+        height: 165px !important;
     }}
     .hero-main-image {{
         display: none;
@@ -2183,7 +2183,7 @@ body {{
     background: linear-gradient(180deg,#fffdfc 0%,#fbf4ef 100%);
     border: 1px solid #e3b5a4;
     border-radius: 28px;
-    padding: 1rem 1.2rem 1.1rem 1.2rem;
+    padding: 0.85rem 1.05rem 1.1rem 1.2rem;
     box-shadow: 0 14px 30px rgba(41,22,35,0.05);
     margin: 0.15rem 0 0.85rem 0;
 }}
@@ -2753,7 +2753,7 @@ def render_review_workspace_header():
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 0.38rem;
+            gap: 0.2rem;
             margin: 0.1rem 0 0.85rem 0;
             padding: 0.7rem 0.8rem;
             border-radius: 20px;
@@ -2789,7 +2789,7 @@ def render_review_workspace_header():
         }
         .review-workspace-badges {
             display: flex;
-            gap: 0.26rem;
+            gap: 0.18rem;
             flex-wrap: wrap;
             justify-content: flex-end;
             flex: 0 0 auto;
@@ -3039,7 +3039,7 @@ def render_review_workspace_header():
         @media (max-width: 1200px) {{
             .unified-result-grid {{
                 grid-template-columns: 1fr;
-                gap: 0.38rem;
+                gap: 0.2rem;
             }}
         }}
 
@@ -3149,7 +3149,7 @@ def render_review_workspace_header():
 
         .batch-results-title {{
             font-family: 'DM Serif Display', serif;
-            font-size: 1.68rem;
+            font-size: 1.55rem;
             color: #160029;
             margin-bottom: 0.4rem;
             font-weight: 700;
@@ -3236,7 +3236,7 @@ def render_review_workspace_header():
 
         .result-hero-title {{
             font-family: 'DM Serif Display', serif;
-            font-size: 1.62rem;
+            font-size: 1.49rem;
             color: #160029;
             margin-bottom: 0.3rem;
             font-weight: 700;
@@ -3440,7 +3440,7 @@ def render_review_workspace_header():
             .result-hero-card {{
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 0.38rem;
+                gap: 0.2rem;
             }}
 
             .result-hero-badges {{
