@@ -584,15 +584,48 @@ fatwa_df["issue"] = fatwa_df["issue"].astype(str).str.strip() if "issue" in fatw
 fatwa_df["question_text"] = fatwa_df["question_text"].astype(str).str.strip() if "question_text" in fatwa_df.columns else ""
 
 # Load pre-collected AI answers dataset
-try:
-    ai_answer_df = safe_read_csv("ai_answer.csv")
-    ai_answer_df["question_id"] = ai_answer_df["question_id"].astype(str).str.strip()
-    ai_answer_df["model"] = ai_answer_df["model"].astype(str).str.strip()
-    ai_answer_df["ai_answer_raw"] = ai_answer_df["ai_answer_raw"].astype(str).str.strip()
-    AI_DATASET_AVAILABLE = True
-except Exception:
-    ai_answer_df = pd.DataFrame()
-    AI_DATASET_AVAILABLE = False
+ai_answer_df = pd.DataFrame()
+AI_DATASET_AVAILABLE = False
+
+_ai_answer_candidates = [
+    "ai_answer.csv",
+    "fyp dataset_ai answer.csv",
+    "fyp_dataset_ai_answer.csv",
+]
+
+for _candidate in _ai_answer_candidates:
+    if not os.path.exists(_candidate):
+        continue
+    try:
+        ai_answer_df = safe_read_csv(_candidate)
+        rename_map = {}
+        if "question_id" not in ai_answer_df.columns:
+            for c in ai_answer_df.columns:
+                if c.strip().lower() == "question_id":
+                    rename_map[c] = "question_id"
+        if "model" not in ai_answer_df.columns:
+            for c in ai_answer_df.columns:
+                if c.strip().lower() == "model":
+                    rename_map[c] = "model"
+        if "ai_answer_raw" not in ai_answer_df.columns:
+            for c in ai_answer_df.columns:
+                if c.strip().lower() in {"ai_answer_raw", "ai answer raw", "answer", "ai_answer"}:
+                    rename_map[c] = "ai_answer_raw"
+        if rename_map:
+            ai_answer_df = ai_answer_df.rename(columns=rename_map)
+
+        required_ai_cols = {"question_id", "model", "ai_answer_raw"}
+        if not required_ai_cols.issubset(set(ai_answer_df.columns)):
+            continue
+
+        ai_answer_df["question_id"] = ai_answer_df["question_id"].astype(str).str.strip()
+        ai_answer_df["model"] = ai_answer_df["model"].astype(str).str.strip()
+        ai_answer_df["ai_answer_raw"] = ai_answer_df["ai_answer_raw"].astype(str).str.strip()
+        AI_DATASET_AVAILABLE = True
+        break
+    except Exception:
+        ai_answer_df = pd.DataFrame()
+        AI_DATASET_AVAILABLE = False
 
 # =========================================================
 # HELPERS

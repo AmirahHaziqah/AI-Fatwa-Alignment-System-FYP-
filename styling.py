@@ -108,7 +108,7 @@ body {{
     padding-top: 1rem !important;
     padding-left: 1.5rem !important;
     padding-right: 1.5rem !important;
-    max-width: 1400px !important;
+    max-width: 1450px !important;
     width: 100% !important;
     margin-left: auto !important;
     margin-right: auto !important;
@@ -593,7 +593,7 @@ body {{
     padding: 2.5rem 2rem;
     color: white;
 
-    background-image: url('dashboard_background.jpg');
+    background-image: url('dashboard_background.png');
     background-size: 80%;
     background-repeat: no-repeat;
     background-position: center;
@@ -613,6 +613,19 @@ body {{
     border: 1px solid rgba(158,179,194,0.20);
     box-shadow: 0 18px 40px rgba(22, 0, 41, 0.14);
     background: linear-gradient(90deg, #0b2a56 0%, #4c224d 55%, #65104d 100%);
+}}
+
+
+.hero-single-image {{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    opacity: 0.62;
+    filter: saturate(0.92) contrast(1.02) brightness(0.80);
 }}
 
 .hero-bg-fill {{
