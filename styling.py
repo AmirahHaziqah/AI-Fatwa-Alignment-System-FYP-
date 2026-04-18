@@ -594,7 +594,7 @@ body {{
     color: white;
 
     background-image: url('dashboard_background.png');
-    background-size: 80%;
+    background-size: cover !important;
     background-repeat: no-repeat;
     background-position: center;
     
@@ -3457,7 +3457,291 @@ def render_review_workspace_header():
             }}
         }}
 
-        </style>
+        
+
+/* ===== COMPACT GLOBAL OVERRIDES ===== */
+html {{
+    font-size: 85% !important;
+}}
+
+body {{
+    zoom: 0.94;
+}}
+
+[data-testid="stAppViewContainer"] {{
+    font-size: 0.94rem !important;
+}}
+
+.block-container {{
+    padding-top: 0.2rem !important;
+    padding-left: 0.55rem !important;
+    padding-right: 0.55rem !important;
+    max-width: 1380px !important;
+}}
+
+[data-testid="stSidebar"] {{
+    min-width: 228px !important;
+    max-width: 228px !important;
+    width: 228px !important;
+}}
+
+[data-testid="stSidebar"] > div:first-child {{
+    padding: 0.45rem 0.45rem 0.7rem 0.45rem !important;
+}}
+
+.stTabs [data-baseweb="tab-list"] {{
+    padding: 4px !important;
+}}
+
+.stTabs [data-baseweb="tab"] {{
+    font-size: 0.82rem !important;
+    padding: 0.42rem 0.9rem !important;
+}}
+
+.hero-image-wrap {{
+    height: 205px !important;
+    border-radius: 24px !important;
+}}
+
+.hero-image-overlay {{
+    padding: 1.55rem 1.8rem !important;
+}}
+
+.hero-image-content {{
+    max-width: 54% !important;
+}}
+
+.hero-image-title {{
+    font-size: 1.9rem !important;
+    margin-bottom: 0.45rem !important;
+}}
+
+.hero-image-subtitle {{
+    font-size: 0.9rem !important;
+    line-height: 1.45 !important;
+}}
+
+.hero-kicker {{
+    font-size: 0.7rem !important;
+    padding: 0.38rem 0.85rem !important;
+    margin-bottom: 0.7rem !important;
+}}
+
+.sidebar-title {{
+    font-size: 1.28rem !important;
+}}
+
+.sidebar-subtitle,
+.sidebar-workspace-subtitle,
+.sidebar-action-text,
+.sidebar-mini-note,
+.sidebar-insight-copy,
+.sidebar-legend-text,
+.sidebar-progress-top,
+.sidebar-topic-pill,
+.small-note {{
+    font-size: 0.76rem !important;
+    line-height: 1.48 !important;
+}}
+
+.sidebar-workspace-title,
+.sidebar-action-title,
+.sidebar-insight-value,
+.sidebar-legend-name {{
+    font-size: 0.88rem !important;
+}}
+
+.sidebar-workspace-card,
+.sidebar-section-card,
+.sidebar-legend-card {{
+    padding: 0.8rem !important;
+    margin-bottom: 0.65rem !important;
+}}
+
+.sidebar-action-item,
+.sidebar-legend-item,
+.sidebar-mini-note,
+.sidebar-highlight-chip {{
+    padding: 0.7rem 0.75rem !important;
+}}
+
+.sidebar-highlight-value {{
+    font-size: 0.92rem !important;
+}}
+
+.metric-card,
+.result-card,
+.points-card,
+.card,
+.fatwa-box,
+.chart-card,
+.overview-chart-card,
+.light-table-wrap,
+.history-table-shell,
+.history-overview-card,
+.analysis-panel,
+.sim-lite-shell,
+.batch-shell,
+.topic-pick-shell,
+.fatwa-browser-shell,
+.workspace-shell,
+.empty-review-card,
+.input-editor-shell {{
+    border-radius: 18px !important;
+}}
+
+.metric-card,
+.result-card,
+.points-card,
+.card,
+.chart-card,
+.overview-chart-card,
+.analysis-panel,
+.sim-lite-shell,
+.batch-shell,
+.topic-pick-shell,
+.workspace-shell,
+.input-editor-shell {{
+    padding: 0.9rem 0.95rem !important;
+}}
+
+.metric-value,
+.result-card-score,
+.metric-value-text,
+.sim-lite-metric-value,
+.history-overview-title,
+.explorer-summary-value {{
+    font-size: 1.5rem !important;
+}}
+
+.workspace-title,
+.empty-review-title,
+.tab-minimal-title,
+.fatwa-browser-title,
+.editorial-title {{
+    font-size: 1.7rem !important;
+    line-height: 1.08 !important;
+}}
+
+.workspace-copy,
+.tab-minimal-copy,
+.editorial-copy,
+.batch-copy,
+.chart-panel-copy,
+.analysis-panel-copy,
+.browse-filter-copy,
+.browse-toolbar-copy,
+.explorer-instruction-copy,
+.topic-pick-copy,
+.history-overview-copy,
+.history-table-copy,
+.system-plain-note,
+.input-editor-note,
+.empty-review-copy {{
+    font-size: 0.88rem !important;
+    line-height: 1.62 !important;
+}}
+
+.workspace-kicker,
+.tab-minimal-kicker,
+.editorial-kicker,
+.batch-kicker,
+.input-editor-kicker,
+.inline-section-label,
+.slim-loader-kicker,
+.explorer-instruction-title,
+.overview-kicker,
+.sim-lite-kicker,
+.history-overview-tag,
+.history-overview-stat-label,
+.browse-inline-head,
+.comparison-select-title,
+.topic-pick-kicker {{
+    font-size: 0.68rem !important;
+}}
+
+.stButton > button,
+.stDownloadButton > button {{
+    font-size: 0.84rem !important;
+    min-height: 2.75rem !important;
+    padding: 0.5rem 1rem !important;
+    border-radius: 12px !important;
+}}
+
+[data-testid="stTextArea"] label,
+[data-testid="stTextInput"] label,
+[data-testid="stSelectbox"] label,
+[data-testid="stMultiSelect"] label,
+[data-testid="stRadio"] label:first-of-type {{
+    font-size: 0.68rem !important;
+}}
+
+[data-testid="stMultiSelect"] [data-baseweb="select"] > div,
+[data-testid="stSelectbox"] [data-baseweb="select"] > div,
+[data-testid="stTextInputRootElement"],
+.stTextInput > div > div,
+.stTextArea > div > div,
+.topic-select-shell [data-baseweb="select"] > div {{
+    min-height: 50px !important;
+    border-radius: 16px !important;
+}}
+
+.stTextArea > div > div {{
+    padding: 0.2rem !important;
+}}
+
+.stTextArea textarea {{
+    min-height: 150px !important;
+    font-size: 0.9rem !important;
+    line-height: 1.55 !important;
+    padding: 0.8rem 0.85rem !important;
+    resize: none !important;
+    caret-color: #2a1421 !important;
+}}
+
+.stTextArea textarea::-webkit-resizer {{
+    display: none !important;
+}}
+
+.stTextInput input,
+[data-testid="stSelectbox"] *,
+[data-testid="stMultiSelect"] *,
+.stSelectbox * {{
+    font-size: 0.88rem !important;
+}}
+
+.light-table thead th,
+.light-table tbody td {{
+    font-size: 0.8rem !important;
+    padding: 0.72rem 0.7rem !important;
+}}
+
+.sim-lite-ring {{
+    width: 88px !important;
+    height: 88px !important;
+}}
+
+.sim-lite-ring-inner {{
+    width: 64px !important;
+    height: 64px !important;
+}}
+
+.empty-review-stat-value,
+.topic-focus-value,
+.leaderboard-score {{
+    font-size: 1rem !important;
+}}
+
+@media (max-width: 1200px) {{
+    html {{
+        font-size: 82% !important;
+    }}
+    .hero-image-wrap {{
+        height: 190px !important;
+    }}
+}}
+
+</style>
         <div class="review-workspace-header">
             <div class="review-workspace-copy">
                 <div class="review-workspace-kicker">Single Review</div>
