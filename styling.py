@@ -108,7 +108,7 @@ body {{
     padding-top: 1.35rem !important;
     padding-left: 1.5rem !important;
     padding-right: 1.5rem !important;
-    max-width: 1380px;
+    max-width: 1180px;
     margin: 0 auto;
 }}
 
@@ -128,7 +128,7 @@ body {{
 [data-testid="stSidebar"] {{
     min-width: 320px !important;
     max-width: 320px !important;
-    width: 320px !important;
+    width: 280px !important;
     background: linear-gradient(180deg, #160029 0%, #773344 55%, #5f2840 100%) !important;
     border-right: 1px solid rgba(255,255,255,0.08) !important;
     box-shadow: 16px 0 34px rgba(22,0,41,0.18) !important;
@@ -600,7 +600,7 @@ body {{
 
 .hero-image-wrap {{
     position: relative;
-    height: 280px !important;
+    height: 240px !important;
     border-radius: 30px !important;
     overflow: hidden;
     margin-bottom: 1.2rem;

@@ -65,7 +65,7 @@ from styling import (
 st.set_page_config(
     page_title="AI Fatwa Alignment Dashboard",
     page_icon="⚖️",
-    layout="wide",
+    layout="centered",
     initial_sidebar_state="expanded"
 )
 
