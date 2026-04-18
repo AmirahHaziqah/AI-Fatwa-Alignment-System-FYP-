@@ -106,19 +106,16 @@ body {{
 
 .block-container {{
     padding-top: 1rem !important;
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-    
-    max-width: 1100px !important;   /* 🔥 smaller */
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+    max-width: 1400px !important;
     width: 100% !important;
-    
     margin-left: auto !important;
     margin-right: auto !important;
 }}
 
 [data-testid="stAppViewContainer"] {{
-    max-width: 1100px !important;
-    margin: 0 auto !important;
+    margin: 0 !important;
 }}
 
 .main .block-container > div {{
