@@ -50,26 +50,53 @@ COLORS = {
 def _image_to_data_uri(image_path: Optional[str]) -> Optional[str]:
     if not image_path:
         return None
-    if not os.path.exists(image_path):
-        return None
-
-    ext = os.path.splitext(image_path)[1].lower()
-    mime_map = {
-        ".png": "image/png",
-        ".jpg": "image/jpeg",
-        ".jpeg": "image/jpeg",
-        ".webp": "image/webp",
-    }
-    mime = mime_map.get(ext)
-    if not mime:
-        return None
-
-    try:
-        with open(image_path, "rb") as f:
-            encoded = base64.b64encode(f.read()).decode("utf-8")
-        return f"data:{mime};base64,{encoded}"
-    except Exception:
-        return None
+    
+    # Try exact path first
+    if os.path.exists(image_path):
+        ext = os.path.splitext(image_path)[1].lower()
+        mime_map = {
+            ".png": "image/png",
+            ".jpg": "image/jpeg",
+            ".jpeg": "image/jpeg",
+            ".webp": "image/webp",
+        }
+        mime = mime_map.get(ext)
+        if not mime:
+            return None
+        try:
+            with open(image_path, "rb") as f:
+                encoded = base64.b64encode(f.read()).decode("utf-8")
+            return f"data:{mime};base64,{encoded}"
+        except Exception:
+            pass
+    
+    # Fallback: try common relative paths for Streamlit deployments
+    fallback_paths = [
+        os.path.join(os.getcwd(), image_path),
+        os.path.join(os.path.dirname(__file__), image_path),
+    ]
+    
+    for attempt_path in fallback_paths:
+        if os.path.exists(attempt_path):
+            ext = os.path.splitext(attempt_path)[1].lower()
+            mime_map = {
+                ".png": "image/png",
+                ".jpg": "image/jpeg",
+                ".jpeg": "image/jpeg",
+                ".webp": "image/webp",
+            }
+            mime = mime_map.get(ext)
+            if not mime:
+                continue
+            try:
+                with open(attempt_path, "rb") as f:
+                    encoded = base64.b64encode(f.read()).decode("utf-8")
+                return f"data:{mime};base64,{encoded}"
+            except Exception:
+                continue
+    
+    # If no image found, return None and let CSS fallback take over
+    return None
 
 
 def apply_theme():
@@ -135,9 +162,30 @@ body {{
     min-width: 260px !important;
     max-width: 260px !important;
     width: 280px !important;
-    background: linear-gradient(180deg, #160029 0%, #773344 55%, #5f2840 100%) !important;
+    background: linear-gradient(135deg, #160029 0%, #2a1535 25%, #3d1f42 50%, #773344 75%, #5f2840 100%) !important;
     border-right: 1px solid rgba(255,255,255,0.08) !important;
-    box-shadow: 16px 0 34px rgba(22,0,41,0.18) !important;
+    box-shadow: inset -1px 0 0 rgba(0,0,0,0.3), 16px 0 34px rgba(22,0,41,0.18) !important;
+    position: relative;
+}}
+
+[data-testid="stSidebar"]::before {{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 30%, rgba(212,77,92,0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(6,168,125,0.05) 0%, transparent 50%),
+        repeating-linear-gradient(90deg, transparent, transparent 35px, rgba(255,255,255,0.01) 35px, rgba(255,255,255,0.01) 70px);
+    pointer-events: none;
+    z-index: 0;
+}}
+
+[data-testid="stSidebar"] > * {{
+    position: relative;
+    z-index: 1;
 }}
 
 [data-testid="stSidebar"] > div:first-child {{
