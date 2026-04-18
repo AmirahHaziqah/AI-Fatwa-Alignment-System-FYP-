@@ -105,11 +105,20 @@ body {{
 }}
 
 .block-container {{
-    padding-top: 1.35rem !important;
-    padding-left: 1.5rem !important;
-    padding-right: 1.5rem !important;
-    max-width: 1180px;
-    margin: 0 auto;
+    padding-top: 1rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    
+    max-width: 1100px !important;   /* 🔥 smaller */
+    width: 100% !important;
+    
+    margin-left: auto !important;
+    margin-right: auto !important;
+}}
+
+[data-testid="stAppViewContainer"] {{
+    max-width: 1100px !important;
+    margin: 0 auto !important;
 }}
 
 .main .block-container > div {{
@@ -126,8 +135,8 @@ body {{
 
 /* ── SIDEBAR ─────────────────────────────────────────── */
 [data-testid="stSidebar"] {{
-    min-width: 320px !important;
-    max-width: 320px !important;
+    min-width: 260px !important;
+    max-width: 260px !important;
     width: 280px !important;
     background: linear-gradient(180deg, #160029 0%, #773344 55%, #5f2840 100%) !important;
     border-right: 1px solid rgba(255,255,255,0.08) !important;
@@ -600,7 +609,7 @@ body {{
 
 .hero-image-wrap {{
     position: relative;
-    height: 240px !important;
+    height: 220px !important;
     border-radius: 30px !important;
     overflow: hidden;
     margin-bottom: 1.2rem;
