@@ -108,7 +108,7 @@ body {{
     padding-top: 0.5rem !important;
     padding-left: 0.8rem !important;
     padding-right: 0.8rem !important;
-    max-width: 950px !important;
+    max-width: 1380px !important;
     width: 100% !important;
     margin-left: auto !important;
     margin-right: auto !important;
@@ -132,9 +132,9 @@ body {{
 
 /* ── SIDEBAR ─────────────────────────────────────────── */
 [data-testid="stSidebar"] {{
-    min-width: 260px !important;
-    max-width: 260px !important;
-    width: 280px !important;
+    min-width: 300px !important;
+    max-width: 300px !important;
+    width: 300px !important;
     background: linear-gradient(180deg, #160029 0%, #773344 55%, #5f2840 100%) !important;
     border-right: 1px solid rgba(255,255,255,0.08) !important;
     box-shadow: 16px 0 34px rgba(22,0,41,0.18) !important;
@@ -2063,9 +2063,9 @@ body {{
 /* ── RESPONSIVE ──────────────────────────────────────── */
 @media (max-width: 1200px) {{
     [data-testid="stSidebar"] {{
-        min-width: 290px !important;
-        max-width: 290px !important;
-        width: 290px !important;
+        min-width: 300px !important;
+        max-width: 300px !important;
+        width: 300px !important;
     }}
 }}
 

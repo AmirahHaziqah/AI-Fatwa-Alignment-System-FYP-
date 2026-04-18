@@ -75,6 +75,12 @@ apply_theme()
 def apply_dashboard_polish():
     st.markdown("""
     <style>
+    :root { color-scheme: light !important; }
+    html, body, [data-testid="stAppViewContainer"] { background-color:#f4f6f9 !important; }
+    [data-testid="stTextArea"] > div > div, [data-testid="stTextArea"] [data-baseweb="textarea"], [data-testid="stTextArea"] [data-testid="stTextAreaRootElement"] { background:linear-gradient(180deg,#fffefe 0%,#fbf4ef 100%) !important; background-color:#fbf4ef !important; }
+    [data-testid="stAppViewContainer"] textarea, textarea { background:#fbf4ef !important; background-color:#fbf4ef !important; color:#2a1421 !important; -webkit-text-fill-color:#2a1421 !important; caret-color:#773344 !important; }
+    [data-testid="stAppViewContainer"] textarea::placeholder, textarea::placeholder { color:#9a7b87 !important; -webkit-text-fill-color:#9a7b87 !important; opacity:1 !important; }
+    [data-testid="stAppViewContainer"] .block-container { max-width:1380px !important; }
     .workspace-shell {background:linear-gradient(180deg,#ffffff 0%,#fbf5f1 100%);border:1px solid #e3b5a4;border-radius:24px;padding:1.05rem 1.1rem;box-shadow:0 10px 24px rgba(25,14,36,0.06);margin-bottom:0.85rem;}
     .workspace-shell-tight {padding:0.95rem 1rem;}
     .workspace-title-row {display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:0.55rem;}
@@ -102,7 +108,7 @@ def apply_dashboard_polish():
     .single-result-anchor {margin-top:0.9rem;}
     .sidebar-insight-list {display:grid;gap:0.65rem;}
     .sidebar-insight-card {background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.11);border-radius:14px;padding:0.8rem 0.85rem;}
-    .sidebar-insight-label {font-size:0.68rem;font-weight:800;letter-spacing:0.07em;text-transform:uppercase;color:rgba(255,255,255,0.58)!important;margin-bottom:0.18rem;}
+    .hero-image-wrap {height:250px!important;border-radius:28px!important;min-height:250px!important;}
     .sidebar-insight-value {font-size:0.86rem;font-weight:700;color:#ffffff!important;line-height:1.45;}
     .sidebar-insight-copy {font-size:0.78rem;line-height:1.55;color:rgba(255,255,255,0.76)!important;margin-top:0.2rem;}
     .sidebar-checklist {margin:0;padding-left:0;list-style:none;display:grid;gap:0.58rem;}
