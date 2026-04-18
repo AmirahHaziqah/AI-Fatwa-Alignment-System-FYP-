@@ -50,53 +50,26 @@ COLORS = {
 def _image_to_data_uri(image_path: Optional[str]) -> Optional[str]:
     if not image_path:
         return None
-    
-    # Try exact path first
-    if os.path.exists(image_path):
-        ext = os.path.splitext(image_path)[1].lower()
-        mime_map = {
-            ".png": "image/png",
-            ".jpg": "image/jpeg",
-            ".jpeg": "image/jpeg",
-            ".webp": "image/webp",
-        }
-        mime = mime_map.get(ext)
-        if not mime:
-            return None
-        try:
-            with open(image_path, "rb") as f:
-                encoded = base64.b64encode(f.read()).decode("utf-8")
-            return f"data:{mime};base64,{encoded}"
-        except Exception:
-            pass
-    
-    # Fallback: try common relative paths for Streamlit deployments
-    fallback_paths = [
-        os.path.join(os.getcwd(), image_path),
-        os.path.join(os.path.dirname(__file__), image_path),
-    ]
-    
-    for attempt_path in fallback_paths:
-        if os.path.exists(attempt_path):
-            ext = os.path.splitext(attempt_path)[1].lower()
-            mime_map = {
-                ".png": "image/png",
-                ".jpg": "image/jpeg",
-                ".jpeg": "image/jpeg",
-                ".webp": "image/webp",
-            }
-            mime = mime_map.get(ext)
-            if not mime:
-                continue
-            try:
-                with open(attempt_path, "rb") as f:
-                    encoded = base64.b64encode(f.read()).decode("utf-8")
-                return f"data:{mime};base64,{encoded}"
-            except Exception:
-                continue
-    
-    # If no image found, return None and let CSS fallback take over
-    return None
+    if not os.path.exists(image_path):
+        return None
+
+    ext = os.path.splitext(image_path)[1].lower()
+    mime_map = {
+        ".png": "image/png",
+        ".jpg": "image/jpeg",
+        ".jpeg": "image/jpeg",
+        ".webp": "image/webp",
+    }
+    mime = mime_map.get(ext)
+    if not mime:
+        return None
+
+    try:
+        with open(image_path, "rb") as f:
+            encoded = base64.b64encode(f.read()).decode("utf-8")
+        return f"data:{mime};base64,{encoded}"
+    except Exception:
+        return None
 
 
 def apply_theme():
@@ -132,9 +105,9 @@ body {{
 }}
 
 .block-container {{
-    padding-top: 1rem !important;
-    padding-left: 1.5rem !important;
-    padding-right: 1.5rem !important;
+    padding-top: 0.7rem !important;
+    padding-left: 1.2rem !important;
+    padding-right: 1.2rem !important;
     max-width: 1450px !important;
     width: 100% !important;
     margin-left: auto !important;
@@ -162,35 +135,14 @@ body {{
     min-width: 260px !important;
     max-width: 260px !important;
     width: 280px !important;
-    background: linear-gradient(135deg, #160029 0%, #2a1535 25%, #3d1f42 50%, #773344 75%, #5f2840 100%) !important;
+    background: linear-gradient(180deg, #160029 0%, #773344 55%, #5f2840 100%) !important;
     border-right: 1px solid rgba(255,255,255,0.08) !important;
-    box-shadow: inset -1px 0 0 rgba(0,0,0,0.3), 16px 0 34px rgba(22,0,41,0.18) !important;
-    position: relative;
-}}
-
-[data-testid="stSidebar"]::before {{
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-        radial-gradient(circle at 20% 30%, rgba(212,77,92,0.08) 0%, transparent 50%),
-        radial-gradient(circle at 80% 70%, rgba(6,168,125,0.05) 0%, transparent 50%),
-        repeating-linear-gradient(90deg, transparent, transparent 35px, rgba(255,255,255,0.01) 35px, rgba(255,255,255,0.01) 70px);
-    pointer-events: none;
-    z-index: 0;
-}}
-
-[data-testid="stSidebar"] > * {{
-    position: relative;
-    z-index: 1;
+    box-shadow: 16px 0 34px rgba(22,0,41,0.18) !important;
 }}
 
 [data-testid="stSidebar"] > div:first-child {{
     background: transparent !important;
-    padding: 1rem 0.85rem 1.5rem 0.85rem !important;
+    padding: 0.8rem 0.7rem 1.2rem 0.7rem !important;
 }}
 
 /* Force all sidebar text to be light */
@@ -206,7 +158,7 @@ body {{
 
 /* ── SIDEBAR HERO BANNER ─────────────────────────────── */
 .sidebar-hero-wrap {{
-    margin-bottom: 1rem;
+    margin-bottom: 0.3rem;
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 10px 28px rgba(0,0,0,0.2);
@@ -226,33 +178,33 @@ body {{
     border-left: 6px solid #d44d5c;
     border-radius: 18px;
     padding: 1.25rem 1.1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.3rem;
     box-shadow: 0 10px 24px rgba(33,50,65,0.22);
     backdrop-filter: blur(4px);
 }}
 .sidebar-brand-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.42rem;
+    font-size: 1.28rem;
     line-height: 1.15;
     color: #FFFFFF !important;
-    margin-bottom: 0.55rem;
+    margin-bottom: 0.14rem;
 }}
 .sidebar-brand-subtitle {{
     font-size: 0.84rem;
-    line-height: 1.65;
+    line-height: 1.45;
     color: rgba(255,255,255,0.78) !important;
 }}
 
 /* ── SIDEBAR WELCOME ─────────────────────────────────── */
 .sidebar-welcome-wrap {{
-    margin-bottom: 1.1rem;
+    margin-bottom: 0.38rem;
 }}
 
 .sidebar-welcome-banner {{
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.10);
     border-radius: 12px;
-    padding: 1.1rem 1.15rem 1rem 1.15rem;
+    padding: 0.8rem 0.95rem 1rem 1.15rem;
     position: relative;
     overflow: hidden;
 }}
@@ -308,7 +260,7 @@ body {{
     box-shadow: 0 12px 26px rgba(13, 24, 47, 0.18) !important;
     border-radius: 18px !important;
     padding: 1rem !important;
-    margin-bottom: 0.95rem;
+    margin-bottom: 0.28rem;
 }}
 
 .sidebar-kicker {{
@@ -321,7 +273,7 @@ body {{
     border: 1px solid rgba(158,179,194,0.22) !important;
     font-size: 0.68rem !important;
     font-weight: 700;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.22rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
 }}
@@ -336,9 +288,9 @@ body {{
 
 .sidebar-workspace-subtitle {{
     font-size: 0.84rem;
-    line-height: 1.55;
+    line-height: 1.38;
     color: rgba(255,255,255,0.78) !important;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.22rem;
 }}
 
 .sidebar-highlight-row {{
@@ -388,10 +340,10 @@ body {{
 .sidebar-section-title {{
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.18rem;
     font-size: 0.78rem !important;
     font-weight: 800;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.2rem;
     padding-bottom: 0.6rem;
     border-bottom: 1px solid rgba(158,179,194,0.2) !important;
     color: #DCE7EE !important;
@@ -402,7 +354,7 @@ body {{
 /* ── SIDEBAR PROGRESS ────────────────────────────────── */
 .sidebar-progress-stack {{
     display: grid;
-    gap: 0.75rem;
+    gap: 0.28rem;
 }}
 
 .sidebar-progress-item {{
@@ -413,7 +365,7 @@ body {{
 .sidebar-progress-top {{
     display: flex;
     justify-content: space-between;
-    gap: 0.7rem;
+    gap: 0.26rem;
     font-size: 0.77rem;
 }}
 
@@ -443,12 +395,12 @@ body {{
 /* ── SIDEBAR ACTION LIST ─────────────────────────────── */
 .sidebar-action-list {{
     display: grid;
-    gap: 0.65rem;
+    gap: 0.24rem;
 }}
 
 .sidebar-action-item {{
     display: flex;
-    gap: 0.75rem;
+    gap: 0.28rem;
     align-items: flex-start;
     padding: 0.85rem 0.9rem;
     border-radius: 14px !important;
@@ -479,7 +431,7 @@ body {{
 
 .sidebar-action-text {{
     font-size: 0.78rem;
-    line-height: 1.6;
+    line-height: 1.42;
     color: rgba(255,255,255,0.78) !important;
 }}
 
@@ -490,7 +442,7 @@ body {{
     border-radius: 14px;
     padding: 0.85rem 0.9rem;
     color: rgba(255,255,255,0.88) !important;
-    line-height: 1.7;
+    line-height: 1.48;
 }}
 
 .sidebar-mini-note strong {{
@@ -501,7 +453,7 @@ body {{
 .sidebar-pill-row {{
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.18rem;
 }}
 
 .sidebar-topic-pill {{
@@ -529,12 +481,12 @@ body {{
 
 .sidebar-legend-grid {{
     display: grid;
-    gap: 0.7rem;
+    gap: 0.26rem;
 }}
 
 .sidebar-legend-item {{
     display: flex;
-    gap: 0.72rem;
+    gap: 0.27rem;
     align-items: flex-start;
     padding: 0.68rem 0.75rem;
     border-radius: 14px;
@@ -558,14 +510,14 @@ body {{
 
 .sidebar-legend-text {{
     font-size: 0.76rem;
-    line-height: 1.55;
+    line-height: 1.38;
     color: rgba(255,255,255,0.74);
 }}
 
 .sidebar-legend-note {{
     margin-top: 0.8rem;
     font-size: 0.76rem;
-    line-height: 1.55;
+    line-height: 1.38;
     color: rgba(255,255,255,0.74);
 }}
 
@@ -611,7 +563,7 @@ body {{
     box-shadow: 0 10px 28px rgba(59, 29, 74, 0.06) !important;
     display: flex;
     align-items: center;
-    gap: 1.2rem;
+    gap: 0.45rem;
 }}
 
 .header-main h1 {{
@@ -629,7 +581,7 @@ body {{
     font-size: 0.9rem;
     font-weight: 400;
     margin: 0;
-    line-height: 1.55;
+    line-height: 1.38;
 }}
 
 /* ── HERO BANNER (MAIN CONTENT) ──────────────────────── */
@@ -654,10 +606,10 @@ body {{
 
 .hero-image-wrap {{
     position: relative;
-    height: 220px !important;
-    border-radius: 30px !important;
+    height: 160px !important;
+    border-radius: 28px !important;
     overflow: hidden;
-    margin-bottom: 1.2rem;
+    margin-bottom: 0.26rem;
     border: 1px solid rgba(158,179,194,0.20);
     box-shadow: 0 18px 40px rgba(22, 0, 41, 0.14);
     background: linear-gradient(90deg, #0b2a56 0%, #4c224d 55%, #65104d 100%);
@@ -737,7 +689,7 @@ body {{
     font-weight: 800;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-    margin-bottom: 1rem;
+    margin-bottom: 0.3rem;
     backdrop-filter: blur(4px);
 }}
 
@@ -756,7 +708,7 @@ body {{
     font-family: 'Inter', sans-serif;
     font-size: 1rem;
     font-weight: 600;
-    line-height: 1.55;
+    line-height: 1.38;
     color: rgba(255,255,255,0.92) !important;
     margin: 0;
     max-width: 92%;
@@ -831,7 +783,7 @@ body {{
     font-size: 0.82rem;
     font-weight: 700;
     color: #160029;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.22rem;
     padding-bottom: 0.5rem;
     border-bottom: 2px solid #f5e9e2;
     letter-spacing: 0.04em;
@@ -889,7 +841,7 @@ body {{
 /* ── SECTION TITLES ──────────────────────────────────── */
 .section-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.65rem;
+    font-size: 1.48rem;
     font-weight: 400;
     color: #773344;
     margin: 1.8rem 0 1.1rem 0;
@@ -929,7 +881,7 @@ body {{
     border-left: 5px solid #773344;
     box-shadow: 0 2px 8px rgba(15,32,68,0.05);
     color: #2a1421;
-    line-height: 1.65;
+    line-height: 1.45;
     font-size: 0.92rem;
 }}
 
@@ -956,7 +908,7 @@ body {{
 .keyword-container {{
     display: flex;
     flex-wrap: wrap;
-    gap: 0.55rem;
+    gap: 0.2rem;
     margin-top: 0.85rem;
 }}
 
@@ -985,56 +937,57 @@ body {{
 .fatwa-box {{
     background: #FFFFFF;
     border-radius: 18px !important;
-    padding: 1.3rem;
+    padding: 0.7rem 0.8rem;
     border: 1px solid #D2DCE5 !important;
     box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
     color: #2a1421;
-    margin-bottom: 1rem;
+    margin-bottom: 0.22rem;
 }}
 
 .fatwa-meta-row {{
     display: flex;
     flex-wrap: wrap;
-    gap: 0.55rem;
-    margin-bottom: 0.85rem;
+    gap: 0.15rem;
+    margin-bottom: 0.15rem;
 }}
 
 .fatwa-meta-pill {{
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
-    padding: 0.35rem 0.75rem;
+    padding: 0.3rem 0.65rem;
     border-radius: 6px;
     background: #f5e9e2;
     border: 1px solid #e3b5a4;
     color: #5f2840;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 500;
 }}
 
 .fatwa-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.35rem;
+    font-size: 1.15rem;
     font-weight: 400;
-    color: #773344;
-    margin-bottom: 0.5rem;
-    line-height: 1.3;
+    color: #160029;
+    margin-bottom: 0.4rem;
+    line-height: 1.25;
     word-break: break-word;
 }}
 
 .fatwa-text-panel {{
-    background: #F0F6FA;
+    background: linear-gradient(180deg, #ffffff 0%, #f9f1ec 100%);
     border: 1px solid #e3b5a4;
     border-radius: 8px;
-    padding: 0.95rem 1rem;
+    padding: 0.75rem 0.85rem;
 }}
 
 .fatwa-text-panel p {{
     margin: 0;
-    color: #2a1421;
-    line-height: 1.8;
-    font-size: 0.94rem;
+    color: #160029;
+    line-height: 1.45;
+    font-size: 0.88rem;
     white-space: pre-wrap;
+    word-break: break-word;
 }}
 
 /* ── BADGES ──────────────────────────────────────────── */
@@ -1104,7 +1057,7 @@ body {{
 .info-grid {{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
-    gap: 0.75rem;
+    gap: 0.28rem;
 }}
 
 .info-item {{
@@ -1169,7 +1122,7 @@ body {{
     color: #8b6771;
     font-weight: 600;
     font-size: 0.78rem;
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.15rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }}
@@ -1188,7 +1141,7 @@ body {{
 .result-card-text {{
     color: #5d3945;
     font-size: 0.88rem;
-    line-height: 1.6;
+    line-height: 1.42;
 }}
 
 /* ── POINTS CARD ─────────────────────────────────────── */
@@ -1206,7 +1159,7 @@ body {{
     font-size: 0.78rem;
     font-weight: 700;
     color: #160029;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.22rem;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid #e3b5a4;
     text-transform: uppercase;
@@ -1217,7 +1170,7 @@ body {{
 .small-note {{
     color: #8b6771;
     font-size: 0.86rem;
-    line-height: 1.6;
+    line-height: 1.42;
 }}
 
 /* ── CHART CARD ──────────────────────────────────────── */
@@ -1227,7 +1180,7 @@ body {{
     padding: 1rem 1rem 0.6rem 1rem;
     border: 1px solid #D2DCE5 !important;
     box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
-    margin-bottom: 1rem;
+    margin-bottom: 0.3rem;
 }}
 
 /* ── SIMILARITY BREAKDOWN (BEAUTIFUL CARD) ───────────── */
@@ -1237,7 +1190,7 @@ body {{
     border-radius: 24px;
     padding: 1.5rem;
     box-shadow: 0 12px 28px rgba(25, 14, 36, 0.08);
-    margin-bottom: 1rem;
+    margin-bottom: 0.3rem;
 }}
 
 .similarity-visual-head {{
@@ -1260,7 +1213,7 @@ body {{
 
 .similarity-visual-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.35rem;
+    font-size: 1.22rem;
     color: #160029;
 }}
 
@@ -1328,13 +1281,13 @@ body {{
 .similarity-ring-copy p {{
     margin: 0;
     color: #5d3945;
-    line-height: 1.6;
+    line-height: 1.42;
 }}
 
 .similarity-mini-grid {{
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
+    gap: 0.38rem;
     margin-bottom: 1.5rem;
 }}
 
@@ -1382,15 +1335,15 @@ body {{
     font-size: 0.75rem;
     font-weight: 800;
     text-transform: uppercase;
-    margin-bottom: 1rem;
+    margin-bottom: 0.3rem;
     letter-spacing: 0.05em;
 }}
 
 .similarity-bar-row {{
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
+    gap: 0.28rem;
+    margin-bottom: 0.2rem;
 }}
 
 .similarity-bar-row label {{
@@ -1646,7 +1599,7 @@ body {{
     color: #773344 !important;
     font-weight: 700;
     font-size: 0.78rem;
-    padding: 0.95rem 1rem;
+    padding: 0.65rem 0.72rem;
     text-align: left;
     white-space: nowrap;
     letter-spacing: 0.03em;
@@ -1668,7 +1621,7 @@ body {{
     padding: 0.9rem 1rem;
     border-bottom: 1px solid #e3b5a4;
     vertical-align: middle;
-    line-height: 1.7;
+    line-height: 1.48;
 }}
 
 .light-table tbody tr:nth-child(even) td {{
@@ -1691,13 +1644,13 @@ body {{
     padding: 1rem 1.2rem 0.85rem 1.2rem;
     border: 1px solid #D2DCE5 !important;
     box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
-    margin-bottom: 1.2rem;
+    margin-bottom: 0.4rem;
 }}
 
 .overview-chart-header {{
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.18rem;
     font-family: 'Inter', sans-serif;
     font-size: 0.88rem;
     font-weight: 700;
@@ -1711,7 +1664,7 @@ body {{
 .topic-card-grid {{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 0.9rem;
+    gap: 0.35rem;
 }}
 
 .topic-card {{
@@ -1728,7 +1681,7 @@ body {{
     font-weight: 800;
     color: #2a1421;
     line-height: 1.45;
-    margin-bottom: 0.7rem;
+    margin-bottom: 0.18rem;
 }}
 
 .topic-card-meta {{
@@ -1752,7 +1705,7 @@ body {{
 
 .topic-card-count {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.35rem;
+    font-size: 1.22rem;
     color: #773344;
 }}
 
@@ -1761,14 +1714,14 @@ body {{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.28rem;
     flex-wrap: wrap;
     background: #FFFFFF;
     border: 1px solid #e3b5a4;
     border-left: 5px solid #b24758;
     border-radius: 14px;
     padding: 0.8rem 0.95rem;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.22rem;
 }}
 
 .pager-note {{
@@ -1779,7 +1732,7 @@ body {{
 
 .pager-actions {{
     display: flex;
-    gap: 0.55rem;
+    gap: 0.2rem;
     align-items: center;
 }}
 
@@ -1804,7 +1757,7 @@ body {{
     padding: 1.2rem;
     border: 1px solid #e3b5a4;
     box-shadow: 0 2px 10px rgba(15,32,68,0.06);
-    margin-bottom: 0.9rem;
+    margin-bottom: 0.26rem;
     height: 100%;
 }}
 
@@ -1813,7 +1766,7 @@ body {{
     font-size: 0.88rem;
     font-weight: 700;
     color: #160029;
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.15rem;
     padding-bottom: 0.45rem;
     border-bottom: 2px solid #f5e9e2;
     line-height: 1.3;
@@ -1826,7 +1779,7 @@ body {{
     font-size: 0.78rem;
     font-weight: 700;
     color: #8b6771;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.2rem;
     letter-spacing: 0.06em;
     text-transform: uppercase;
 }}
@@ -1837,7 +1790,7 @@ body {{
     border: 1px solid #e3b5a4;
     box-shadow: 0 2px 8px rgba(15,32,68,0.05);
     padding: 0.85rem 1rem;
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.15rem;
     transition: transform 0.16s ease, box-shadow 0.16s ease;
 }}
 
@@ -1859,7 +1812,7 @@ body {{
 .align-rank-row {{
     display: flex;
     align-items: center;
-    gap: 0.55rem;
+    gap: 0.2rem;
     margin-bottom: 0.45rem;
     flex-wrap: wrap;
 }}
@@ -1902,7 +1855,7 @@ body {{
 .align-full-row {{
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.18rem;
     padding: 0.45rem 0;
     border-bottom: 1px solid #e3b5a4;
     flex-wrap: nowrap;
@@ -1950,7 +1903,7 @@ body {{
     border-radius: 8px;
     border: 1px solid #e3b5a4;
     box-shadow: 0 2px 8px rgba(15,32,68,0.05);
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.15rem;
     overflow: hidden;
 }}
 
@@ -2017,7 +1970,7 @@ body {{
     padding: 0.9rem 1rem 0.9rem 1rem !important;
     color: #5d3945 !important;
     box-shadow: 0 10px 22px rgba(44, 21, 33, 0.05);
-    line-height: 1.55;
+    line-height: 1.38;
 }}
 
 .editorial-meta span:before {{
@@ -2055,7 +2008,7 @@ body {{
 .result-reading-guide-copy {{
     color: #6b5660;
     font-size: 0.92rem;
-    line-height: 1.75;
+    line-height: 1.5;
 }}
 
 .batch-readable-note,
@@ -2064,7 +2017,7 @@ body {{
     border: 1px solid #e3b5a4;
     border-left: 4px solid #d44d5c;
     border-radius: 20px;
-    padding: 0.95rem 1rem;
+    padding: 0.65rem 0.72rem;
     margin: 0.95rem 0;
     box-shadow: 0 8px 20px rgba(44, 21, 33, 0.05);
 }}
@@ -2103,7 +2056,7 @@ body {{
     color: #8b6771;
     font-size: 0.84rem;
     font-family: 'Inter', sans-serif;
-    line-height: 1.65;
+    line-height: 1.45;
     margin: 0;
 }}
 
@@ -2187,7 +2140,7 @@ body {{
     .hero-kicker {{
         font-size: 0.68rem;
         padding: 0.4rem 0.8rem;
-        margin-bottom: 0.8rem;
+        margin-bottom: 0.22rem;
     }}
     .section-banner {{
         min-height: 110px;
@@ -2800,9 +2753,9 @@ def render_review_workspace_header():
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 1rem;
+            gap: 0.38rem;
             margin: 0.1rem 0 0.85rem 0;
-            padding: 1rem 1.1rem;
+            padding: 0.7rem 0.8rem;
             border-radius: 20px;
             border: 1px solid #e3b5a4;
             background: linear-gradient(180deg, #ffffff 0%, #fcf8fb 100%);
@@ -2831,12 +2784,12 @@ def render_review_workspace_header():
             margin: 0;
             color: #5d5060;
             font-size: 0.9rem;
-            line-height: 1.55;
+            line-height: 1.38;
             max-width: 720px;
         }
         .review-workspace-badges {
             display: flex;
-            gap: 0.7rem;
+            gap: 0.26rem;
             flex-wrap: wrap;
             justify-content: flex-end;
             flex: 0 0 auto;
@@ -2937,7 +2890,7 @@ def render_review_workspace_header():
             letter-spacing: 0.10em;
             text-transform: uppercase;
             color: #a3195b;
-            margin-bottom: 0.65rem;
+            margin-bottom: 0.16rem;
             opacity: 0.95;
         }}
 
@@ -2946,7 +2899,7 @@ def render_review_workspace_header():
             font-size: 1.32rem;
             color: #160029;
             font-weight: 700;
-            margin-bottom: 0.7rem;
+            margin-bottom: 0.18rem;
             line-height: 1.2;
             letter-spacing: -0.01em;
             overflow-wrap: anywhere;
@@ -2954,7 +2907,7 @@ def render_review_workspace_header():
 
         .unified-result-explanation {{
             font-size: 0.84rem;
-            line-height: 1.65;
+            line-height: 1.45;
             color: #5d3945;
             background: linear-gradient(135deg, rgba(212, 77, 92, 0.12) 0%, rgba(212, 77, 92, 0.06) 100%);
             padding: 0.8rem 0.95rem;
@@ -2991,9 +2944,9 @@ def render_review_workspace_header():
 
         .metrics-pill-row {{
             display: flex;
-            gap: 0.65rem;
+            gap: 0.24rem;
             flex-wrap: wrap;
-            margin-bottom: 1rem;
+            margin-bottom: 0.3rem;
         }}
 
         .metrics-mini-pill {{
@@ -3034,7 +2987,7 @@ def render_review_workspace_header():
 
         .metrics-overall {{
             font-size: 0.83rem;
-            line-height: 1.6;
+            line-height: 1.42;
             color: #2e6b52;
             background: linear-gradient(135deg, #E6F7F1 0%, #f0fdf9 100%);
             padding: 0.75rem 0.95rem;
@@ -3086,7 +3039,7 @@ def render_review_workspace_header():
         @media (max-width: 1200px) {{
             .unified-result-grid {{
                 grid-template-columns: 1fr;
-                gap: 1rem;
+                gap: 0.38rem;
             }}
         }}
 
@@ -3110,7 +3063,7 @@ def render_review_workspace_header():
         }}
 
         .light-table thead th {{
-            padding: 1rem 1.1rem;
+            padding: 0.7rem 0.8rem;
             text-align: left;
             font-size: 0.73rem;
             font-weight: 820;
@@ -3173,7 +3126,7 @@ def render_review_workspace_header():
             background: linear-gradient(90deg, #f9f1ec 0%, #fbf5f1 100%);
             border: 1.2px solid #e3b5a4;
             border-radius: 16px;
-            margin-bottom: 0.8rem;
+            margin-bottom: 0.22rem;
             font-size: 0.82rem;
             color: #5d3945;
             box-shadow: 0 4px 12px rgba(25, 14, 36, 0.04);
@@ -3206,7 +3159,7 @@ def render_review_workspace_header():
         .batch-results-copy {{
             font-size: 0.95rem;
             color: #5d3945;
-            line-height: 1.6;
+            line-height: 1.42;
         }}
 
         .metric-card {{
@@ -3243,7 +3196,7 @@ def render_review_workspace_header():
             letter-spacing: 0.08em;
             text-transform: uppercase;
             color: #a3195b;
-            margin-bottom: 0.6rem;
+            margin-bottom: 0.15rem;
         }}
 
         .metric-value {{
@@ -3283,7 +3236,7 @@ def render_review_workspace_header():
 
         .result-hero-title {{
             font-family: 'DM Serif Display', serif;
-            font-size: 1.82rem;
+            font-size: 1.62rem;
             color: #160029;
             margin-bottom: 0.3rem;
             font-weight: 700;
@@ -3294,7 +3247,7 @@ def render_review_workspace_header():
         .result-hero-copy {{
             font-size: 0.95rem;
             color: #5d3945;
-            line-height: 1.6;
+            line-height: 1.42;
         }}
 
         .result-hero-badges {{
@@ -3336,7 +3289,7 @@ def render_review_workspace_header():
         /* ── SECTION SEPARATORS & DIVIDERS ──────────────── */
         .section-subtitle {{
             font-family: 'Inter Tight', 'Inter', sans-serif;
-            font-size: 1.35rem;
+            font-size: 1.22rem;
             font-weight: 700;
             color: #160029;
             margin: 1.2rem 0 0.8rem 0;
@@ -3417,7 +3370,7 @@ def render_review_workspace_header():
             color: #ffffff !important;
             border: none !important;
             border-radius: 14px !important;
-            padding: 0.8rem 1.5rem !important;
+            padding: 0.6rem 1.2rem !important;
             font-weight: 700 !important;
             font-size: 0.9rem !important;
             letter-spacing: 0.05em !important;
@@ -3457,7 +3410,7 @@ def render_review_workspace_header():
             background: linear-gradient(135deg, #ffffff 0%, #faf7f4 100%);
             border: 1.2px solid #e3b5a4;
             border-radius: 20px;
-            padding: 1.3rem 1.4rem;
+            padding: 0.9rem 1rem;
             box-shadow: 0 8px 20px rgba(25, 14, 36, 0.05);
             transition: all 0.3s ease;
         }}
@@ -3473,13 +3426,13 @@ def render_review_workspace_header():
             letter-spacing: 0.08em;
             text-transform: uppercase;
             color: #a3195b;
-            margin-bottom: 0.9rem;
+            margin-bottom: 0.26rem;
         }}
 
         .keyword-container {{
             display: flex;
             flex-wrap: wrap;
-            gap: 0.4rem;
+            gap: 0.15rem;
         }}
 
         /* ── RESPONSIVE IMPROVEMENTS ────────────────────── */
@@ -3487,7 +3440,7 @@ def render_review_workspace_header():
             .result-hero-card {{
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 1rem;
+                gap: 0.38rem;
             }}
 
             .result-hero-badges {{
@@ -3496,7 +3449,7 @@ def render_review_workspace_header():
             }}
 
             .metric-value {{
-                font-size: 1.5rem;
+                font-size: 1.22rem;
             }}
 
             .unified-result-value {{

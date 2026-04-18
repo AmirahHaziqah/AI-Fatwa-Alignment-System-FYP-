@@ -141,10 +141,10 @@ def apply_dashboard_polish():
     .slim-loader-copy {font-size:0.9rem;color:#766772;line-height:1.65;}
     .slim-loader-side {font-size:0.82rem;font-weight:800;color:#907785;white-space:nowrap;padding-bottom:0.15rem;}
     .dataset-control-caption {font-size:0.72rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin:0 0 0.35rem 0.1rem;}
-    .floating-success-toast {position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:9999;background:rgba(255,255,255,0.96);border:1px solid #d4a04b;border-radius:22px;box-shadow:0 24px 50px rgba(25,14,36,0.18);padding:1rem 1.2rem;min-width:320px;max-width:420px;text-align:center;backdrop-filter:blur(8px);animation:toast-pop 0.25s ease-out;}
-    .floating-success-icon {width:54px;height:54px;border-radius:999px;background:linear-gradient(135deg,#f3c96c 0%,#d4a04b 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.4rem;font-weight:800;margin:0 auto 0.6rem auto;}
-    .floating-success-title {font-size:1rem;font-weight:800;color:#251329;margin-bottom:0.22rem;}
-    .floating-success-copy {font-size:0.88rem;line-height:1.6;color:#6d5a68;}
+    .floating-success-toast {position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:9999;background:rgba(255,255,255,0.96);border:1px solid #d4a04b;border-radius:18px;box-shadow:0 16px 40px rgba(25,14,36,0.15);padding:0.8rem 1rem;min-width:280px;max-width:360px;text-align:center;backdrop-filter:blur(8px);animation:toast-pop 0.25s ease-out;}
+    .floating-success-icon {width:44px;height:44px;border-radius:999px;background:linear-gradient(135deg,#f3c96c 0%,#d4a04b 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.2rem;font-weight:800;margin:0 auto 0.4rem auto;}
+    .floating-success-title {font-size:0.9rem;font-weight:800;color:#251329;margin-bottom:0.15rem;}
+    .floating-success-copy {font-size:0.8rem;line-height:1.5;color:#6d5a68;}
     @keyframes toast-pop {from {opacity:0;transform:translate(-50%,-46%);} to {opacity:1;transform:translate(-50%,-50%);}}
     .micro-copy {font-size:0.93rem;line-height:1.75;color:#7b6d78;margin:0.35rem 0 1rem 0;}
     .analysis-panel {background:rgba(255,255,255,0.72);border:1px solid rgba(170,133,155,0.28);border-radius:26px;padding:1.2rem 1.25rem;box-shadow:0 14px 34px rgba(52,27,45,0.05);height:100%;}
@@ -1856,7 +1856,7 @@ def render_dashboard_shell_header(title="AI Fatwa Alignment System", subtitle="H
     st.markdown(
         """
         <style>
-        .dashboard-shell-header {margin-bottom: 1.2rem;}
+        .dashboard-shell-header {margin-bottom: 0.4rem;}
         </style>
         <div class="dashboard-shell-header"></div>
         """,
@@ -2049,7 +2049,7 @@ with tab1:
         """), unsafe_allow_html=True)
         ai_response = st.text_area(
             "AI Response Input",
-            height=260,
+            height=200,
             placeholder="Paste the answer here or load one from the dataset above...",
             key="ai_input",
             label_visibility="collapsed"
