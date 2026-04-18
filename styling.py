@@ -105,10 +105,10 @@ body {{
 }}
 
 .block-container {{
-    padding-top: 0.7rem !important;
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-    max-width: 1100px !important;
+    padding-top: 0.5rem !important;
+    padding-left: 0.8rem !important;
+    padding-right: 0.8rem !important;
+    max-width: 950px !important;
     width: 100% !important;
     margin-left: auto !important;
     margin-right: auto !important;
@@ -142,7 +142,7 @@ body {{
 
 [data-testid="stSidebar"] > div:first-child {{
     background: transparent !important;
-    padding: 0.8rem 0.7rem 1.2rem 0.7rem !important;
+    padding: 0.6rem 0.6rem 0.9rem 0.6rem !important;
 }}
 
 /* Force all sidebar text to be light */
@@ -158,7 +158,7 @@ body {{
 
 /* ── SIDEBAR HERO BANNER ─────────────────────────────── */
 .sidebar-hero-wrap {{
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.13rem;
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 10px 28px rgba(0,0,0,0.2);
@@ -178,13 +178,13 @@ body {{
     border-left: 6px solid #d44d5c;
     border-radius: 18px;
     padding: 1.25rem 1.1rem;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.13rem;
     box-shadow: 0 10px 24px rgba(33,50,65,0.22);
     backdrop-filter: blur(4px);
 }}
 .sidebar-brand-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.18rem;
+    font-size: 0.73rem;
     line-height: 1.15;
     color: #FFFFFF !important;
     margin-bottom: 0.14rem;
@@ -197,14 +197,14 @@ body {{
 
 /* ── SIDEBAR WELCOME ─────────────────────────────────── */
 .sidebar-welcome-wrap {{
-    margin-bottom: 0.38rem;
+    margin-bottom: 0.17rem;
 }}
 
 .sidebar-welcome-banner {{
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.10);
     border-radius: 12px;
-    padding: 0.8rem 0.95rem 1rem 1.15rem;
+    padding: 0.55rem 0.7rem 1rem 1.15rem;
     position: relative;
     overflow: hidden;
 }}
@@ -260,7 +260,7 @@ body {{
     box-shadow: 0 12px 26px rgba(13, 24, 47, 0.18) !important;
     border-radius: 18px !important;
     padding: 1rem !important;
-    margin-bottom: 0.28rem;
+    margin-bottom: 0.12rem;
 }}
 
 .sidebar-kicker {{
@@ -273,7 +273,7 @@ body {{
     border: 1px solid rgba(158,179,194,0.22) !important;
     font-size: 0.68rem !important;
     font-weight: 700;
-    margin-bottom: 0.22rem;
+    margin-bottom: 0.08rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
 }}
@@ -283,14 +283,14 @@ body {{
     font-weight: 800;
     line-height: 1.25;
     color: #FFFFFF !important;
-    margin-bottom: 0.28rem;
+    margin-bottom: 0.12rem;
 }}
 
 .sidebar-workspace-subtitle {{
     font-size: 0.84rem;
     line-height: 1.38;
     color: rgba(255,255,255,0.78) !important;
-    margin-bottom: 0.22rem;
+    margin-bottom: 0.08rem;
 }}
 
 .sidebar-highlight-row {{
@@ -354,7 +354,7 @@ body {{
 /* ── SIDEBAR PROGRESS ────────────────────────────────── */
 .sidebar-progress-stack {{
     display: grid;
-    gap: 0.2rem;
+    gap: 0.08rem;
 }}
 
 .sidebar-progress-item {{
@@ -400,7 +400,7 @@ body {{
 
 .sidebar-action-item {{
     display: flex;
-    gap: 0.2rem;
+    gap: 0.08rem;
     align-items: flex-start;
     padding: 0.85rem 0.9rem;
     border-radius: 14px !important;
@@ -418,7 +418,7 @@ body {{
     justify-content: center;
     background: #cb4a5e !important;
     color: #FFFFFF !important;
-    font-size: 0.95rem;
+    font-size: 0.75rem;
     font-weight: 800;
 }}
 
@@ -568,7 +568,7 @@ body {{
 
 .header-main h1 {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.7rem;
+    font-size: 1.1rem;
     font-weight: 400;
     color: #773344 !important;
     margin: 0 0 0.35rem 0;
@@ -578,7 +578,7 @@ body {{
 
 .header-main p {{
     color: #8b6771 !important;
-    font-size: 0.9rem;
+    font-size: 0.7rem;
     font-weight: 400;
     margin: 0;
     line-height: 1.38;
@@ -606,10 +606,10 @@ body {{
 
 .hero-image-wrap {{
     position: relative;
-    height: 160px !important;
+    height: 90px !important;
     border-radius: 28px !important;
     overflow: hidden;
-    margin-bottom: 0.26rem;
+    margin-bottom: 0.11rem;
     border: 1px solid rgba(158,179,194,0.20);
     box-shadow: 0 18px 40px rgba(22, 0, 41, 0.14);
     background: linear-gradient(90deg, #0b2a56 0%, #4c224d 55%, #65104d 100%);
@@ -689,7 +689,7 @@ body {{
     font-weight: 800;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.13rem;
     backdrop-filter: blur(4px);
 }}
 
@@ -706,7 +706,7 @@ body {{
 
 .hero-image-subtitle {{
     font-family: 'Inter', sans-serif;
-    font-size: 1rem;
+    font-size: 0.8rem;
     font-weight: 600;
     line-height: 1.38;
     color: rgba(255,255,255,0.92) !important;
@@ -720,7 +720,7 @@ body {{
 .section-banner {{
     position: relative;
     width: 100%;
-    min-height: 130px;
+    min-height: 95px;
     border-radius: 20px;
     overflow: hidden;
     margin: 1.4rem 0 1.1rem 0;
@@ -732,8 +732,8 @@ body {{
 .section-banner img {{
     width: 100%;
     height: 100%;
-    min-height: 130px;
-    max-height: 160px;
+    min-height: 95px;
+    max-height: 90px;
     object-fit: cover;
     display: block;
 }}
@@ -783,7 +783,7 @@ body {{
     font-size: 0.82rem;
     font-weight: 700;
     color: #160029;
-    margin-bottom: 0.22rem;
+    margin-bottom: 0.08rem;
     padding-bottom: 0.5rem;
     border-bottom: 2px solid #f5e9e2;
     letter-spacing: 0.04em;
@@ -864,7 +864,7 @@ body {{
 
 .section-subtitle {{
     font-family: 'Inter', sans-serif;
-    font-size: 1rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: #160029;
     margin: 1.2rem 0 0.85rem 0;
@@ -873,7 +873,7 @@ body {{
 
 /* ── MESSAGE BOXES ───────────────────────────────────── */
 .msg-box {{
-    padding: 0.85rem 1.05rem;
+    padding: 0.55rem 0.75rem;
     border-radius: 16px !important;
     margin: 0.85rem 0;
     background: #FFFFFF;
@@ -882,7 +882,7 @@ body {{
     box-shadow: 0 2px 8px rgba(15,32,68,0.05);
     color: #2a1421;
     line-height: 1.45;
-    font-size: 0.92rem;
+    font-size: 0.72rem;
 }}
 
 .msg-box strong {{
@@ -908,7 +908,7 @@ body {{
 .keyword-container {{
     display: flex;
     flex-wrap: wrap;
-    gap: 0.2rem;
+    gap: 0.08rem;
     margin-top: 0.85rem;
 }}
 
@@ -937,11 +937,11 @@ body {{
 .fatwa-box {{
     background: #FFFFFF;
     border-radius: 18px !important;
-    padding: 0.7rem 0.8rem;
+    padding: 0.5rem 0.6rem;
     border: 1px solid #D2DCE5 !important;
     box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
     color: #2a1421;
-    margin-bottom: 0.22rem;
+    margin-bottom: 0.08rem;
 }}
 
 .fatwa-meta-row {{
@@ -954,7 +954,7 @@ body {{
 .fatwa-meta-pill {{
     display: inline-flex;
     align-items: center;
-    gap: 0.22rem;
+    gap: 0.09rem;
     padding: 0.3rem 0.65rem;
     border-radius: 6px;
     background: #f5e9e2;
@@ -966,10 +966,10 @@ body {{
 
 .fatwa-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.15rem;
+    font-size: 0.7rem;
     font-weight: 400;
     color: #160029;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.18rem;
     line-height: 1.25;
     word-break: break-word;
 }}
@@ -978,14 +978,14 @@ body {{
     background: linear-gradient(180deg, #ffffff 0%, #f9f1ec 100%);
     border: 1px solid #e3b5a4;
     border-radius: 8px;
-    padding: 0.75rem 0.85rem;
+    padding: 0.5rem 0.65rem;
 }}
 
 .fatwa-text-panel p {{
     margin: 0;
     color: #160029;
     line-height: 1.45;
-    font-size: 0.88rem;
+    font-size: 0.68rem;
     white-space: pre-wrap;
     word-break: break-word;
 }}
@@ -1057,7 +1057,7 @@ body {{
 .info-grid {{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
-    gap: 0.2rem;
+    gap: 0.08rem;
 }}
 
 .info-item {{
@@ -1071,7 +1071,7 @@ body {{
     font-size: 0.72rem;
     font-weight: 700;
     color: #8b6771;
-    margin-bottom: 0.22rem;
+    margin-bottom: 0.08rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }}
@@ -1140,7 +1140,7 @@ body {{
 
 .result-card-text {{
     color: #5d3945;
-    font-size: 0.88rem;
+    font-size: 0.68rem;
     line-height: 1.42;
 }}
 
@@ -1159,7 +1159,7 @@ body {{
     font-size: 0.78rem;
     font-weight: 700;
     color: #160029;
-    margin-bottom: 0.22rem;
+    margin-bottom: 0.08rem;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid #e3b5a4;
     text-transform: uppercase;
@@ -1180,7 +1180,7 @@ body {{
     padding: 1rem 1rem 0.6rem 1rem;
     border: 1px solid #D2DCE5 !important;
     box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.13rem;
 }}
 
 /* ── SIMILARITY BREAKDOWN (BEAUTIFUL CARD) ───────────── */
@@ -1190,7 +1190,7 @@ body {{
     border-radius: 24px;
     padding: 1.5rem;
     box-shadow: 0 12px 28px rgba(25, 14, 36, 0.08);
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.13rem;
 }}
 
 .similarity-visual-head {{
@@ -1213,7 +1213,7 @@ body {{
 
 .similarity-visual-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.22rem;
+    font-size: 0.96rem;
     color: #160029;
 }}
 
@@ -1227,7 +1227,7 @@ body {{
 .similarity-score-pill span {{
     color: #d44d5c;
     font-weight: 800;
-    font-size: 1.2rem;
+    font-size: 0.75rem;
 }}
 
 .similarity-ring-row {{
@@ -1239,7 +1239,7 @@ body {{
 
 .similarity-ring {{
     width: 130px;
-    height: 130px;
+    height: 95px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -1287,7 +1287,7 @@ body {{
 .similarity-mini-grid {{
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 0.2rem;
+    gap: 0.08rem;
     margin-bottom: 1.5rem;
 }}
 
@@ -1305,7 +1305,7 @@ body {{
     text-transform: uppercase;
     letter-spacing: 0.06em;
     display: block;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.13rem;
 }}
 
 .similarity-mini-card strong {{
@@ -1335,14 +1335,14 @@ body {{
     font-size: 0.75rem;
     font-weight: 800;
     text-transform: uppercase;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.13rem;
     letter-spacing: 0.05em;
 }}
 
 .similarity-bar-row {{
     display: flex;
     align-items: center;
-    gap: 0.2rem;
+    gap: 0.08rem;
     margin-bottom: 0.2rem;
 }}
 
@@ -1523,7 +1523,7 @@ body {{
     font-family: 'Inter', sans-serif !important;
     line-height: 1.75 !important;
     box-shadow: none !important;
-    min-height: 165px !important;
+    min-height: 90px !important;
 }}
 
 .stTextArea textarea:focus {{
@@ -1543,7 +1543,7 @@ body {{
     background: transparent !important;
     border: none !important;
     border-radius: 16px !important;
-    padding: 0.8rem 0.9rem !important;
+    padding: 0.55rem 0.7rem !important;
     color: #2a1421 !important;
     font-size: 0.93rem !important;
     font-family: 'Inter', sans-serif !important;
@@ -1617,8 +1617,8 @@ body {{
 .light-table tbody td {{
     background: #FFFFFF;
     color: #2a1421;
-    font-size: 0.88rem;
-    padding: 0.9rem 1rem;
+    font-size: 0.68rem;
+    padding: 0.6rem 0.8rem;
     border-bottom: 1px solid #e3b5a4;
     vertical-align: middle;
     line-height: 1.48;
@@ -1641,10 +1641,10 @@ body {{
 .overview-chart-card {{
     background: #FFFFFF;
     border-radius: 18px !important;
-    padding: 0.85rem 1.05rem 0.85rem 1.2rem;
+    padding: 0.55rem 0.75rem 0.85rem 1.2rem;
     border: 1px solid #D2DCE5 !important;
     box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.18rem;
 }}
 
 .overview-chart-header {{
@@ -1652,7 +1652,7 @@ body {{
     align-items: center;
     gap: 0.18rem;
     font-family: 'Inter', sans-serif;
-    font-size: 0.88rem;
+    font-size: 0.68rem;
     font-weight: 700;
     color: #160029;
     flex-wrap: wrap;
@@ -1705,7 +1705,7 @@ body {{
 
 .topic-card-count {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.22rem;
+    font-size: 0.96rem;
     color: #773344;
 }}
 
@@ -1714,14 +1714,14 @@ body {{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 0.2rem;
+    gap: 0.08rem;
     flex-wrap: wrap;
     background: #FFFFFF;
     border: 1px solid #e3b5a4;
     border-left: 5px solid #b24758;
     border-radius: 14px;
-    padding: 0.8rem 0.95rem;
-    margin-bottom: 0.22rem;
+    padding: 0.55rem 0.7rem;
+    margin-bottom: 0.08rem;
 }}
 
 .pager-note {{
@@ -1732,7 +1732,7 @@ body {{
 
 .pager-actions {{
     display: flex;
-    gap: 0.2rem;
+    gap: 0.08rem;
     align-items: center;
 }}
 
@@ -1757,13 +1757,13 @@ body {{
     padding: 1.2rem;
     border: 1px solid #e3b5a4;
     box-shadow: 0 2px 10px rgba(15,32,68,0.06);
-    margin-bottom: 0.26rem;
+    margin-bottom: 0.11rem;
     height: 100%;
 }}
 
 .comparison-card-header {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.88rem;
+    font-size: 0.68rem;
     font-weight: 700;
     color: #160029;
     margin-bottom: 0.15rem;
@@ -1789,7 +1789,7 @@ body {{
     border-radius: 10px;
     border: 1px solid #e3b5a4;
     box-shadow: 0 2px 8px rgba(15,32,68,0.05);
-    padding: 0.85rem 1rem;
+    padding: 0.55rem 0.75rem;
     margin-bottom: 0.15rem;
     transition: transform 0.16s ease, box-shadow 0.16s ease;
 }}
@@ -1801,10 +1801,10 @@ body {{
 
 .align-rank-topic {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.92rem;
+    font-size: 0.72rem;
     font-weight: 600;
     color: #160029;
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.15rem;
     line-height: 1.4;
     word-break: break-word;
 }}
@@ -1812,7 +1812,7 @@ body {{
 .align-rank-row {{
     display: flex;
     align-items: center;
-    gap: 0.2rem;
+    gap: 0.08rem;
     margin-bottom: 0.45rem;
     flex-wrap: wrap;
 }}
@@ -1921,7 +1921,7 @@ body {{
 
 .donut-insight-name {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.88rem;
+    font-size: 0.68rem;
     font-weight: 600;
     color: #160029;
     margin-bottom: 0.18rem;
@@ -1967,7 +1967,7 @@ body {{
     background: linear-gradient(180deg, #fffefe 0%, #f8efea 100%);
     border: 1px solid #e3b5a4;
     border-radius: 18px;
-    padding: 0.9rem 1rem 0.9rem 1rem !important;
+    padding: 0.6rem 0.8rem 0.9rem 1rem !important;
     color: #5d3945 !important;
     box-shadow: 0 10px 22px rgba(44, 21, 33, 0.05);
     line-height: 1.38;
@@ -1997,7 +1997,7 @@ body {{
 
 .batch-results-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.2rem;
+    font-size: 0.75rem;
     font-weight: 700;
     color: #251329;
     margin-bottom: 0.2rem;
@@ -2007,7 +2007,7 @@ body {{
 .batch-readable-note,
 .result-reading-guide-copy {{
     color: #6b5660;
-    font-size: 0.92rem;
+    font-size: 0.72rem;
     line-height: 1.5;
 }}
 
@@ -2028,7 +2028,7 @@ body {{
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: #a3195b;
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.15rem;
 }}
 
 /* safer table area for larger batch outputs */
@@ -2071,7 +2071,7 @@ body {{
 
 @media (max-width: 1100px) {{
     .hero-image-wrap {{
-        height: 260px !important;
+        height: 180px !important;
     }}
     .hero-main-image {{
         max-width: 46%;
@@ -2090,7 +2090,7 @@ body {{
         font-size: 1.9rem !important;
     }}
     .hero-image-subtitle {{
-        font-size: 0.93rem;
+        font-size: 0.73rem;
     }}
     .section-banner-title {{
         font-size: 1.25rem;
@@ -2113,7 +2113,7 @@ body {{
         padding: 1.2rem 1.4rem !important;
     }}
     .header-main h1 {{
-        font-size: 1.55rem;
+        font-size: 0.78rem;
     }}
     .hero-image-wrap {{
         height: 240px !important;
@@ -2134,19 +2134,19 @@ body {{
         font-size: 1.7rem !important;
     }}
     .hero-image-subtitle {{
-        font-size: 0.9rem;
+        font-size: 0.7rem;
         line-height: 1.5;
     }}
     .hero-kicker {{
         font-size: 0.68rem;
         padding: 0.4rem 0.8rem;
-        margin-bottom: 0.22rem;
+        margin-bottom: 0.08rem;
     }}
     .section-banner {{
         min-height: 110px;
     }}
     .section-banner-title {{
-        font-size: 1.15rem;
+        font-size: 0.7rem;
     }}
     .light-table {{
         min-width: 520px;
@@ -2162,7 +2162,7 @@ body {{
 
 @media (max-width: 620px) {{
     .hero-image-wrap {{
-        height: 165px !important;
+        height: 90px !important;
     }}
     .hero-main-image {{
         display: none;
@@ -2183,7 +2183,7 @@ body {{
     background: linear-gradient(180deg,#fffdfc 0%,#fbf4ef 100%);
     border: 1px solid #e3b5a4;
     border-radius: 28px;
-    padding: 0.85rem 1.05rem 1.1rem 1.2rem;
+    padding: 0.55rem 0.75rem 1.1rem 1.2rem;
     box-shadow: 0 14px 30px rgba(41,22,35,0.05);
     margin: 0.15rem 0 0.85rem 0;
 }}
@@ -2753,9 +2753,9 @@ def render_review_workspace_header():
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 0.2rem;
+            gap: 0.08rem;
             margin: 0.1rem 0 0.85rem 0;
-            padding: 0.7rem 0.8rem;
+            padding: 0.5rem 0.6rem;
             border-radius: 20px;
             border: 1px solid #e3b5a4;
             background: linear-gradient(180deg, #ffffff 0%, #fcf8fb 100%);
@@ -2770,20 +2770,20 @@ def render_review_workspace_header():
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.09em;
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.13rem;
         }
         .review-workspace-header h1 {
             margin: 0 0 0.2rem 0;
             color: #160029;
             font-family: 'Inter Tight', 'Inter', sans-serif;
-            font-size: 1.7rem;
+            font-size: 1.1rem;
             line-height: 1.05;
             letter-spacing: -0.02em;
         }
         .review-workspace-header p {
             margin: 0;
             color: #5d5060;
-            font-size: 0.9rem;
+            font-size: 0.7rem;
             line-height: 1.38;
             max-width: 720px;
         }
@@ -2798,7 +2798,7 @@ def render_review_workspace_header():
             min-width: 170px;
             background: linear-gradient(135deg, #162a63 0%, #4a1d62 55%, #7a1657 100%);
             border-radius: 16px;
-            padding: 0.8rem 0.95rem;
+            padding: 0.55rem 0.7rem;
             border: 1px solid rgba(253,3,99,0.14);
             box-shadow: 0 8px 18px rgba(20, 10, 33, 0.12);
         }
@@ -2809,11 +2809,11 @@ def render_review_workspace_header():
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.1rem;
         }
         .review-badge-card strong {
             color: #ffffff;
-            font-size: 0.94rem;
+            font-size: 0.74rem;
             line-height: 1.35;
             font-weight: 700;
         }
@@ -2910,7 +2910,7 @@ def render_review_workspace_header():
             line-height: 1.45;
             color: #5d3945;
             background: linear-gradient(135deg, rgba(212, 77, 92, 0.12) 0%, rgba(212, 77, 92, 0.06) 100%);
-            padding: 0.8rem 0.95rem;
+            padding: 0.55rem 0.7rem;
             border-radius: 14px;
             border-left: 4px solid #d44d5c;
             position: relative;
@@ -2946,7 +2946,7 @@ def render_review_workspace_header():
             display: flex;
             gap: 0.24rem;
             flex-wrap: wrap;
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.13rem;
         }}
 
         .metrics-mini-pill {{
@@ -2974,12 +2974,12 @@ def render_review_workspace_header():
             color: #a3195b;
             text-transform: uppercase;
             letter-spacing: 0.07em;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.1rem;
         }}
 
         .metrics-mini-value {{
             font-family: 'DM Serif Display', serif;
-            font-size: 1.18rem;
+            font-size: 0.73rem;
             font-weight: 700;
             color: #160029;
             line-height: 1.2;
@@ -3039,7 +3039,7 @@ def render_review_workspace_header():
         @media (max-width: 1200px) {{
             .unified-result-grid {{
                 grid-template-columns: 1fr;
-                gap: 0.2rem;
+                gap: 0.08rem;
             }}
         }}
 
@@ -3063,7 +3063,7 @@ def render_review_workspace_header():
         }}
 
         .light-table thead th {{
-            padding: 0.7rem 0.8rem;
+            padding: 0.5rem 0.6rem;
             text-align: left;
             font-size: 0.73rem;
             font-weight: 820;
@@ -3099,7 +3099,7 @@ def render_review_workspace_header():
 
         .light-table tbody td {{
             padding: 0.95rem 1.1rem;
-            font-size: 0.88rem;
+            font-size: 0.68rem;
             color: #5d3945;
             word-break: break-word;
             line-height: 1.5;
@@ -3126,7 +3126,7 @@ def render_review_workspace_header():
             background: linear-gradient(90deg, #f9f1ec 0%, #fbf5f1 100%);
             border: 1.2px solid #e3b5a4;
             border-radius: 16px;
-            margin-bottom: 0.22rem;
+            margin-bottom: 0.08rem;
             font-size: 0.82rem;
             color: #5d3945;
             box-shadow: 0 4px 12px rgba(25, 14, 36, 0.04);
@@ -3149,15 +3149,15 @@ def render_review_workspace_header():
 
         .batch-results-title {{
             font-family: 'DM Serif Display', serif;
-            font-size: 1.55rem;
+            font-size: 0.78rem;
             color: #160029;
-            margin-bottom: 0.4rem;
+            margin-bottom: 0.18rem;
             font-weight: 700;
             letter-spacing: -0.02em;
         }}
 
         .batch-results-copy {{
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             color: #5d3945;
             line-height: 1.42;
         }}
@@ -3236,16 +3236,16 @@ def render_review_workspace_header():
 
         .result-hero-title {{
             font-family: 'DM Serif Display', serif;
-            font-size: 1.49rem;
+            font-size: 1.19rem;
             color: #160029;
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.13rem;
             font-weight: 700;
             line-height: 1.15;
             letter-spacing: -0.02em;
         }}
 
         .result-hero-copy {{
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             color: #5d3945;
             line-height: 1.42;
         }}
@@ -3289,7 +3289,7 @@ def render_review_workspace_header():
         /* ── SECTION SEPARATORS & DIVIDERS ──────────────── */
         .section-subtitle {{
             font-family: 'Inter Tight', 'Inter', sans-serif;
-            font-size: 1.22rem;
+            font-size: 0.96rem;
             font-weight: 700;
             color: #160029;
             margin: 1.2rem 0 0.8rem 0;
@@ -3410,7 +3410,7 @@ def render_review_workspace_header():
             background: linear-gradient(135deg, #ffffff 0%, #faf7f4 100%);
             border: 1.2px solid #e3b5a4;
             border-radius: 20px;
-            padding: 0.9rem 1rem;
+            padding: 0.6rem 0.8rem;
             box-shadow: 0 8px 20px rgba(25, 14, 36, 0.05);
             transition: all 0.3s ease;
         }}
@@ -3426,7 +3426,7 @@ def render_review_workspace_header():
             letter-spacing: 0.08em;
             text-transform: uppercase;
             color: #a3195b;
-            margin-bottom: 0.26rem;
+            margin-bottom: 0.11rem;
         }}
 
         .keyword-container {{
@@ -3440,7 +3440,7 @@ def render_review_workspace_header():
             .result-hero-card {{
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 0.2rem;
+                gap: 0.08rem;
             }}
 
             .result-hero-badges {{
@@ -3449,11 +3449,11 @@ def render_review_workspace_header():
             }}
 
             .metric-value {{
-                font-size: 1.22rem;
+                font-size: 0.96rem;
             }}
 
             .unified-result-value {{
-                font-size: 1.2rem;
+                font-size: 0.75rem;
             }}
         }}
 

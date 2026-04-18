@@ -1544,7 +1544,7 @@ def render_circular_metric_chart(metric_name: str, score: float, description: st
         <div style="position: relative; width: 80px; height: 80px; margin: 0 auto;">
             <div style="width: 80px; height: 80px; border-radius: 50%; background: conic-gradient({color} {degrees}deg, #e6d8e2 {degrees}deg); display: flex; align-items: center; justify-content: center;">
                 <div style="width: 60px; height: 60px; border-radius: 50%; background: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                    <strong style="font-family: 'DM Serif Display', serif; font-size: 1rem; color: {color};">{score_val:.0f}%</strong>
+                    <strong style="font-family: 'DM Serif Display', serif; font-size: 0.8rem; color: {color};">{score_val:.0f}%</strong>
                 </div>
             </div>
         </div>
@@ -1856,7 +1856,7 @@ def render_dashboard_shell_header(title="AI Fatwa Alignment System", subtitle="H
     st.markdown(
         """
         <style>
-        .dashboard-shell-header {margin-bottom: 0.4rem;}
+        .dashboard-shell-header {margin-bottom: 0.18rem;}
         </style>
         <div class="dashboard-shell-header"></div>
         """,
@@ -2049,7 +2049,7 @@ with tab1:
         """), unsafe_allow_html=True)
         ai_response = st.text_area(
             "AI Response Input",
-            height=200,
+            height=140,
             placeholder="Paste the answer here or load one from the dataset above...",
             key="ai_input",
             label_visibility="collapsed"
