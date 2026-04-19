@@ -415,6 +415,39 @@ def apply_dashboard_polish():
     @media (max-width: 1200px) { [data-testid="stAppViewContainer"] .block-container { max-width: calc(100vw - 250px) !important; } }
     @media (max-width: 900px) { [data-testid="stAppViewContainer"] .block-container { max-width: 100vw !important; } }
 
+
+    /* ===== FINAL DASHBOARD COMPACT OVERRIDES ===== */
+    [data-testid="stAppViewContainer"] .block-container {max-width:none !important;padding-top:0.2rem !important;padding-left:0.45rem !important;padding-right:0.45rem !important;}
+    .workspace-shell,.empty-review-card,.batch-shell,.fatwa-browser-shell,.topic-pick-shell,.history-overview-card,.history-table-shell,.grouped-chart-shell,.chart-panel,.analysis-panel,.sim-lite-shell,.comparison-card {padding:0.72rem !important;border-radius:16px !important;margin-bottom:0.5rem !important;}
+    .workspace-shell-tight {padding:0.65rem 0.72rem !important;}
+    .workspace-title {font-size:1.02rem !important;}
+    .workspace-copy,.empty-review-copy,.batch-copy,.chart-panel-copy,.inline-section-copy,.analysis-panel-copy,.system-plain-note,.explorer-instruction-copy,.history-table-copy {font-size:0.75rem !important;line-height:1.46 !important;}
+    .workspace-kicker,.batch-kicker,.tab-minimal-kicker,.inline-section-label,.slim-loader-kicker,.input-editor-kicker,.browse-inline-head,.sim-lite-kicker,.chart-panel-title,.explorer-instruction-title,.history-table-pill,.history-overview-tag {font-size:0.6rem !important;}
+    .empty-review-title,.batch-title,.fatwa-browser-title,.history-overview-title,.tab-minimal-title,.editorial-title,.sim-lite-title {font-size:1.32rem !important;line-height:1.05 !important;}
+    .tab-minimal-copy,.editorial-copy,.browse-filter-copy,.fatwa-browser-copy,.history-overview-copy {font-size:0.78rem !important;line-height:1.48 !important;}
+    .empty-review-pill,.batch-pill,.input-editor-chip,.sim-lite-pill,.history-overview-chip,.browse-filter-chip,.fatwa-browser-pills .browse-filter-chip,.workspace-chip {font-size:0.66rem !important;padding:0.28rem 0.55rem !important;}
+    .empty-review-item,.batch-guide-step,.donut-insight-card,.align-rank-card,.topic-focus-card,.explorer-summary-card,.comparison-card,.explorer-orb {padding:0.62rem !important;border-radius:14px !important;}
+    .empty-review-icon,.analysis-step-no,.sidebar-action-icon {width:26px !important;height:26px !important;min-width:26px !important;border-radius:9px !important;font-size:0.66rem !important;}
+    .empty-review-stat,.history-overview-stat,.history-overview-note,.sim-lite-metric {padding:0.58rem !important;border-radius:14px !important;min-height:auto !important;}
+    .empty-review-stat-label,.history-overview-stat-label,.explorer-summary-label,.topic-focus-label,.sim-lite-metric-label,.align-panel-title,.overview-kicker,.light-table thead th,.light-table tbody td::before {font-size:0.58rem !important;}
+    .empty-review-stat-value,.history-overview-stat-value,.metric-value-text,.sim-lite-metric-value,.leaderboard-score,.align-score,.align-full-score {font-size:1rem !important;}
+    .single-review-hero {padding:0.78rem 0.85rem !important;margin-bottom:0.55rem !important;}
+    .single-review-hero .tab-minimal-title {font-size:1.18rem !important;}
+    .input-editor-shell {padding:0.72rem 0.78rem 0.62rem 0.78rem !important;border-radius:16px !important;}
+    .input-editor-title,.slim-loader-title,.browse-toolbar-title,.overview-title,.history-table-title,.align-rank-topic,.comparison-card-header {font-size:0.84rem !important;line-height:1.28 !important;}
+    .light-table thead th {padding:0.55rem 0.52rem !important;}
+    .light-table tbody td {padding:0.55rem 0.52rem !important;font-size:0.72rem !important;line-height:1.42 !important;}
+    .topic-select-shell {padding:0.68rem 0.76rem !important;border-radius:16px !important;margin-bottom:0.65rem !important;}
+    .topic-select-shell [data-baseweb="select"] > div {min-height:42px !important;border-radius:13px !important;}
+    .fatwa-title {font-size:0.88rem !important;margin-bottom:0.35rem !important;}
+    .fatwa-text-panel {padding:0.72rem !important;border-radius:12px !important;}
+    .fatwa-text-panel p {font-size:0.72rem !important;line-height:1.45 !important;}
+    .grouped-chart-title,.chart-panel-title,.overview-title {font-size:0.82rem !important;}
+    .explorer-orb-value,.topic-focus-value,.leaderboard-title {font-size:0.88rem !important;}
+    .leaderboard-card {padding:0.72rem 0.78rem !important;border-radius:16px !important;}
+    .leaderboard-rank {width:34px !important;height:34px !important;border-radius:10px !important;font-size:0.84rem !important;}
+    .overview-chart-head,.history-overview-head {padding:0.68rem 0.74rem !important;border-radius:16px !important;}
+
 </style>
     """, unsafe_allow_html=True)
 

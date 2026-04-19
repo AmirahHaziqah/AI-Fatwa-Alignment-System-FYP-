@@ -78,22 +78,12 @@ def apply_theme():
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Inter+Tight:wght@500;600;700;800&display=swap');
 
+html {{ font-size: 11px !important; }}
+body {{ overflow-x: hidden !important; }}
+.stApp {{ overflow-x: hidden !important; }}
+
 * {{
     box-sizing: border-box;
-}}
-
-/* GLOBAL SCALE (35% smaller) */
-.stApp {{
-    transform: scale(0.65);
-    transform-origin: top left;
-    width: 153%;   /* compensate shrink so it still fills screen */
-}}
-
-.stApp {{
-    transform: scale(0.65);
-    transform-origin: top left;
-    width: 153%;
-    image-rendering: -webkit-optimize-contrast;
 }}
 
 html, body, [class*="css"] {{
@@ -119,9 +109,9 @@ body {{
 }}
 
 .block-container {{
-    padding-top: 0.35rem !important;
-    padding-left: 0.65rem !important;
-    padding-right: 0.65rem !important;
+    padding-top: 0.2rem !important;
+    padding-left: 0.45rem !important;
+    padding-right: 0.45rem !important;
     max-width: none !important;
     width: 100% !important;
     margin-left: 0 !important;
@@ -146,9 +136,9 @@ body {{
 
 /* ── SIDEBAR ─────────────────────────────────────────── */
 [data-testid="stSidebar"] {{
-    min-width: 280px !important;
-    max-width: 280px !important;
-    width: 280px !important;
+    min-width: 238px !important;
+    max-width: 238px !important;
+    width: 238px !important;
     background: linear-gradient(180deg, #160029 0%, #773344 55%, #5f2840 100%) !important;
     border-right: 1px solid rgba(255,255,255,0.08) !important;
     box-shadow: 16px 0 34px rgba(22,0,41,0.18) !important;
@@ -156,7 +146,7 @@ body {{
 
 [data-testid="stSidebar"] > div:first-child {{
     background: transparent !important;
-    padding: 0.6rem 0.6rem 0.9rem 0.6rem !important;
+    padding: 0.4rem 0.4rem 0.55rem 0.4rem !important;
 }}
 
 /* Force all sidebar text to be light */
@@ -204,7 +194,7 @@ body {{
     margin-bottom: 0.14rem;
 }}
 .sidebar-brand-subtitle {{
-    font-size: 0.84rem;
+    font-size: 0.72rem;
     line-height: 1.45;
     color: rgba(255,255,255,0.78) !important;
 }}
@@ -248,7 +238,7 @@ body {{
 
 .sidebar-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.72rem !important;
+    font-size: 1.16rem !important;
     line-height: 1.08 !important;
     font-weight: 400;
     color: #FFFFFF;
@@ -258,7 +248,7 @@ body {{
 
 .sidebar-subtitle {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.88rem !important;
+    font-size: 0.7rem !important;
     line-height: 1.62 !important;
     font-weight: 400;
     color: rgba(255,255,255,0.78) !important;
@@ -273,7 +263,7 @@ body {{
     border: 1px solid rgba(158,179,194,0.18) !important;
     box-shadow: 0 12px 26px rgba(13, 24, 47, 0.18) !important;
     border-radius: 18px !important;
-    padding: 1rem !important;
+    padding: 0.72rem !important;
     margin-bottom: 0.12rem;
 }}
 
@@ -293,7 +283,7 @@ body {{
 }}
 
 .sidebar-workspace-title {{
-    font-size: 1.12rem;
+    font-size: 0.88rem;
     font-weight: 800;
     line-height: 1.25;
     color: #FFFFFF !important;
@@ -301,7 +291,7 @@ body {{
 }}
 
 .sidebar-workspace-subtitle {{
-    font-size: 0.84rem;
+    font-size: 0.72rem;
     line-height: 1.38;
     color: rgba(255,255,255,0.78) !important;
     margin-bottom: 0.08rem;
@@ -318,7 +308,7 @@ body {{
     border: 1px solid rgba(158,179,194,0.22) !important;
     border-top: 4px solid #1C7293 !important;
     border-radius: 14px;
-    padding: 0.75rem 0.8rem;
+    padding: 0.58rem 0.62rem;
 }}
 
 .sidebar-highlight-label {{
@@ -331,7 +321,7 @@ body {{
 }}
 
 .sidebar-highlight-value {{
-    font-size: 1.05rem !important;
+    font-size: 0.86rem !important;
     color: #162033 !important;
     font-weight: 800;
 }}
@@ -343,7 +333,7 @@ body {{
     border: 1px solid rgba(158,179,194,0.18) !important;
     box-shadow: 0 12px 26px rgba(13, 24, 47, 0.18) !important;
     border-radius: 18px !important;
-    padding: 0.95rem !important;
+    padding: 0.7rem !important;
     margin-bottom: 0.85rem !important;
 }}
 
@@ -355,7 +345,7 @@ body {{
     display: flex;
     align-items: center;
     gap: 0.18rem;
-    font-size: 0.78rem !important;
+    font-size: 0.66rem !important;
     font-weight: 800;
     margin-bottom: 0.2rem;
     padding-bottom: 0.6rem;
@@ -416,35 +406,35 @@ body {{
     display: flex;
     gap: 0.08rem;
     align-items: flex-start;
-    padding: 0.85rem 0.9rem;
+    padding: 0.62rem 0.68rem;
     border-radius: 14px !important;
     background: rgba(255,255,255,0.05) !important;
     border: 1px solid rgba(158,179,194,0.14) !important;
 }}
 
 .sidebar-action-icon {{
-    width: 34px;
-    height: 34px;
-    min-width: 34px;
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: #cb4a5e !important;
     color: #FFFFFF !important;
-    font-size: 0.75rem;
+    font-size: 0.66rem;
     font-weight: 800;
 }}
 
 .sidebar-action-title {{
-    font-size: 0.84rem;
+    font-size: 0.72rem;
     font-weight: 800;
     color: #FFFFFF !important;
     margin-bottom: 0.12rem;
 }}
 
 .sidebar-action-text {{
-    font-size: 0.78rem;
+    font-size: 0.66rem;
     line-height: 1.42;
     color: rgba(255,255,255,0.78) !important;
 }}
@@ -454,7 +444,7 @@ body {{
     background: rgba(255,255,255,0.06) !important;
     border: 1px solid rgba(158,179,194,0.14) !important;
     border-radius: 14px;
-    padding: 0.85rem 0.9rem;
+    padding: 0.62rem 0.68rem;
     color: rgba(255,255,255,0.88) !important;
     line-height: 1.48;
 }}
@@ -478,7 +468,7 @@ body {{
     background: rgba(255,255,255,0.10) !important;
     border: 1px solid rgba(255,255,255,0.14) !important;
     color: #ffd9e9 !important;
-    font-size: 0.76rem;
+    font-size: 0.66rem;
     font-weight: 700;
     line-height: 1.2;
     box-shadow: 0 6px 12px rgba(0,0,0,0.12);
@@ -489,7 +479,7 @@ body {{
     background: rgba(255,255,255,0.06) !important;
     border: 1px solid rgba(158,179,194,0.14) !important;
     border-radius: 18px !important;
-    padding: 0.95rem !important;
+    padding: 0.7rem !important;
     margin-bottom: 0.85rem !important;
 }}
 
@@ -523,14 +513,14 @@ body {{
 }}
 
 .sidebar-legend-text {{
-    font-size: 0.76rem;
+    font-size: 0.66rem;
     line-height: 1.38;
     color: rgba(255,255,255,0.74);
 }}
 
 .sidebar-legend-note {{
     margin-top: 0.8rem;
-    font-size: 0.76rem;
+    font-size: 0.66rem;
     line-height: 1.38;
     color: rgba(255,255,255,0.74);
 }}
@@ -539,7 +529,7 @@ body {{
 .stTabs [data-baseweb="tab-list"] {{
     background: #f5e9e2 !important;
     border-radius: 14px !important;
-    padding: 6px !important;
+    padding: 3px !important;
     gap: 2px !important;
     border: 1px solid #e3b5a4 !important;
 }}
@@ -549,8 +539,8 @@ body {{
     border-radius: 8px !important;
     color: #8b6771 !important;
     font-weight: 500 !important;
-    font-size: 0.88rem !important;
-    padding: 0.5rem 1.1rem !important;
+    font-size: 0.7rem !important;
+    padding: 0.32rem 0.65rem !important;
     border: none !important;
     transition: all 0.18s ease !important;
 }}
@@ -563,7 +553,7 @@ body {{
 }}
 
 .stTabs [data-baseweb="tab-panel"] {{
-    padding-top: 1.2rem;
+    padding-top: 0.45rem;
 }}
 
 /* ── HEADER ──────────────────────────────────────────── */
@@ -621,7 +611,7 @@ body {{
 .hero-image-wrap {{
     position: relative;
     width: 100%;
-    aspect-ratio: 1384 / 280;
+    aspect-ratio: 1384 / 250;
     max-height: none !important;
     min-height: 0 !important;
     height: auto !important;
@@ -703,7 +693,7 @@ body {{
     background: rgba(255,255,255,0.10);
     border: 1px solid rgba(255,255,255,0.20);
     color: #ffffff;
-    font-size: 0.78rem;
+    font-size: 0.66rem;
     font-weight: 800;
     letter-spacing: 0.05em;
     text-transform: uppercase;
@@ -713,7 +703,7 @@ body {{
 
 .hero-image-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.85rem !important;
+    font-size: 1.18rem !important;
     font-weight: 800;
     line-height: 1.04;
     letter-spacing: -0.03em;
@@ -724,7 +714,7 @@ body {{
 
 .hero-image-subtitle {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.86rem;
+    font-size: 0.7rem;
     font-weight: 600;
     line-height: 1.38;
     color: rgba(255,255,255,0.92) !important;
@@ -752,7 +742,7 @@ body {{
     }}
 
     .hero-image-subtitle {{
-        font-size: 0.78rem;
+        font-size: 0.66rem;
         max-width: 100%;
     }}
 }}
@@ -804,7 +794,7 @@ body {{
 .soft-card, .card {{
     background: #FFFFFF;
     border-radius: 18px !important;
-    padding: 1.3rem;
+    padding: 0.82rem;
     border: 1px solid #D2DCE5 !important;
     box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
     color: #2a1421;
@@ -871,7 +861,7 @@ body {{
 
 .metric-value {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 2rem;
+    font-size: 1.35rem;
     font-weight: 400;
     color: #773344;
     line-height: 1.2;
@@ -1003,7 +993,7 @@ body {{
     background: #f5e9e2;
     border: 1px solid #e3b5a4;
     color: #5f2840;
-    font-size: 0.75rem;
+    font-size: 0.66rem;
     font-weight: 500;
 }}
 
@@ -1088,7 +1078,7 @@ body {{
     position: relative;
     z-index: 2;
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.9rem;
+    font-size: 1.28rem;
     font-weight: 400;
     color: #773344;
 }}
@@ -1140,7 +1130,7 @@ body {{
 .result-card {{
     background: #FFFFFF;
     border-radius: 18px !important;
-    padding: 1.3rem 1.2rem;
+    padding: 0.85rem 0.82rem;
     border: 1px solid #D2DCE5 !important;
     box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
     text-align: center;
@@ -1164,7 +1154,7 @@ body {{
 .result-card-title {{
     color: #8b6771;
     font-weight: 600;
-    font-size: 0.78rem;
+    font-size: 0.66rem;
     margin-bottom: 0.15rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -1172,7 +1162,7 @@ body {{
 
 .result-card-score {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.9rem;
+    font-size: 1.28rem;
     font-weight: 400;
     margin: 0.3rem 0 0.5rem 0;
 }}
@@ -1191,7 +1181,7 @@ body {{
 .points-card {{
     background: #FFFFFF;
     border-radius: 18px !important;
-    padding: 1.3rem;
+    padding: 0.82rem;
     border: 1px solid #D2DCE5 !important;
     box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
     height: 100%;
@@ -1199,7 +1189,7 @@ body {{
 
 .points-card-header {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.78rem;
+    font-size: 0.66rem;
     font-weight: 700;
     color: #160029;
     margin-bottom: 0.08rem;
@@ -1212,7 +1202,7 @@ body {{
 /* ── SMALL NOTE ──────────────────────────────────────── */
 .small-note {{
     color: #8b6771;
-    font-size: 0.86rem;
+    font-size: 0.7rem;
     line-height: 1.42;
 }}
 
@@ -1231,7 +1221,7 @@ body {{
     background: linear-gradient(135deg, #ffffff 0%, #faf4f8 100%);
     border: 1px solid #e3b5a4;
     border-radius: 24px;
-    padding: 1.5rem;
+    padding: 0.9rem;
     box-shadow: 0 12px 28px rgba(25, 14, 36, 0.08);
     margin-bottom: 0.13rem;
 }}
@@ -1270,7 +1260,7 @@ body {{
 .similarity-score-pill span {{
     color: #d44d5c;
     font-weight: 800;
-    font-size: 0.75rem;
+    font-size: 0.66rem;
 }}
 
 .similarity-ring-row {{
@@ -1362,7 +1352,7 @@ body {{
 .similarity-mini-card p {{
     margin: 0;
     color: #5d3945;
-    font-size: 0.75rem;
+    font-size: 0.66rem;
     line-height: 1.5;
 }}
 
@@ -1375,7 +1365,7 @@ body {{
 
 .similarity-bars-title {{
     color: #8b6771;
-    font-size: 0.75rem;
+    font-size: 0.66rem;
     font-weight: 800;
     text-transform: uppercase;
     margin-bottom: 0.13rem;
@@ -1427,8 +1417,8 @@ body {{
     border-radius: 12px !important;
     font-weight: 600 !important;
     font-family: 'Inter', sans-serif !important;
-    padding: 0.6rem 1.4rem !important;
-    font-size: 0.88rem !important;
+    padding: 0.34rem 0.78rem !important;
+    font-size: 0.7rem !important;
     box-shadow: 0 10px 22px rgba(119,51,68,0.18) !important;
     transition: all 0.18s ease !important;
     letter-spacing: 0.01em !important;
@@ -1560,13 +1550,13 @@ body {{
     background: transparent !important;
     border: none !important;
     border-radius: 18px !important;
-    padding: 1rem 1rem 1.05rem 1rem !important;
+    padding: 0.65rem 0.7rem 0.72rem 0.7rem !important;
     color: #2a1421 !important;
-    font-size: 0.96rem !important;
+    font-size: 0.74rem !important;
     font-family: 'Inter', sans-serif !important;
-    line-height: 1.75 !important;
+    line-height: 1.45 !important;
     box-shadow: none !important;
-    min-height: 90px !important;
+    min-height: 72px !important;
 }}
 
 .stTextArea textarea:focus {{
@@ -1586,9 +1576,9 @@ body {{
     background: transparent !important;
     border: none !important;
     border-radius: 16px !important;
-    padding: 0.55rem 0.7rem !important;
+    padding: 0.38rem 0.5rem !important;
     color: #2a1421 !important;
-    font-size: 0.93rem !important;
+    font-size: 0.74rem !important;
     font-family: 'Inter', sans-serif !important;
     box-shadow: none !important;
 }}
@@ -1607,7 +1597,7 @@ body {{
     border: none !important;
     border-radius: 16px !important;
     color: #2a1421 !important;
-    font-size: 0.93rem !important;
+    font-size: 0.74rem !important;
     font-family: 'Inter', sans-serif !important;
     box-shadow: none !important;
 }}
@@ -1641,8 +1631,8 @@ body {{
     background: #f7f0f5 !important;
     color: #773344 !important;
     font-weight: 700;
-    font-size: 0.78rem;
-    padding: 0.65rem 0.72rem;
+    font-size: 0.66rem;
+    padding: 0.48rem 0.56rem;
     text-align: left;
     white-space: nowrap;
     letter-spacing: 0.03em;
@@ -1742,7 +1732,7 @@ body {{
     background: #f5e9e2;
     color: #160029;
     border: 1px solid #e3b5a4;
-    font-size: 0.76rem;
+    font-size: 0.66rem;
     font-weight: 800;
 }}
 
@@ -1769,7 +1759,7 @@ body {{
 
 .pager-note {{
     color: #8b6771;
-    font-size: 0.84rem;
+    font-size: 0.72rem;
     line-height: 1.5;
 }}
 
@@ -1819,7 +1809,7 @@ body {{
 /* ── ALIGNMENT RANKING ───────────────────────────────── */
 .align-panel-title {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.78rem;
+    font-size: 0.66rem;
     font-weight: 700;
     color: #8b6771;
     margin-bottom: 0.2rem;
@@ -1869,7 +1859,7 @@ body {{
 
 .align-band {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.76rem;
+    font-size: 0.66rem;
     font-weight: 600;
     letter-spacing: 0.02em;
 }}
@@ -1906,7 +1896,7 @@ body {{
 
 .align-full-rank {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.76rem;
+    font-size: 0.66rem;
     font-weight: 700;
     min-width: 2rem;
     color: #8b6771;
@@ -1988,7 +1978,7 @@ body {{
 
 .donut-insight-pct {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.78rem;
+    font-size: 0.66rem;
     font-weight: 400;
     color: #8b6771;
 }}
@@ -2040,7 +2030,7 @@ body {{
 
 .batch-results-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 0.75rem;
+    font-size: 0.66rem;
     font-weight: 700;
     color: #251329;
     margin-bottom: 0.2rem;
@@ -2060,13 +2050,13 @@ body {{
     border: 1px solid #e3b5a4;
     border-left: 4px solid #d44d5c;
     border-radius: 20px;
-    padding: 0.65rem 0.72rem;
+    padding: 0.48rem 0.56rem;
     margin: 0.95rem 0;
     box-shadow: 0 8px 20px rgba(44, 21, 33, 0.05);
 }}
 
 .result-reading-guide-title {{
-    font-size: 0.78rem;
+    font-size: 0.66rem;
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -2097,7 +2087,7 @@ body {{
 
 .footer-wrap p {{
     color: #8b6771;
-    font-size: 0.84rem;
+    font-size: 0.72rem;
     font-family: 'Inter', sans-serif;
     line-height: 1.45;
     margin: 0;
@@ -2156,7 +2146,7 @@ body {{
         padding: 1.2rem 1.4rem !important;
     }}
     .header-main h1 {{
-        font-size: 0.78rem;
+        font-size: 0.66rem;
     }}
     .hero-image-wrap {{
         height: 240px !important;
@@ -2217,7 +2207,7 @@ body {{
         font-size: 1.5rem !important;
     }}
     .hero-image-subtitle {{
-        font-size: 0.84rem;
+        font-size: 0.72rem;
     }}
 }}
 
@@ -2413,7 +2403,7 @@ body {{
     border-radius: 12px !important;
 }}
 .stTabs [data-baseweb="tab"] {{
-    font-size: 0.78rem !important;
+    font-size: 0.66rem !important;
     padding: 0.38rem 0.78rem !important;
     min-height: 36px !important;
 }}
@@ -2440,7 +2430,7 @@ body {{
     padding: 0.2rem !important;
 }}
 .stTextArea textarea {{
-    font-size: 0.88rem !important;
+    font-size: 0.7rem !important;
     line-height: 1.5 !important;
     min-height: 140px !important;
     padding: 0.72rem 0.82rem 0.75rem 0.82rem !important;
@@ -2496,7 +2486,7 @@ body {{
 .sidebar-workspace-subtitle,
 .sidebar-subtitle,
 .hero-image-subtitle {{
-    font-size: 0.78rem !important;
+    font-size: 0.66rem !important;
 }}
 .sidebar-title {{
     font-size: 1.12rem !important;
@@ -2555,6 +2545,28 @@ body {{
     .main .block-container {{
         max-width: 100vw !important;
     }}
+}}
+
+
+/* ===== FINAL COMPACT OVERRIDES ===== */
+.main .block-container {{max-width: calc(100vw - 252px) !important;}}
+[data-testid="stSidebar"] {{box-shadow: 10px 0 22px rgba(22,0,41,0.15) !important;}}
+.hero-image-overlay {{padding: 0.75rem 0.9rem !important;}}
+.hero-image-content {{max-width: 38% !important;}}
+.hero-kicker {{padding: 0.24rem 0.55rem; font-size: 0.58rem !important; margin-bottom: 0.22rem;}}
+.stButton > button,.stDownloadButton > button {{min-height: 34px !important; border-radius: 9px !important;}}
+.stTextArea > div > div {{border-radius: 14px !important; padding: 0.16rem !important;}}
+[data-testid="stMultiSelect"] [data-baseweb="select"] > div,
+[data-testid="stSelectbox"] [data-baseweb="select"] > div,
+[data-testid="stTextInputRootElement"],
+.stTextInput > div > div {{min-height: 38px !important; border-radius: 13px !important;}}
+.metric-card,.result-card,.points-card,.chart-card,.soft-card,.card,.fatwa-box,.overview-chart-card {{border-radius: 14px !important;}}
+@media (max-width: 1400px) {{.main .block-container {{max-width: calc(100vw - 244px) !important;}}}}
+@media (max-width: 1100px) {{
+  html {{font-size: 10.5px !important;}}
+  [data-testid="stSidebar"] {{min-width: 220px !important; max-width: 220px !important; width: 220px !important;}}
+  .main .block-container {{max-width: calc(100vw - 226px) !important;}}
+  .hero-image-content {{max-width: 46% !important;}}
 }}
 
 </style>
@@ -3133,7 +3145,7 @@ def render_review_workspace_header():
         }}
 
         .unified-result-explanation {{
-            font-size: 0.84rem;
+            font-size: 0.72rem;
             line-height: 1.45;
             color: #5d3945;
             background: linear-gradient(135deg, rgba(212, 77, 92, 0.12) 0%, rgba(212, 77, 92, 0.06) 100%);
@@ -3369,14 +3381,14 @@ def render_review_workspace_header():
             background: linear-gradient(135deg, #ffffff 0%, #fbf5f1 50%, #f5ebe4 100%);
             border: 1.5px solid #e3b5a4;
             border-radius: 24px;
-            padding: 1.5rem;
+            padding: 0.9rem;
             margin-bottom: 1.5rem;
             box-shadow: 0 12px 32px rgba(25, 14, 36, 0.08);
         }}
 
         .batch-results-title {{
             font-family: 'DM Serif Display', serif;
-            font-size: 0.78rem;
+            font-size: 0.66rem;
             color: #160029;
             margin-bottom: 0.18rem;
             font-weight: 700;
@@ -3384,7 +3396,7 @@ def render_review_workspace_header():
         }}
 
         .batch-results-copy {{
-            font-size: 0.75rem;
+            font-size: 0.66rem;
             color: #5d3945;
             line-height: 1.42;
         }}
@@ -3418,7 +3430,7 @@ def render_review_workspace_header():
         }}
 
         .metric-label {{
-            font-size: 0.75rem;
+            font-size: 0.66rem;
             font-weight: 820;
             letter-spacing: 0.08em;
             text-transform: uppercase;
@@ -3428,7 +3440,7 @@ def render_review_workspace_header():
 
         .metric-value {{
             font-family: 'DM Serif Display', serif;
-            font-size: 2rem;
+            font-size: 1.35rem;
             color: #160029;
             font-weight: 700;
             line-height: 1.2;
@@ -3453,7 +3465,7 @@ def render_review_workspace_header():
         }}
 
         .result-hero-kicker {{
-            font-size: 0.75rem;
+            font-size: 0.66rem;
             font-weight: 820;
             letter-spacing: 0.10em;
             text-transform: uppercase;
@@ -3472,7 +3484,7 @@ def render_review_workspace_header():
         }}
 
         .result-hero-copy {{
-            font-size: 0.75rem;
+            font-size: 0.66rem;
             color: #5d3945;
             line-height: 1.42;
         }}
@@ -3680,7 +3692,7 @@ def render_review_workspace_header():
             }}
 
             .unified-result-value {{
-                font-size: 0.75rem;
+                font-size: 0.66rem;
             }}
         }}
 
@@ -3696,7 +3708,7 @@ body {{
 }}
 
 [data-testid="stAppViewContainer"] {{
-    font-size: 0.88rem !important;
+    font-size: 0.7rem !important;
 }}
 
 .block-container {{
@@ -3722,7 +3734,7 @@ body {{
 }}
 
 .stTabs [data-baseweb="tab"] {{
-    font-size: 0.78rem !important;
+    font-size: 0.66rem !important;
     padding: 0.34rem 0.72rem !important;
 }}
 
@@ -3746,7 +3758,7 @@ body {{
 }}
 
 .hero-image-subtitle {{
-    font-size: 0.78rem !important;
+    font-size: 0.66rem !important;
     line-height: 1.34 !important;
 }}
 
@@ -3867,7 +3879,7 @@ body {{
 .system-plain-note,
 .input-editor-note,
 .empty-review-copy {{
-    font-size: 0.78rem !important;
+    font-size: 0.66rem !important;
     line-height: 1.5 !important;
 }}
 
@@ -3891,7 +3903,7 @@ body {{
 
 .stButton > button,
 .stDownloadButton > button {{
-    font-size: 0.78rem !important;
+    font-size: 0.66rem !important;
     min-height: 2.35rem !important;
     padding: 0.4rem 0.82rem !important;
     border-radius: 10px !important;
