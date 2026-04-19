@@ -393,6 +393,28 @@ def apply_dashboard_polish():
     @media (max-width: 1150px) {.history-overview-grid {grid-template-columns:1fr;} .history-overview-stat-grid{grid-template-columns:1fr 1fr 1fr;} }
     @media (max-width: 820px) {.history-overview-note-grid,.history-overview-stat-grid {grid-template-columns:1fr;} .history-table-head{flex-direction:column;} .light-table, .light-table thead, .light-table tbody, .light-table th, .light-table td, .light-table tr {display:block;} .light-table thead {display:none;} .light-table tbody tr {padding:0.55rem 0;border-bottom:1px solid #ead1c8;} .light-table tbody td {display:grid;grid-template-columns:130px 1fr;gap:0.75rem;align-items:start;padding:0.55rem 0.9rem;background:transparent !important;border-bottom:none;} .light-table tbody td::before {content:attr(data-label);font-size:0.72rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#8b6771;} }
 
+
+    /* ===== BEST-EFFORT COMPACT / LOW-SCROLL MODE ===== */
+    [data-testid="stAppViewContainer"] .block-container { max-width: calc(100vw - 270px) !important; padding-top: 0.15rem !important; padding-bottom: 0.35rem !important; }
+    .workspace-shell,.empty-review-card,.sim-lite-shell,.analysis-panel,.input-editor-shell,.batch-shell,.fatwa-browser-shell,.history-overview-card,.history-table-shell,.grouped-chart-shell,.topic-pick-shell,.comparison-card,.tab-minimal-hero,.explorer-instruction-card,.chart-panel,.chart-panel-plain,.chart-conclusion,.batch-guide-card { padding:0.78rem 0.85rem !important; border-radius:18px !important; }
+    .workspace-title,.empty-review-title,.tab-minimal-title,.fatwa-browser-title,.history-overview-title,.sim-lite-title,.batch-title,.topic-pick-title { font-size:1.08rem !important; line-height:1.1 !important; }
+    .workspace-copy,.empty-review-copy,.tab-minimal-copy,.fatwa-browser-copy,.history-overview-copy,.sim-lite-summary-copy,.batch-copy,.topic-pick-copy,.inline-section-copy,.chart-panel-copy,.analysis-panel-copy,.system-plain-note,.micro-copy,.explorer-instruction-copy { font-size:0.78rem !important; line-height:1.5 !important; }
+    .workspace-kicker,.empty-review-stat-label,.tab-minimal-kicker,.batch-kicker,.comparison-select-title,.inline-section-label,.slim-loader-kicker,.dataset-control-caption,.explorer-instruction-title,.overview-kicker,.browse-inline-head,.topic-pick-kicker { font-size:0.64rem !important; }
+    .workspace-chip,.empty-review-pill,.batch-pill,.input-editor-chip,.history-table-pill,.history-overview-chip,.sim-lite-mini-badge,.browse-filter-chip,.browse-filter-stat,.fatwa-meta-pill,.browse-toolbar-pills > * { font-size:0.7rem !important; padding:0.28rem 0.56rem !important; }
+    .empty-review-item,.analysis-step,.leaderboard-card,.align-rank-card,.explorer-summary-card,.topic-focus-card,.donut-insight-card,.history-overview-note,.history-overview-stat,.empty-review-stat,.sim-lite-metric { padding:0.65rem 0.72rem !important; border-radius:14px !important; }
+    .empty-review-icon,.analysis-step-no { width:28px !important; height:28px !important; min-width:28px !important; font-size:0.78rem !important; }
+    .input-editor-title,.chart-panel-title,.grouped-chart-title,.history-table-title,.overview-title,.align-rank-topic,.comparison-card-header,.sim-lite-summary-title { font-size:0.92rem !important; }
+    .metric-value-text,.sim-lite-metric-value,.explorer-summary-value,.leaderboard-score,.donut-insight-count,.align-score,.align-full-score { font-size:1.45rem !important; }
+    .empty-review-footer,.explorer-summary-grid,.topic-focus-grid,.history-overview-note-grid,.history-overview-stat-grid { gap:0.5rem !important; }
+    .workspace-shell,.tab-minimal-hero,.batch-shell,.fatwa-browser-shell,.history-overview-card,.history-table-shell,.topic-pick-shell,.comparison-card,.chart-panel,.analysis-panel,.input-editor-shell { margin-bottom:0.45rem !important; }
+    .hero-image-wrap { max-height:170px !important; }
+    .hero-image-overlay { padding:0.95rem 1.15rem !important; }
+    .hero-image-title { font-size:1.42rem !important; }
+    .hero-image-subtitle { font-size:0.76rem !important; max-width:440px !important; }
+    .single-review-right-col { margin-top:0.2rem !important; }
+    @media (max-width: 1200px) { [data-testid="stAppViewContainer"] .block-container { max-width: calc(100vw - 250px) !important; } }
+    @media (max-width: 900px) { [data-testid="stAppViewContainer"] .block-container { max-width: 100vw !important; } }
+
 </style>
     """, unsafe_allow_html=True)
 

@@ -2359,7 +2359,191 @@ body {{
     .sim-lite-hero {{flex-direction:column;align-items:flex-start;}}
 }}
 
-        </style>
+        
+
+/* ===== BEST-EFFORT COMPACT / LOW-SCROLL MODE ===== */
+html {{
+    font-size: 13px !important;
+}}
+body {{
+    line-height: 1.35 !important;
+}}
+[data-testid="stSidebar"] {{
+    min-width: 252px !important;
+    max-width: 252px !important;
+    width: 252px !important;
+}}
+[data-testid="stSidebar"] > div:first-child {{
+    padding: 0.45rem 0.45rem 0.55rem 0.45rem !important;
+}}
+.block-container {{
+    padding-top: 0.15rem !important;
+    padding-left: 0.45rem !important;
+    padding-right: 0.45rem !important;
+    padding-bottom: 0.35rem !important;
+}}
+.main .block-container {{
+    max-width: calc(100vw - 270px) !important;
+}}
+[data-testid="stVerticalBlock"] {{
+    gap: 0.45rem !important;
+}}
+.element-container,
+.stMarkdown,
+.stAlert {{
+    margin-bottom: 0.25rem !important;
+}}
+.stTabs [data-baseweb="tab-list"] {{
+    padding: 4px !important;
+    gap: 2px !important;
+    border-radius: 12px !important;
+}}
+.stTabs [data-baseweb="tab"] {{
+    font-size: 0.78rem !important;
+    padding: 0.38rem 0.78rem !important;
+    min-height: 36px !important;
+}}
+.stButton > button,
+.stDownloadButton > button {{
+    font-size: 0.8rem !important;
+    padding: 0.48rem 0.95rem !important;
+    border-radius: 10px !important;
+    min-height: 40px !important;
+}}
+[data-testid="stSelectbox"] [data-baseweb="select"] > div,
+[data-testid="stMultiSelect"] [data-baseweb="select"] > div,
+[data-testid="stTextInputRootElement"],
+.stTextInput > div > div {{
+    min-height: 46px !important;
+    border-radius: 14px !important;
+}}
+.stTextInput input {{
+    font-size: 0.86rem !important;
+    padding: 0.38rem 0.55rem !important;
+}}
+.stTextArea > div > div {{
+    border-radius: 18px !important;
+    padding: 0.2rem !important;
+}}
+.stTextArea textarea {{
+    font-size: 0.88rem !important;
+    line-height: 1.5 !important;
+    min-height: 140px !important;
+    padding: 0.72rem 0.82rem 0.75rem 0.82rem !important;
+}}
+.card,
+.soft-card,
+.metric-card,
+.result-card,
+.points-card,
+.chart-card,
+.overview-chart-card,
+.topic-card,
+.fatwa-box,
+.sidebar-section-card,
+.sidebar-workspace-card {{
+    border-radius: 16px !important;
+}}
+.metric-card,
+.result-card,
+.points-card,
+.chart-card,
+.overview-chart-card,
+.topic-card,
+.fatwa-box {{
+    padding: 0.85rem !important;
+}}
+.metric-label,
+.result-card-title,
+.card-header,
+.overview-chart-header {{
+    font-size: 0.68rem !important;
+}}
+.metric-value,
+.result-card-score,
+.score-circle-inner {{
+    font-size: 1.6rem !important;
+}}
+.section-title {{
+    font-size: 1.12rem !important;
+    margin: 1rem 0 0.6rem 0 !important;
+    padding-bottom: 0.35rem !important;
+}}
+.section-subtitle {{
+    font-size: 0.72rem !important;
+    margin: 0.75rem 0 0.45rem 0 !important;
+}}
+.msg-box,
+.small-note,
+.info-label,
+.info-value,
+.result-card-text,
+.sidebar-action-text,
+.sidebar-workspace-subtitle,
+.sidebar-subtitle,
+.hero-image-subtitle {{
+    font-size: 0.78rem !important;
+}}
+.sidebar-title {{
+    font-size: 1.12rem !important;
+}}
+.sidebar-brand-card,
+.sidebar-section-card,
+.sidebar-workspace-card {{
+    padding: 0.8rem !important;
+}}
+.sidebar-highlight-chip {{
+    padding: 0.62rem 0.68rem !important;
+}}
+.sidebar-highlight-value {{
+    font-size: 0.95rem !important;
+}}
+.hero-image-wrap {{
+    max-height: 180px !important;
+    border-radius: 22px !important;
+}}
+.hero-image-overlay {{
+    padding: 1rem 1.25rem !important;
+}}
+.hero-image-title {{
+    font-size: 1.52rem !important;
+    margin-bottom: 0.38rem !important;
+}}
+.hero-image-subtitle {{
+    max-width: 470px !important;
+}}
+.score-circle {{
+    width: 108px !important;
+    height: 108px !important;
+}}
+.score-circle::before {{
+    width: 84px !important;
+    height: 84px !important;
+}}
+.light-table thead th,
+.light-table tbody td {{
+    padding: 0.5rem 0.58rem !important;
+    font-size: 0.74rem !important;
+}}
+@media (max-width: 1200px) {{
+    html {{ font-size: 12.5px !important; }}
+    [data-testid="stSidebar"] {{
+        min-width: 236px !important;
+        max-width: 236px !important;
+        width: 236px !important;
+    }}
+    .main .block-container {{
+        max-width: calc(100vw - 250px) !important;
+    }}
+}}
+@media (max-width: 900px) {{
+    html {{ font-size: 12px !important; }}
+    .main .block-container {{
+        max-width: 100vw !important;
+    }}
+}}
+
+</style>
 """,
         unsafe_allow_html=True,
     )
