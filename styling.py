@@ -3490,74 +3490,76 @@ def render_review_workspace_header():
 
 /* ===== COMPACT GLOBAL OVERRIDES ===== */
 html {{
-    font-size: 85% !important;
+    font-size: 78% !important;
 }}
 
 body {{
-    zoom: 0.94;
+    zoom: 1 !important;
 }}
 
 [data-testid="stAppViewContainer"] {{
-    font-size: 0.94rem !important;
+    font-size: 0.88rem !important;
 }}
 
 .block-container {{
-    padding-top: 0.2rem !important;
-    padding-left: 0.55rem !important;
-    padding-right: 0.55rem !important;
-    max-width: 1380px !important;
+    padding-top: 0.15rem !important;
+    padding-left: 0.45rem !important;
+    padding-right: 0.45rem !important;
+    padding-bottom: 0.45rem !important;
+    max-width: 1450px !important;
 }}
 
 [data-testid="stSidebar"] {{
-    min-width: 228px !important;
-    max-width: 228px !important;
-    width: 228px !important;
+    min-width: 216px !important;
+    max-width: 216px !important;
+    width: 216px !important;
 }}
 
 [data-testid="stSidebar"] > div:first-child {{
-    padding: 0.45rem 0.45rem 0.7rem 0.45rem !important;
+    padding: 0.38rem 0.38rem 0.55rem 0.38rem !important;
 }}
 
 .stTabs [data-baseweb="tab-list"] {{
-    padding: 4px !important;
+    padding: 3px !important;
 }}
 
 .stTabs [data-baseweb="tab"] {{
-    font-size: 0.82rem !important;
-    padding: 0.42rem 0.9rem !important;
+    font-size: 0.78rem !important;
+    padding: 0.34rem 0.72rem !important;
 }}
 
 .hero-image-wrap {{
-    height: 205px !important;
-    border-radius: 24px !important;
+    height: 178px !important;
+    border-radius: 22px !important;
+    margin-bottom: 0.4rem !important;
 }}
 
 .hero-image-overlay {{
-    padding: 1.55rem 1.8rem !important;
+    padding: 1.2rem 1.45rem !important;
 }}
 
 .hero-image-content {{
-    max-width: 54% !important;
+    max-width: 52% !important;
 }}
 
 .hero-image-title {{
-    font-size: 1.9rem !important;
-    margin-bottom: 0.45rem !important;
+    font-size: 1.62rem !important;
+    margin-bottom: 0.32rem !important;
 }}
 
 .hero-image-subtitle {{
-    font-size: 0.9rem !important;
-    line-height: 1.45 !important;
+    font-size: 0.78rem !important;
+    line-height: 1.34 !important;
 }}
 
 .hero-kicker {{
-    font-size: 0.7rem !important;
-    padding: 0.38rem 0.85rem !important;
-    margin-bottom: 0.7rem !important;
+    font-size: 0.64rem !important;
+    padding: 0.3rem 0.72rem !important;
+    margin-bottom: 0.5rem !important;
 }}
 
 .sidebar-title {{
-    font-size: 1.28rem !important;
+    font-size: 1.16rem !important;
 }}
 
 .sidebar-subtitle,
@@ -3569,33 +3571,33 @@ body {{
 .sidebar-progress-top,
 .sidebar-topic-pill,
 .small-note {{
-    font-size: 0.76rem !important;
-    line-height: 1.48 !important;
+    font-size: 0.7rem !important;
+    line-height: 1.38 !important;
 }}
 
 .sidebar-workspace-title,
 .sidebar-action-title,
 .sidebar-insight-value,
 .sidebar-legend-name {{
-    font-size: 0.88rem !important;
+    font-size: 0.8rem !important;
 }}
 
 .sidebar-workspace-card,
 .sidebar-section-card,
 .sidebar-legend-card {{
-    padding: 0.8rem !important;
-    margin-bottom: 0.65rem !important;
+    padding: 0.68rem !important;
+    margin-bottom: 0.5rem !important;
 }}
 
 .sidebar-action-item,
 .sidebar-legend-item,
 .sidebar-mini-note,
 .sidebar-highlight-chip {{
-    padding: 0.7rem 0.75rem !important;
+    padding: 0.58rem 0.62rem !important;
 }}
 
 .sidebar-highlight-value {{
-    font-size: 0.92rem !important;
+    font-size: 0.84rem !important;
 }}
 
 .metric-card,
@@ -3616,7 +3618,7 @@ body {{
 .workspace-shell,
 .empty-review-card,
 .input-editor-shell {{
-    border-radius: 18px !important;
+    border-radius: 16px !important;
 }}
 
 .metric-card,
@@ -3631,7 +3633,7 @@ body {{
 .topic-pick-shell,
 .workspace-shell,
 .input-editor-shell {{
-    padding: 0.9rem 0.95rem !important;
+    padding: 0.72rem 0.78rem !important;
 }}
 
 .metric-value,
@@ -3640,7 +3642,7 @@ body {{
 .sim-lite-metric-value,
 .history-overview-title,
 .explorer-summary-value {{
-    font-size: 1.5rem !important;
+    font-size: 1.28rem !important;
 }}
 
 .workspace-title,
@@ -3648,8 +3650,8 @@ body {{
 .tab-minimal-title,
 .fatwa-browser-title,
 .editorial-title {{
-    font-size: 1.7rem !important;
-    line-height: 1.08 !important;
+    font-size: 1.42rem !important;
+    line-height: 1.05 !important;
 }}
 
 .workspace-copy,
@@ -3667,8 +3669,8 @@ body {{
 .system-plain-note,
 .input-editor-note,
 .empty-review-copy {{
-    font-size: 0.88rem !important;
-    line-height: 1.62 !important;
+    font-size: 0.78rem !important;
+    line-height: 1.5 !important;
 }}
 
 .workspace-kicker,
@@ -3686,15 +3688,15 @@ body {{
 .browse-inline-head,
 .comparison-select-title,
 .topic-pick-kicker {{
-    font-size: 0.68rem !important;
+    font-size: 0.62rem !important;
 }}
 
 .stButton > button,
 .stDownloadButton > button {{
-    font-size: 0.84rem !important;
-    min-height: 2.75rem !important;
-    padding: 0.5rem 1rem !important;
-    border-radius: 12px !important;
+    font-size: 0.78rem !important;
+    min-height: 2.35rem !important;
+    padding: 0.4rem 0.82rem !important;
+    border-radius: 10px !important;
 }}
 
 [data-testid="stTextArea"] label,
@@ -3702,7 +3704,7 @@ body {{
 [data-testid="stSelectbox"] label,
 [data-testid="stMultiSelect"] label,
 [data-testid="stRadio"] label:first-of-type {{
-    font-size: 0.68rem !important;
+    font-size: 0.62rem !important;
 }}
 
 [data-testid="stMultiSelect"] [data-baseweb="select"] > div,
@@ -3711,19 +3713,19 @@ body {{
 .stTextInput > div > div,
 .stTextArea > div > div,
 .topic-select-shell [data-baseweb="select"] > div {{
-    min-height: 50px !important;
-    border-radius: 16px !important;
+    min-height: 44px !important;
+    border-radius: 14px !important;
 }}
 
 .stTextArea > div > div {{
-    padding: 0.2rem !important;
+    padding: 0.12rem !important;
 }}
 
 .stTextArea textarea {{
-    min-height: 150px !important;
-    font-size: 0.9rem !important;
-    line-height: 1.55 !important;
-    padding: 0.8rem 0.85rem !important;
+    min-height: 128px !important;
+    font-size: 0.82rem !important;
+    line-height: 1.42 !important;
+    padding: 0.62rem 0.68rem !important;
     resize: none !important;
     caret-color: #2a1421 !important;
 }}
@@ -3736,37 +3738,37 @@ body {{
 [data-testid="stSelectbox"] *,
 [data-testid="stMultiSelect"] *,
 .stSelectbox * {{
-    font-size: 0.88rem !important;
+    font-size: 0.8rem !important;
 }}
 
 .light-table thead th,
 .light-table tbody td {{
-    font-size: 0.8rem !important;
-    padding: 0.72rem 0.7rem !important;
+    font-size: 0.72rem !important;
+    padding: 0.6rem 0.56rem !important;
 }}
 
 .sim-lite-ring {{
-    width: 88px !important;
-    height: 88px !important;
+    width: 78px !important;
+    height: 78px !important;
 }}
 
 .sim-lite-ring-inner {{
-    width: 64px !important;
-    height: 64px !important;
+    width: 56px !important;
+    height: 56px !important;
 }}
 
 .empty-review-stat-value,
 .topic-focus-value,
 .leaderboard-score {{
-    font-size: 1rem !important;
+    font-size: 0.9rem !important;
 }}
 
 @media (max-width: 1200px) {{
     html {{
-        font-size: 82% !important;
+        font-size: 75% !important;
     }}
     .hero-image-wrap {{
-        max-height: 200px !important;
+        max-height: 170px !important;
     }}
 }}
 
