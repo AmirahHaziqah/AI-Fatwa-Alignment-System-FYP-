@@ -2355,6 +2355,99 @@ body {{
 .hero-image-wrap {{ margin-bottom: 0.55rem !important; }}
 .hero-image-content {{ max-width: 50% !important; }}
 
+
+
+/* ===== TYPOGRAPHY BALANCE FINAL OVERRIDES ===== */
+html {{ font-size: 11.5px !important; }}
+body, p, div, span, label, li {{ font-size: 0.74rem; line-height: 1.45; }}
+
+/* hero banner */
+.hero-image-wrap {{ max-height: 175px !important; margin-bottom: 0.35rem !important; }}
+.hero-image-overlay {{ padding: 1.05rem 1.35rem !important; }}
+.hero-image-content {{ max-width: 50% !important; }}
+.hero-kicker {{ font-size: 0.62rem !important; padding: 0.32rem 0.72rem !important; margin-bottom: 0.28rem !important; }}
+.hero-image-title {{ font-size: 1.65rem !important; line-height: 1.02 !important; margin-bottom: 0.34rem !important; }}
+.hero-image-subtitle {{ font-size: 0.82rem !important; line-height: 1.4 !important; max-width: 500px !important; }}
+
+/* global title hierarchy */
+.section-title, .workspace-title, .empty-review-title, .batch-title, .sim-lite-title, .topic-pick-title, .fatwa-browser-title, .history-overview-title, .tab-minimal-title, .comparison-card-header, .history-table-title, .chart-panel-title, .grouped-chart-title, .overview-title, .analysis-panel-title, .input-editor-title, .browse-toolbar-title, .align-rank-topic {{
+    font-size: 1.02rem !important;
+    line-height: 1.2 !important;
+}}
+.tab-minimal-title, .batch-title, .sim-lite-title, .fatwa-browser-title {{ font-size: 1.12rem !important; }}
+.single-review-hero .tab-minimal-title, .editorial-title {{ font-size: 1.28rem !important; }}
+
+/* supporting text */
+.workspace-copy, .empty-review-copy, .batch-copy, .tab-minimal-copy, .analysis-panel-copy, .chart-panel-copy, .input-editor-note, .system-plain-note, .micro-copy, .history-table-copy, .browse-toolbar-copy, .fatwa-browser-copy, .sim-lite-summary-copy, .topic-pick-copy, .explorer-instruction-copy, .inline-section-copy {{
+    font-size: 0.74rem !important;
+    line-height: 1.48 !important;
+}}
+.workspace-kicker, .batch-kicker, .tab-minimal-kicker, .inline-section-label, .slim-loader-kicker, .input-editor-kicker, .overview-kicker, .sim-lite-kicker, .history-overview-tag, .explorer-instruction-title, .chart-panel-plain .chart-panel-title, .chart-panel-title {{
+    font-size: 0.62rem !important;
+}}
+
+/* buttons and segmented radio */
+.stButton > button, .stDownloadButton > button {{
+    min-height: 34px !important;
+    font-size: 0.68rem !important;
+    padding: 0.28rem 0.72rem !important;
+    border-radius: 10px !important;
+}}
+[data-testid="stRadio"] [role="radiogroup"] {{ padding: 0.2rem !important; gap: 0.25rem !important; border-radius: 16px !important; }}
+[data-testid="stRadio"] [role="radiogroup"] > label {{
+    min-height: 34px !important;
+    padding: 0.32rem 0.6rem !important;
+    border-radius: 12px !important;
+}}
+[data-testid="stRadio"] [role="radiogroup"] p {{ font-size: 0.68rem !important; }}
+
+/* inputs */
+[data-testid="stMultiSelect"] [data-baseweb="select"] > div,
+[data-testid="stSelectbox"] [data-baseweb="select"] > div,
+[data-testid="stTextInputRootElement"],
+.stTextInput > div > div {{ min-height: 42px !important; border-radius: 14px !important; }}
+.stTextArea > div > div {{ border-radius: 16px !important; }}
+.stTextArea textarea {{ min-height: 84px !important; font-size: 0.74rem !important; line-height: 1.45 !important; padding: 0.58rem 0.62rem 0.64rem 0.62rem !important; }}
+
+/* cards and metric blocks */
+.workspace-shell, .empty-review-card, .batch-shell, .fatwa-browser-shell, .topic-pick-shell, .history-overview-card, .history-table-shell, .grouped-chart-shell, .chart-panel, .analysis-panel, .sim-lite-shell, .comparison-card, .points-card, .metric-card, .result-card, .card, .soft-card {{
+    padding: 0.78rem !important;
+    border-radius: 18px !important;
+}}
+.metric-label, .result-card-title, .explorer-summary-label, .topic-focus-label, .history-overview-stat-label, .empty-review-stat-label, .sim-lite-metric-label {{ font-size: 0.6rem !important; }}
+.metric-value, .result-card-score, .metric-value-text, .sim-lite-metric-value, .history-overview-stat-value, .explorer-summary-value {{ font-size: 1.18rem !important; line-height: 1.05 !important; }}
+
+/* leaderboard and chart */
+.leaderboard-card {{ padding: 0.78rem 0.84rem !important; border-radius: 18px !important; }}
+.leaderboard-title {{ font-size: 0.92rem !important; }}
+.leaderboard-meta, .leaderboard-note {{ font-size: 0.68rem !important; }}
+.overview-chart-header, .similarity-visual-title, .sim-lite-summary-title {{ font-size: 0.84rem !important; }}
+.altair-chart-container text, .vega-embed text {{ font-size: 11px !important; }}
+
+/* tables */
+.light-table thead th {{ font-size: 0.68rem !important; padding: 0.65rem 0.62rem !important; }}
+.light-table tbody td {{ font-size: 0.74rem !important; padding: 0.68rem 0.62rem !important; line-height: 1.5 !important; }}
+
+/* sidebar hierarchy */
+.sidebar-title {{ font-size: 1.2rem !important; line-height: 1.08 !important; }}
+.sidebar-subtitle {{ font-size: 0.76rem !important; line-height: 1.55 !important; }}
+.sidebar-workspace-title, .sidebar-insight-value {{ font-size: 0.88rem !important; }}
+.sidebar-workspace-subtitle, .sidebar-action-text, .sidebar-insight-copy, .sidebar-mini-note, .sidebar-legend-text {{ font-size: 0.7rem !important; line-height: 1.5 !important; }}
+.sidebar-action-item {{ padding: 0.68rem 0.74rem !important; }}
+.sidebar-action-title {{ font-size: 0.78rem !important; }}
+.sidebar-topic-pill {{ font-size: 0.68rem !important; }}
+
+/* spacing consistency */
+.element-container, .stMarkdown, .stSelectbox, .stTextArea, .stButton {{ margin-bottom: 0.18rem !important; }}
+.empty-review-item, .batch-guide-step, .donut-insight-card, .align-rank-card, .topic-focus-card, .explorer-summary-card, .history-overview-note, .history-overview-stat, .sim-lite-metric {{ padding: 0.62rem 0.68rem !important; }}
+
+/* keep mobile readable */
+@media (max-width: 900px) {{
+  .hero-image-content {{ max-width: 100% !important; }}
+  .hero-image-title {{ font-size: 1.32rem !important; }}
+  .hero-image-subtitle {{ font-size: 0.74rem !important; max-width: 100% !important; }}
+}}
+
 </style>
 """,
         unsafe_allow_html=True,
