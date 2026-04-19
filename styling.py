@@ -105,13 +105,13 @@ body {{
 }}
 
 .block-container {{
-    padding-top: 0.5rem !important;
-    padding-left: 0.8rem !important;
-    padding-right: 0.8rem !important;
-    max-width: 1380px !important;
+    padding-top: 0.35rem !important;
+    padding-left: 0.65rem !important;
+    padding-right: 0.65rem !important;
+    max-width: none !important;
     width: 100% !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
 }}
 
 [data-testid="stAppViewContainer"] {{
@@ -132,9 +132,9 @@ body {{
 
 /* ── SIDEBAR ─────────────────────────────────────────── */
 [data-testid="stSidebar"] {{
-    min-width: 300px !important;
-    max-width: 300px !important;
-    width: 300px !important;
+    min-width: 280px !important;
+    max-width: 280px !important;
+    width: 280px !important;
     background: linear-gradient(180deg, #160029 0%, #773344 55%, #5f2840 100%) !important;
     border-right: 1px solid rgba(255,255,255,0.08) !important;
     box-shadow: 16px 0 34px rgba(22,0,41,0.18) !important;
@@ -608,7 +608,7 @@ body {{
     position: relative;
     width: 100%;
     aspect-ratio: 1384 / 280;
-    max-height: 220px;
+    max-height: none !important;
     min-height: 0 !important;
     height: auto !important;
     border-radius: 28px !important;
@@ -625,7 +625,7 @@ body {{
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: fill;
+    object-fit: cover;
     object-position: center center;
     display: block;
     opacity: 0.90;
@@ -2092,9 +2092,9 @@ body {{
 /* ── RESPONSIVE ──────────────────────────────────────── */
 @media (max-width: 1200px) {{
     [data-testid="stSidebar"] {{
-        min-width: 300px !important;
-        max-width: 300px !important;
-        width: 300px !important;
+        min-width: 260px !important;
+        max-width: 260px !important;
+        width: 260px !important;
     }}
 }}
 

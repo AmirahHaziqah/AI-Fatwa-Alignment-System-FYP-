@@ -1863,32 +1863,34 @@ def render_dashboard_shell_header(title="AI Fatwa Alignment System", subtitle="H
         """
         <style>
         .dashboard-shell-header {margin-bottom: 0.18rem;}
-        
 
-/* ===== COMPACT GLOBAL OVERRIDES ===== */
+/* ===== SIDE-FIT / FULL-WIDTH LAYOUT FIX ===== */
 html {
-    font-size: 82% !important;
+    font-size: 100% !important;
 }
 
 body {
-    zoom: 0.90;
+    zoom: 1 !important;
 }
 
 [data-testid="stAppViewContainer"] {
-    font-size: 0.90rem !important;
+    font-size: 0.96rem !important;
 }
 
 .block-container {
-    padding-top: 0.2rem !important;
+    padding-top: 0.25rem !important;
     padding-left: 0.55rem !important;
     padding-right: 0.55rem !important;
-    max-width: 1360px !important;
+    max-width: none !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
 }
 
 [data-testid="stSidebar"] {
-    min-width: 228px !important;
-    max-width: 228px !important;
-    width: 228px !important;
+    min-width: 280px !important;
+    max-width: 280px !important;
+    width: 280px !important;
 }
 
 [data-testid="stSidebar"] > div:first-child {
@@ -1900,37 +1902,41 @@ body {
 }
 
 .stTabs [data-baseweb="tab"] {
-    font-size: 0.82rem !important;
-    padding: 0.42rem 0.9rem !important;
+    font-size: 0.84rem !important;
+    padding: 0.44rem 0.9rem !important;
 }
 
 .hero-image-wrap {
-    height: 205px !important;
+    width: 100% !important;
+    aspect-ratio: 1384 / 280 !important;
+    height: auto !important;
+    max-height: none !important;
     border-radius: 24px !important;
 }
 
 .hero-image-overlay {
-    padding: 1.55rem 1.8rem !important;
+    padding: 1.35rem 1.65rem !important;
 }
 
 .hero-image-content {
-    max-width: 54% !important;
+    max-width: 40% !important;
 }
 
 .hero-image-title {
-    font-size: 1.9rem !important;
-    margin-bottom: 0.45rem !important;
+    font-size: 1.8rem !important;
+    margin-bottom: 0.35rem !important;
 }
 
 .hero-image-subtitle {
-    font-size: 0.9rem !important;
-    line-height: 1.45 !important;
+    font-size: 0.82rem !important;
+    line-height: 1.4 !important;
+    max-width: 460px !important;
 }
 
 .hero-kicker {
-    font-size: 0.7rem !important;
-    padding: 0.38rem 0.85rem !important;
-    margin-bottom: 0.7rem !important;
+    font-size: 0.68rem !important;
+    padding: 0.34rem 0.8rem !important;
+    margin-bottom: 0.55rem !important;
 }
 
 .sidebar-title {
