@@ -78,7 +78,7 @@ def apply_theme():
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Inter+Tight:wght@500;600;700;800&display=swap');
 
-html {{ font-size: 8.5px !important; }}
+html {{ font-size: 11px !important; }}
 body {{ overflow-x: hidden !important; }}
 .stApp {{ overflow-x: hidden !important; }}
 
@@ -2530,7 +2530,7 @@ body {{
     font-size: 0.74rem !important;
 }}
 @media (max-width: 1200px) {{
-    html {{ font-size: 12.5px !important; }}
+    html {{ font-size: 12.5px !important;}}
     [data-testid="stSidebar"] {{
         min-width: 236px !important;
         max-width: 236px !important;
@@ -2561,7 +2561,7 @@ body {{
 [data-testid="stTextInputRootElement"],
 .stTextInput > div > div {{min-height: 38px !important; border-radius: 13px !important;}}
 .metric-card,.result-card,.points-card,.chart-card,.soft-card,.card,.fatwa-box,.overview-chart-card {{border-radius: 14px !important;}}
-@media (max-width: 1400px) {{.main .block-container {{max-width: calc(100vw - 244px) !important;}}}}
+@media (max-width: 1400px) {{ .main .block-container {{ max-width: calc(100vw - 244px) !important; }} }}
 @media (max-width: 1100px) {{
   html {{font-size: 10.5px !important;}}
   [data-testid="stSidebar"] {{min-width: 220px !important; max-width: 220px !important; width: 220px !important;}}
@@ -2569,10 +2569,212 @@ body {{
   .hero-image-content {{max-width: 46% !important;}}
 }}
 
+
+
+/* ===== COMPACT SCREEN FIT OVERRIDES ===== */
+html {{ font-size: 10px !important; }}
+body, p, div, span, label, li {{ font-size: 0.84rem; }}
+
+.block-container,
+.main .block-container {{
+    max-width: 1380px !important;
+    padding-top: 0.08rem !important;
+    padding-bottom: 0.08rem !important;
+    padding-left: 0.35rem !important;
+    padding-right: 0.35rem !important;
+}}
+
+[data-testid="stSidebar"] {{
+    min-width: 208px !important;
+    max-width: 208px !important;
+    width: 208px !important;
+}}
+[data-testid="stSidebar"] > div:first-child {{
+    padding: 0.28rem 0.28rem 0.35rem 0.28rem !important;
+}}
+.sidebar-clean-header {{ padding: 0.25rem 0.08rem 0.55rem 0.08rem !important; margin-bottom: 0.45rem !important; }}
+.sidebar-kicker-line {{ width: 52px !important; margin-bottom: 0.45rem !important; }}
+.sidebar-title {{ font-size: 0.88rem !important; margin: 0 0 0.42rem 0 !important; }}
+.sidebar-subtitle {{ font-size: 0.60rem !important; line-height: 1.42 !important; }}
+.sidebar-workspace-card, .sidebar-section-card, .sidebar-legend-card {{ padding: 0.55rem !important; border-radius: 14px !important; margin-bottom: 0.45rem !important; }}
+.sidebar-workspace-title, .sidebar-insight-value {{ font-size: 0.74rem !important; }}
+.sidebar-workspace-subtitle, .sidebar-action-text, .sidebar-insight-copy, .sidebar-progress-top, .sidebar-topic-pill {{ font-size: 0.60rem !important; line-height: 1.36 !important; }}
+.sidebar-highlight-row {{ gap: 0.45rem !important; }}
+.sidebar-highlight-chip {{ padding: 0.55rem 0.55rem !important; border-radius: 12px !important; }}
+.sidebar-highlight-label {{ font-size: 0.55rem !important; }}
+.sidebar-highlight-value {{ font-size: 0.76rem !important; }}
+.sidebar-kicker, .sidebar-section-title, .sidebar-legend-name {{ font-size: 0.58rem !important; }}
+.sidebar-action-item {{ padding: 0.55rem 0.62rem !important; border-radius: 12px !important; }}
+.sidebar-action-icon {{ width: 26px; height: 26px; min-width: 26px; border-radius: 9px; font-size: 0.62rem; }}
+.sidebar-mini-note {{ padding: 0.58rem 0.62rem !important; font-size: 0.60rem !important; }}
+
+.hero-image-wrap {{ aspect-ratio: 1384 / 190 !important; border-radius: 20px !important; margin-bottom: 0.18rem !important; }}
+.hero-image-overlay {{ padding: 0.8rem 1rem !important; }}
+.hero-image-content {{ max-width: 40% !important; }}
+.hero-kicker {{ padding: 0.22rem 0.52rem !important; font-size: 0.50rem !important; margin-bottom: 0.2rem !important; }}
+.hero-image-title {{ font-size: 0.95rem !important; margin: 0 0 0.18rem 0 !important; }}
+.hero-image-subtitle {{ font-size: 0.55rem !important; line-height: 1.28 !important; }}
+
+.stTabs [data-baseweb="tab-list"] {{ padding: 3px !important; border-radius: 11px !important; }}
+.stTabs [data-baseweb="tab"] {{
+    font-size: 0.62rem !important;
+    padding: 0.22rem 0.5rem !important;
+    min-height: 30px !important;
+    border-radius: 7px !important;
+}}
+.stTabs [data-baseweb="tab-panel"] {{ padding-top: 0.35rem !important; }}
+
+.card, .soft-card, .metric-card, .result-card, .points-card, .chart-card,
+.analysis-panel, .sim-lite-shell, .workspace-shell, .workspace-shell-tight,
+.empty-review-card, .batch-shell, .batch-guide-card, .grouped-chart-shell,
+.fatwa-browser-shell, .topic-pick-shell, .history-overview-card, .history-table-shell,
+.overview-chart-card, .comparison-card, .align-rank-card, .light-table-wrap,
+.explorer-summary-card, .topic-focus-card, .donut-insight-card, .leaderboard-card {{
+    border-radius: 14px !important;
+}}
+
+.workspace-shell, .workspace-shell-tight, .empty-review-card, .batch-shell,
+.fatwa-browser-shell, .topic-pick-shell, .history-overview-card,
+.history-table-shell, .analysis-panel, .sim-lite-shell, .grouped-chart-shell,
+.comparison-card, .align-rank-card, .batch-guide-card {{
+    padding: 0.62rem !important;
+    margin-bottom: 0.42rem !important;
+}}
+
+.editorial-title, .tab-minimal-title, .workspace-title, .fatwa-browser-title,
+.history-overview-title, .sim-lite-title, .single-review-hero .tab-minimal-title {{
+    font-size: 0.94rem !important;
+    line-height: 1.05 !important;
+}}
+.empty-review-title, .fatwa-title, .batch-title, .topic-pick-title, .comparison-card-header,
+.chart-panel-title, .grouped-chart-title, .history-table-title, .overview-title {{
+    font-size: 0.76rem !important;
+    line-height: 1.2 !important;
+}}
+.inline-section-title, .browse-filter-title, .browse-toolbar-title, .chart-panel-title,
+.align-rank-topic, .leaderboard-title, .topic-focus-value, .topic-card-title {{
+    font-size: 0.72rem !important;
+}}
+.editorial-copy, .tab-minimal-copy, .workspace-copy, .empty-review-copy, .batch-copy,
+.chart-panel-copy, .inline-section-copy, .system-plain-note, .sim-lite-summary-copy,
+.overview-copy, .browse-filter-copy, .browse-toolbar-copy, .fatwa-browser-copy,
+.explorer-instruction-copy, .chart-conclusion, .history-table-copy, .history-overview-copy,
+.sim-lite-summary-copy.alt, .comparison-select-copy, .analysis-panel-copy {{
+    font-size: 0.60rem !important;
+    line-height: 1.42 !important;
+}}
+.workspace-kicker, .editorial-kicker, .tab-minimal-kicker, .inline-section-label, .slim-loader-kicker,
+.batch-kicker, .browse-inline-head, .explorer-instruction-title, .history-overview-tag,
+.history-overview-stat-label, .history-table-pill, .metric-label, .result-card-title,
+.empty-review-stat-label, .topic-focus-label, .explorer-summary-label, .align-panel-title,
+.sidebar-insight-label, .sim-lite-kicker, .sim-lite-top-note-title, .sim-lite-metric-label,
+.input-editor-kicker, .input-editor-chip, .batch-pill, .browse-selector-intro-kicker,
+.browse-filter-chip, .browse-filter-stat, .fatwa-meta-pill, .topic-card-pill, .pager-chip,
+.chart-panel-note, .leaderboard-note {{
+    font-size: 0.50rem !important;
+}}
+
+.metric-value, .result-card-score, .metric-value-text, .sim-lite-metric-value,
+.explorer-summary-value, .align-score, .leaderboard-score, .topic-card-count,
+.empty-review-stat-value, .history-overview-stat-value, .history-overview-title,
+.donut-insight-count {{
+    font-size: 1rem !important;
+    line-height: 1 !important;
+}}
+.sim-lite-pill, .empty-review-pill, .batch-pill, .input-editor-chip, .history-table-pill {{
+    padding: 0.24rem 0.55rem !important;
+    font-size: 0.52rem !important;
+}}
+
+[data-testid="stTextArea"] label,
+[data-testid="stTextInput"] label,
+[data-testid="stSelectbox"] label,
+[data-testid="stMultiSelect"] label,
+[data-testid="stRadio"] label:first-of-type {{
+    font-size: 0.54rem !important;
+    margin-bottom: 0.14rem !important;
+}}
+
+[data-testid="stMultiSelect"] [data-baseweb="select"] > div,
+[data-testid="stSelectbox"] [data-baseweb="select"] > div,
+[data-testid="stTextInputRootElement"],
+.stTextInput > div > div {{
+    min-height: 34px !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 10px rgba(44,21,33,0.05) !important;
+}}
+.stTextInput input {{
+    padding: 0.34rem 0.5rem !important;
+    font-size: 0.66rem !important;
+}}
+.stTextArea > div > div {{ border-radius: 14px !important; padding: 0.12rem !important; }}
+.stTextArea textarea {{
+    border-radius: 12px !important;
+    padding: 0.5rem 0.56rem !important;
+    font-size: 0.64rem !important;
+    line-height: 1.36 !important;
+    min-height: 60px !important;
+}}
+[data-baseweb="tag"] {{ font-size: 0.60rem !important; }}
+
+.stButton > button,
+.stDownloadButton > button {{
+    border-radius: 9px !important;
+    font-size: 0.62rem !important;
+    padding: 0.26rem 0.62rem !important;
+    min-height: 32px !important;
+    box-shadow: 0 4px 10px rgba(119,51,68,0.12) !important;
+}}
+.stButton > button p, .stDownloadButton > button p {{ font-size: 0.62rem !important; }}
+
+[data-testid="stRadio"] > div {{ margin-bottom: 0.1rem !important; }}
+[data-testid="stRadio"] [role="radiogroup"] {{
+    border-radius: 14px !important;
+    padding: 0.16rem !important;
+    gap: 0.2rem !important;
+}}
+[data-testid="stRadio"] [role="radiogroup"] > label {{
+    min-height: 32px !important;
+    border-radius: 11px !important;
+    padding: 0.24rem 0.52rem !important;
+}}
+[data-testid="stRadio"] [role="radiogroup"] p {{
+    font-size: 0.66rem !important;
+    line-height: 1.15 !important;
+}}
+
+.light-table thead th {{ font-size: 0.58rem !important; padding: 0.55rem 0.55rem !important; }}
+.light-table tbody td {{ font-size: 0.60rem !important; padding: 0.5rem 0.55rem !important; line-height: 1.4 !important; }}
+
+.element-container,
+.stMarkdown,
+.stSelectbox,
+.stTextArea,
+.stButton,
+.stMultiSelect,
+.stTextInput,
+.stRadio {{
+    margin-bottom: 0.08rem !important;
+}}
+
+@media (max-width: 1400px) {{
+    html {{ font-size: 9.5px !important; }}
+    [data-testid="stSidebar"] {{
+        min-width: 196px !important;
+        max-width: 196px !important;
+        width: 196px !important;
+    }}
+    .hero-image-wrap {{ aspect-ratio: 1384 / 180 !important; }}
+    .block-container,
+    .main .block-container {{
+        max-width: 1320px !important;
+    }}
+}}
+
 </style>
 """,
-        unsafe_allow_html=True,
-    )
+    unsafe_allow_html=True,
+)
 
 
 # =========================================================
@@ -3698,7 +3900,565 @@ def render_review_workspace_header():
 
         
 
-/* ===== SCALE HANDLED BY BASE 8.5px FONT-SIZE ===== */
+/* ===== COMPACT GLOBAL OVERRIDES ===== */
+html {{
+    font-size: 78% !important;
+}}
+
+body {{
+    zoom: 1 !important;
+}}
+
+[data-testid="stAppViewContainer"] {{
+    font-size: 0.7rem !important;
+}}
+
+.block-container {{
+    padding-top: 0.15rem !important;
+    padding-left: 0.45rem !important;
+    padding-right: 0.45rem !important;
+    padding-bottom: 0.45rem !important;
+    max-width: 1450px !important;
+}}
+
+[data-testid="stSidebar"] {{
+    min-width: 216px !important;
+    max-width: 216px !important;
+    width: 216px !important;
+}}
+
+[data-testid="stSidebar"] > div:first-child {{
+    padding: 0.38rem 0.38rem 0.55rem 0.38rem !important;
+}}
+
+.stTabs [data-baseweb="tab-list"] {{
+    padding: 3px !important;
+}}
+
+.stTabs [data-baseweb="tab"] {{
+    font-size: 0.66rem !important;
+    padding: 0.34rem 0.72rem !important;
+}}
+
+.hero-image-wrap {{
+    height: 178px !important;
+    border-radius: 22px !important;
+    margin-bottom: 0.4rem !important;
+}}
+
+.hero-image-overlay {{
+    padding: 1.2rem 1.45rem !important;
+}}
+
+.hero-image-content {{
+    max-width: 52% !important;
+}}
+
+.hero-image-title {{
+    font-size: 1.62rem !important;
+    margin-bottom: 0.32rem !important;
+}}
+
+.hero-image-subtitle {{
+    font-size: 0.66rem !important;
+    line-height: 1.34 !important;
+}}
+
+.hero-kicker {{
+    font-size: 0.64rem !important;
+    padding: 0.3rem 0.72rem !important;
+    margin-bottom: 0.5rem !important;
+}}
+
+.sidebar-title {{
+    font-size: 1.16rem !important;
+}}
+
+.sidebar-subtitle,
+.sidebar-workspace-subtitle,
+.sidebar-action-text,
+.sidebar-mini-note,
+.sidebar-insight-copy,
+.sidebar-legend-text,
+.sidebar-progress-top,
+.sidebar-topic-pill,
+.small-note {{
+    font-size: 0.7rem !important;
+    line-height: 1.38 !important;
+}}
+
+.sidebar-workspace-title,
+.sidebar-action-title,
+.sidebar-insight-value,
+.sidebar-legend-name {{
+    font-size: 0.8rem !important;
+}}
+
+.sidebar-workspace-card,
+.sidebar-section-card,
+.sidebar-legend-card {{
+    padding: 0.68rem !important;
+    margin-bottom: 0.5rem !important;
+}}
+
+.sidebar-action-item,
+.sidebar-legend-item,
+.sidebar-mini-note,
+.sidebar-highlight-chip {{
+    padding: 0.58rem 0.62rem !important;
+}}
+
+.sidebar-highlight-value {{
+    font-size: 0.84rem !important;
+}}
+
+.metric-card,
+.result-card,
+.points-card,
+.card,
+.fatwa-box,
+.chart-card,
+.overview-chart-card,
+.light-table-wrap,
+.history-table-shell,
+.history-overview-card,
+.analysis-panel,
+.sim-lite-shell,
+.batch-shell,
+.topic-pick-shell,
+.fatwa-browser-shell,
+.workspace-shell,
+.empty-review-card,
+.input-editor-shell {{
+    border-radius: 16px !important;
+}}
+
+.metric-card,
+.result-card,
+.points-card,
+.card,
+.chart-card,
+.overview-chart-card,
+.analysis-panel,
+.sim-lite-shell,
+.batch-shell,
+.topic-pick-shell,
+.workspace-shell,
+.input-editor-shell {{
+    padding: 0.72rem 0.78rem !important;
+}}
+
+.metric-value,
+.result-card-score,
+.metric-value-text,
+.sim-lite-metric-value,
+.history-overview-title,
+.explorer-summary-value {{
+    font-size: 1.28rem !important;
+}}
+
+.workspace-title,
+.empty-review-title,
+.tab-minimal-title,
+.fatwa-browser-title,
+.editorial-title {{
+    font-size: 1.42rem !important;
+    line-height: 1.05 !important;
+}}
+
+.workspace-copy,
+.tab-minimal-copy,
+.editorial-copy,
+.batch-copy,
+.chart-panel-copy,
+.analysis-panel-copy,
+.browse-filter-copy,
+.browse-toolbar-copy,
+.explorer-instruction-copy,
+.topic-pick-copy,
+.history-overview-copy,
+.history-table-copy,
+.system-plain-note,
+.input-editor-note,
+.empty-review-copy {{
+    font-size: 0.66rem !important;
+    line-height: 1.5 !important;
+}}
+
+.workspace-kicker,
+.tab-minimal-kicker,
+.editorial-kicker,
+.batch-kicker,
+.input-editor-kicker,
+.inline-section-label,
+.slim-loader-kicker,
+.explorer-instruction-title,
+.overview-kicker,
+.sim-lite-kicker,
+.history-overview-tag,
+.history-overview-stat-label,
+.browse-inline-head,
+.comparison-select-title,
+.topic-pick-kicker {{
+    font-size: 0.62rem !important;
+}}
+
+.stButton > button,
+.stDownloadButton > button {{
+    font-size: 0.66rem !important;
+    min-height: 2.35rem !important;
+    padding: 0.4rem 0.82rem !important;
+    border-radius: 10px !important;
+}}
+
+[data-testid="stTextArea"] label,
+[data-testid="stTextInput"] label,
+[data-testid="stSelectbox"] label,
+[data-testid="stMultiSelect"] label,
+[data-testid="stRadio"] label:first-of-type {{
+    font-size: 0.62rem !important;
+}}
+
+[data-testid="stMultiSelect"] [data-baseweb="select"] > div,
+[data-testid="stSelectbox"] [data-baseweb="select"] > div,
+[data-testid="stTextInputRootElement"],
+.stTextInput > div > div,
+.stTextArea > div > div,
+.topic-select-shell [data-baseweb="select"] > div {{
+    min-height: 44px !important;
+    border-radius: 14px !important;
+}}
+
+.stTextArea > div > div {{
+    padding: 0.12rem !important;
+}}
+
+.stTextArea textarea {{
+    min-height: 128px !important;
+    font-size: 0.82rem !important;
+    line-height: 1.42 !important;
+    padding: 0.62rem 0.68rem !important;
+    resize: none !important;
+    caret-color: #2a1421 !important;
+}}
+
+.stTextArea textarea::-webkit-resizer {{
+    display: none !important;
+}}
+
+.stTextInput input,
+[data-testid="stSelectbox"] *,
+[data-testid="stMultiSelect"] *,
+.stSelectbox * {{
+    font-size: 0.8rem !important;
+}}
+
+.light-table thead th,
+.light-table tbody td {{
+    font-size: 0.72rem !important;
+    padding: 0.6rem 0.56rem !important;
+}}
+
+.sim-lite-ring {{
+    width: 78px !important;
+    height: 78px !important;
+}}
+
+.sim-lite-ring-inner {{
+    width: 56px !important;
+    height: 56px !important;
+}}
+
+.empty-review-stat-value,
+.topic-focus-value,
+.leaderboard-score {{
+    font-size: 0.9rem !important;
+}}
+
+@media (max-width: 1200px) {{
+    html {{
+        font-size: 75% !important;
+    }}
+    .hero-image-wrap {{
+        max-height: 170px !important;
+    }}
+}}
+
+
+
+/* ===== COMPACT SCREEN FIT OVERRIDES ===== */
+html { font-size: 10px !important; }
+body, p, div, span, label, li { font-size: 0.84rem; }
+
+.block-container,
+.main .block-container {
+    max-width: 1380px !important;
+    padding-top: 0.08rem !important;
+    padding-bottom: 0.08rem !important;
+    padding-left: 0.35rem !important;
+    padding-right: 0.35rem !important;
+}
+
+[data-testid="stSidebar"] {
+    min-width: 208px !important;
+    max-width: 208px !important;
+    width: 208px !important;
+}
+[data-testid="stSidebar"] > div:first-child {
+    padding: 0.28rem 0.28rem 0.35rem 0.28rem !important;
+}
+.sidebar-clean-header { padding: 0.25rem 0.08rem 0.55rem 0.08rem !important; margin-bottom: 0.45rem !important; }
+.sidebar-kicker-line { width: 52px !important; margin-bottom: 0.45rem !important; }
+.sidebar-title { font-size: 0.88rem !important; margin: 0 0 0.42rem 0 !important; }
+.sidebar-subtitle { font-size: 0.60rem !important; line-height: 1.42 !important; }
+.sidebar-workspace-card, .sidebar-section-card, .sidebar-legend-card { padding: 0.55rem !important; border-radius: 14px !important; margin-bottom: 0.45rem !important; }
+.sidebar-workspace-title, .sidebar-insight-value { font-size: 0.74rem !important; }
+.sidebar-workspace-subtitle, .sidebar-action-text, .sidebar-insight-copy, .sidebar-progress-top, .sidebar-topic-pill { font-size: 0.60rem !important; line-height: 1.36 !important; }
+.sidebar-highlight-row { gap: 0.45rem !important; }
+.sidebar-highlight-chip { padding: 0.55rem 0.55rem !important; border-radius: 12px !important; }
+.sidebar-highlight-label { font-size: 0.55rem !important; }
+.sidebar-highlight-value { font-size: 0.76rem !important; }
+.sidebar-kicker, .sidebar-section-title, .sidebar-legend-name { font-size: 0.58rem !important; }
+.sidebar-action-item { padding: 0.55rem 0.62rem !important; border-radius: 12px !important; }
+.sidebar-action-icon { width: 26px; height: 26px; min-width: 26px; border-radius: 9px; font-size: 0.62rem; }
+.sidebar-mini-note { padding: 0.58rem 0.62rem !important; font-size: 0.60rem !important; }
+
+.hero-image-wrap { aspect-ratio: 1384 / 190 !important; border-radius: 20px !important; margin-bottom: 0.18rem !important; }
+.hero-image-overlay { padding: 0.8rem 1rem !important; }
+.hero-image-content { max-width: 40% !important; }
+.hero-kicker { padding: 0.22rem 0.52rem !important; font-size: 0.50rem !important; margin-bottom: 0.2rem !important; }
+.hero-image-title { font-size: 0.95rem !important; margin: 0 0 0.18rem 0 !important; }
+.hero-image-subtitle { font-size: 0.55rem !important; line-height: 1.28 !important; }
+
+.stTabs [data-baseweb="tab-list"] { padding: 3px !important; border-radius: 11px !important; }
+.stTabs [data-baseweb="tab"] {
+    font-size: 0.62rem !important;
+    padding: 0.22rem 0.5rem !important;
+    min-height: 30px !important;
+    border-radius: 7px !important;
+}
+.stTabs [data-baseweb="tab-panel"] { padding-top: 0.35rem !important; }
+
+.card, .soft-card, .metric-card, .result-card, .points-card, .chart-card,
+.analysis-panel, .sim-lite-shell, .workspace-shell, .workspace-shell-tight,
+.empty-review-card, .batch-shell, .batch-guide-card, .grouped-chart-shell,
+.fatwa-browser-shell, .topic-pick-shell, .history-overview-card, .history-table-shell,
+.overview-chart-card, .comparison-card, .align-rank-card, .light-table-wrap,
+.explorer-summary-card, .topic-focus-card, .donut-insight-card, .leaderboard-card {
+    border-radius: 14px !important;
+}
+
+.workspace-shell, .workspace-shell-tight, .empty-review-card, .batch-shell,
+.fatwa-browser-shell, .topic-pick-shell, .history-overview-card,
+.history-table-shell, .analysis-panel, .sim-lite-shell, .grouped-chart-shell,
+.comparison-card, .align-rank-card, .batch-guide-card {
+    padding: 0.62rem !important;
+    margin-bottom: 0.42rem !important;
+}
+
+.editorial-title, .tab-minimal-title, .workspace-title, .fatwa-browser-title,
+.history-overview-title, .sim-lite-title, .single-review-hero .tab-minimal-title {
+    font-size: 0.94rem !important;
+    line-height: 1.05 !important;
+}
+.empty-review-title, .fatwa-title, .batch-title, .topic-pick-title, .comparison-card-header,
+.chart-panel-title, .grouped-chart-title, .history-table-title, .overview-title {
+    font-size: 0.76rem !important;
+    line-height: 1.2 !important;
+}
+.inline-section-title, .browse-filter-title, .browse-toolbar-title, .chart-panel-title,
+.align-rank-topic, .leaderboard-title, .topic-focus-value, .topic-card-title {
+    font-size: 0.72rem !important;
+}
+.editorial-copy, .tab-minimal-copy, .workspace-copy, .empty-review-copy, .batch-copy,
+.chart-panel-copy, .inline-section-copy, .system-plain-note, .sim-lite-summary-copy,
+.overview-copy, .browse-filter-copy, .browse-toolbar-copy, .fatwa-browser-copy,
+.explorer-instruction-copy, .chart-conclusion, .history-table-copy, .history-overview-copy,
+.sim-lite-summary-copy.alt, .comparison-select-copy, .analysis-panel-copy {
+    font-size: 0.60rem !important;
+    line-height: 1.42 !important;
+}
+.workspace-kicker, .editorial-kicker, .tab-minimal-kicker, .inline-section-label, .slim-loader-kicker,
+.batch-kicker, .browse-inline-head, .explorer-instruction-title, .history-overview-tag,
+.history-overview-stat-label, .history-table-pill, .metric-label, .result-card-title,
+.empty-review-stat-label, .topic-focus-label, .explorer-summary-label, .align-panel-title,
+.sidebar-insight-label, .sim-lite-kicker, .sim-lite-top-note-title, .sim-lite-metric-label,
+.input-editor-kicker, .input-editor-chip, .batch-pill, .browse-selector-intro-kicker,
+.browse-filter-chip, .browse-filter-stat, .fatwa-meta-pill, .topic-card-pill, .pager-chip,
+.chart-panel-note, .leaderboard-note {
+    font-size: 0.50rem !important;
+}
+
+.metric-value, .result-card-score, .metric-value-text, .sim-lite-metric-value,
+.explorer-summary-value, .align-score, .leaderboard-score, .topic-card-count,
+.empty-review-stat-value, .history-overview-stat-value, .history-overview-title,
+.donut-insight-count {
+    font-size: 1rem !important;
+    line-height: 1 !important;
+}
+.sim-lite-pill, .empty-review-pill, .batch-pill, .input-editor-chip, .history-table-pill {
+    padding: 0.24rem 0.55rem !important;
+    font-size: 0.52rem !important;
+}
+
+[data-testid="stTextArea"] label,
+[data-testid="stTextInput"] label,
+[data-testid="stSelectbox"] label,
+[data-testid="stMultiSelect"] label,
+[data-testid="stRadio"] label:first-of-type {
+    font-size: 0.54rem !important;
+    margin-bottom: 0.14rem !important;
+}
+
+[data-testid="stMultiSelect"] [data-baseweb="select"] > div,
+[data-testid="stSelectbox"] [data-baseweb="select"] > div,
+[data-testid="stTextInputRootElement"],
+.stTextInput > div > div {
+    min-height: 34px !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 10px rgba(44,21,33,0.05) !important;
+}
+.stTextInput input {
+    padding: 0.34rem 0.5rem !important;
+    font-size: 0.66rem !important;
+}
+.stTextArea > div > div { border-radius: 14px !important; padding: 0.12rem !important; }
+.stTextArea textarea {
+    border-radius: 12px !important;
+    padding: 0.5rem 0.56rem !important;
+    font-size: 0.64rem !important;
+    line-height: 1.36 !important;
+    min-height: 60px !important;
+}
+[data-baseweb="tag"] { font-size: 0.60rem !important; }
+
+.stButton > button,
+.stDownloadButton > button {
+    border-radius: 9px !important;
+    font-size: 0.62rem !important;
+    padding: 0.26rem 0.62rem !important;
+    min-height: 32px !important;
+    box-shadow: 0 4px 10px rgba(119,51,68,0.12) !important;
+}
+.stButton > button p, .stDownloadButton > button p { font-size: 0.62rem !important; }
+
+[data-testid="stRadio"] > div { margin-bottom: 0.1rem !important; }
+[data-testid="stRadio"] [role="radiogroup"] {
+    border-radius: 14px !important;
+    padding: 0.16rem !important;
+    gap: 0.2rem !important;
+}
+[data-testid="stRadio"] [role="radiogroup"] > label {
+    min-height: 32px !important;
+    border-radius: 11px !important;
+    padding: 0.24rem 0.52rem !important;
+}
+[data-testid="stRadio"] [role="radiogroup"] p {
+    font-size: 0.66rem !important;
+    line-height: 1.15 !important;
+}
+
+.light-table thead th { font-size: 0.58rem !important; padding: 0.55rem 0.55rem !important; }
+.light-table tbody td { font-size: 0.60rem !important; padding: 0.5rem 0.55rem !important; line-height: 1.4 !important; }
+
+.element-container,
+.stMarkdown,
+.stSelectbox,
+.stTextArea,
+.stButton,
+.stMultiSelect,
+.stTextInput,
+.stRadio {
+    margin-bottom: 0.08rem !important;
+}
+
+@media (max-width: 1400px) {
+    html { font-size: 9.5px !important; }
+    [data-testid="stSidebar"] {
+        min-width: 196px !important;
+        max-width: 196px !important;
+        width: 196px !important;
+    }
+    .hero-image-wrap { aspect-ratio: 1384 / 180 !important; }
+    .block-container,
+    .main .block-container {
+        max-width: 1320px !important;
+    }
+}
+
+
+
+/* ===== FINAL ULTRA COMPACT SCREEN-FIT OVERRIDES ===== */
+html { font-size: 10px !important; }
+body, p, div, span, label, li { font-size: 0.72rem; }
+.block-container, .main .block-container {
+    padding-top: 0.12rem !important;
+    padding-bottom: 0.2rem !important;
+    padding-left: 0.35rem !important;
+    padding-right: 0.35rem !important;
+}
+[data-testid="stSidebar"] {
+    min-width: 210px !important;
+    max-width: 210px !important;
+    width: 210px !important;
+}
+[data-testid="stSidebar"] > div:first-child { padding: 0.28rem 0.3rem 0.4rem 0.3rem !important; }
+.sidebar-title { font-size: 1rem !important; }
+.sidebar-subtitle, .sidebar-workspace-subtitle, .sidebar-action-text, .sidebar-insight-copy, .sidebar-legend-text, .sidebar-legend-note { font-size: 0.62rem !important; line-height: 1.35 !important; }
+.sidebar-workspace-title, .sidebar-insight-value, .sidebar-action-title { font-size: 0.72rem !important; }
+.sidebar-workspace-card, .sidebar-section-card, .sidebar-legend-card { padding: 0.55rem !important; border-radius: 14px !important; }
+.sidebar-highlight-chip { padding: 0.46rem 0.5rem !important; }
+.sidebar-highlight-value { font-size: 0.78rem !important; }
+.hero-image-wrap { max-height: 145px !important; aspect-ratio: 1384 / 220 !important; margin-bottom: 0.18rem !important; }
+.hero-image-overlay { padding: 0.78rem 0.95rem !important; }
+.hero-image-content { max-width: 46% !important; }
+.hero-kicker { font-size: 0.56rem !important; padding: 0.26rem 0.56rem !important; margin-bottom: 0.18rem !important; }
+.hero-image-title { font-size: 1rem !important; margin-bottom: 0.22rem !important; }
+.hero-image-subtitle { font-size: 0.58rem !important; line-height: 1.28 !important; max-width: 360px !important; }
+.stTabs [data-baseweb="tab-list"] { padding: 2px !important; }
+.stTabs [data-baseweb="tab"] { font-size: 0.62rem !important; padding: 0.22rem 0.5rem !important; min-height: 28px !important; }
+.stButton > button, .stDownloadButton > button {
+    font-size: 0.62rem !important;
+    padding: 0.22rem 0.56rem !important;
+    min-height: 32px !important;
+    border-radius: 10px !important;
+    letter-spacing: 0.01em !important;
+    text-transform: none !important;
+}
+.stButton > button p, .stDownloadButton > button p { font-size: 0.62rem !important; }
+[data-testid="stRadio"] [role="radiogroup"] { padding: 0.24rem !important; gap: 0.24rem !important; border-radius: 16px !important; }
+[data-testid="stRadio"] [role="radiogroup"] > label { min-height: 32px !important; padding: 0.26rem 0.46rem !important; border-radius: 12px !important; }
+[data-testid="stRadio"] [role="radiogroup"] p { font-size: 0.72rem !important; }
+[data-testid="stMultiSelect"] [data-baseweb="select"] > div,
+[data-testid="stSelectbox"] [data-baseweb="select"] > div,
+[data-testid="stTextInputRootElement"],
+.stTextInput > div > div { min-height: 38px !important; border-radius: 14px !important; }
+[data-testid="stTextArea"] label,
+[data-testid="stTextInput"] label,
+[data-testid="stSelectbox"] label,
+[data-testid="stMultiSelect"] label,
+[data-testid="stRadio"] label:first-of-type { font-size: 0.62rem !important; margin-bottom: 0.14rem !important; }
+.stTextArea > div > div { padding: 0.2rem !important; border-radius: 16px !important; }
+.stTextArea textarea { font-size: 0.68rem !important; min-height: 60px !important; padding: 0.5rem 0.56rem !important; line-height: 1.35 !important; }
+.stTextInput input, [data-testid="stSelectbox"] > div > div, .stSelectbox [data-baseweb="select"] > div, [data-testid="stMultiSelect"] > div > div { font-size: 0.68rem !important; }
+.card, .soft-card, .metric-card, .result-card, .points-card, .chart-card, .fatwa-box, .overview-chart-card, .comparison-card,
+.analysis-panel, .sim-lite-shell, .workspace-shell, .batch-shell, .topic-pick-shell, .fatwa-browser-shell, .history-overview-card, .history-table-shell, .grouped-chart-shell, .chart-panel, .input-editor-shell { padding: 0.56rem !important; border-radius: 14px !important; }
+.workspace-title, .empty-review-title, .batch-title, .fatwa-browser-title, .history-overview-title, .tab-minimal-title, .editorial-title, .sim-lite-title, .topic-pick-title { font-size: 0.98rem !important; line-height: 1.08 !important; }
+.workspace-copy, .empty-review-copy, .batch-copy, .chart-panel-copy, .inline-section-copy, .analysis-panel-copy, .system-plain-note, .explorer-instruction-copy, .history-table-copy, .tab-minimal-copy, .editorial-copy, .browse-filter-copy, .fatwa-browser-copy, .history-overview-copy, .sim-lite-summary-copy, .topic-pick-copy { font-size: 0.68rem !important; line-height: 1.38 !important; }
+.workspace-kicker, .batch-kicker, .tab-minimal-kicker, .inline-section-label, .slim-loader-kicker, .input-editor-kicker, .browse-inline-head, .sim-lite-kicker, .explorer-instruction-title, .history-table-pill, .history-overview-tag, .section-title, .section-subtitle { font-size: 0.56rem !important; }
+.metric-label, .result-card-title, .sidebar-highlight-label, .empty-review-stat-label, .explorer-summary-label, .topic-focus-label, .sim-lite-metric-label, .align-panel-title, .overview-kicker, .light-table thead th, .light-table tbody td::before { font-size: 0.54rem !important; }
+.metric-value, .result-card-score, .metric-value-text, .sim-lite-metric-value, .explorer-summary-value, .leaderboard-score, .donut-insight-count, .align-score, .align-full-score, .history-overview-stat-value, .empty-review-stat-value { font-size: 0.92rem !important; }
+.empty-review-item, .batch-guide-step, .donut-insight-card, .align-rank-card, .topic-focus-card, .explorer-summary-card, .comparison-card, .explorer-orb, .empty-review-stat, .history-overview-stat, .history-overview-note, .sim-lite-metric { padding: 0.48rem !important; border-radius: 12px !important; }
+.empty-review-icon, .analysis-step-no, .sidebar-action-icon { width: 22px !important; height: 22px !important; min-width: 22px !important; border-radius: 8px !important; font-size: 0.56rem !important; }
+.light-table thead th { padding: 0.38rem 0.4rem !important; }
+.light-table tbody td { padding: 0.38rem 0.4rem !important; font-size: 0.64rem !important; line-height: 1.32 !important; }
+.element-container, .stMarkdown, .stSelectbox, .stTextArea, .stButton, .stMultiSelect, .stTextInput, .stRadio { margin-bottom: 0.04rem !important; }
+.topic-select-shell [data-baseweb="select"] > div { min-height: 36px !important; }
+@media (max-width: 1400px) {
+    html { font-size: 9px !important; }
+    [data-testid="stSidebar"] { min-width: 194px !important; max-width: 194px !important; width: 194px !important; }
+    .hero-image-wrap { max-height: 128px !important; }
+}
 
 </style>
         <div class="review-workspace-header">
