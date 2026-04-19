@@ -82,6 +82,20 @@ def apply_theme():
     box-sizing: border-box;
 }}
 
+/* GLOBAL SCALE (35% smaller) */
+.stApp {{
+    transform: scale(0.65);
+    transform-origin: top left;
+    width: 153%;   /* compensate shrink so it still fills screen */
+}}
+
+.stApp {{
+    transform: scale(0.65);
+    transform-origin: top left;
+    width: 153%;
+    image-rendering: -webkit-optimize-contrast;
+}}
+
 html, body, [class*="css"] {{
     font-family: 'Inter', sans-serif;
 }}
