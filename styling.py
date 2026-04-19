@@ -594,7 +594,7 @@ body {{
     color: white;
 
     background-image: url('dashboard_background.png');
-    background-size: cover !important;
+    background-size: 100% 100% !important;
     background-repeat: no-repeat;
     background-position: center;
     
@@ -606,13 +606,17 @@ body {{
 
 .hero-image-wrap {{
     position: relative;
-    height: 90px !important;
+    width: 100%;
+    aspect-ratio: 1384 / 280;
+    max-height: 220px;
+    min-height: 0 !important;
+    height: auto !important;
     border-radius: 28px !important;
     overflow: hidden;
-    margin-bottom: 0.11rem;
+    margin-bottom: 0.25rem;
     border: 1px solid rgba(158,179,194,0.20);
     box-shadow: 0 18px 40px rgba(22, 0, 41, 0.14);
-    background: linear-gradient(90deg, #0b2a56 0%, #4c224d 55%, #65104d 100%);
+    background: #85414f;
 }}
 
 
@@ -621,11 +625,11 @@ body {{
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    object-position: center;
+    object-fit: fill;
+    object-position: center center;
     display: block;
-    opacity: 0.62;
-    filter: saturate(0.92) contrast(1.02) brightness(0.80);
+    opacity: 0.90;
+    filter: saturate(0.98) contrast(1.00) brightness(0.86);
 }}
 
 .hero-bg-fill {{
@@ -669,12 +673,12 @@ body {{
     align-items: center;
     justify-content: flex-start !important;
     text-align: left !important;
-    padding: 2rem 2.4rem;
+    padding: 1.4rem 1.8rem;
 }}
 
 .hero-image-content {{
     width: 100%;
-    max-width: 58% !important;
+    max-width: 48% !important;
 }}
 
 .hero-kicker {{
@@ -695,7 +699,7 @@ body {{
 
 .hero-image-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 2.45rem !important;
+    font-size: 1.85rem !important;
     font-weight: 800;
     line-height: 1.04;
     letter-spacing: -0.03em;
@@ -706,7 +710,7 @@ body {{
 
 .hero-image-subtitle {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.8rem;
+    font-size: 0.86rem;
     font-weight: 600;
     line-height: 1.38;
     color: rgba(255,255,255,0.92) !important;
@@ -714,6 +718,31 @@ body {{
     max-width: 92%;
     text-shadow: 0 2px 8px rgba(0,0,0,0.18);
 }}
+
+@media (max-width: 900px) {{
+    .hero-image-wrap {{
+        aspect-ratio: 1384 / 340;
+        max-height: none !important;
+    }}
+
+    .hero-image-overlay {{
+        padding: 1.15rem 1.2rem;
+    }}
+
+    .hero-image-content {{
+        max-width: 100% !important;
+    }}
+
+    .hero-image-title {{
+        font-size: 1.45rem !important;
+    }}
+
+    .hero-image-subtitle {{
+        font-size: 0.78rem;
+        max-width: 100%;
+    }}
+}}
+
 
 
 /* ── SECTION BANNER ──────────────────────────────────── */
@@ -3737,7 +3766,7 @@ body {{
         font-size: 82% !important;
     }}
     .hero-image-wrap {{
-        height: 190px !important;
+        max-height: 200px !important;
     }}
 }}
 

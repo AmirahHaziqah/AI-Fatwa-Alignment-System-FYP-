@@ -108,16 +108,16 @@ def apply_dashboard_polish():
     .single-result-anchor {margin-top:0.9rem;}
     .sidebar-insight-list {display:grid;gap:0.65rem;}
     .sidebar-insight-card {background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.11);border-radius:14px;padding:0.8rem 0.85rem;}
-    .hero-image-wrap {height:250px!important;border-radius:28px!important;min-height:250px!important;}
+    .hero-image-wrap {aspect-ratio:1384 / 280 !important;height:auto !important;min-height:0 !important;max-height:220px !important;border-radius:28px!important;}
     .sidebar-insight-value {font-size:0.86rem;font-weight:700;color:#ffffff!important;line-height:1.45;}
     .sidebar-insight-copy {font-size:0.78rem;line-height:1.55;color:rgba(255,255,255,0.76)!important;margin-top:0.2rem;}
     .sidebar-checklist {margin:0;padding-left:0;list-style:none;display:grid;gap:0.58rem;}
     .sidebar-checklist li {position:relative;padding-left:1.2rem;color:rgba(255,255,255,0.82)!important;font-size:0.82rem;line-height:1.55;}
     .sidebar-checklist li:before {content:'✓';position:absolute;left:0;top:0;color:#fdc7df;font-weight:800;}
-    .hero-image-wrap {height:250px!important;border-radius:28px!important;}
-    .hero-image-overlay {justify-content:flex-start!important;text-align:left!important;padding:2rem 2.2rem!important;background:linear-gradient(90deg,rgba(10,35,68,0.80),rgba(107,22,80,0.52))!important;}
-    .hero-image-title {font-size:2.35rem!important;}
-    .hero-image-subtitle {max-width:760px!important;}
+    .hero-image-wrap {aspect-ratio:1384 / 280 !important;height:auto !important;max-height:220px !important;border-radius:28px!important;}
+    .hero-image-overlay {justify-content:flex-start!important;text-align:left!important;padding:1.4rem 1.8rem!important;background:linear-gradient(90deg,rgba(10,35,68,0.84),rgba(107,22,80,0.50))!important;}
+    .hero-image-title {font-size:1.85rem!important;line-height:1.02!important;}
+    .hero-image-subtitle {max-width:520px!important;font-size:0.86rem!important;line-height:1.45!important;}
     .sidebar-workspace-card,.sidebar-section-card {border-radius:20px!important;}
     .metric-card,.result-card,.points-card,.fatwa-box,.card,.overview-chart-card {border-radius:20px!important;}
     .topic-card {border-radius:18px!important;}
@@ -1867,22 +1867,22 @@ def render_dashboard_shell_header(title="AI Fatwa Alignment System", subtitle="H
 
 /* ===== COMPACT GLOBAL OVERRIDES ===== */
 html {
-    font-size: 85% !important;
+    font-size: 82% !important;
 }
 
 body {
-    zoom: 0.94;
+    zoom: 0.90;
 }
 
 [data-testid="stAppViewContainer"] {
-    font-size: 0.94rem !important;
+    font-size: 0.90rem !important;
 }
 
 .block-container {
     padding-top: 0.2rem !important;
     padding-left: 0.55rem !important;
     padding-right: 0.55rem !important;
-    max-width: 1380px !important;
+    max-width: 1360px !important;
 }
 
 [data-testid="stSidebar"] {
@@ -2140,15 +2140,31 @@ body {
 
 @media (max-width: 1200px) {
     html {
-        font-size: 82% !important;
+        font-size: 80% !important;
     }
     .hero-image-wrap {
-        height: 190px !important;
+        max-height: 200px !important;
+    }
+}
+
+@media (max-width: 900px) {
+    .hero-image-wrap {
+        max-height: none !important;
+        aspect-ratio: 1384 / 340 !important;
+    }
+    .hero-image-overlay {
+        padding: 1.15rem 1.2rem !important;
+    }
+    .hero-image-title {
+        font-size: 1.45rem !important;
+    }
+    .hero-image-subtitle {
+        font-size: 0.78rem !important;
+        max-width: 100% !important;
     }
 }
 
 </style>
-        <div class="dashboard-shell-header"></div>
         """,
         unsafe_allow_html=True,
     )
