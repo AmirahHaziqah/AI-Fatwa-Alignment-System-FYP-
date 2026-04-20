@@ -7,6 +7,7 @@ from typing import Optional
 import streamlit as st
 
 from utils import get_score_tier, get_score_tier_colors, get_score_css_class
+
 COLORS = {
     # Requested palette
     "linen": "#F5E9E2",
@@ -46,7 +47,6 @@ COLORS = {
 }
 
 
-
 def _image_to_data_uri(image_path: Optional[str]) -> Optional[str]:
     if not image_path:
         return None
@@ -78,67 +78,43 @@ def apply_theme():
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Inter+Tight:wght@500;600;700;800&display=swap');
 
-html {{ font-size: 12px !important; }}
-body {{ overflow-x: hidden !important; }}
+/* ── BASE FONT SIZE — bigger and more readable ── */
+html {{ font-size: 15px !important; }}
+body {{ overflow-x: hidden !important; color: {COLORS["text_primary"]}; }}
 .stApp {{ overflow-x: hidden !important; }}
 
-* {{
-    box-sizing: border-box;
-}}
+* {{ box-sizing: border-box; }}
 
 html, body, [class*="css"] {{
     font-family: 'Inter', sans-serif;
 }}
 
-html {{
-    scroll-behavior: smooth;
-}}
-
-body {{
-    color: {COLORS["text_primary"]};
-}}
+html {{ scroll-behavior: smooth; }}
 
 /* ── APP BACKGROUND ──────────────────────────────────── */
 [data-testid="stAppViewContainer"] {{
-    background: linear-gradient(
-        180deg,
-        #f4f6f9 0%,
-        #efe6ea 100%
-    ) !important;
+    background: linear-gradient(180deg, #f4f6f9 0%, #efe6ea 100%) !important;
     color: {COLORS["text_primary"]};
 }}
 
 .block-container {{
-    padding-top: 0.35rem !important;
-    padding-left: 0.6rem !important;
-    padding-right: 0.6rem !important;
+    padding-top: 0.6rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
     max-width: 1380px !important;
     width: 100% !important;
     margin-left: auto !important;
     margin-right: auto !important;
 }}
 
-[data-testid="stAppViewContainer"] {{
-    margin: 0 !important;
-}}
-
-.main .block-container > div {{
-    position: relative;
-}}
-
-[data-testid="stHeader"] {{
-    background: transparent;
-}}
-
-[data-testid="stToolbar"] {{
-    right: 1rem;
-}}
+[data-testid="stHeader"] {{ background: transparent; }}
+[data-testid="stToolbar"] {{ right: 1rem; }}
 
 /* ── SIDEBAR ─────────────────────────────────────────── */
 [data-testid="stSidebar"] {{
-    min-width: 244px !important;
-    max-width: 244px !important;
-    width: 244px !important;
+    min-width: 270px !important;
+    max-width: 270px !important;
+    width: 270px !important;
     background: linear-gradient(180deg, #160029 0%, #773344 55%, #5f2840 100%) !important;
     border-right: 1px solid rgba(255,255,255,0.08) !important;
     box-shadow: 16px 0 34px rgba(22,0,41,0.18) !important;
@@ -146,10 +122,9 @@ body {{
 
 [data-testid="stSidebar"] > div:first-child {{
     background: transparent !important;
-    padding: 0.45rem 0.45rem 0.65rem 0.45rem !important;
+    padding: 0.7rem 0.6rem 0.8rem 0.6rem !important;
 }}
 
-/* Force all sidebar text to be light */
 [data-testid="stSidebar"] * {{
     color: rgba(255,255,255,0.90) !important;
 }}
@@ -160,100 +135,61 @@ body {{
     color: rgba(255,255,255,0.82) !important;
 }}
 
-/* ── SIDEBAR HERO BANNER ─────────────────────────────── */
-.sidebar-hero-wrap {{
-    margin-bottom: 0.13rem;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 10px 28px rgba(0,0,0,0.2);
-}}
-
-.sidebar-hero-image {{
-    width: 100%;
-    height: auto;
-    display: block;
-    object-fit: cover;
-}}
-
 /* ── SIDEBAR BRAND ───────────────────────────────────── */
 .sidebar-brand-card {{
     background: rgba(255,255,255,0.08);
     border: 1px solid rgba(255,255,255,0.12);
     border-left: 6px solid #d44d5c;
     border-radius: 18px;
-    padding: 1.25rem 1.1rem;
-    margin-bottom: 0.13rem;
+    padding: 1.4rem 1.2rem;
+    margin-bottom: 0.3rem;
     box-shadow: 0 10px 24px rgba(33,50,65,0.22);
-    backdrop-filter: blur(4px);
 }}
 .sidebar-brand-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 0.73rem;
-    line-height: 1.15;
+    font-size: 0.95rem;
+    line-height: 1.2;
     color: #FFFFFF !important;
-    margin-bottom: 0.14rem;
+    margin-bottom: 0.2rem;
+    font-weight: 700;
 }}
 .sidebar-brand-subtitle {{
-    font-size: 0.84rem;
-    line-height: 1.45;
+    font-size: 0.82rem;
+    line-height: 1.5;
     color: rgba(255,255,255,0.78) !important;
 }}
 
-/* ── SIDEBAR WELCOME ─────────────────────────────────── */
-.sidebar-welcome-wrap {{
-    margin-bottom: 0.17rem;
-}}
-
-.sidebar-welcome-banner {{
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.10);
-    border-radius: 12px;
-    padding: 0.55rem 0.7rem 1rem 1.15rem;
-    position: relative;
-    overflow: hidden;
-}}
-
-.sidebar-welcome-banner::before {{
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: {COLORS["teal_lt"]};
-}}
-
+/* ── SIDEBAR CLEAN HEADER ────────────────────────────── */
 .sidebar-clean-header {{
-    padding: 0.4rem 0.15rem 1rem 0.15rem !important;
-    margin-bottom: 0.85rem !important;
+    padding: 0.5rem 0.2rem 1.1rem 0.2rem !important;
+    margin-bottom: 1rem !important;
 }}
 
 .sidebar-kicker-line {{
     width: 72px !important;
     height: 4px !important;
     background: {COLORS["teal_lt"]} !important;
-    margin-bottom: 0.9rem !important;
+    margin-bottom: 1rem !important;
     border-radius: 2px;
 }}
 
 .sidebar-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.36rem !important;
-    line-height: 1.08 !important;
-    font-weight: 400;
+    font-size: 1.55rem !important;
+    line-height: 1.1 !important;
+    font-weight: 700;
     color: #FFFFFF;
     letter-spacing: -0.025em !important;
-    margin: 0 0 0.8rem 0 !important;
+    margin: 0 0 0.9rem 0 !important;
 }}
 
 .sidebar-subtitle {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.7rem !important;
-    line-height: 1.62 !important;
+    font-size: 0.88rem !important;
+    line-height: 1.6 !important;
     font-weight: 400;
     color: rgba(255,255,255,0.78) !important;
     margin: 0;
-    max-width: 100% !important;
 }}
 
 /* ── SIDEBAR WORKSPACE CARD ──────────────────────────── */
@@ -263,44 +199,45 @@ body {{
     border: 1px solid rgba(158,179,194,0.18) !important;
     box-shadow: 0 12px 26px rgba(13, 24, 47, 0.18) !important;
     border-radius: 18px !important;
-    padding: 1rem !important;
-    margin-bottom: 0.12rem;
+    padding: 1.1rem !important;
+    margin-bottom: 0.6rem;
 }}
 
 .sidebar-kicker {{
     display: inline-flex;
     align-items: center;
-    padding: 0.3rem 0.75rem;
+    padding: 0.32rem 0.8rem;
     border-radius: 999px;
     background: rgba(158,179,194,0.16) !important;
     color: #DCE7EE !important;
     border: 1px solid rgba(158,179,194,0.22) !important;
-    font-size: 0.68rem !important;
+    font-size: 0.72rem !important;
     font-weight: 700;
-    margin-bottom: 0.08rem;
+    margin-bottom: 0.4rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
 }}
 
 .sidebar-workspace-title {{
-    font-size: 1.12rem;
+    font-size: 1.15rem;
     font-weight: 800;
     line-height: 1.25;
     color: #FFFFFF !important;
-    margin-bottom: 0.12rem;
+    margin-bottom: 0.3rem;
 }}
 
 .sidebar-workspace-subtitle {{
     font-size: 0.84rem;
-    line-height: 1.38;
+    line-height: 1.5;
     color: rgba(255,255,255,0.78) !important;
-    margin-bottom: 0.08rem;
+    margin-bottom: 0.3rem;
 }}
 
 .sidebar-highlight-row {{
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0.75rem !important;
+    margin-top: 0.6rem;
 }}
 
 .sidebar-highlight-chip {{
@@ -308,20 +245,20 @@ body {{
     border: 1px solid rgba(158,179,194,0.22) !important;
     border-top: 4px solid #1C7293 !important;
     border-radius: 14px;
-    padding: 0.75rem 0.8rem;
+    padding: 0.8rem 0.85rem;
 }}
 
 .sidebar-highlight-label {{
-    font-size: 0.67rem;
+    font-size: 0.72rem;
     color: #5E7186 !important;
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.25rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
 }}
 
 .sidebar-highlight-value {{
-    font-size: 1.05rem !important;
+    font-size: 1.15rem !important;
     color: #162033 !important;
     font-weight: 800;
 }}
@@ -333,8 +270,8 @@ body {{
     border: 1px solid rgba(158,179,194,0.18) !important;
     box-shadow: 0 12px 26px rgba(13, 24, 47, 0.18) !important;
     border-radius: 18px !important;
-    padding: 0.95rem !important;
-    margin-bottom: 0.85rem !important;
+    padding: 1.1rem !important;
+    margin-bottom: 0.9rem !important;
 }}
 
 .sidebar-section-card * {{
@@ -344,11 +281,11 @@ body {{
 .sidebar-section-title {{
     display: flex;
     align-items: center;
-    gap: 0.18rem;
-    font-size: 0.78rem !important;
+    gap: 0.4rem;
+    font-size: 0.82rem !important;
     font-weight: 800;
-    margin-bottom: 0.2rem;
-    padding-bottom: 0.6rem;
+    margin-bottom: 0.6rem;
+    padding-bottom: 0.65rem;
     border-bottom: 1px solid rgba(158,179,194,0.2) !important;
     color: #DCE7EE !important;
     letter-spacing: 0.08em !important;
@@ -358,19 +295,19 @@ body {{
 /* ── SIDEBAR PROGRESS ────────────────────────────────── */
 .sidebar-progress-stack {{
     display: grid;
-    gap: 0.08rem;
+    gap: 0.6rem;
 }}
 
 .sidebar-progress-item {{
     display: grid;
-    gap: 0.34rem;
+    gap: 0.4rem;
 }}
 
 .sidebar-progress-top {{
     display: flex;
     justify-content: space-between;
-    gap: 0.18rem;
-    font-size: 0.77rem;
+    gap: 0.3rem;
+    font-size: 0.84rem;
 }}
 
 .sidebar-progress-name {{
@@ -399,43 +336,43 @@ body {{
 /* ── SIDEBAR ACTION LIST ─────────────────────────────── */
 .sidebar-action-list {{
     display: grid;
-    gap: 0.24rem;
+    gap: 0.5rem;
 }}
 
 .sidebar-action-item {{
     display: flex;
-    gap: 0.08rem;
+    gap: 0.75rem;
     align-items: flex-start;
-    padding: 0.85rem 0.9rem;
+    padding: 0.95rem 1rem;
     border-radius: 14px !important;
     background: rgba(255,255,255,0.05) !important;
     border: 1px solid rgba(158,179,194,0.14) !important;
 }}
 
 .sidebar-action-icon {{
-    width: 34px;
-    height: 34px;
-    min-width: 34px;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: #cb4a5e !important;
     color: #FFFFFF !important;
-    font-size: 0.75rem;
+    font-size: 0.92rem;
     font-weight: 800;
 }}
 
 .sidebar-action-title {{
-    font-size: 0.84rem;
+    font-size: 0.9rem;
     font-weight: 800;
     color: #FFFFFF !important;
-    margin-bottom: 0.12rem;
+    margin-bottom: 0.25rem;
 }}
 
 .sidebar-action-text {{
-    font-size: 0.78rem;
-    line-height: 1.42;
+    font-size: 0.82rem;
+    line-height: 1.55;
     color: rgba(255,255,255,0.78) !important;
 }}
 
@@ -444,9 +381,10 @@ body {{
     background: rgba(255,255,255,0.06) !important;
     border: 1px solid rgba(158,179,194,0.14) !important;
     border-radius: 14px;
-    padding: 0.85rem 0.9rem;
+    padding: 1rem 1.05rem;
     color: rgba(255,255,255,0.88) !important;
-    line-height: 1.48;
+    line-height: 1.55;
+    font-size: 0.86rem;
 }}
 
 .sidebar-mini-note strong {{
@@ -457,18 +395,18 @@ body {{
 .sidebar-pill-row {{
     display: flex;
     flex-wrap: wrap;
-    gap: 0.18rem;
+    gap: 0.45rem;
 }}
 
 .sidebar-topic-pill {{
     display: inline-flex;
     align-items: center;
-    padding: 0.42rem 0.8rem;
+    padding: 0.46rem 0.88rem;
     border-radius: 999px;
     background: rgba(255,255,255,0.10) !important;
     border: 1px solid rgba(255,255,255,0.14) !important;
     color: #ffd9e9 !important;
-    font-size: 0.76rem;
+    font-size: 0.82rem;
     font-weight: 700;
     line-height: 1.2;
     box-shadow: 0 6px 12px rgba(0,0,0,0.12);
@@ -479,20 +417,20 @@ body {{
     background: rgba(255,255,255,0.06) !important;
     border: 1px solid rgba(158,179,194,0.14) !important;
     border-radius: 18px !important;
-    padding: 0.95rem !important;
-    margin-bottom: 0.85rem !important;
+    padding: 1.05rem !important;
+    margin-bottom: 0.9rem !important;
 }}
 
 .sidebar-legend-grid {{
     display: grid;
-    gap: 0.18rem;
+    gap: 0.5rem;
 }}
 
 .sidebar-legend-item {{
     display: flex;
-    gap: 0.19rem;
+    gap: 0.6rem;
     align-items: flex-start;
-    padding: 0.68rem 0.75rem;
+    padding: 0.75rem 0.85rem;
     border-radius: 14px;
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(158,179,194,0.14);
@@ -507,40 +445,40 @@ body {{
 }}
 
 .sidebar-legend-name {{
-    font-size: 0.82rem;
+    font-size: 0.88rem;
     font-weight: 800;
     color: #FFFFFF;
 }}
 
 .sidebar-legend-text {{
-    font-size: 0.76rem;
-    line-height: 1.38;
+    font-size: 0.82rem;
+    line-height: 1.45;
     color: rgba(255,255,255,0.74);
 }}
 
 .sidebar-legend-note {{
-    margin-top: 0.8rem;
-    font-size: 0.76rem;
-    line-height: 1.38;
+    margin-top: 0.85rem;
+    font-size: 0.82rem;
+    line-height: 1.45;
     color: rgba(255,255,255,0.74);
 }}
 
 /* ── TABS ────────────────────────────────────────────── */
 .stTabs [data-baseweb="tab-list"] {{
     background: #f5e9e2 !important;
-    border-radius: 14px !important;
+    border-radius: 16px !important;
     padding: 6px !important;
-    gap: 2px !important;
+    gap: 4px !important;
     border: 1px solid #e3b5a4 !important;
 }}
 
 .stTabs [data-baseweb="tab"] {{
     background: transparent !important;
-    border-radius: 8px !important;
+    border-radius: 10px !important;
     color: #8b6771 !important;
-    font-weight: 500 !important;
-    font-size: 0.7rem !important;
-    padding: 0.38rem 0.82rem !important;
+    font-weight: 600 !important;
+    font-size: 0.88rem !important;
+    padding: 0.5rem 1.1rem !important;
     border: none !important;
     transition: all 0.18s ease !important;
 }}
@@ -548,77 +486,25 @@ body {{
 .stTabs [aria-selected="true"] {{
     background: #cb4a5e !important;
     color: white !important;
-    font-weight: 600 !important;
+    font-weight: 700 !important;
     box-shadow: 0 6px 18px rgba(119,51,68,0.20) !important;
 }}
 
 .stTabs [data-baseweb="tab-panel"] {{
-    padding-top: 1.2rem;
-}}
-
-/* ── HEADER ──────────────────────────────────────────── */
-.header-main {{
-    background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(253,249,252,1) 100%) !important;
-    padding: 1.6rem 2rem;
-    margin-bottom: 1.4rem;
-    border: 1px solid #e3b5a4;
-    border-left: 5px solid #d44d5c !important;
-    border-radius: 18px !important;
-    box-shadow: 0 10px 28px rgba(59, 29, 74, 0.06) !important;
-    display: flex;
-    align-items: center;
-    gap: 0.18rem;
-}}
-
-.header-main h1 {{
-    font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 400;
-    color: #773344 !important;
-    margin: 0 0 0.35rem 0;
-    letter-spacing: -0.01em;
-    line-height: 1.2;
-}}
-
-.header-main p {{
-    color: #8b6771 !important;
-    font-size: 0.7rem;
-    font-weight: 400;
-    margin: 0;
-    line-height: 1.38;
+    padding-top: 1.4rem;
 }}
 
 /* ── HERO BANNER (MAIN CONTENT) ──────────────────────── */
-
-.hero-banner {{
-    position: relative;
-    border-radius: 24px;
-    overflow: hidden;
-    padding: 2.5rem 2rem;
-    color: white;
-
-    background-image: url('dashboard_background.png');
-    background-size: 80%;
-    background-repeat: no-repeat;
-    background-position: center;
-    
-    /* optional overlay */
-    background-color: rgba(0,0,0,0.4);
-    background-blend-mode: overlay;
-}}
-
-
 .hero-image-wrap {{
     position: relative;
-    height: 150px !important;
+    height: 180px !important;
     border-radius: 28px !important;
     overflow: hidden;
-    margin-bottom: 0.11rem;
+    margin-bottom: 0.7rem;
     border: 1px solid rgba(158,179,194,0.20);
     box-shadow: 0 18px 40px rgba(22, 0, 41, 0.14);
     background: linear-gradient(90deg, #0b2a56 0%, #4c224d 55%, #65104d 100%);
 }}
-
 
 .hero-single-image {{
     position: absolute;
@@ -630,31 +516,6 @@ body {{
     display: block;
     opacity: 0.62;
     filter: saturate(0.92) contrast(1.02) brightness(0.80);
-}}
-
-.hero-bg-fill {{
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: 72% center;
-    opacity: 0.58;
-    filter: saturate(0.92) contrast(1.02) brightness(0.78);
-    transform: scale(1.03);
-}}
-
-.hero-main-image {{
-    position: absolute;
-    right: 4%;
-    bottom: 0;
-    height: 100%;
-    width: auto;
-    max-width: 44%;
-    object-fit: contain;
-    object-position: right bottom;
-    z-index: 2;
-    filter: saturate(0.95) contrast(1.02) brightness(0.92);
 }}
 
 .hero-image-overlay {{
@@ -678,47 +539,46 @@ body {{
 
 .hero-image-content {{
     width: 100%;
-    max-width: 58% !important;
+    max-width: 62% !important;
 }}
 
 .hero-kicker {{
     display: inline-flex;
     align-items: center;
-    padding: 0.48rem 1rem;
+    padding: 0.5rem 1.1rem;
     border-radius: 999px;
     background: rgba(255,255,255,0.10);
     border: 1px solid rgba(255,255,255,0.20);
     color: #ffffff;
-    font-size: 0.78rem;
+    font-size: 0.84rem;
     font-weight: 800;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-    margin-bottom: 0.13rem;
+    margin-bottom: 0.6rem;
     backdrop-filter: blur(4px);
 }}
 
 .hero-image-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.6rem !important;
+    font-size: 2rem !important;
     font-weight: 800;
-    line-height: 1.04;
+    line-height: 1.05;
     letter-spacing: -0.03em;
     color: #ffffff !important;
-    margin: 0 0 0.7rem 0;
+    margin: 0 0 0.6rem 0;
     text-shadow: 0 8px 18px rgba(0,0,0,0.20) !important;
 }}
 
 .hero-image-subtitle {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.72rem;
-    font-weight: 600;
-    line-height: 1.38;
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.5;
     color: rgba(255,255,255,0.92) !important;
     margin: 0;
     max-width: 92%;
     text-shadow: 0 2px 8px rgba(0,0,0,0.18);
 }}
-
 
 /* ── SECTION BANNER ──────────────────────────────────── */
 .section-banner {{
@@ -733,28 +593,10 @@ body {{
     background: linear-gradient(135deg, #160029, #773344);
 }}
 
-.section-banner img {{
-    width: 100%;
-    height: 100%;
-    min-height: 95px;
-    max-height: 90px;
-    object-fit: cover;
-    display: block;
-}}
-
-.section-banner-overlay {{
-    position: absolute;
-    inset: 0;
-    background: rgba(27,59,111,0.48);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}}
-
 .section-banner-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.4rem;
-    font-weight: 400;
+    font-size: 1.5rem;
+    font-weight: 700;
     color: #FFFFFF;
     margin: 0;
     text-shadow: 0 2px 8px rgba(15,32,68,0.25);
@@ -765,17 +607,13 @@ body {{
 .soft-card, .card {{
     background: #FFFFFF;
     border-radius: 18px !important;
-    padding: 0.82rem;
+    padding: 1.1rem;
     border: 1px solid #D2DCE5 !important;
     box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
     color: #2a1421;
 }}
 
-.card {{
-    transition: all 0.22s ease;
-    height: 100%;
-}}
-
+.card {{ transition: all 0.22s ease; height: 100%; }}
 .card:hover {{
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(15,32,68,0.10);
@@ -784,11 +622,11 @@ body {{
 
 .card-header {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.82rem;
+    font-size: 0.92rem;
     font-weight: 700;
     color: #160029;
-    margin-bottom: 0.08rem;
-    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.6rem;
     border-bottom: 2px solid #f5e9e2;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -798,7 +636,7 @@ body {{
 .metric-card {{
     background: #FFFFFF;
     border-radius: 18px !important;
-    padding: 0.72rem 0.78rem;
+    padding: 1.1rem 1.2rem;
     border: 1px solid #D2DCE5 !important;
     box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
     text-align: center;
@@ -810,10 +648,8 @@ body {{
 .metric-card::before {{
     content: "";
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
+    top: 0; left: 0; right: 0;
+    height: 5px;
     background: linear-gradient(90deg, #d44d5c 0%, #773344 100%) !important;
 }}
 
@@ -821,21 +657,23 @@ body {{
 .metric-card-mid::before  {{ background: #F1A208 !important; }}
 .metric-card-low::before  {{ background: #A31621 !important; }}
 
+/* TITLE HIERARCHY — KEY RULE: section title > card title > body text */
+
 .metric-label {{
-    font-size: 0.72rem;
+    font-size: 0.8rem;
     font-weight: 700;
     color: #8b6771;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.65rem;
     letter-spacing: 0.06em;
     text-transform: uppercase;
 }}
 
 .metric-value {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.35rem;
-    font-weight: 400;
+    font-size: 1.7rem;
+    font-weight: 700;
     color: #773344;
-    line-height: 1.2;
+    line-height: 1.1;
 }}
 
 .metric-value-good {{ color: #06A77D !important; }}
@@ -843,12 +681,13 @@ body {{
 .metric-value-low  {{ color: #A31621 !important; }}
 
 /* ── SECTION TITLES ──────────────────────────────────── */
+/* These are the BIG titles — visible, clear labels for each section */
 .section-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.08rem;
-    font-weight: 400;
+    font-size: 1.3rem;
+    font-weight: 700;
     color: #773344;
-    margin: 1.8rem 0 1.1rem 0;
+    margin: 1.8rem 0 1rem 0;
     position: relative;
     display: inline-block;
     padding-bottom: 0.6rem;
@@ -858,71 +697,56 @@ body {{
 .section-title::after {{
     content: '';
     position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 48px;
-    height: 3px;
+    left: 0; bottom: 0;
+    width: 48px; height: 3px;
     background: linear-gradient(90deg, #d44d5c 0%, #773344 100%);
     border-radius: 2px;
 }}
 
+/* Section subtitle — slightly smaller than main title */
 .section-subtitle {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.72rem;
-    font-weight: 600;
+    font-size: 1.05rem;
+    font-weight: 700;
     color: #160029;
-    margin: 1.2rem 0 0.85rem 0;
+    margin: 1.3rem 0 0.9rem 0;
     letter-spacing: -0.01em;
 }}
 
 /* ── MESSAGE BOXES ───────────────────────────────────── */
 .msg-box {{
-    padding: 0.55rem 0.75rem;
+    padding: 0.85rem 1rem;
     border-radius: 16px !important;
-    margin: 0.85rem 0;
+    margin: 1rem 0;
     background: #FFFFFF;
     border: 1px solid #e3b5a4;
     border-left: 5px solid #773344;
     box-shadow: 0 2px 8px rgba(15,32,68,0.05);
     color: #2a1421;
-    line-height: 1.45;
-    font-size: 0.72rem;
+    line-height: 1.6;
+    font-size: 0.9rem;
 }}
 
-.msg-box strong {{
-    color: #160029;
-}}
-
-.msg-success {{
-    border-left-color: #06A77D !important;
-    background: #f6fbf8 !important;
-}}
-
-.msg-info {{
-    border-left-color: #773344 !important;
-    background: #faf4f8 !important;
-}}
-
-.msg-warning {{
-    border-left-color: #F1A208 !important;
-    background: #fff8ef !important;
-}}
+.msg-box strong {{ color: #160029; }}
+.msg-success {{ border-left-color: #06A77D !important; background: #f6fbf8 !important; }}
+.msg-info    {{ border-left-color: #773344 !important; background: #faf4f8 !important; }}
+.msg-warning {{ border-left-color: #F1A208 !important; background: #fff8ef !important; }}
 
 /* ── KEYWORD CHIPS ───────────────────────────────────── */
 .keyword-container {{
     display: flex;
     flex-wrap: wrap;
-    gap: 0.08rem;
+    gap: 0.5rem;
     margin-top: 0.85rem;
 }}
 
 .keyword-match, .keyword-miss {{
     display: inline-flex;
     align-items: center;
-    padding: 0.36rem 0.85rem;
-    border-radius: 6px;
-    font-size: 0.83rem;
-    font-weight: 500;
+    padding: 0.44rem 1rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 600;
 }}
 
 .keyword-match {{
@@ -941,55 +765,57 @@ body {{
 .fatwa-box {{
     background: #FFFFFF;
     border-radius: 18px !important;
-    padding: 0.5rem 0.6rem;
+    padding: 1.1rem 1.2rem;
     border: 1px solid #D2DCE5 !important;
     box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
     color: #2a1421;
-    margin-bottom: 0.08rem;
+    margin-bottom: 0.75rem;
 }}
 
 .fatwa-meta-row {{
     display: flex;
     flex-wrap: wrap;
-    gap: 0.15rem;
-    margin-bottom: 0.15rem;
+    gap: 0.5rem;
+    margin-bottom: 0.6rem;
 }}
 
 .fatwa-meta-pill {{
     display: inline-flex;
     align-items: center;
-    gap: 0.09rem;
-    padding: 0.3rem 0.65rem;
-    border-radius: 6px;
+    gap: 0.3rem;
+    padding: 0.38rem 0.8rem;
+    border-radius: 8px;
     background: #f5e9e2;
     border: 1px solid #e3b5a4;
     color: #5f2840;
-    font-size: 0.75rem;
-    font-weight: 500;
+    font-size: 0.84rem;
+    font-weight: 600;
 }}
 
+/* Fatwa title — big enough to read easily */
 .fatwa-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 0.7rem;
-    font-weight: 400;
+    font-size: 1.2rem;
+    font-weight: 700;
     color: #160029;
-    margin-bottom: 0.18rem;
-    line-height: 1.25;
+    margin-bottom: 0.6rem;
+    line-height: 1.3;
     word-break: break-word;
 }}
 
 .fatwa-text-panel {{
     background: linear-gradient(180deg, #ffffff 0%, #f9f1ec 100%);
     border: 1px solid #e3b5a4;
-    border-radius: 8px;
-    padding: 0.5rem 0.65rem;
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
 }}
 
+/* Fatwa body text — comfortable reading size */
 .fatwa-text-panel p {{
     margin: 0;
     color: #160029;
-    line-height: 1.45;
-    font-size: 0.68rem;
+    line-height: 1.75;
+    font-size: 0.95rem;
     white-space: pre-wrap;
     word-break: break-word;
 }}
@@ -997,41 +823,24 @@ body {{
 /* ── BADGES ──────────────────────────────────────────── */
 .badge {{
     display: inline-block;
-    padding: 0.28rem 0.8rem;
-    border-radius: 5px;
-    font-size: 0.74rem;
+    padding: 0.32rem 0.9rem;
+    border-radius: 6px;
+    font-size: 0.84rem;
     font-weight: 700;
     letter-spacing: 0.03em;
     text-transform: uppercase;
 }}
 
-.badge-good {{
-    background: rgba(25,135,84,0.12) !important;
-    color: #198754 !important;
-    border: 1px solid rgba(25,135,84,0.26) !important;
-}}
-
-.badge-mid {{
-    background: rgba(194,125,6,0.12) !important;
-    color: #9A6A18 !important;
-    border: 1px solid rgba(194,125,6,0.24) !important;
-}}
-
-.badge-low {{
-    background: rgba(180,35,79,0.10) !important;
-    color: #b4234f !important;
-    border: 1px solid rgba(180,35,79,0.20) !important;
-}}
+.badge-good {{ background: rgba(25,135,84,0.12) !important; color: #198754 !important; border: 1px solid rgba(25,135,84,0.26) !important; }}
+.badge-mid  {{ background: rgba(194,125,6,0.12) !important; color: #9A6A18 !important; border: 1px solid rgba(194,125,6,0.24) !important; }}
+.badge-low  {{ background: rgba(180,35,79,0.10) !important; color: #b4234f !important; border: 1px solid rgba(180,35,79,0.20) !important; }}
 
 /* ── SCORE CIRCLE ────────────────────────────────────── */
 .score-circle {{
-    width: 136px;
-    height: 136px;
+    width: 136px; height: 136px;
     border-radius: 50%;
     margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     position: relative;
     box-shadow: 0 4px 20px rgba(15,32,68,0.14);
 }}
@@ -1039,8 +848,7 @@ body {{
 .score-circle::before {{
     content: '';
     position: absolute;
-    width: 108px;
-    height: 108px;
+    width: 108px; height: 108px;
     border-radius: 50%;
     background: #FFFFFF;
 }}
@@ -1049,8 +857,8 @@ body {{
     position: relative;
     z-index: 2;
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.28rem;
-    font-weight: 400;
+    font-size: 1.45rem;
+    font-weight: 700;
     color: #773344;
 }}
 .score-circle-good .score-circle-inner {{ color: #198754; }}
@@ -1061,27 +869,27 @@ body {{
 .info-grid {{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
-    gap: 0.08rem;
+    gap: 0.75rem;
 }}
 
 .info-item {{
     background: #EEF4F8;
-    padding: 0.9rem;
-    border-radius: 8px;
+    padding: 1rem;
+    border-radius: 10px;
     border: 1px solid #e3b5a4;
 }}
 
 .info-label {{
-    font-size: 0.72rem;
+    font-size: 0.8rem;
     font-weight: 700;
     color: #8b6771;
-    margin-bottom: 0.08rem;
+    margin-bottom: 0.3rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }}
 
 .info-value {{
-    font-size: 0.96rem;
+    font-size: 1.05rem;
     font-weight: 600;
     color: #2a1421;
     word-break: break-word;
@@ -1093,7 +901,7 @@ body {{
 .divider {{
     height: 1px;
     background: #e3b5a4;
-    margin: 1.8rem 0;
+    margin: 2rem 0;
     opacity: 0.8;
 }}
 
@@ -1101,7 +909,7 @@ body {{
 .result-card {{
     background: #FFFFFF;
     border-radius: 18px !important;
-    padding: 0.82rem 0.78rem;
+    padding: 1.1rem 1.2rem;
     border: 1px solid #D2DCE5 !important;
     box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
     text-align: center;
@@ -1114,7 +922,7 @@ body {{
     content: "";
     position: absolute;
     top: 0; left: 0; right: 0;
-    height: 4px;
+    height: 5px;
     background: linear-gradient(90deg, #d44d5c 0%, #773344 100%) !important;
 }}
 
@@ -1124,18 +932,18 @@ body {{
 
 .result-card-title {{
     color: #8b6771;
-    font-weight: 600;
-    font-size: 0.78rem;
-    margin-bottom: 0.15rem;
+    font-weight: 700;
+    font-size: 0.84rem;
+    margin-bottom: 0.4rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }}
 
 .result-card-score {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.28rem;
-    font-weight: 400;
-    margin: 0.3rem 0 0.5rem 0;
+    font-size: 1.65rem;
+    font-weight: 700;
+    margin: 0.4rem 0 0.55rem 0;
 }}
 
 .result-card-score-good {{ color: #06A77D; }}
@@ -1144,15 +952,15 @@ body {{
 
 .result-card-text {{
     color: #5d3945;
-    font-size: 0.68rem;
-    line-height: 1.42;
+    font-size: 0.85rem;
+    line-height: 1.55;
 }}
 
 /* ── POINTS CARD ─────────────────────────────────────── */
 .points-card {{
     background: #FFFFFF;
     border-radius: 18px !important;
-    padding: 0.82rem;
+    padding: 1.1rem 1.2rem;
     border: 1px solid #D2DCE5 !important;
     box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
     height: 100%;
@@ -1160,11 +968,11 @@ body {{
 
 .points-card-header {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.78rem;
+    font-size: 0.88rem;
     font-weight: 700;
     color: #160029;
-    margin-bottom: 0.08rem;
-    padding-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
+    padding-bottom: 0.55rem;
     border-bottom: 1px solid #e3b5a4;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -1173,210 +981,18 @@ body {{
 /* ── SMALL NOTE ──────────────────────────────────────── */
 .small-note {{
     color: #8b6771;
-    font-size: 0.74rem;
-    line-height: 1.42;
+    font-size: 0.88rem;
+    line-height: 1.55;
 }}
 
 /* ── CHART CARD ──────────────────────────────────────── */
 .chart-card {{
     background: #FFFFFF;
     border-radius: 18px !important;
-    padding: 1rem 1rem 0.6rem 1rem;
+    padding: 1.2rem 1.2rem 0.8rem 1.2rem;
     border: 1px solid #D2DCE5 !important;
     box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
-    margin-bottom: 0.13rem;
-}}
-
-/* ── SIMILARITY BREAKDOWN (BEAUTIFUL CARD) ───────────── */
-.similarity-visual-shell {{
-    background: linear-gradient(135deg, #ffffff 0%, #faf4f8 100%);
-    border: 1px solid #e3b5a4;
-    border-radius: 24px;
-    padding: 1.5rem;
-    box-shadow: 0 12px 28px rgba(25, 14, 36, 0.08);
-    margin-bottom: 0.13rem;
-}}
-
-.similarity-visual-head {{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid #e3b5a4;
-}}
-
-.similarity-visual-kicker {{
-    color: #773344;
-    font-size: 0.7rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 0.2rem;
-}}
-
-.similarity-visual-title {{
-    font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 0.96rem;
-    color: #160029;
-}}
-
-.similarity-score-pill {{
-    background: rgba(253,3,99,0.12);
-    border: 1.5px solid #d44d5c;
-    border-radius: 40px;
-    padding: 0.5rem 1.2rem;
-}}
-
-.similarity-score-pill span {{
-    color: #d44d5c;
-    font-weight: 800;
-    font-size: 0.75rem;
-}}
-
-.similarity-ring-row {{
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
-}}
-
-.similarity-ring {{
-    width: 130px;
-    height: 95px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-    flex-shrink: 0;
-}}
-
-.similarity-ring-inner {{
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: #ffffff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-}}
-
-.similarity-ring-inner strong {{
-    font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.8rem;
-    line-height: 1;
-}}
-
-.similarity-ring-inner span {{
-    font-size: 0.7rem;
-    color: #8b6771;
-}}
-
-.similarity-ring-copy h3 {{
-    margin: 0 0 0.4rem 0;
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    color: #160029;
-}}
-
-.similarity-ring-copy p {{
-    margin: 0;
-    color: #5d3945;
-    line-height: 1.42;
-}}
-
-.similarity-mini-grid {{
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.08rem;
-    margin-bottom: 1.5rem;
-}}
-
-.similarity-mini-card {{
-    background: #f9f1ec;
-    border-radius: 12px;
-    padding: 0.75rem;
-    border-left: 4px solid #e3b5a4;
-}}
-
-.similarity-mini-card span {{
-    color: #8b6771;
-    font-size: 0.7rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    display: block;
-    margin-bottom: 0.13rem;
-}}
-
-.similarity-mini-card strong {{
-    font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.4rem;
-    font-weight: 400;
-    display: block;
-    margin-bottom: 0.2rem;
-}}
-
-.similarity-mini-card p {{
-    margin: 0;
-    color: #5d3945;
-    font-size: 0.75rem;
-    line-height: 1.5;
-}}
-
-.similarity-bars-wrap {{
-    background: #f9f1ec;
-    border-radius: 18px;
-    padding: 1rem;
-    border: 1px solid #e3b5a4;
-}}
-
-.similarity-bars-title {{
-    color: #8b6771;
-    font-size: 0.75rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    margin-bottom: 0.13rem;
-    letter-spacing: 0.05em;
-}}
-
-.similarity-bar-row {{
-    display: flex;
-    align-items: center;
-    gap: 0.08rem;
-    margin-bottom: 0.2rem;
-}}
-
-.similarity-bar-row label {{
-    width: 80px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #773344;
-}}
-
-.similarity-bar-track {{
-    flex: 1;
-    height: 8px;
-    background: #e3b5a4;
-    border-radius: 10px;
-    overflow: hidden;
-}}
-
-.similarity-bar-fill {{
-    height: 100%;
-    border-radius: 10px;
-    background: linear-gradient(90deg, #d44d5c, #b24758);
-}}
-
-.similarity-bar-row strong {{
-    width: 40px;
-    text-align: right;
-    color: #160029;
-    font-size: 0.85rem;
-    font-weight: 700;
+    margin-bottom: 0.75rem;
 }}
 
 /* ── BUTTONS ─────────────────────────────────────────── */
@@ -1386,13 +1002,14 @@ body {{
     color: white !important;
     border: none !important;
     border-radius: 12px !important;
-    font-weight: 600 !important;
+    font-weight: 700 !important;
     font-family: 'Inter', sans-serif !important;
-    padding: 0.34rem 0.78rem !important;
-    font-size: 0.7rem !important;
+    padding: 0.55rem 1.1rem !important;
+    font-size: 0.92rem !important;
     box-shadow: 0 10px 22px rgba(119,51,68,0.18) !important;
     transition: all 0.18s ease !important;
     letter-spacing: 0.01em !important;
+    min-height: 44px !important;
 }}
 
 .stButton > button:hover,
@@ -1417,13 +1034,11 @@ body {{
 [data-testid="stRadio"] label:first-of-type {{
     color: #160029 !important;
     font-family: 'Inter', sans-serif !important;
-    font-size: 0.75rem !important;
+    font-size: 0.92rem !important;
     font-weight: 700 !important;
-    letter-spacing: 0.06em !important;
-    margin-bottom: 0.35rem !important;
+    letter-spacing: 0.04em !important;
+    margin-bottom: 0.45rem !important;
 }}
-
-
 
 /* ── RADIO / SEGMENTED INPUTS ────────────────────────── */
 [data-testid="stRadio"] > div {{color:#2a1421 !important;}}
@@ -1432,17 +1047,17 @@ body {{
     background: linear-gradient(180deg,#fffdfc 0%,#fbf3ee 100%) !important;
     border: 1px solid #e3b5a4 !important;
     border-radius: 22px !important;
-    padding: 0.4rem !important;
-    gap: 0.45rem !important;
+    padding: 0.45rem !important;
+    gap: 0.5rem !important;
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.55);
 }}
 [data-testid="stRadio"] [role="radiogroup"] > label {{
     flex: 1 1 0 !important;
     justify-content: center !important;
     text-align: center !important;
-    min-height: 36px !important;
+    min-height: 42px !important;
     border-radius: 16px !important;
-    padding: 0.34rem 0.62rem !important;
+    padding: 0.42rem 0.8rem !important;
     transition: all 0.18s ease !important;
     border: 1px solid transparent !important;
 }}
@@ -1454,9 +1069,9 @@ body {{
 }}
 [data-testid="stRadio"] [role="radiogroup"] > label:has(input:checked) p {{color:#ffffff !important;}}
 [data-testid="stRadio"] [role="radiogroup"] input {{display:none !important;}}
-[data-testid="stRadio"] [role="radiogroup"] p {{color:#5d3945 !important;font-weight:700 !important;font-size:0.72rem !important;opacity:1 !important;}}
+[data-testid="stRadio"] [role="radiogroup"] p {{color:#5d3945 !important;font-weight:700 !important;font-size:0.9rem !important;opacity:1 !important;}}
 
-/* ── INPUT SURFACES / LIGHTER SELECTS ───────────────── */
+/* ── INPUT SURFACES ──────────────────────────────────── */
 [data-testid="stMultiSelect"] [data-baseweb="select"] > div,
 [data-testid="stSelectbox"] [data-baseweb="select"] > div,
 [data-testid="stTextInputRootElement"],
@@ -1464,17 +1079,9 @@ body {{
     background: linear-gradient(180deg, #fffefe 0%, #fbf4ef 100%) !important;
     border: 1.5px solid #e3b5a4 !important;
     border-radius: 18px !important;
-    min-height: 44px !important;
+    min-height: 50px !important;
     box-shadow: 0 8px 18px rgba(44, 21, 33, 0.06) !important;
-    transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease !important;
-}}
-
-[data-testid="stMultiSelect"] [data-baseweb="select"] > div:hover,
-[data-testid="stSelectbox"] [data-baseweb="select"] > div:hover,
-[data-testid="stTextInputRootElement"]:hover,
-.stTextInput > div > div:hover {{
-    border-color: #d49287 !important;
-    box-shadow: 0 10px 22px rgba(44, 21, 33, 0.08) !important;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease !important;
 }}
 
 [data-testid="stMultiSelect"] [data-baseweb="select"] > div:focus-within,
@@ -1483,7 +1090,6 @@ body {{
 .stTextInput > div > div:focus-within {{
     border-color: #b24758 !important;
     box-shadow: 0 0 0 4px rgba(212,77,92,0.12), 0 12px 24px rgba(44,21,33,0.08) !important;
-    transform: translateY(-1px);
 }}
 
 [data-testid="stMultiSelect"] [data-baseweb="tag"] {{
@@ -1491,7 +1097,6 @@ body {{
     color:#4a2030 !important;
     border-radius:999px !important;
     border:1px solid rgba(178,71,88,0.18) !important;
-    box-shadow:none !important;
 }}
 [data-testid="stMultiSelect"] [data-baseweb="tag"] * {{color:#4a2030 !important;}}
 [data-testid="stMultiSelect"] input,
@@ -1507,27 +1112,26 @@ body {{
     border: 1.5px solid #e3b5a4 !important;
     border-radius: 22px !important;
     box-shadow: 0 10px 24px rgba(44,21,33,0.06) !important;
-    padding: 0.35rem !important;
-    transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease !important;
+    padding: 0.4rem !important;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease !important;
 }}
 
 .stTextArea > div > div:focus-within {{
     border-color: #b24758 !important;
     box-shadow: 0 0 0 4px rgba(212,77,92,0.12), 0 14px 28px rgba(44,21,33,0.08) !important;
-    transform: translateY(-1px);
 }}
 
 .stTextArea textarea {{
     background: transparent !important;
     border: none !important;
     border-radius: 18px !important;
-    padding: 0.65rem 0.7rem 0.72rem 0.7rem !important;
+    padding: 0.8rem 0.9rem !important;
     color: #2a1421 !important;
-    font-size: 0.74rem !important;
+    font-size: 0.95rem !important;
     font-family: 'Inter', sans-serif !important;
-    line-height: 1.45 !important;
+    line-height: 1.6 !important;
     box-shadow: none !important;
-    min-height: 150px !important;
+    min-height: 160px !important;
 }}
 
 .stTextArea textarea:focus {{
@@ -1540,6 +1144,7 @@ body {{
 .stTextInput input::placeholder {{
     color: #9a7b87 !important;
     opacity: 1 !important;
+    font-size: 0.92rem !important;
 }}
 
 /* ── TEXT INPUT ──────────────────────────────────────── */
@@ -1547,17 +1152,11 @@ body {{
     background: transparent !important;
     border: none !important;
     border-radius: 16px !important;
-    padding: 0.38rem 0.5rem !important;
+    padding: 0.5rem 0.7rem !important;
     color: #2a1421 !important;
-    font-size: 0.74rem !important;
+    font-size: 0.92rem !important;
     font-family: 'Inter', sans-serif !important;
     box-shadow: none !important;
-}}
-
-.stTextInput input:focus {{
-    border: none !important;
-    box-shadow: none !important;
-    outline: none !important;
 }}
 
 /* ── SELECTBOX / MULTISELECT ─────────────────────────── */
@@ -1568,7 +1167,7 @@ body {{
     border: none !important;
     border-radius: 16px !important;
     color: #2a1421 !important;
-    font-size: 0.74rem !important;
+    font-size: 0.92rem !important;
     font-family: 'Inter', sans-serif !important;
     box-shadow: none !important;
 }}
@@ -1584,7 +1183,7 @@ body {{
 /* ── LIGHT TABLE ─────────────────────────────────────── */
 .light-table-wrap {{
     overflow-x: auto;
-    border-radius: 16px;
+    border-radius: 18px;
     border: 1px solid #e3b5a4;
     box-shadow: 0 10px 24px rgba(39,34,51,0.08);
     background: #FFFFFF;
@@ -1595,121 +1194,89 @@ body {{
     border-collapse: separate;
     border-spacing: 0;
     overflow: hidden;
-    border-radius: 16px;
+    border-radius: 18px;
 }}
 
+/* Table headers — readable labels */
 .light-table thead th {{
     background: #f7f0f5 !important;
     color: #773344 !important;
     font-weight: 700;
-    font-size: 0.78rem;
-    padding: 0.65rem 0.72rem;
+    font-size: 0.88rem;
+    padding: 0.85rem 1rem;
     text-align: left;
     white-space: nowrap;
     letter-spacing: 0.03em;
     border-bottom: 1px solid rgba(0,0,0,0.05);
 }}
 
-.light-table thead th:first-child {{
-    border-radius: 16px 0 0 0;
-}}
+.light-table thead th:first-child {{ border-radius: 18px 0 0 0; }}
+.light-table thead th:last-child  {{ border-radius: 0 18px 0 0; }}
 
-.light-table thead th:last-child {{
-    border-radius: 0 16px 0 0;
-}}
-
+/* Table cell text — comfortable size */
 .light-table tbody td {{
     background: #FFFFFF;
     color: #2a1421;
-    font-size: 0.68rem;
-    padding: 0.6rem 0.8rem;
+    font-size: 0.88rem;
+    padding: 0.85rem 1rem;
     border-bottom: 1px solid #e3b5a4;
     vertical-align: middle;
-    line-height: 1.48;
+    line-height: 1.6;
 }}
 
-.light-table tbody tr:nth-child(even) td {{
-    background: #FCF8F5;
-}}
-
-.light-table tbody tr:hover td {{
-    background: #F8EFE8;
-    transition: background 0.14s ease;
-}}
-
-.light-table tbody tr:last-child td {{
-    border-bottom: none;
-}}
+.light-table tbody tr:nth-child(even) td {{ background: #FCF8F5; }}
+.light-table tbody tr:hover td {{ background: #F8EFE8; transition: background 0.14s ease; }}
+.light-table tbody tr:last-child td {{ border-bottom: none; }}
 
 /* ── OVERVIEW CHART CARD ─────────────────────────────── */
 .overview-chart-card {{
     background: #FFFFFF;
     border-radius: 18px !important;
-    padding: 0.55rem 0.75rem 0.85rem 1.2rem;
+    padding: 0.75rem 1rem 1rem 1.3rem;
     border: 1px solid #D2DCE5 !important;
     box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
-    margin-bottom: 0.18rem;
-}}
-
-.overview-chart-header {{
-    display: flex;
-    align-items: center;
-    gap: 0.18rem;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.68rem;
-    font-weight: 700;
-    color: #160029;
-    flex-wrap: wrap;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+    margin-bottom: 0.75rem;
 }}
 
 /* ── TOPIC CARDS ─────────────────────────────────────── */
 .topic-card-grid {{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 0.18rem;
+    gap: 0.75rem;
 }}
 
 .topic-card {{
     background: #FFFFFF;
     border: 1px solid #e3b5a4;
     border-top: 5px solid #b24758;
-    border-radius: 16px;
-    padding: 1rem;
+    border-radius: 18px;
+    padding: 1.2rem;
     box-shadow: 0 8px 18px rgba(39,34,51,0.08);
 }}
 
 .topic-card-title {{
-    font-size: 0.96rem;
+    font-size: 1.05rem;
     font-weight: 800;
     color: #2a1421;
     line-height: 1.45;
-    margin-bottom: 0.18rem;
-}}
-
-.topic-card-meta {{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.6rem;
+    margin-bottom: 0.4rem;
 }}
 
 .topic-card-pill {{
     display: inline-flex;
     align-items: center;
-    padding: 0.38rem 0.74rem;
+    padding: 0.42rem 0.85rem;
     border-radius: 999px;
     background: #f5e9e2;
     color: #160029;
     border: 1px solid #e3b5a4;
-    font-size: 0.76rem;
+    font-size: 0.84rem;
     font-weight: 800;
 }}
 
 .topic-card-count {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 0.96rem;
+    font-size: 1.05rem;
     color: #773344;
 }}
 
@@ -1718,26 +1285,20 @@ body {{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 0.08rem;
+    gap: 0.5rem;
     flex-wrap: wrap;
     background: #FFFFFF;
     border: 1px solid #e3b5a4;
     border-left: 5px solid #b24758;
     border-radius: 14px;
-    padding: 0.55rem 0.7rem;
-    margin-bottom: 0.08rem;
+    padding: 0.65rem 0.9rem;
+    margin-bottom: 0.5rem;
 }}
 
 .pager-note {{
     color: #8b6771;
-    font-size: 0.84rem;
+    font-size: 0.92rem;
     line-height: 1.5;
-}}
-
-.pager-actions {{
-    display: flex;
-    gap: 0.08rem;
-    align-items: center;
 }}
 
 .pager-chip {{
@@ -1745,33 +1306,33 @@ body {{
     align-items: center;
     justify-content: center;
     min-width: 90px;
-    padding: 0.5rem 0.85rem;
+    padding: 0.5rem 0.95rem;
     border-radius: 999px;
     background: #f5e9e2;
     color: #160029;
     border: 1px solid #e3b5a4;
-    font-size: 0.8rem;
+    font-size: 0.88rem;
     font-weight: 700;
 }}
 
 /* ── COMPARISON CARD ─────────────────────────────────── */
 .comparison-card {{
     background: #FFFFFF;
-    border-radius: 12px;
-    padding: 1.2rem;
+    border-radius: 16px;
+    padding: 1.3rem;
     border: 1px solid #e3b5a4;
     box-shadow: 0 2px 10px rgba(15,32,68,0.06);
-    margin-bottom: 0.11rem;
+    margin-bottom: 0.75rem;
     height: 100%;
 }}
 
 .comparison-card-header {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.68rem;
+    font-size: 1rem;
     font-weight: 700;
     color: #160029;
-    margin-bottom: 0.15rem;
-    padding-bottom: 0.45rem;
+    margin-bottom: 0.55rem;
+    padding-bottom: 0.55rem;
     border-bottom: 2px solid #f5e9e2;
     line-height: 1.3;
     word-break: break-word;
@@ -1780,21 +1341,21 @@ body {{
 /* ── ALIGNMENT RANKING ───────────────────────────────── */
 .align-panel-title {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.78rem;
+    font-size: 0.88rem;
     font-weight: 700;
     color: #8b6771;
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.55rem;
     letter-spacing: 0.06em;
     text-transform: uppercase;
 }}
 
 .align-rank-card {{
     background: #FFFFFF;
-    border-radius: 10px;
+    border-radius: 14px;
     border: 1px solid #e3b5a4;
     box-shadow: 0 2px 8px rgba(15,32,68,0.05);
-    padding: 0.55rem 0.75rem;
-    margin-bottom: 0.15rem;
+    padding: 0.9rem 1rem;
+    margin-bottom: 0.6rem;
     transition: transform 0.16s ease, box-shadow 0.16s ease;
 }}
 
@@ -1803,12 +1364,13 @@ body {{
     box-shadow: 0 5px 16px rgba(15,32,68,0.08);
 }}
 
+/* Rank card topic label */
 .align-rank-topic {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.72rem;
-    font-weight: 600;
+    font-size: 0.95rem;
+    font-weight: 700;
     color: #160029;
-    margin-bottom: 0.15rem;
+    margin-bottom: 0.4rem;
     line-height: 1.4;
     word-break: break-word;
 }}
@@ -1816,28 +1378,28 @@ body {{
 .align-rank-row {{
     display: flex;
     align-items: center;
-    gap: 0.08rem;
-    margin-bottom: 0.45rem;
+    gap: 0.55rem;
+    margin-bottom: 0.5rem;
     flex-wrap: wrap;
 }}
 
 .align-score {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.25rem;
-    font-weight: 400;
+    font-size: 1.35rem;
+    font-weight: 700;
     line-height: 1;
 }}
 
 .align-band {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.76rem;
+    font-size: 0.88rem;
     font-weight: 600;
     letter-spacing: 0.02em;
 }}
 
 .align-n {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.72rem;
+    font-size: 0.84rem;
     color: #8b6771;
     margin-left: auto;
 }}
@@ -1845,7 +1407,7 @@ body {{
 .align-bar-bg {{
     background: #f5e9e2;
     border-radius: 99px;
-    height: 5px;
+    height: 7px;
     width: 100%;
     overflow: hidden;
 }}
@@ -1859,15 +1421,15 @@ body {{
 .align-full-row {{
     display: flex;
     align-items: center;
-    gap: 0.18rem;
-    padding: 0.45rem 0;
+    gap: 0.55rem;
+    padding: 0.55rem 0;
     border-bottom: 1px solid #e3b5a4;
     flex-wrap: nowrap;
 }}
 
 .align-full-rank {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.76rem;
+    font-size: 0.88rem;
     font-weight: 700;
     min-width: 2rem;
     color: #8b6771;
@@ -1875,7 +1437,7 @@ body {{
 
 .align-full-topic {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.83rem;
+    font-size: 0.95rem;
     color: #2a1421;
     min-width: 150px;
     word-break: break-word;
@@ -1885,7 +1447,7 @@ body {{
 
 .align-full-score {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     font-weight: 700;
     min-width: 3.5rem;
     text-align: right;
@@ -1893,7 +1455,7 @@ body {{
 
 .align-full-n {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.72rem;
+    font-size: 0.84rem;
     color: #8b6771;
     min-width: 2.5rem;
 }}
@@ -1904,31 +1466,31 @@ body {{
     align-items: stretch;
     gap: 0;
     background: #FFFFFF;
-    border-radius: 8px;
+    border-radius: 10px;
     border: 1px solid #e3b5a4;
     box-shadow: 0 2px 8px rgba(15,32,68,0.05);
-    margin-bottom: 0.15rem;
+    margin-bottom: 0.55rem;
     overflow: hidden;
 }}
 
 .donut-insight-accent {{
-    width: 4px;
+    width: 5px;
     min-height: 100%;
     flex-shrink: 0;
     border-radius: 0;
 }}
 
 .donut-insight-body {{
-    padding: 0.65rem 0.9rem;
+    padding: 0.8rem 1rem;
     flex: 1;
 }}
 
 .donut-insight-name {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.68rem;
-    font-weight: 600;
+    font-size: 0.92rem;
+    font-weight: 700;
     color: #160029;
-    margin-bottom: 0.18rem;
+    margin-bottom: 0.25rem;
     word-break: break-word;
 }}
 
@@ -1941,52 +1503,17 @@ body {{
 
 .donut-insight-count {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.3rem;
-    font-weight: 400;
+    font-size: 1.45rem;
+    font-weight: 700;
     color: #773344;
     line-height: 1;
 }}
 
 .donut-insight-pct {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.78rem;
+    font-size: 0.9rem;
     font-weight: 400;
     color: #8b6771;
-}}
-
-
-
-/* ── EDITORIAL META PILLS ───────────────────────────── */
-.editorial-meta {{
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.75rem !important;
-    margin-top: 1.1rem !important;
-    padding-top: 0 !important;
-    border-top: none !important;
-}}
-
-.editorial-meta span {{
-    display: block;
-    background: linear-gradient(180deg, #fffefe 0%, #f8efea 100%);
-    border: 1px solid #e3b5a4;
-    border-radius: 18px;
-    padding: 0.6rem 0.8rem 0.9rem 1rem !important;
-    color: #5d3945 !important;
-    box-shadow: 0 10px 22px rgba(44, 21, 33, 0.05);
-    line-height: 1.38;
-}}
-
-.editorial-meta span:before {{
-    content: '';
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 999px;
-    background: linear-gradient(135deg, #d44d5c 0%, #b24758 100%);
-    margin-right: 0.6rem;
-    vertical-align: middle;
-    position: static !important;
 }}
 
 /* ── BATCH RESULT HELPERS ───────────────────────────── */
@@ -1994,25 +1521,25 @@ body {{
     background: linear-gradient(180deg, #ffffff 0%, #f9f1ec 100%);
     border: 1px solid #e3b5a4;
     border-radius: 24px;
-    padding: 1rem 1.05rem;
+    padding: 1.3rem 1.35rem;
     box-shadow: 0 12px 26px rgba(44, 21, 33, 0.06);
-    margin: 1rem 0 0.9rem 0;
+    margin: 1.1rem 0 1rem 0;
 }}
 
 .batch-results-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 0.75rem;
+    font-size: 1.15rem;
     font-weight: 700;
     color: #251329;
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.3rem;
 }}
 
 .batch-results-copy,
 .batch-readable-note,
 .result-reading-guide-copy {{
     color: #6b5660;
-    font-size: 0.72rem;
-    line-height: 1.5;
+    font-size: 0.9rem;
+    line-height: 1.6;
 }}
 
 .batch-readable-note,
@@ -2021,31 +1548,24 @@ body {{
     border: 1px solid #e3b5a4;
     border-left: 4px solid #d44d5c;
     border-radius: 20px;
-    padding: 0.65rem 0.72rem;
-    margin: 0.95rem 0;
+    padding: 0.85rem 1rem;
+    margin: 1rem 0;
     box-shadow: 0 8px 20px rgba(44, 21, 33, 0.05);
 }}
 
 .result-reading-guide-title {{
-    font-size: 0.78rem;
+    font-size: 0.88rem;
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: #a3195b;
-    margin-bottom: 0.15rem;
+    margin-bottom: 0.25rem;
 }}
 
-/* safer table area for larger batch outputs */
 .light-table-wrap {{
     width: 100%;
     overflow-x: auto;
     overflow-y: visible;
-}}
-
-@media (max-width: 900px) {{
-    .editorial-meta {{
-        grid-template-columns: 1fr;
-    }}
 }}
 
 /* ── FOOTER ──────────────────────────────────────────── */
@@ -2058,394 +1578,692 @@ body {{
 
 .footer-wrap p {{
     color: #8b6771;
-    font-size: 0.84rem;
+    font-size: 0.92rem;
     font-family: 'Inter', sans-serif;
-    line-height: 1.45;
+    line-height: 1.55;
     margin: 0;
 }}
 
-/* ── RESPONSIVE ──────────────────────────────────────── */
-@media (max-width: 1200px) {{
-    [data-testid="stSidebar"] {{
-        min-width: 290px !important;
-        max-width: 290px !important;
-        width: 290px !important;
-    }}
-}}
-
-@media (max-width: 1100px) {{
-    .hero-image-wrap {{
-        height: 180px !important;
-    }}
-    .hero-main-image {{
-        max-width: 46%;
-        right: 2%;
-    }}
-    .hero-image-content {{
-        max-width: 60% !important;
-    }}
-    .hero-image-title {{
-        font-size: 2.05rem !important;
-    }}
-}}
-
-@media (max-width: 992px) {{
-    .hero-image-title {{
-        font-size: 1.9rem !important;
-    }}
-    .hero-image-subtitle {{
-        font-size: 0.73rem;
-    }}
-    .section-banner-title {{
-        font-size: 1.25rem;
-    }}
-    .similarity-ring-row {{
-        flex-direction: column;
-        text-align: center;
-    }}
-    .similarity-mini-grid {{
-        grid-template-columns: 1fr;
-    }}
-}}
-
-@media (max-width: 768px) {{
-    .block-container {{
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
-    }}
-    .header-main {{
-        padding: 1.2rem 1.4rem !important;
-    }}
-    .header-main h1 {{
-        font-size: 0.78rem;
-    }}
-    .hero-image-wrap {{
-        height: 240px !important;
-        border-radius: 24px !important;
-    }}
-    .hero-main-image {{
-        opacity: 0.42;
-        max-width: 58%;
-        right: -2%;
-    }}
-    .hero-image-overlay {{
-        padding: 1.4rem 1.4rem;
-    }}
-    .hero-image-content {{
-        max-width: 82% !important;
-    }}
-    .hero-image-title {{
-        font-size: 1.7rem !important;
-    }}
-    .hero-image-subtitle {{
-        font-size: 0.7rem;
-        line-height: 1.5;
-    }}
-    .hero-kicker {{
-        font-size: 0.68rem;
-        padding: 0.4rem 0.8rem;
-        margin-bottom: 0.08rem;
-    }}
-    .section-banner {{
-        min-height: 110px;
-    }}
-    .section-banner-title {{
-        font-size: 0.7rem;
-    }}
-    .light-table {{
-        min-width: 520px;
-    }}
-    .similarity-bar-row {{
-        flex-wrap: wrap;
-    }}
-    .similarity-bar-row label {{
-        width: 100%;
-    }}
-}}
-
-
-@media (max-width: 620px) {{
-    .hero-image-wrap {{
-        height: 150px !important;
-    }}
-    .hero-main-image {{
-        display: none;
-    }}
-    .hero-image-content {{
-        max-width: 100% !important;
-    }}
-    .hero-image-title {{
-        font-size: 1.5rem !important;
-    }}
-    .hero-image-subtitle {{
-        font-size: 0.84rem;
-    }}
-}}
-
-/* ── MINIMAL TAB HERO ───────────────────────────────── */
+/* ── TAB MINIMAL HERO ───────────────────────────────── */
+/* The big section intro banner at top of each tab */
 .tab-minimal-hero {{
     background: linear-gradient(180deg,#fffdfc 0%,#fbf4ef 100%);
     border: 1px solid #e3b5a4;
     border-radius: 28px;
-    padding: 0.55rem 0.75rem 1.1rem 1.2rem;
+    padding: 1.35rem 1.45rem 1.3rem 1.45rem;
     box-shadow: 0 14px 30px rgba(41,22,35,0.05);
-    margin: 0.15rem 0 0.85rem 0;
+    margin: 0.2rem 0 1.1rem 0;
 }}
+
+/* Section kicker label — small category label above the big title */
 .tab-minimal-kicker {{
     color:#b01f55;
-    font-size:0.74rem;
+    font-size:0.8rem;
     font-weight:800;
     letter-spacing:0.16em;
     text-transform:uppercase;
-    margin-bottom:0.35rem;
+    margin-bottom:0.5rem;
 }}
+
+/* Big tab title — this should be the most prominent text on the page */
 .tab-minimal-title {{
     font-family:'Inter Tight','Inter',sans-serif;
-    font-size:1.15rem;
+    font-size:1.85rem;
     font-weight:800;
     color:#221221;
-    line-height:1.2;
+    line-height:1.1;
 }}
+
+/* Tab subtitle — description below the big title */
 .tab-minimal-copy {{
     color:#766772;
-    font-size:0.95rem;
-    line-height:1.65;
-    margin-top:0.45rem;
+    font-size:1.0rem;
+    line-height:1.7;
+    margin-top:0.55rem;
+    max-width: 860px;
 }}
-.mini-explainer-card {{
-    background: linear-gradient(180deg,#fffefe 0%,#faf4f8 100%);
-    border:1px solid #e8c8ba;
-    border-radius:18px;
-    padding:0.85rem 0.95rem;
-    color:#654857;
-    font-size:0.88rem;
+
+/* ── WORKSPACE SHELL ────────────────────────────────── */
+.workspace-shell {{
+    background: linear-gradient(180deg,#ffffff 0%,#fbf5f1 100%);
+    border: 1px solid #e3b5a4;
+    border-radius: 24px;
+    padding: 1.3rem 1.35rem;
+    box-shadow: 0 10px 24px rgba(25,14,36,0.06);
+    margin-bottom: 0.85rem;
+}}
+
+.workspace-kicker {{
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #773344;
+    margin-bottom: 0.32rem;
+}}
+
+/* Card / panel title — clearly bigger than body text, smaller than section title */
+.workspace-title {{
+    font-family:'Inter Tight','Inter',sans-serif;
+    font-size:1.25rem;
+    color:#160029;
+    line-height:1.15;
+    margin: 0;
+    font-weight: 700;
+}}
+
+.workspace-copy {{
+    color:#5d3945;
+    font-size:0.92rem;
     line-height:1.65;
-    margin:0.65rem 0 0.8rem 0;
-    box-shadow:0 8px 22px rgba(41,22,35,0.04);
+    margin-top:0.3rem;
+}}
+
+/* ── SLIM LOADER ─────────────────────────────────────── */
+.slim-loader-kicker {{
+    font-size:0.78rem;
+    font-weight:800;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:#a3195b;
+    margin-bottom:0.3rem;
+}}
+
+.slim-loader-title {{
+    font-size:1.1rem;
+    font-weight:800;
+    color:#251329;
+    line-height:1.2;
+    margin-bottom:0.25rem;
+}}
+
+.slim-loader-copy {{
+    font-size:0.92rem;
+    color:#766772;
+    line-height:1.68;
+}}
+
+.slim-loader-side {{
+    font-size:0.88rem;
+    font-weight:800;
+    color:#907785;
+    white-space:nowrap;
+    padding-bottom:0.15rem;
+}}
+
+.dataset-control-caption {{
+    font-size:0.78rem;
+    font-weight:800;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:#8b6771;
+    margin:0 0 0.4rem 0.1rem;
+}}
+
+/* ── INPUT EDITOR ────────────────────────────────────── */
+.input-editor-shell {{
+    background:linear-gradient(180deg,#fffaf8 0%,#f8efea 100%);
+    border:1px solid #e3b5a4;
+    border-radius:22px;
+    padding:1.1rem 1.15rem 0.95rem 1.15rem;
+    margin:0.3rem 0 0.7rem 0;
+    box-shadow:0 10px 24px rgba(25,14,36,0.05);
+}}
+
+.input-editor-kicker {{
+    font-size:0.78rem;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:#a3195b;
+    margin-bottom:0.25rem;
+}}
+
+.input-editor-title {{
+    font-size:1.08rem;
+    font-weight:800;
+    color:#241226;
+    line-height:1.3;
+}}
+
+.input-editor-chip {{
+    padding:0.42rem 0.9rem;
+    border-radius:999px;
+    background:#fff;
+    border:1px solid #e3b5a4;
+    color:#773344;
+    font-size:0.84rem;
+    font-weight:800;
+    white-space:nowrap;
+}}
+
+/* ── BATCH SHELL ─────────────────────────────────────── */
+.batch-shell {{
+    background:linear-gradient(180deg,#ffffff 0%,#f9f1ec 100%);
+    border:1px solid #e3b5a4;
+    border-radius:26px;
+    padding:1.25rem 1.3rem 1.1rem 1.3rem;
+    box-shadow:0 12px 28px rgba(25,14,36,0.06);
+    margin:0.2rem 0 1rem 0;
+}}
+
+.batch-kicker {{
+    font-size:0.78rem;
+    font-weight:800;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:#a3195b;
+    margin-bottom:0.25rem;
+}}
+
+.batch-title {{
+    font-family:'Inter Tight','Inter',sans-serif;
+    font-size:1.3rem;
+    font-weight:700;
+    color:#211120;
+    line-height:1.15;
+    margin-bottom:0.35rem;
+}}
+
+.batch-copy {{
+    color:#6d5a68;
+    font-size:0.92rem;
+    line-height:1.72;
+    max-width:860px;
+}}
+
+.batch-selection-note {{
+    background:#fff7f4;
+    border:1px solid #e3b5a4;
+    border-radius:16px;
+    padding:1rem 1.1rem;
+    color:#5f4751;
+    font-size:0.92rem;
+    line-height:1.6;
+    margin:0.85rem 0 1rem 0;
+}}
+
+.batch-selection-note strong {{
+    color:#160029;
+    font-size:1.05rem;
+}}
+
+/* ── CHART PANEL ─────────────────────────────────────── */
+.chart-panel {{
+    background:linear-gradient(180deg,#fffefe 0%,#f8efea 100%);
+    border:1px solid #e3b5a4;
+    border-radius:22px;
+    padding:1.15rem 1.2rem 1.05rem 1.2rem;
+    box-shadow:0 10px 24px rgba(25,14,36,0.05);
+    margin:1.1rem 0 0.6rem 0;
+}}
+
+.chart-panel-title {{
+    font-family:'Inter Tight','Inter',sans-serif;
+    font-size:1.05rem;
+    font-weight:700;
+    color:#221221;
+    margin-bottom:0.25rem;
+}}
+
+.chart-panel-copy {{
+    color:#6d5a68;
+    font-size:0.92rem;
+    line-height:1.68;
+}}
+
+.chart-conclusion {{
+    margin-top:0.8rem;
+    padding:1rem 1.05rem;
+    border-radius:16px;
+    background:linear-gradient(180deg,#fffaf7 0%,#fff3ed 100%);
+    border:1px solid #ead1c8;
+    color:#6d5a68;
+    font-size:0.92rem;
+    line-height:1.7;
+}}
+
+/* ── EXPLORER CARDS ──────────────────────────────────── */
+.explorer-instruction-card {{
+    background:linear-gradient(180deg,#fffaf7 0%,#fff2ec 100%);
+    border:1px solid #ead1c8;
+    border-left:6px solid #b24758;
+    border-radius:22px;
+    padding:1.1rem 1.2rem;
+    margin:0.7rem 0 1.1rem 0;
+    box-shadow:0 10px 24px rgba(25,14,36,0.05);
+}}
+
+.explorer-instruction-title {{
+    font-size:0.84rem;
+    font-weight:800;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:#a3195b;
+    margin-bottom:0.45rem;
+}}
+
+.explorer-instruction-copy {{
+    font-size:1.0rem;
+    line-height:1.78;
+    color:#634e59;
+}}
+
+.explorer-orb-grid {{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:1.1rem;
+    margin:1rem 0 1.2rem 0;
+}}
+
+.explorer-orb {{
+    background:linear-gradient(180deg,#fff 0%,#fbf3ef 100%);
+    border:1px solid #ead1c8;
+    border-radius:999px;
+    padding:1.1rem 1.2rem;
+    display:flex;
+    align-items:center;
+    gap:0.9rem;
+    box-shadow:0 10px 20px rgba(25,14,36,0.05);
+    min-height:96px;
+}}
+
+.explorer-orb-icon {{
+    width:56px; height:56px;
+    border-radius:999px;
+    display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg,#d44d5c 0%,#a63a52 100%);
+    color:#fff; font-weight:800; font-size:1.1rem;
+    box-shadow:0 8px 18px rgba(164,59,83,0.22);
+}}
+
+.explorer-orb-label {{
+    font-size:0.8rem;
+    font-weight:800;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:#8b6771;
+    margin-bottom:0.22rem;
+}}
+
+.explorer-orb-value {{
+    font-family:'Inter Tight','Inter',sans-serif;
+    font-size:1.6rem;
+    font-weight:700;
+    color:#241226;
+    line-height:1.05;
+}}
+
+.explorer-orb-note {{
+    font-size:0.88rem;
+    line-height:1.55;
+    color:#7a6874;
+    margin-top:0.15rem;
+}}
+
+/* ── TOPIC FOCUS GRID ────────────────────────────────── */
+.topic-focus-grid {{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:0.9rem;
+    margin:0.5rem 0 1rem 0;
+}}
+
+.topic-focus-card {{
+    background:linear-gradient(180deg,#fff 0%,#faf4f0 100%);
+    border:1px solid #e3b5a4;
+    border-radius:18px;
+    padding:1rem 1.05rem;
+}}
+
+.topic-focus-label {{
+    font-size:0.78rem;
+    font-weight:800;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:#8b6771;
+    margin-bottom:0.3rem;
+}}
+
+.topic-focus-value {{
+    font-size:1.1rem;
+    font-weight:800;
+    color:#221221;
+    line-height:1.35;
+}}
+
+/* ── SIM LITE SHELL ──────────────────────────────────── */
+.sim-lite-shell {{
+    background:linear-gradient(180deg,#ffffff 0%,#fbf3ef 100%);
+    border:1px solid #e3b5a4;
+    border-radius:24px;
+    padding:1.15rem 1.2rem 1.1rem 1.2rem;
+    box-shadow:0 12px 26px rgba(25,14,36,0.06);
+}}
+
+.sim-lite-head {{display:flex;justify-content:space-between;align-items:flex-start;gap:0.85rem;margin-bottom:1rem;}}
+.sim-lite-kicker {{color:#8b6771;font-size:0.8rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.25rem;}}
+.sim-lite-title {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.55rem;font-weight:800;color:#221221;}}
+.sim-lite-pill {{padding:0.46rem 0.95rem;border-radius:999px;border:1px solid #d44d5c;font-weight:800;font-size:1.05rem;}}
+
+.sim-lite-hero {{display:grid;grid-template-columns:120px 1fr;gap:1.05rem;align-items:center;margin-bottom:1rem;}}
+.sim-lite-ring {{width:108px;height:108px;border-radius:999px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 18px rgba(25,14,36,0.08);}}
+.sim-lite-ring-inner {{width:78px;height:78px;border-radius:999px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px rgba(227,181,164,0.45);}}
+.sim-lite-ring-inner strong {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.7rem;line-height:1;}}
+.sim-lite-ring-inner span {{font-size:0.8rem;color:#8b6771;margin-top:0.2rem;}}
+
+.sim-lite-summary-title {{font-size:1.12rem;font-weight:800;color:#221221;margin-bottom:0.32rem;}}
+.sim-lite-summary-copy {{font-size:0.94rem;line-height:1.7;color:#6d5a68;}}
+
+.sim-lite-top-note {{
+    display:block;background:#fff8f4;border:1px solid #ead1c8;
+    border-radius:16px;padding:0.95rem 1rem;margin:1rem 0 1.05rem 0;
+}}
+.sim-lite-top-note-title {{display:block;font-size:0.8rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.25rem;}}
+.sim-lite-top-note-copy {{display:block;font-size:0.92rem;line-height:1.65;color:#6d5a68;}}
+
+.sim-lite-metric {{
+    background:#fff;border:1px solid #ead1c8;border-radius:16px;
+    padding:1rem 1.05rem;box-shadow:0 6px 16px rgba(25,14,36,0.04);
+    min-height:124px;margin-bottom:0.7rem;text-align:center;
+    display:flex;flex-direction:column;justify-content:center;
+}}
+.sim-lite-metric-label {{font-size:0.82rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#8b6771;margin-bottom:0.38rem;}}
+.sim-lite-metric-value {{font-family:'Inter Tight','Inter',sans-serif;font-size:2rem;font-weight:700;line-height:1;margin-bottom:0.38rem;text-align:center;}}
+.sim-lite-metric-note {{font-size:0.9rem;line-height:1.6;color:#6d5a68;}}
+
+/* ── HISTORY OVERVIEW ────────────────────────────────── */
+.history-table-title {{
+    font-size:1.1rem;
+    font-weight:800;
+    color:#241226;
+    margin-bottom:0.25rem;
+}}
+
+.history-table-copy {{
+    font-size:0.92rem;
+    line-height:1.68;
+    color:#6d5a68;
+    max-width:860px;
+}}
+
+/* ── LEADERBOARD ─────────────────────────────────────── */
+.leaderboard-shell {{display:grid;gap:0.9rem;margin-top:0.9rem;}}
+
+.leaderboard-card {{
+    display:grid;
+    grid-template-columns:58px 1fr auto;
+    gap:1rem;
+    align-items:center;
+    background:linear-gradient(180deg,#fff 0%,#fbf3ef 100%);
+    border:1px solid #e7c2b3;
+    border-radius:20px;
+    padding:1.05rem 1.1rem;
+    box-shadow:0 8px 18px rgba(25,14,36,0.05);
+}}
+
+.leaderboard-rank {{
+    width:46px;height:46px;border-radius:14px;
+    background:#fff7f1;border:1px solid #e7c2b3;
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.15rem;
+}}
+
+.leaderboard-title {{font-size:1.05rem;font-weight:800;color:#221221;margin-bottom:0.2rem;}}
+.leaderboard-meta {{font-size:0.88rem;color:#7a6874;line-height:1.55;margin-bottom:0.5rem;}}
+.leaderboard-track {{height:9px;background:#f3dfd7;border-radius:999px;overflow:hidden;}}
+.leaderboard-fill {{height:100%;background:linear-gradient(90deg,#d44d5c 0%,#b24758 100%);border-radius:999px;}}
+.leaderboard-side {{text-align:right;min-width:95px;}}
+.leaderboard-score {{font-size:1.18rem;font-weight:800;color:#221221;}}
+.leaderboard-note {{font-size:0.82rem;color:#8b6771;line-height:1.4;}}
+
+/* ── MINI EXPLAINER CARD ─────────────────────────────── */
+.mini-explainer-card {{
+    background:linear-gradient(180deg,#fffaf7 0%,#fff4ef 100%);
+    border:1px solid #ead1c8;border-radius:18px;
+    padding:1.05rem 1.1rem;color:#6d5a68;
+    font-size:0.95rem;line-height:1.72;
+    margin:0.6rem 0 1.1rem 0;
+    box-shadow:0 10px 20px rgba(25,14,36,0.04);
 }}
 .mini-explainer-card strong {{color:#221221;}}
 
-.chart-conclusion {{
-    margin-top:0.7rem;
-    background:linear-gradient(180deg,#fffefe 0%,#faf4f8 100%);
-    border:1px solid #e8c8ba;
-    border-radius:16px;
-    padding:0.75rem 0.9rem;
-    color:#654857;
-    font-size:0.86rem;
-    line-height:1.6;
+/* ── EMPTY REVIEW CARD ───────────────────────────────── */
+.empty-review-card {{
+    background:linear-gradient(180deg,#ffffff 0%,#f9f1ec 100%);
+    border:1px solid #e3b5a4;
+    border-radius:24px;
+    padding:1.3rem 1.35rem 1.2rem 1.35rem;
+    box-shadow:0 10px 24px rgba(25,14,36,0.06);
+    min-height:380px;
+    display:flex;flex-direction:column;justify-content:space-between;
 }}
-.chart-conclusion strong {{color:#221221;}}
+
+.empty-review-top {{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;margin-bottom:0.85rem;}}
+.empty-review-title {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.35rem;color:#160029;margin:0.1rem 0 0.25rem 0;font-weight:700;}}
+.empty-review-copy {{color:#5d3945;font-size:0.95rem;line-height:1.68;}}
+.empty-review-pill {{padding:0.46rem 0.9rem;border-radius:999px;background:#fff;border:1px solid #e3b5a4;color:#773344;font-weight:800;font-size:0.86rem;white-space:nowrap;}}
+.empty-review-list {{display:grid;gap:0.75rem;margin-top:0.6rem;}}
+.empty-review-item {{display:flex;gap:0.85rem;align-items:flex-start;padding:1rem 1.05rem;border-radius:16px;background:#fff;border:1px solid #e3b5a4;}}
+.empty-review-icon {{width:36px;height:36px;min-width:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#d44d5c 0%,#b24758 100%);color:#fff;font-size:1rem;font-weight:800;}}
+.empty-review-item strong {{display:block;color:#160029;font-size:0.95rem;margin-bottom:0.18rem;}}
+.empty-review-item span {{display:block;color:#5d3945;font-size:0.9rem;line-height:1.6;}}
+.empty-review-footer {{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-top:1rem;}}
+.empty-review-stat {{background:#fff;border:1px solid #e3b5a4;border-radius:16px;padding:0.9rem;text-align:center;}}
+.empty-review-stat-label {{font-size:0.76rem;font-weight:800;color:#8b6771;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.28rem;}}
+.empty-review-stat-value {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.3rem;color:#160029;font-weight:700;}}
+
+/* ── ANALYSIS PANEL ──────────────────────────────────── */
+.analysis-panel {{
+    background:rgba(255,255,255,0.72);
+    border:1px solid rgba(170,133,155,0.28);
+    border-radius:26px;
+    padding:1.3rem 1.35rem;
+    box-shadow:0 14px 34px rgba(52,27,45,0.05);
+    height:100%;
+}}
+
+.analysis-panel-title {{
+    font-family:'Inter Tight','Inter',sans-serif;
+    font-size:1.18rem;
+    font-weight:700;
+    color:#2d1830;
+    margin:0 0 0.4rem 0;
+}}
+
+.analysis-panel-copy {{color:#6e6070;font-size:0.95rem;line-height:1.78;margin:0 0 1rem 0;}}
+
+.analysis-steps {{display:grid;gap:0.95rem;margin-top:0.15rem;}}
+.analysis-step {{display:grid;grid-template-columns:42px 1fr;gap:0.85rem;align-items:start;padding:0.1rem 0;}}
+.analysis-step-no {{width:34px;height:34px;border-radius:999px;background:#f0e7ec;color:#a3195b;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.95rem;}}
+.analysis-step-title {{font-weight:700;color:#35233b;font-size:1.0rem;margin-bottom:0.15rem;}}
+.analysis-step-copy {{color:#746675;font-size:0.92rem;line-height:1.72;}}
+.analysis-step + .analysis-step {{border-top:1px solid rgba(170,133,155,0.2);padding-top:0.95rem;}}
+
+/* ── EDITORIAL ───────────────────────────────────────── */
+.editorial-section {{padding:0.1rem 0 0.65rem 0;margin-bottom:0.9rem;}}
+.editorial-kicker {{font-size:0.84rem;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;color:#a3195b;margin-bottom:0.75rem;}}
+.editorial-title {{font-family:'Inter Tight','Inter',sans-serif;font-size:2.15rem;line-height:1.08;font-weight:700;color:#221221;letter-spacing:-0.03em;margin:0 0 0.85rem 0;max-width:900px;}}
+.editorial-copy {{max-width:980px;font-size:1.08rem;line-height:1.82;color:#6d5a68;margin:0;}}
+
+/* ── BROWSE / FILTER ─────────────────────────────────── */
+.browse-inline-head {{font-size:0.84rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin:0 0 0.4rem 0.08rem;}}
+.browse-filter-chip-row {{display:flex;flex-wrap:wrap;gap:0.55rem;margin:0.6rem 0 0.95rem 0;padding-top:0.2rem;border-top:1px solid rgba(227,181,164,0.45);}}
+.browse-filter-chip {{display:inline-flex;align-items:center;padding:0.44rem 0.9rem;border-radius:999px;background:#fff8f4;border:1px solid #e3b5a4;color:#773344;font-size:0.88rem;font-weight:700;}}
+
+/* ── COMPARISON SELECT ───────────────────────────────── */
+.comparison-select-title {{font-size:0.9rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#8f6f7b;}}
+.comparison-select-copy {{font-size:0.95rem;line-height:1.68;color:#6d5a68;margin-top:0.25rem;}}
+
+/* ── TOPIC PICK SHELL ────────────────────────────────── */
+.topic-pick-shell {{
+    background:linear-gradient(180deg,#fffdfb 0%,#fbf3ef 100%);
+    border:1px solid #e7c3b4;
+    border-radius:24px;
+    padding:1.1rem 1.2rem;
+    box-shadow:0 10px 24px rgba(25,14,36,0.05);
+    margin:0.5rem 0 1.05rem 0;
+}}
+.topic-pick-kicker {{font-size:0.8rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#a3195b;margin-bottom:0.35rem;}}
+.topic-pick-title {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.25rem;font-weight:700;color:#241226;line-height:1.2;margin-bottom:0.35rem;}}
+.topic-pick-copy {{font-size:0.98rem;line-height:1.75;color:#6d5a68;max-width:900px;}}
+
+/* ── INLINE SECTION HEAD ─────────────────────────────── */
+.inline-section-head {{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;margin:0.1rem 0 0.65rem 0;}}
+.inline-section-label {{font-size:0.84rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:#a3195b;margin-bottom:0.4rem;}}
+.inline-section-title {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.12rem;font-weight:700;color:#251329;line-height:1.2;}}
+.inline-section-copy {{color:#766772;font-size:0.98rem;line-height:1.72;max-width:760px;}}
+
+/* ── HISTORY OVERVIEW GRID ───────────────────────────── */
+.history-overview-grid {{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.1rem;align-items:start;}}
+.history-overview-card {{background:linear-gradient(180deg,#fffdfb 0%,#fbf3ef 100%);border:1px solid #ead1c8;border-radius:28px;padding:1.1rem 1.15rem 1.05rem 1.15rem;box-shadow:0 12px 26px rgba(25,14,36,0.05);overflow:hidden;}}
+
+/* ── MISC UTILS ──────────────────────────────────────── */
+.metric-card-info {{margin-top:0.15rem;font-size:0.9rem;line-height:1.65;color:#6d5a68;text-align:center;}}
+.metric-card-info strong {{display:block;color:#221221;margin-bottom:0.15rem;}}
 
 .result-hero-card {{
     background:linear-gradient(180deg,#ffffff 0%,#fcf7f3 100%);
-    border:1px solid #e3b5a4;
-    border-radius:24px;
-    padding:1.05rem 1.1rem;
-    box-shadow:0 12px 28px rgba(25,14,36,0.06);
-    display:flex;
-    justify-content:space-between;
-    gap:1rem;
-    align-items:flex-start;
-    flex-wrap:wrap;
-    margin:0.95rem 0 0.8rem 0;
+    border:1px solid #e3b5a4;border-radius:24px;
+    padding:1.15rem 1.2rem;box-shadow:0 12px 28px rgba(25,14,36,0.06);
+    display:flex;justify-content:space-between;gap:1rem;
+    align-items:flex-start;flex-wrap:wrap;margin:1rem 0 0.9rem 0;
 }}
-.result-hero-kicker {{color:#8b6771;font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.09em;margin-bottom:0.2rem;}}
-.result-hero-title {{font-family:'DM Serif Display',serif;color:#160029;font-size:1.8rem;line-height:1.05;margin-bottom:0.3rem;}}
-.result-hero-copy {{color:#5d3945;font-size:0.96rem;line-height:1.65;max-width:760px;}}
-.result-hero-badges {{display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:flex-end;}}
-.result-hero-badge {{padding:0.46rem 0.92rem;border-radius:999px;font-size:0.8rem;font-weight:800;white-space:nowrap;border:1px solid #e3b5a4;background:#fff;}}
-.result-hero-badge.soft {{background:#f5e9e2;color:#773344;border-color:#e6d8e2;}}
-.result-hero-badge.score {{background:#fff;}}
-.compact-summary-card {{background:#fff;border:1px solid #e3b5a4;border-radius:18px;padding:0.92rem 0.95rem;box-shadow:0 8px 22px rgba(25,14,36,0.05);min-height:94px;}}
-.compact-summary-label {{color:#8b6771;font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.3rem;}}
-.compact-summary-value {{color:#160029;font-size:1.02rem;font-weight:800;line-height:1.45;}}
-.fatwa-focus-card {{background:#fff;border-radius:22px;padding:1rem 1.05rem;border:1px solid #e3b5a4;box-shadow:0 8px 22px rgba(25,14,36,0.06);margin-top:0.85rem;height:100%;}}
-.fatwa-focus-head {{display:flex;justify-content:space-between;gap:0.7rem;align-items:flex-start;flex-wrap:wrap;margin-bottom:0.45rem;}}
-.fatwa-focus-title {{font-family:'DM Serif Display',serif;color:#160029;font-size:1.24rem;}}
-.fatwa-focus-copy {{color:#8b6771;font-size:0.88rem;line-height:1.55;margin-top:0.18rem;}}
-.fatwa-focus-chip {{padding:0.38rem 0.82rem;border-radius:999px;background:#f5e9e2;border:1px solid #e6d8e2;color:#773344;font-size:0.78rem;font-weight:800;}}
-.fatwa-focus-pill-row {{display:flex;flex-wrap:wrap;gap:0.45rem;margin:0.75rem 0 0.85rem 0;}}
-.fatwa-focus-pill {{padding:0.35rem 0.75rem;border-radius:999px;background:#f9f1ec;border:1px solid #e6d8e2;color:#773344;font-size:0.78rem;font-weight:700;}}
-.fatwa-focus-text {{background:#f9f1ec;border:1px solid #e3b5a4;border-radius:18px;padding:1rem;color:#2a1421;font-size:0.96rem;line-height:1.85;white-space:pre-wrap;}}
-.insight-side-card {{background:#fff;border-radius:22px;padding:1rem 1.05rem;border:1px solid #e3b5a4;box-shadow:0 8px 22px rgba(25,14,36,0.06);margin-top:0.85rem;height:100%;}}
-.insight-side-title {{font-family:'DM Serif Display',serif;color:#160029;font-size:1.18rem;margin-bottom:0.35rem;}}
-.insight-side-copy {{color:#5d3945;font-size:0.9rem;line-height:1.7;}}
-.insight-mini-grid {{display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;margin-top:0.95rem;}}
-.insight-mini-card {{background:#f5e9e2;border:1px solid #e3b5a4;border-radius:16px;padding:0.8rem;}}
-.insight-mini-label {{color:#8b6771;font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;}}
-.insight-mini-value {{color:#160029;font-size:0.98rem;font-weight:800;margin-top:0.18rem;line-height:1.4;}}
-.coverage-card {{margin-top:0.85rem;}}
+.result-hero-kicker {{color:#8b6771;font-size:0.8rem;font-weight:800;text-transform:uppercase;letter-spacing:0.09em;margin-bottom:0.25rem;}}
+.result-hero-title {{font-family:'Inter Tight','Inter',sans-serif;color:#160029;font-size:1.65rem;line-height:1.08;margin-bottom:0.35rem;font-weight:700;}}
+.result-hero-copy {{color:#5d3945;font-size:1.0rem;line-height:1.68;max-width:760px;}}
+
+/* ── TECH REVIEW TITLE ───────────────────────────────── */
+.tech-review-title {{
+    font-size:1.0rem;
+    font-weight:700;
+    color:#241226;
+    margin:1.1rem 0 0.5rem 0;
+}}
+
+/* ── EDITORIAL META ──────────────────────────────────── */
+.editorial-meta {{
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem !important;
+    margin-top: 1.1rem !important;
+    padding-top: 0 !important;
+    border-top: none !important;
+}}
+
+.editorial-meta span {{
+    display: block;
+    background: linear-gradient(180deg, #fffefe 0%, #f8efea 100%);
+    border: 1px solid #e3b5a4;
+    border-radius: 18px;
+    padding: 0.7rem 0.85rem 1rem 1.1rem !important;
+    color: #5d3945 !important;
+    box-shadow: 0 10px 22px rgba(44, 21, 33, 0.05);
+    line-height: 1.5;
+    font-size: 0.92rem;
+}}
+
+.editorial-meta span:before {{
+    content: '';
+    display: inline-block;
+    width: 10px; height: 10px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #d44d5c 0%, #b24758 100%);
+    margin-right: 0.6rem;
+    vertical-align: middle;
+    position: static !important;
+}}
+
+/* ── DATASET PANEL ───────────────────────────────────── */
+.dataset-side-panel {{
+    background: linear-gradient(180deg, #fff 0%, #faf3ef 100%);
+    border: 1px solid #e3b5a4;
+    border-radius: 22px;
+    padding: 1.15rem 1.2rem;
+    box-shadow: 0 10px 22px rgba(25,14,36,0.05);
+}}
+.dataset-side-title {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.08rem;font-weight:700;color:#251329;margin-bottom:0.2rem;}}
+.dataset-side-subtitle {{font-size:0.9rem;line-height:1.6;color:#766772;margin-bottom:0.75rem;}}
+.dataset-model-chip {{padding:0.42rem 0.9rem;border-radius:999px;background:#fff;border:1px solid #e3b5a4;color:#773344;font-size:0.88rem;font-weight:800;white-space:nowrap;}}
+.dataset-stat-grid {{display:grid;grid-template-columns:repeat(2,1fr);gap:0.65rem;margin:0.75rem 0;}}
+.dataset-stat-card {{background:#fff;border:1px solid #ead1c8;border-radius:14px;padding:0.8rem 0.9rem;}}
+.dataset-stat-label {{font-size:0.76rem;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:#8b6771;margin-bottom:0.18rem;}}
+.dataset-stat-value {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.4rem;font-weight:700;color:#241226;}}
+.dataset-preview-box {{background:#fff8f4;border:1px solid #ead1c8;border-radius:14px;padding:0.85rem 0.95rem;margin-top:0.65rem;}}
+.dataset-preview-label {{font-size:0.76rem;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:#8b6771;margin-bottom:0.28rem;}}
+.dataset-preview-text {{font-size:0.9rem;line-height:1.65;color:#5d3945;}}
+
+/* ── SCORE METRIC TEXT ───────────────────────────────── */
+.metric-value-text {{
+    font-family:'Inter Tight','Inter',sans-serif !important;
+    font-size:2.2rem !important;
+    font-weight:700 !important;
+    line-height:1.1 !important;
+    color:#7d3347 !important;
+    letter-spacing:-0.03em;
+    word-break:break-word;
+}}
+
+/* ── SYSTEM PLAIN NOTE ───────────────────────────────── */
+.system-plain-note {{
+    padding:0.2rem 0 0.75rem 0;
+    margin-bottom:0.5rem;
+    color:#6d5a68;
+    font-size:1.0rem;
+    line-height:1.82;
+}}
+.system-plain-note strong {{color:#251329;}}
+
+/* ── OVERVIEW CHART ──────────────────────────────────── */
+.overview-kicker {{font-size:0.78rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#9a7380;margin-bottom:0.28rem;}}
+.overview-title {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.05rem;font-weight:700;color:#231222;line-height:1.2;margin-bottom:0.22rem;}}
+.overview-copy {{font-size:0.95rem;line-height:1.68;color:#6d5a68;margin-bottom:0.65rem;}}
+
+/* ── RESPONSIVE ──────────────────────────────────────── */
+@media (max-width: 1200px) {{
+    [data-testid="stSidebar"] {{
+        min-width: 300px !important;
+        max-width: 300px !important;
+        width: 300px !important;
+    }}
+}}
+
+@media (max-width: 1100px) {{
+    .hero-image-wrap {{ height: 200px !important; }}
+    .hero-image-content {{ max-width: 65% !important; }}
+    .hero-image-title {{ font-size: 1.75rem !important; }}
+    .explorer-orb-grid {{ grid-template-columns: 1fr; }}
+    .topic-focus-grid {{ grid-template-columns: 1fr 1fr; }}
+}}
+
 @media (max-width: 900px) {{
-  .result-hero-card {{padding:0.95rem;}}
-  .result-hero-title {{font-size:1.55rem;}}
-  .insight-mini-grid {{grid-template-columns:1fr;}}
+    .hero-image-content {{ max-width: 100% !important; }}
+    .hero-image-title {{ font-size: 1.5rem !important; }}
+    .hero-image-subtitle {{ font-size: 0.9rem !important; max-width: 100% !important; }}
+    .history-overview-grid {{ grid-template-columns: 1fr; }}
+    .topic-focus-grid {{ grid-template-columns: 1fr 1fr; }}
+    .editorial-meta {{ grid-template-columns: 1fr; }}
+    .leaderboard-card {{ grid-template-columns: 44px 1fr; }}
+    .leaderboard-side {{ grid-column: 2; text-align: left; }}
+    .sim-lite-hero {{ grid-template-columns: 1fr; }}
+    .sim-lite-ring {{ margin: 0 auto; }}
 }}
 
-/* ── SIMPLIFIED SIMILARITY BREAKDOWN ────────────────── */
-.sim-lite-shell {{
-    background: linear-gradient(180deg,#ffffff 0%,#fbf4ef 100%);
-    border:1px solid #e3b5a4;
-    border-radius:24px;
-    padding:1rem;
-    box-shadow:0 12px 26px rgba(25,14,36,0.06);
-}}
-.sim-lite-head {{display:flex;justify-content:space-between;align-items:flex-start;gap:0.8rem;margin-bottom:0.85rem;}}
-.sim-lite-kicker {{color:#8b6771;font-size:0.7rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.18rem;}}
-.sim-lite-title {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.12rem;font-weight:800;color:#221221;}}
-.sim-lite-pill {{padding:0.38rem 0.8rem;border-radius:999px;border:1px solid #d44d5c;font-weight:800;font-size:0.84rem;}}
-.sim-lite-hero {{display:flex;gap:0.9rem;align-items:center;background:#fff;border:1px solid #ead1c8;border-radius:20px;padding:0.9rem;}}
-.sim-lite-ring {{width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}}
-.sim-lite-ring-inner {{width:70px;height:70px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;}}
-.sim-lite-ring-inner strong {{font-family:'DM Serif Display',serif;font-size:1.5rem;line-height:1;}}
-.sim-lite-ring-inner span {{font-size:0.66rem;color:#8b6771;}}
-.sim-lite-summary-title {{font-size:1.08rem;font-weight:800;color:#221221;margin-bottom:0.2rem;}}
-.sim-lite-summary-copy {{font-size:0.84rem;color:#6d5a68;line-height:1.55;}}
-.sim-lite-metric {{background:#fff;border:1px solid #ead1c8;border-radius:18px;padding:0.9rem;margin-top:0.8rem;}}
-.sim-lite-metric-label {{color:#8b6771;font-size:0.7rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.28rem;}}
-.sim-lite-metric-value {{font-size:1.8rem;font-weight:800;line-height:1;}}
-.sim-lite-metric-note {{color:#8b6771;font-size:0.82rem;line-height:1.45;margin-top:0.32rem;}}
-.sim-lite-bottom {{display:grid;gap:0.8rem;margin-top:0.8rem;}}
-.sim-lite-note-card {{background:#fff;border:1px solid #ead1c8;border-radius:18px;padding:0.9rem;}}
-.sim-lite-note-label {{color:#8b6771;font-size:0.7rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.24rem;}}
-.sim-lite-note-title {{font-size:1rem;font-weight:800;color:#221221;}}
-.sim-lite-note-copy {{color:#5d3945;font-size:0.86rem;line-height:1.6;}}
-
-/* ── TOPIC PICKER ───────────────────────────────────── */
-.topic-pick-shell {{
-    background:linear-gradient(180deg,#fffefe 0%,#fbf3ef 100%);
-    border:1px solid #e3b5a4;
-    border-radius:24px;
-    padding:1rem 1.05rem;
-    margin:0.2rem 0 0.75rem 0;
-    box-shadow:0 12px 24px rgba(41,22,35,0.05);
-}}
-.topic-pick-kicker {{color:#b01f55;font-size:0.72rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:0.25rem;}}
-.topic-pick-title {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.08rem;font-weight:800;color:#221221;margin-bottom:0.25rem;}}
-.topic-pick-copy {{color:#766772;font-size:0.9rem;line-height:1.65;}}
-.topic-select-shell [data-baseweb="select"] > div {{
-    background:linear-gradient(180deg,#fffefe 0%,#fbf4ef 100%) !important;
-    border:1.5px solid #e3b5a4 !important;
-    border-radius:18px !important;
-    min-height:58px !important;
-    box-shadow:0 8px 18px rgba(41,22,35,0.04) !important;
-}}
-@media (max-width: 900px) {{
-    .sim-lite-hero {{flex-direction:column;align-items:flex-start;}}
+@media (max-width: 768px) {{
+    .block-container {{ padding-left: 1rem !important; padding-right: 1rem !important; }}
+    .hero-image-wrap {{ height: 220px !important; border-radius: 20px !important; }}
+    .hero-image-overlay {{ padding: 1.5rem 1.5rem; }}
+    .hero-image-title {{ font-size: 1.45rem !important; }}
+    .hero-image-subtitle {{ font-size: 0.88rem; line-height: 1.5; }}
+    .topic-focus-grid {{ grid-template-columns: 1fr; }}
+    .explorer-summary-grid {{ grid-template-columns: 1fr 1fr; }}
+    .light-table {{ min-width: 540px; }}
 }}
 
-        
-
-/* ===== CLEAN COMPACT OVERRIDES ===== */
-.workspace-shell,.empty-review-card,.batch-shell,.fatwa-browser-shell,.topic-pick-shell,.history-overview-card,.history-table-shell,.grouped-chart-shell,.chart-panel,.analysis-panel,.sim-lite-shell,.comparison-card,.points-card,.result-card,.metric-card,.soft-card,.card {{
-    border-radius: 18px !important;
-    margin-bottom: 0.75rem !important;
-}}
-.sidebar-workspace-card,.sidebar-section-card,.sidebar-legend-card {{ margin-bottom: 0.7rem !important; }}
-.stButton > button,.stDownloadButton > button {{ text-transform: none !important; min-height: 38px !important; }}
-[data-testid="stRadio"] [role="radiogroup"] > label {{ min-height: 38px !important; }}
-[data-testid="stSelectbox"] [data-baseweb="select"] > div,
-[data-testid="stMultiSelect"] [data-baseweb="select"] > div,
-[data-testid="stTextInputRootElement"],
-.stTextInput > div > div {{ min-height: 44px !important; }}
-.stTextArea > div > div {{ border-radius: 18px !important; }}
-.stTextArea textarea {{ min-height: 84px !important; }}
-.light-table-wrap,.history-table-shell,.comparison-card,.align-rank-card,.leaderboard-card,.fatwa-box,.topic-card,.explorer-summary-card,.topic-focus-card {{ overflow: hidden; }}
-.align-rank-card,.leaderboard-card,.topic-card,.explorer-summary-card,.topic-focus-card,.comparison-card {{ margin-bottom: 0.7rem !important; }}
-.hero-image-wrap {{ margin-bottom: 0.55rem !important; }}
-.hero-image-content {{ max-width: 50% !important; }}
-
-
-
-/* ===== TYPOGRAPHY BALANCE FINAL OVERRIDES ===== */
-html {{ font-size: 11.5px !important; }}
-body, p, div, span, label, li {{ font-size: 0.74rem; line-height: 1.45; }}
-
-/* hero banner */
-.hero-image-wrap {{ max-height: 175px !important; margin-bottom: 0.35rem !important; }}
-.hero-image-overlay {{ padding: 1.05rem 1.35rem !important; }}
-.hero-image-content {{ max-width: 50% !important; }}
-.hero-kicker {{ font-size: 0.62rem !important; padding: 0.32rem 0.72rem !important; margin-bottom: 0.28rem !important; }}
-.hero-image-title {{ font-size: 1.65rem !important; line-height: 1.02 !important; margin-bottom: 0.34rem !important; }}
-.hero-image-subtitle {{ font-size: 0.82rem !important; line-height: 1.4 !important; max-width: 500px !important; }}
-
-/* global title hierarchy */
-.section-title, .workspace-title, .empty-review-title, .batch-title, .sim-lite-title, .topic-pick-title, .fatwa-browser-title, .history-overview-title, .tab-minimal-title, .comparison-card-header, .history-table-title, .chart-panel-title, .grouped-chart-title, .overview-title, .analysis-panel-title, .input-editor-title, .browse-toolbar-title, .align-rank-topic {{
-    font-size: 1.02rem !important;
-    line-height: 1.2 !important;
-}}
-.tab-minimal-title, .batch-title, .sim-lite-title, .fatwa-browser-title {{ font-size: 1.12rem !important; }}
-.single-review-hero .tab-minimal-title, .editorial-title {{ font-size: 1.28rem !important; }}
-
-/* supporting text */
-.workspace-copy, .empty-review-copy, .batch-copy, .tab-minimal-copy, .analysis-panel-copy, .chart-panel-copy, .input-editor-note, .system-plain-note, .micro-copy, .history-table-copy, .browse-toolbar-copy, .fatwa-browser-copy, .sim-lite-summary-copy, .topic-pick-copy, .explorer-instruction-copy, .inline-section-copy {{
-    font-size: 0.74rem !important;
-    line-height: 1.48 !important;
-}}
-.workspace-kicker, .batch-kicker, .tab-minimal-kicker, .inline-section-label, .slim-loader-kicker, .input-editor-kicker, .overview-kicker, .sim-lite-kicker, .history-overview-tag, .explorer-instruction-title, .chart-panel-plain .chart-panel-title, .chart-panel-title {{
-    font-size: 0.62rem !important;
-}}
-
-/* buttons and segmented radio */
-.stButton > button, .stDownloadButton > button {{
-    min-height: 34px !important;
-    font-size: 0.68rem !important;
-    padding: 0.28rem 0.72rem !important;
-    border-radius: 10px !important;
-}}
-[data-testid="stRadio"] [role="radiogroup"] {{ padding: 0.2rem !important; gap: 0.25rem !important; border-radius: 16px !important; }}
-[data-testid="stRadio"] [role="radiogroup"] > label {{
-    min-height: 34px !important;
-    padding: 0.32rem 0.6rem !important;
-    border-radius: 12px !important;
-}}
-[data-testid="stRadio"] [role="radiogroup"] p {{ font-size: 0.68rem !important; }}
-
-/* inputs */
-[data-testid="stMultiSelect"] [data-baseweb="select"] > div,
-[data-testid="stSelectbox"] [data-baseweb="select"] > div,
-[data-testid="stTextInputRootElement"],
-.stTextInput > div > div {{ min-height: 42px !important; border-radius: 14px !important; }}
-.stTextArea > div > div {{ border-radius: 16px !important; }}
-.stTextArea textarea {{ min-height: 84px !important; font-size: 0.74rem !important; line-height: 1.45 !important; padding: 0.58rem 0.62rem 0.64rem 0.62rem !important; }}
-
-/* cards and metric blocks */
-.workspace-shell, .empty-review-card, .batch-shell, .fatwa-browser-shell, .topic-pick-shell, .history-overview-card, .history-table-shell, .grouped-chart-shell, .chart-panel, .analysis-panel, .sim-lite-shell, .comparison-card, .points-card, .metric-card, .result-card, .card, .soft-card {{
-    padding: 0.78rem !important;
-    border-radius: 18px !important;
-}}
-.metric-label, .result-card-title, .explorer-summary-label, .topic-focus-label, .history-overview-stat-label, .empty-review-stat-label, .sim-lite-metric-label {{ font-size: 0.6rem !important; }}
-.metric-value, .result-card-score, .metric-value-text, .sim-lite-metric-value, .history-overview-stat-value, .explorer-summary-value {{ font-size: 1.18rem !important; line-height: 1.05 !important; }}
-
-/* leaderboard and chart */
-.leaderboard-card {{ padding: 0.78rem 0.84rem !important; border-radius: 18px !important; }}
-.leaderboard-title {{ font-size: 0.92rem !important; }}
-.leaderboard-meta, .leaderboard-note {{ font-size: 0.68rem !important; }}
-.overview-chart-header, .similarity-visual-title, .sim-lite-summary-title {{ font-size: 0.84rem !important; }}
-.altair-chart-container text, .vega-embed text {{ font-size: 11px !important; }}
-
-/* tables */
-.light-table thead th {{ font-size: 0.68rem !important; padding: 0.65rem 0.62rem !important; }}
-.light-table tbody td {{ font-size: 0.74rem !important; padding: 0.68rem 0.62rem !important; line-height: 1.5 !important; }}
-
-/* sidebar hierarchy */
-.sidebar-title {{ font-size: 1.2rem !important; line-height: 1.08 !important; }}
-.sidebar-subtitle {{ font-size: 0.76rem !important; line-height: 1.55 !important; }}
-.sidebar-workspace-title, .sidebar-insight-value {{ font-size: 0.88rem !important; }}
-.sidebar-workspace-subtitle, .sidebar-action-text, .sidebar-insight-copy, .sidebar-mini-note, .sidebar-legend-text {{ font-size: 0.7rem !important; line-height: 1.5 !important; }}
-.sidebar-action-item {{ padding: 0.68rem 0.74rem !important; }}
-.sidebar-action-title {{ font-size: 0.78rem !important; }}
-.sidebar-topic-pill {{ font-size: 0.68rem !important; }}
-
-/* spacing consistency */
-.element-container, .stMarkdown, .stSelectbox, .stTextArea, .stButton {{ margin-bottom: 0.18rem !important; }}
-.empty-review-item, .batch-guide-step, .donut-insight-card, .align-rank-card, .topic-focus-card, .explorer-summary-card, .history-overview-note, .history-overview-stat, .sim-lite-metric {{ padding: 0.62rem 0.68rem !important; }}
-
-/* keep mobile readable */
-@media (max-width: 900px) {{
-  .hero-image-content {{ max-width: 100% !important; }}
-  .hero-image-title {{ font-size: 1.32rem !important; }}
-  .hero-image-subtitle {{ font-size: 0.74rem !important; max-width: 100% !important; }}
+@media (max-width: 620px) {{
+    .hero-image-wrap {{ height: 170px !important; }}
+    .hero-image-title {{ font-size: 1.3rem !important; }}
+    .explorer-summary-grid {{ grid-template-columns: 1fr; }}
 }}
 
 </style>
@@ -2755,7 +2573,7 @@ def render_sidebar_theme_legend():
                 </div>
             </div>
         </div>
-        <div class="sidebar-legend-note">Colors represent alignment Strength. <br> Scores indicate how closely AI responses match fatwa references. </div>
+        <div class="sidebar-legend-note">Colors represent alignment strength. <br> Scores show how closely AI responses match fatwa references. </div>
     </div>
     """
     st.markdown(legend_html, unsafe_allow_html=True)
@@ -2856,7 +2674,7 @@ def render_footer():
         <div class="footer-wrap">
             <p>
                 ★ Amirah Alyahaziqah Bt Mohd Jeffry ★ &nbsp;·&nbsp; Bachelor of Computer Science (Hons.)<br>
-                <span style="font-size:0.78rem;">2026 Universiti Teknologi MARA</span>
+                <span style="font-size:0.88rem;">2026 Universiti Teknologi MARA</span>
             </p>
         </div>
     """).strip()
@@ -2871,9 +2689,9 @@ def render_review_workspace_header():
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 0.08rem;
-            margin: 0.1rem 0 0.85rem 0;
-            padding: 0.5rem 0.6rem;
+            gap: 1rem;
+            margin: 0.15rem 0 1rem 0;
+            padding: 0.75rem 1rem;
             border-radius: 20px;
             border: 1px solid #e3b5a4;
             background: linear-gradient(180deg, #ffffff 0%, #fcf8fb 100%);
@@ -2884,30 +2702,31 @@ def render_review_workspace_header():
         }
         .review-workspace-kicker {
             color: #773344;
-            font-size: 0.7rem;
+            font-size: 0.82rem;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.09em;
-            margin-bottom: 0.13rem;
+            margin-bottom: 0.18rem;
         }
         .review-workspace-header h1 {
-            margin: 0 0 0.2rem 0;
+            margin: 0 0 0.25rem 0;
             color: #160029;
             font-family: 'Inter Tight', 'Inter', sans-serif;
-            font-size: 1.1rem;
-            line-height: 1.05;
+            font-size: 1.3rem;
+            line-height: 1.1;
             letter-spacing: -0.02em;
+            font-weight: 700;
         }
         .review-workspace-header p {
             margin: 0;
             color: #5d5060;
-            font-size: 0.7rem;
-            line-height: 1.38;
+            font-size: 0.92rem;
+            line-height: 1.55;
             max-width: 720px;
         }
         .review-workspace-badges {
             display: flex;
-            gap: 0.18rem;
+            gap: 0.5rem;
             flex-wrap: wrap;
             justify-content: flex-end;
             flex: 0 0 auto;
@@ -2916,22 +2735,22 @@ def render_review_workspace_header():
             min-width: 170px;
             background: linear-gradient(135deg, #162a63 0%, #4a1d62 55%, #7a1657 100%);
             border-radius: 16px;
-            padding: 0.55rem 0.7rem;
+            padding: 0.65rem 0.85rem;
             border: 1px solid rgba(253,3,99,0.14);
             box-shadow: 0 8px 18px rgba(20, 10, 33, 0.12);
         }
         .review-badge-card span {
             display: block;
             color: rgba(255,255,255,0.62);
-            font-size: 0.65rem;
+            font-size: 0.76rem;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            margin-bottom: 0.1rem;
+            margin-bottom: 0.15rem;
         }
         .review-badge-card strong {
             color: #ffffff;
-            font-size: 0.74rem;
+            font-size: 0.88rem;
             line-height: 1.35;
             font-weight: 700;
         }
@@ -2944,659 +2763,7 @@ def render_review_workspace_header():
                 justify-content: flex-start;
             }
         }
-
-        /* ── UNIFIED RESULT CARD (TAB 1) ─────────────────── */
-        .unified-result-card {{
-            background: linear-gradient(135deg, #ffffff 0%, #fbf5f1 50%, #f5ebe4 100%);
-            border: 1.5px solid #e3b5a4;
-            border-radius: 24px;
-            padding: 1.5rem 1.6rem;
-            box-shadow: 0 12px 32px rgba(25, 14, 36, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-            margin: 0.8rem 0 1.2rem 0;
-            backdrop-filter: blur(4px);
-        }}
-
-        .unified-result-grid {{
-            display: grid;
-            grid-template-columns: 1fr 1.4fr 1fr;
-            gap: 1.25rem;
-            align-items: stretch;
-            min-width: 0;
-        }}
-
-        .unified-result-section {{
-            padding: 1rem 1.05rem;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 248, 244, 0.82) 100%);
-            border: 1.2px solid rgba(227, 181, 164, 0.68);
-            border-radius: 18px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            min-width: 0;
-            word-break: break-word;
-            overflow-wrap: anywhere;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
-        }}
-
-        .recommendation-section {{
-            background: linear-gradient(180deg, #fff8f4 0%, #fff1f1 100%);
-            border-top: 4px solid #d44d5c;
-        }}
-
-        .reference-section {{
-            background: linear-gradient(180deg, #fffdfb 0%, #faf3f7 100%);
-            border-top: 4px solid #773344;
-        }}
-
-        .metrics-section {{
-            background: linear-gradient(180deg, #fffdf8 0%, #f9f1ec 100%);
-            border-top: 4px solid #d98c3f;
-        }}
-
-        .unified-result-section:hover {{
-            border-color: rgba(212, 77, 92, 0.4);
-            box-shadow: 0 8px 20px rgba(212, 77, 92, 0.1);
-            transform: translateY(-2px);
-        }}
-
-        .unified-result-label {{
-            font-size: 0.70rem;
-            font-weight: 850;
-            letter-spacing: 0.10em;
-            text-transform: uppercase;
-            color: #a3195b;
-            margin-bottom: 0.16rem;
-            opacity: 0.95;
-        }}
-
-        .unified-result-value {{
-            font-family: 'DM Serif Display', serif;
-            font-size: 1.32rem;
-            color: #160029;
-            font-weight: 700;
-            margin-bottom: 0.18rem;
-            line-height: 1.2;
-            letter-spacing: -0.01em;
-            overflow-wrap: anywhere;
-        }}
-
-        .unified-result-explanation {{
-            font-size: 0.84rem;
-            line-height: 1.45;
-            color: #5d3945;
-            background: linear-gradient(135deg, rgba(212, 77, 92, 0.12) 0%, rgba(212, 77, 92, 0.06) 100%);
-            padding: 0.55rem 0.7rem;
-            border-radius: 14px;
-            border-left: 4px solid #d44d5c;
-            position: relative;
-        }}
-
-        .unified-result-explanation::before {{
-            content: '';
-            position: absolute;
-            top: -1px;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, rgba(212, 77, 92, 0.2), transparent);
-            border-radius: 14px 14px 0 0;
-        }}
-
-        .unified-result-subtext {{
-            font-size: 0.8rem;
-            line-height: 1.58;
-            color: #5d3945;
-            margin-top: 0.35rem;
-            overflow-wrap: anywhere;
-            word-break: break-word;
-            white-space: normal;
-        }}
-
-        .unified-result-subtext strong {{
-            color: #160029;
-            font-weight: 750;
-        }}
-
-        .metrics-pill-row {{
-            display: flex;
-            gap: 0.24rem;
-            flex-wrap: wrap;
-            margin-bottom: 0.13rem;
-        }}
-
-        .metrics-mini-pill {{
-            background: linear-gradient(135deg, #ffffff 0%, #f9f1ec 100%);
-            border: 1.2px solid #e3b5a4;
-            border-radius: 16px;
-            padding: 0.6rem 0.7rem;
-            text-align: center;
-            flex: 1;
-            min-width: 70px;
-            transition: all 0.2s ease;
-            position: relative;
-            box-shadow: 0 2px 8px rgba(25, 14, 36, 0.04);
-        }}
-
-        .metrics-mini-pill:hover {{
-            border-color: #d44d5c;
-            box-shadow: 0 4px 12px rgba(212, 77, 92, 0.12);
-            transform: translateY(-1px);
-        }}
-
-        .metrics-mini-label {{
-            font-size: 0.67rem;
-            font-weight: 820;
-            color: #a3195b;
-            text-transform: uppercase;
-            letter-spacing: 0.07em;
-            margin-bottom: 0.1rem;
-        }}
-
-        .metrics-mini-value {{
-            font-family: 'DM Serif Display', serif;
-            font-size: 0.73rem;
-            font-weight: 700;
-            color: #160029;
-            line-height: 1.2;
-        }}
-
-        .metrics-overall {{
-            font-size: 0.83rem;
-            line-height: 1.42;
-            color: #2e6b52;
-            background: linear-gradient(135deg, #E6F7F1 0%, #f0fdf9 100%);
-            padding: 0.75rem 0.95rem;
-            border-radius: 12px;
-            border-left: 4px solid #06A77D;
-            font-weight: 550;
-            position: relative;
-        }}
-
-        .metrics-overall strong {{
-            color: #06A77D;
-            font-weight: 750;
-            font-size: 1.02em;
-        }}
-
-        .reference-section {{
-            position: relative;
-        }}
-
-        .reference-section::after {{
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 80px;
-            height: 80px;
-            background: radial-gradient(circle, rgba(227, 181, 164, 0.1) 0%, transparent 70%);
-            border-radius: 100%;
-            pointer-events: none;
-        }}
-
-        .recommendation-section {{
-            background: linear-gradient(135deg, rgba(212, 77, 92, 0.10) 0%, rgba(212, 77, 92, 0.05) 100%);
-            border-color: rgba(212, 77, 92, 0.35);
-            position: relative;
-        }}
-
-        .recommendation-section::before {{
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background: linear-gradient(180deg, #d44d5c 0%, rgba(212, 77, 92, 0) 100%);
-            border-radius: 18px 0 0 18px;
-        }}
-
-        @media (max-width: 1200px) {{
-            .unified-result-grid {{
-                grid-template-columns: 1fr;
-                gap: 0.08rem;
-            }}
-        }}
-
-        /* ── IMPROVED LIGHT TABLE ────────────────────────── */
-        .light-table-wrap {{
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1.2px solid #e3b5a4;
-            background: linear-gradient(180deg, #ffffff 0%, #faf7f4 100%);
-            box-shadow: 0 8px 24px rgba(25, 14, 36, 0.06);
-        }}
-
-        .light-table {{
-            width: 100%;
-            border-collapse: collapse;
-        }}
-
-        .light-table thead {{
-            background: linear-gradient(90deg, #f5e9e2 0%, #fbf5f1 50%, #f5ebe4 100%);
-            border-bottom: 2px solid #e3b5a4;
-        }}
-
-        .light-table thead th {{
-            padding: 0.5rem 0.6rem;
-            text-align: left;
-            font-size: 0.73rem;
-            font-weight: 820;
-            text-transform: uppercase;
-            letter-spacing: 0.09em;
-            color: #a3195b;
-            font-variant: small-caps;
-            position: relative;
-        }}
-
-        .light-table thead th::first-letter {{
-            font-variant: normal;
-        }}
-
-        .light-table tbody tr {{
-            border-bottom: 1px solid rgba(227, 181, 164, 0.25);
-            transition: all 0.2s ease;
-            background: #ffffff;
-        }}
-
-        .light-table tbody tr:hover {{
-            background: linear-gradient(90deg, rgba(227, 181, 164, 0.12) 0%, rgba(227, 181, 164, 0.06) 100%);
-            box-shadow: inset 0 0 12px rgba(227, 181, 164, 0.1);
-        }}
-
-        .light-table tbody tr:nth-child(even) {{
-            background: rgba(227, 181, 164, 0.02);
-        }}
-
-        .light-table tbody tr:nth-child(even):hover {{
-            background: linear-gradient(90deg, rgba(227, 181, 164, 0.12) 0%, rgba(227, 181, 164, 0.06) 100%);
-        }}
-
-        .light-table tbody td {{
-            padding: 0.95rem 1.1rem;
-            font-size: 0.68rem;
-            color: #5d3945;
-            word-break: break-word;
-            line-height: 1.5;
-        }}
-
-        .light-table tbody strong {{
-            color: #160029;
-            font-weight: 700;
-        }}
-
-        .light-table tbody tr:first-child td {{
-            padding-top: 1rem;
-        }}
-
-        .light-table tbody tr:last-child td {{
-            padding-bottom: 1rem;
-        }}
-
-        .pager-bar {{
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.95rem 1.3rem;
-            background: linear-gradient(90deg, #f9f1ec 0%, #fbf5f1 100%);
-            border: 1.2px solid #e3b5a4;
-            border-radius: 16px;
-            margin-bottom: 0.08rem;
-            font-size: 0.82rem;
-            color: #5d3945;
-            box-shadow: 0 4px 12px rgba(25, 14, 36, 0.04);
-        }}
-
-        .pager-note {{
-            font-weight: 620;
-            color: #773344;
-        }}
-
-        /* ── BATCH RESULTS IMPROVEMENTS ──────────────────── */
-        .batch-results-shell {{
-            background: linear-gradient(135deg, #ffffff 0%, #fbf5f1 50%, #f5ebe4 100%);
-            border: 1.5px solid #e3b5a4;
-            border-radius: 24px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 12px 32px rgba(25, 14, 36, 0.08);
-        }}
-
-        .batch-results-title {{
-            font-family: 'DM Serif Display', serif;
-            font-size: 0.78rem;
-            color: #160029;
-            margin-bottom: 0.18rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-        }}
-
-        .batch-results-copy {{
-            font-size: 0.75rem;
-            color: #5d3945;
-            line-height: 1.42;
-        }}
-
-        .metric-card {{
-            background: linear-gradient(135deg, #ffffff 0%, #faf7f4 100%);
-            border: 1.2px solid #e3b5a4;
-            border-radius: 18px;
-            padding: 1.2rem 1rem;
-            text-align: center;
-            box-shadow: 0 6px 16px rgba(25, 14, 36, 0.05);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }}
-
-        .metric-card::before {{
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #d44d5c 0%, #d44d5c 50%, transparent 100%);
-        }}
-
-        .metric-card:hover {{
-            border-color: #d44d5c;
-            box-shadow: 0 10px 28px rgba(212, 77, 92, 0.12);
-            transform: translateY(-4px);
-        }}
-
-        .metric-label {{
-            font-size: 0.75rem;
-            font-weight: 820;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: #a3195b;
-            margin-bottom: 0.15rem;
-        }}
-
-        .metric-value {{
-            font-family: 'DM Serif Display', serif;
-            font-size: 1.35rem;
-            color: #160029;
-            font-weight: 700;
-            line-height: 1.2;
-        }}
-
-        /* ── RESULT HERO CARD IMPROVEMENTS ──────────────── */
-        .result-hero-card {{
-            background: linear-gradient(135deg, #ffffff 0%, #fbf5f1 100%);
-            border: 1.5px solid #e3b5a4;
-            border-radius: 24px;
-            padding: 1.5rem 1.6rem;
-            margin-bottom: 1.4rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 2rem;
-            box-shadow: 0 12px 32px rgba(25, 14, 36, 0.08);
-        }}
-
-        .result-hero-main {{
-            flex: 1;
-        }}
-
-        .result-hero-kicker {{
-            font-size: 0.75rem;
-            font-weight: 820;
-            letter-spacing: 0.10em;
-            text-transform: uppercase;
-            color: #a3195b;
-            margin-bottom: 0.5rem;
-        }}
-
-        .result-hero-title {{
-            font-family: 'DM Serif Display', serif;
-            font-size: 1.19rem;
-            color: #160029;
-            margin-bottom: 0.13rem;
-            font-weight: 700;
-            line-height: 1.15;
-            letter-spacing: -0.02em;
-        }}
-
-        .result-hero-copy {{
-            font-size: 0.75rem;
-            color: #5d3945;
-            line-height: 1.42;
-        }}
-
-        .result-hero-badges {{
-            display: flex;
-            gap: 0.8rem;
-            flex-wrap: wrap;
-            justify-content: flex-end;
-        }}
-
-        .result-hero-badge {{
-            display: inline-flex;
-            align-items: center;
-            padding: 0.55rem 1rem;
-            border-radius: 999px;
-            font-size: 0.82rem;
-            font-weight: 650;
-            white-space: nowrap;
-            transition: all 0.2s ease;
-            border: 1.2px solid;
-        }}
-
-        .result-hero-badge.soft {{
-            background: rgba(227, 181, 164, 0.15);
-            border-color: rgba(227, 181, 164, 0.4);
-            color: #773344;
-        }}
-
-        .result-hero-badge.soft:hover {{
-            background: rgba(227, 181, 164, 0.25);
-            box-shadow: 0 4px 12px rgba(227, 181, 164, 0.2);
-        }}
-
-        .result-hero-badge.score {{
-            background: rgba(255, 255, 255, 0.6);
-            font-weight: 700;
-            backdrop-filter: blur(4px);
-        }}
-
-        /* ── SECTION SEPARATORS & DIVIDERS ──────────────── */
-        .section-subtitle {{
-            font-family: 'Inter Tight', 'Inter', sans-serif;
-            font-size: 0.96rem;
-            font-weight: 700;
-            color: #160029;
-            margin: 1.2rem 0 0.8rem 0;
-            letter-spacing: -0.01em;
-        }}
-
-        .divider {{
-            height: 1.5px;
-            background: linear-gradient(90deg, rgba(212, 77, 92, 0.2), rgba(212, 77, 92, 0.05) 50%, rgba(212, 77, 92, 0.2));
-            margin: 1.5rem 0;
-            border-radius: 999px;
-        }}
-
-        /* ── INPUT & FILTER IMPROVEMENTS ────────────────── */
-        .stTextInput input,
-        .stSelectbox select {{
-            background: linear-gradient(180deg, #ffffff 0%, #f9f1ec 100%) !important;
-            border: 1.2px solid #e3b5a4 !important;
-            border-radius: 14px !important;
-            color: #160029 !important;
-            font-size: 0.9rem !important;
-            padding: 0.75rem 1rem !important;
-            transition: all 0.2s ease !important;
-        }}
-
-        .stTextInput input:focus,
-        .stSelectbox select:focus {{
-            border-color: #d44d5c !important;
-            box-shadow: 0 0 0 3px rgba(212, 77, 92, 0.1) !important;
-        }}
-
-        /* ── KEYWORD CHIPS & TAGS ────────────────────────── */
-        .keyword-match {{
-            display: inline-block;
-            padding: 0.5rem 0.85rem;
-            margin: 0.4rem 0.4rem 0.4rem 0;
-            background: linear-gradient(135deg, #E6F7F1 0%, #f0fdf9 100%);
-            border: 1.2px solid rgba(6, 168, 125, 0.3);
-            border-radius: 999px;
-            color: #2e6b52;
-            font-size: 0.82rem;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 6px rgba(6, 168, 125, 0.08);
-        }}
-
-        .keyword-match:hover {{
-            background: linear-gradient(135deg, #d6f5f1 0%, #e0fdfb 100%);
-            border-color: rgba(6, 168, 125, 0.6);
-            box-shadow: 0 4px 12px rgba(6, 168, 125, 0.15);
-            transform: translateY(-2px);
-        }}
-
-        .keyword-miss {{
-            display: inline-block;
-            padding: 0.5rem 0.85rem;
-            margin: 0.4rem 0.4rem 0.4rem 0;
-            background: linear-gradient(135deg, #FBEAEC 0%, #fdf0f3 100%);
-            border: 1.2px solid rgba(212, 77, 92, 0.3);
-            border-radius: 999px;
-            color: #a31621;
-            font-size: 0.82rem;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 6px rgba(212, 77, 92, 0.08);
-        }}
-
-        .keyword-miss:hover {{
-            background: linear-gradient(135deg, #fbdae3 0%, #fde6ed 100%);
-            border-color: rgba(212, 77, 92, 0.6);
-            box-shadow: 0 4px 12px rgba(212, 77, 92, 0.15);
-            transform: translateY(-2px);
-        }}
-
-        /* ── BUTTON STYLING ─────────────────────────────── */
-        .stButton > button {{
-            background: linear-gradient(135deg, #d44d5c 0%, #b24758 100%);
-            color: #ffffff !important;
-            border: none !important;
-            border-radius: 14px !important;
-            padding: 0.6rem 1.2rem !important;
-            font-weight: 700 !important;
-            font-size: 0.9rem !important;
-            letter-spacing: 0.05em !important;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            box-shadow: 0 8px 16px rgba(212, 77, 92, 0.25) !important;
-            text-transform: uppercase;
-        }}
-
-        .stButton > button:hover {{
-            background: linear-gradient(135deg, #b24758 0%, #a23d4a 100%) !important;
-            box-shadow: 0 12px 28px rgba(212, 77, 92, 0.35) !important;
-            transform: translateY(-2px) !important;
-        }}
-
-        .stButton > button:active {{
-            transform: translateY(0px) !important;
-        }}
-
-        /* ── DOWNLOAD BUTTON STYLING ────────────────────── */
-        .stDownloadButton > button {{
-            background: linear-gradient(135deg, #f5e9e2 0%, #fbf5f1 100%);
-            color: #773344 !important;
-            border: 1.5px solid #e3b5a4 !important;
-            border-radius: 14px !important;
-            font-weight: 700 !important;
-            transition: all 0.2s ease !important;
-        }}
-
-        .stDownloadButton > button:hover {{
-            background: linear-gradient(135deg, #e3b5a4 0%, #f5e9e2 100%);
-            border-color: #d44d5c !important;
-            box-shadow: 0 6px 16px rgba(212, 77, 92, 0.15) !important;
-        }}
-
-        /* ── CARD CONTAINERS ────────────────────────────── */
-        .points-card {{
-            background: linear-gradient(135deg, #ffffff 0%, #faf7f4 100%);
-            border: 1.2px solid #e3b5a4;
-            border-radius: 20px;
-            padding: 0.6rem 0.8rem;
-            box-shadow: 0 8px 20px rgba(25, 14, 36, 0.05);
-            transition: all 0.3s ease;
-        }}
-
-        .points-card:hover {{
-            border-color: #d44d5c;
-            box-shadow: 0 12px 32px rgba(212, 77, 92, 0.1);
-        }}
-
-        .points-card-header {{
-            font-size: 0.82rem;
-            font-weight: 820;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: #a3195b;
-            margin-bottom: 0.11rem;
-        }}
-
-        .keyword-container {{
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.15rem;
-        }}
-
-        /* ── RESPONSIVE IMPROVEMENTS ────────────────────── */
-        @media (max-width: 768px) {{
-            .result-hero-card {{
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.08rem;
-            }}
-
-            .result-hero-badges {{
-                justify-content: flex-start;
-                width: 100%;
-            }}
-
-            .metric-value {{
-                font-size: 0.96rem;
-            }}
-
-            .unified-result-value {{
-                font-size: 0.75rem;
-            }}
-        }}
-
-        
-
-/* ===== CLEAN COMPACT OVERRIDES ===== */
-.workspace-shell,.empty-review-card,.batch-shell,.fatwa-browser-shell,.topic-pick-shell,.history-overview-card,.history-table-shell,.grouped-chart-shell,.chart-panel,.analysis-panel,.sim-lite-shell,.comparison-card,.points-card,.result-card,.metric-card,.soft-card,.card {
-    border-radius: 18px !important;
-    margin-bottom: 0.75rem !important;
-}
-.sidebar-workspace-card,.sidebar-section-card,.sidebar-legend-card { margin-bottom: 0.7rem !important; }
-.stButton > button,.stDownloadButton > button { text-transform: none !important; min-height: 38px !important; }
-[data-testid="stRadio"] [role="radiogroup"] > label { min-height: 38px !important; }
-[data-testid="stSelectbox"] [data-baseweb="select"] > div,
-[data-testid="stMultiSelect"] [data-baseweb="select"] > div,
-[data-testid="stTextInputRootElement"],
-.stTextInput > div > div { min-height: 44px !important; }
-.stTextArea > div > div { border-radius: 18px !important; }
-.stTextArea textarea { min-height: 84px !important; }
-.light-table-wrap,.history-table-shell,.comparison-card,.align-rank-card,.leaderboard-card,.fatwa-box,.topic-card,.explorer-summary-card,.topic-focus-card { overflow: hidden; }
-.align-rank-card,.leaderboard-card,.topic-card,.explorer-summary-card,.topic-focus-card,.comparison-card { margin-bottom: 0.7rem !important; }
-.hero-image-wrap { margin-bottom: 0.55rem !important; }
-.hero-image-content { max-width: 50% !important; }
-
-</style>
+        </style>
         <div class="review-workspace-header">
             <div class="review-workspace-copy">
                 <div class="review-workspace-kicker">Single Review</div>
