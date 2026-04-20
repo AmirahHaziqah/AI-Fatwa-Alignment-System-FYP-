@@ -82,9 +82,9 @@ def apply_theme():
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Inter+Tight:wght@500;600;700;800&display=swap');
 
-/* ── BASE FONT SIZE — optimized for perfect 100% zoom ── */
+/* ── BASE FONT SIZE — optimized for 100% zoom ── */
 html {{
-    font-size: 16px !important;
+    font-size: 14px !important;
 }}
 body {{
     overflow-x: hidden !important;
@@ -157,6 +157,28 @@ html {{
     100% {{ box-shadow: 0 0 5px rgba(212,77,92,0.3); }}
 }}
 
+@keyframes slideInDown {{
+    from {{
+        transform: translateY(-100%);
+        opacity: 0;
+    }}
+    to {{
+        transform: translateY(0);
+        opacity: 1;
+    }}
+}}
+
+@keyframes fadeOutUp {{
+    from {{
+        opacity: 1;
+        transform: translateY(0);
+    }}
+    to {{
+        opacity: 0;
+        transform: translateY(-100%);
+    }}
+}}
+
 .fade-in-up {{
     animation: fadeInUp 0.6s ease-out;
 }}
@@ -189,9 +211,9 @@ html {{
 }}
 
 .block-container {{
-    padding-top: 0.6rem !important;
-    padding-left: 1.5rem !important;
-    padding-right: 1.5rem !important;
+    padding-top: 0.5rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
     max-width: 1400px !important;
     width: 100% !important;
     margin-left: auto !important;
@@ -223,9 +245,9 @@ html {{
 
 /* ── SIDEBAR ─────────────────────────────────────────── */
 [data-testid="stSidebar"] {{
-    min-width: 280px !important;
-    max-width: 280px !important;
-    width: 280px !important;
+    min-width: 260px !important;
+    max-width: 260px !important;
+    width: 260px !important;
     background: linear-gradient(180deg, #160029 0%, #773344 55%, #5f2840 100%) !important;
     border-right: 1px solid rgba(255,255,255,0.08) !important;
     box-shadow: 16px 0 34px rgba(22,0,41,0.18) !important;
@@ -667,12 +689,12 @@ html {{
 /* ── HERO BANNER (MAIN CONTENT) ──────────────────────── */
 .hero-image-wrap {{
     position: relative;
-    height: 200px !important;
-    border-radius: 28px !important;
+    height: 130px !important;
+    border-radius: 20px !important;
     overflow: hidden;
-    margin-bottom: 1rem;
+    margin-bottom: 0.8rem;
     border: 1px solid rgba(158,179,194,0.20);
-    box-shadow: 0 18px 40px rgba(22, 0, 41, 0.14);
+    box-shadow: 0 12px 28px rgba(22, 0, 41, 0.12);
     background: linear-gradient(90deg, #0b2a56 0%, #4c224d 55%, #65104d 100%);
     animation: fadeInUp 0.6s ease-out;
 }}
@@ -709,27 +731,27 @@ html {{
     align-items: center;
     justify-content: flex-start !important;
     text-align: left !important;
-    padding: 2rem 2rem;
+    padding: 1.5rem 2rem;
 }}
 
 .hero-image-content {{
     width: 100%;
-    max-width: 60% !important;
+    max-width: 70% !important;
 }}
 
 .hero-kicker {{
     display: inline-flex;
     align-items: center;
-    padding: 0.45rem 1rem;
+    padding: 0.3rem 0.8rem;
     border-radius: 999px;
     background: rgba(255,255,255,0.10);
     border: 1px solid rgba(255,255,255,0.20);
     color: #ffffff;
-    font-size: 0.8rem;
+    font-size: 0.65rem !important;
     font-weight: 800;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-    margin-bottom: 0.7rem;
+    margin-bottom: 0.5rem;
     backdrop-filter: blur(4px);
     transition: all 0.2s ease;
 }}
@@ -740,18 +762,18 @@ html {{
 
 .hero-image-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 2rem !important;
+    font-size: 1.3rem !important;
     font-weight: 800;
     line-height: 1.1;
     letter-spacing: -0.03em;
     color: #ffffff !important;
-    margin: 0 0 0.6rem 0;
-    text-shadow: 0 8px 18px rgba(0,0,0,0.20) !important;
+    margin: 0 0 0.4rem 0;
+    text-shadow: 0 4px 12px rgba(0,0,0,0.20) !important;
 }}
 
 .hero-image-subtitle {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.95rem;
+    font-size: 0.7rem !important;
     font-weight: 500;
     line-height: 1.5;
     color: rgba(255,255,255,0.92) !important;
@@ -764,23 +786,23 @@ html {{
 .section-banner {{
     position: relative;
     width: 100%;
-    min-height: 90px;
+    min-height: 80px;
     border-radius: 20px;
     overflow: hidden;
-    margin: 1.5rem 0 1.2rem 0;
+    margin: 1rem 0 1rem 0;
     border: 1px solid #e3b5a4;
-    box-shadow: 0 10px 28px rgba(59, 29, 74, 0.06);
+    box-shadow: 0 8px 20px rgba(59, 29, 74, 0.06);
     background: linear-gradient(135deg, #160029, #773344);
     transition: all 0.3s ease;
 }}
 .section-banner:hover {{
     transform: translateY(-2px);
-    box-shadow: 0 16px 32px rgba(59, 29, 74, 0.12);
+    box-shadow: 0 12px 24px rgba(59, 29, 74, 0.12);
 }}
 
 .section-banner-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     font-weight: 700;
     color: #FFFFFF;
     margin: 0;
@@ -792,9 +814,9 @@ html {{
 .soft-card, .card {{
     background: #FFFFFF;
     border-radius: 18px !important;
-    padding: 1.1rem;
+    padding: 1rem;
     border: 1px solid #D2DCE5 !important;
-    box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
+    box-shadow: 0 8px 20px rgba(22, 32, 51, 0.06) !important;
     color: #2a1421;
     transition: all 0.3s ease;
 }}
@@ -805,18 +827,18 @@ html {{
     animation: fadeInUp 0.5s ease-out;
 }}
 .card:hover {{
-    transform: translateY(-6px) !important;
-    box-shadow: 0 20px 40px rgba(22, 32, 51, 0.12) !important;
+    transform: translateY(-4px) !important;
+    box-shadow: 0 16px 32px rgba(22, 32, 51, 0.12) !important;
     border-color: #d44d5c !important;
 }}
 
 .card-header {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 700;
     color: #160029;
     margin-bottom: 0.5rem;
-    padding-bottom: 0.6rem;
+    padding-bottom: 0.5rem;
     border-bottom: 2px solid #f5e9e2;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -825,10 +847,10 @@ html {{
 /* ── METRIC CARDS ────────────────────────────────────── */
 .metric-card {{
     background: #FFFFFF;
-    border-radius: 18px !important;
-    padding: 1rem 1.2rem;
+    border-radius: 16px !important;
+    padding: 0.7rem 0.8rem;
     border: 1px solid #D2DCE5 !important;
-    box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
+    box-shadow: 0 8px 20px rgba(22, 32, 51, 0.06) !important;
     text-align: center;
     height: 100%;
     position: relative;
@@ -836,20 +858,20 @@ html {{
     transition: all 0.3s ease;
 }}
 .metric-card:hover {{
-    transform: translateY(-4px);
-    box-shadow: 0 16px 32px rgba(22, 32, 51, 0.1) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(22, 32, 51, 0.1) !important;
 }}
 
 .metric-card::before {{
     content: "";
     position: absolute;
     top: 0; left: 0; right: 0;
-    height: 5px;
+    height: 4px;
     background: linear-gradient(90deg, #d44d5c 0%, #773344 100%) !important;
     transition: height 0.2s ease;
 }}
 .metric-card:hover::before {{
-    height: 6px;
+    height: 5px;
 }}
 
 .metric-card-good::before {{ background: #06A77D !important; }}
@@ -857,17 +879,17 @@ html {{
 .metric-card-low::before  {{ background: #A31621 !important; }}
 
 .metric-label {{
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     font-weight: 700;
     color: #8b6771;
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.4rem;
     letter-spacing: 0.06em;
     text-transform: uppercase;
 }}
 
 .metric-value {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.6rem;
+    font-size: 1.3rem;
     font-weight: 700;
     color: #773344;
     line-height: 1.1;
@@ -884,13 +906,13 @@ html {{
 /* ── SECTION TITLES ──────────────────────────────────── */
 .section-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     font-weight: 700;
     color: #773344;
-    margin: 1.8rem 0 1rem 0;
+    margin: 1.5rem 0 0.8rem 0;
     position: relative;
     display: inline-block;
-    padding-bottom: 0.6rem;
+    padding-bottom: 0.5rem;
     letter-spacing: -0.01em;
 }}
 
@@ -909,30 +931,30 @@ html {{
 
 .section-subtitle {{
     font-family: 'Inter', sans-serif;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 700;
     color: #160029;
-    margin: 1.3rem 0 0.9rem 0;
+    margin: 1rem 0 0.7rem 0;
     letter-spacing: -0.01em;
 }}
 
 /* ── MESSAGE BOXES ───────────────────────────────────── */
 .msg-box {{
-    padding: 0.85rem 1rem;
-    border-radius: 16px !important;
-    margin: 1rem 0;
+    padding: 0.7rem 0.9rem;
+    border-radius: 14px !important;
+    margin: 0.8rem 0;
     background: #FFFFFF;
     border: 1px solid #e3b5a4;
     border-left: 5px solid #773344;
-    box-shadow: 0 2px 8px rgba(15,32,68,0.05);
+    box-shadow: 0 2px 6px rgba(15,32,68,0.05);
     color: #2a1421;
-    line-height: 1.6;
-    font-size: 0.9rem;
+    line-height: 1.5;
+    font-size: 0.85rem;
     transition: all 0.2s ease;
 }}
 .msg-box:hover {{
     transform: translateX(4px);
-    box-shadow: 0 4px 12px rgba(15,32,68,0.1);
+    box-shadow: 0 4px 10px rgba(15,32,68,0.08);
 }}
 
 .msg-box strong {{ color: #160029; }}
@@ -944,16 +966,16 @@ html {{
 .keyword-container {{
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 0.85rem;
+    gap: 0.4rem;
+    margin-top: 0.6rem;
 }}
 
 .keyword-match, .keyword-miss {{
     display: inline-flex;
     align-items: center;
-    padding: 0.4rem 1rem;
+    padding: 0.25rem 0.7rem;
     border-radius: 999px;
-    font-size: 0.85rem;
+    font-size: 0.7rem;
     font-weight: 600;
     transition: all 0.2s ease;
 }}
@@ -968,7 +990,7 @@ html {{
 }}
 .keyword-match:hover {{
     background: rgba(25,135,84,0.2) !important;
-    box-shadow: 0 2px 8px rgba(25,135,84,0.2);
+    box-shadow: 0 2px 6px rgba(25,135,84,0.2);
 }}
 
 .keyword-miss {{
@@ -978,43 +1000,43 @@ html {{
 }}
 .keyword-miss:hover {{
     background: rgba(180,35,79,0.15) !important;
-    box-shadow: 0 2px 8px rgba(180,35,79,0.15);
+    box-shadow: 0 2px 6px rgba(180,35,79,0.15);
 }}
 
 /* ── FATWA BOX ───────────────────────────────────────── */
 .fatwa-box {{
     background: #FFFFFF;
-    border-radius: 18px !important;
-    padding: 1.1rem 1.2rem;
+    border-radius: 16px !important;
+    padding: 0.9rem 1rem;
     border: 1px solid #D2DCE5 !important;
-    box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
+    box-shadow: 0 8px 20px rgba(22, 32, 51, 0.06) !important;
     color: #2a1421;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.7rem;
     transition: all 0.3s ease;
 }}
 .fatwa-box:hover {{
     transform: translateY(-2px);
-    box-shadow: 0 16px 32px rgba(22, 32, 51, 0.1) !important;
+    box-shadow: 0 12px 24px rgba(22, 32, 51, 0.1) !important;
     border-color: #d44d5c !important;
 }}
 
 .fatwa-meta-row {{
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 0.7rem;
+    gap: 0.4rem;
+    margin-bottom: 0.5rem;
 }}
 
 .fatwa-meta-pill {{
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
-    padding: 0.35rem 0.75rem;
+    padding: 0.25rem 0.6rem;
     border-radius: 8px;
     background: #f5e9e2;
     border: 1px solid #e3b5a4;
     color: #5f2840;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     font-weight: 600;
     transition: all 0.2s ease;
 }}
@@ -1025,10 +1047,10 @@ html {{
 
 .fatwa-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: 700;
     color: #160029;
-    margin-bottom: 0.7rem;
+    margin-bottom: 0.5rem;
     line-height: 1.3;
     word-break: break-word;
 }}
@@ -1037,7 +1059,7 @@ html {{
     background: linear-gradient(180deg, #ffffff 0%, #f9f1ec 100%);
     border: 1px solid #e3b5a4;
     border-radius: 12px;
-    padding: 0.9rem 1rem;
+    padding: 0.7rem 0.9rem;
     transition: all 0.2s ease;
 }}
 .fatwa-box:hover .fatwa-text-panel {{
@@ -1047,8 +1069,8 @@ html {{
 .fatwa-text-panel p {{
     margin: 0;
     color: #160029;
-    line-height: 1.7;
-    font-size: 0.95rem;
+    line-height: 1.6;
+    font-size: 0.85rem;
     white-space: pre-wrap;
     word-break: break-word;
 }}
@@ -1056,9 +1078,9 @@ html {{
 /* ── BADGES ──────────────────────────────────────────── */
 .badge {{
     display: inline-block;
-    padding: 0.3rem 0.85rem;
+    padding: 0.25rem 0.7rem;
     border-radius: 6px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.03em;
     text-transform: uppercase;
@@ -1075,25 +1097,25 @@ html {{
 
 /* ── SCORE CIRCLE ────────────────────────────────────── */
 .score-circle {{
-    width: 130px; height: 130px;
+    width: 110px; height: 110px;
     border-radius: 50%;
     margin: 0 auto;
     display: flex; align-items: center; justify-content: center;
     position: relative;
-    box-shadow: 0 4px 20px rgba(15,32,68,0.14);
+    box-shadow: 0 4px 16px rgba(15,32,68,0.14);
     transition: all 0.3s ease;
     animation: fadeInUp 0.5s ease-out;
 }}
 .score-circle:hover {{
     transform: scale(1.02);
-    box-shadow: 0 8px 30px rgba(212,77,92,0.3);
+    box-shadow: 0 8px 24px rgba(212,77,92,0.3);
     animation: glow 1.5s infinite;
 }}
 
 .score-circle::before {{
     content: '';
     position: absolute;
-    width: 100px; height: 100px;
+    width: 85px; height: 85px;
     border-radius: 50%;
     background: #FFFFFF;
 }}
@@ -1102,7 +1124,7 @@ html {{
     position: relative;
     z-index: 2;
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     font-weight: 700;
     color: #773344;
 }}
@@ -1113,13 +1135,13 @@ html {{
 /* ── INFO GRID ───────────────────────────────────────── */
 .info-grid {{
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
-    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.7rem;
 }}
 
 .info-item {{
     background: #EEF4F8;
-    padding: 1rem;
+    padding: 0.8rem;
     border-radius: 10px;
     border: 1px solid #e3b5a4;
     transition: all 0.2s ease;
@@ -1127,20 +1149,20 @@ html {{
 .info-item:hover {{
     transform: translateY(-2px);
     background: #e8f0f5;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }}
 
 .info-label {{
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     font-weight: 700;
     color: #8b6771;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.2rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }}
 
 .info-value {{
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: #2a1421;
     word-break: break-word;
@@ -1152,17 +1174,17 @@ html {{
 .divider {{
     height: 1px;
     background: linear-gradient(90deg, transparent, #e3b5a4, transparent);
-    margin: 2rem 0;
+    margin: 1.5rem 0;
     opacity: 0.8;
 }}
 
 /* ── RESULT CARDS ────────────────────────────────────── */
 .result-card {{
     background: #FFFFFF;
-    border-radius: 18px !important;
-    padding: 1rem 1.2rem;
+    border-radius: 16px !important;
+    padding: 0.8rem 1rem;
     border: 1px solid #D2DCE5 !important;
-    box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
+    box-shadow: 0 8px 20px rgba(22, 32, 51, 0.06) !important;
     text-align: center;
     height: 100%;
     position: relative;
@@ -1170,20 +1192,20 @@ html {{
     transition: all 0.3s ease;
 }}
 .result-card:hover {{
-    transform: translateY(-4px);
-    box-shadow: 0 20px 40px rgba(22, 32, 51, 0.12) !important;
+    transform: translateY(-3px);
+    box-shadow: 0 16px 32px rgba(22, 32, 51, 0.12) !important;
 }}
 
 .result-card::before {{
     content: "";
     position: absolute;
     top: 0; left: 0; right: 0;
-    height: 5px;
+    height: 4px;
     background: linear-gradient(90deg, #d44d5c 0%, #773344 100%) !important;
     transition: height 0.2s ease;
 }}
 .result-card:hover::before {{
-    height: 6px;
+    height: 5px;
 }}
 
 .result-card-good::before  {{ background: #06A77D !important; }}
@@ -1193,17 +1215,17 @@ html {{
 .result-card-title {{
     color: #8b6771;
     font-weight: 700;
-    font-size: 0.8rem;
-    margin-bottom: 0.5rem;
+    font-size: 0.75rem;
+    margin-bottom: 0.4rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }}
 
 .result-card-score {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     font-weight: 700;
-    margin: 0.4rem 0 0.5rem 0;
+    margin: 0.3rem 0 0.4rem 0;
     transition: all 0.2s ease;
 }}
 .result-card:hover .result-card-score {{
@@ -1216,32 +1238,32 @@ html {{
 
 .result-card-text {{
     color: #5d3945;
-    font-size: 0.85rem;
-    line-height: 1.55;
+    font-size: 0.8rem;
+    line-height: 1.5;
 }}
 
 /* ── POINTS CARD ─────────────────────────────────────── */
 .points-card {{
     background: #FFFFFF;
-    border-radius: 18px !important;
-    padding: 1rem 1.2rem;
+    border-radius: 16px !important;
+    padding: 0.8rem 1rem;
     border: 1px solid #D2DCE5 !important;
-    box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
+    box-shadow: 0 8px 20px rgba(22, 32, 51, 0.06) !important;
     height: 100%;
     transition: all 0.3s ease;
 }}
 .points-card:hover {{
     transform: translateY(-2px);
-    box-shadow: 0 16px 32px rgba(22, 32, 51, 0.1) !important;
+    box-shadow: 0 12px 24px rgba(22, 32, 51, 0.1) !important;
 }}
 
 .points-card-header {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.85rem;
+    font-size: 0.7rem;
     font-weight: 700;
     color: #160029;
-    margin-bottom: 0.5rem;
-    padding-bottom: 0.55rem;
+    margin-bottom: 0.4rem;
+    padding-bottom: 0.4rem;
     border-bottom: 1px solid #e3b5a4;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -1250,23 +1272,23 @@ html {{
 /* ── SMALL NOTE ──────────────────────────────────────── */
 .small-note {{
     color: #8b6771;
-    font-size: 0.85rem;
-    line-height: 1.55;
+    font-size: 0.8rem;
+    line-height: 1.5;
 }}
 
 /* ── CHART CARD ──────────────────────────────────────── */
 .chart-card {{
     background: #FFFFFF;
-    border-radius: 18px !important;
-    padding: 1.2rem 1.2rem 0.8rem 1.2rem;
+    border-radius: 16px !important;
+    padding: 1rem 1rem 0.6rem 1rem;
     border: 1px solid #D2DCE5 !important;
-    box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
-    margin-bottom: 0.75rem;
+    box-shadow: 0 8px 20px rgba(22, 32, 51, 0.06) !important;
+    margin-bottom: 0.7rem;
     transition: all 0.3s ease;
 }}
 .chart-card:hover {{
     transform: translateY(-2px);
-    box-shadow: 0 16px 32px rgba(22, 32, 51, 0.1) !important;
+    box-shadow: 0 12px 24px rgba(22, 32, 51, 0.1) !important;
 }}
 
 /* ── BUTTONS ─────────────────────────────────────────── */
@@ -1278,18 +1300,18 @@ html {{
     border-radius: 12px !important;
     font-weight: 700 !important;
     font-family: 'Inter', sans-serif !important;
-    padding: 0.55rem 1.1rem !important;
-    font-size: 0.9rem !important;
-    box-shadow: 0 10px 22px rgba(119,51,68,0.18) !important;
+    padding: 0.35rem 0.8rem !important;
+    font-size: 0.8rem !important;
+    box-shadow: 0 8px 16px rgba(119,51,68,0.18) !important;
     transition: all 0.3s ease !important;
     letter-spacing: 0.01em !important;
-    min-height: 44px !important;
+    min-height: 36px !important;
 }}
 
 .stButton > button:hover,
 .stDownloadButton > button:hover {{
     transform: translateY(-2px) !important;
-    box-shadow: 0 12px 28px rgba(119,51,68,0.28) !important;
+    box-shadow: 0 10px 22px rgba(119,51,68,0.28) !important;
     background: linear-gradient(135deg, #d44d5c 0%, #e05568 100%) !important;
     color: white !important;
 }}
@@ -1297,7 +1319,7 @@ html {{
 .stButton > button:active,
 .stDownloadButton > button:active {{
     transform: translateY(0px) !important;
-    box-shadow: 0 4px 12px rgba(119,51,68,0.2) !important;
+    box-shadow: 0 4px 10px rgba(119,51,68,0.2) !important;
 }}
 
 /* ── INPUT LABELS ────────────────────────────────────── */
@@ -1308,10 +1330,10 @@ html {{
 [data-testid="stRadio"] label:first-of-type {{
     color: #160029 !important;
     font-family: 'Inter', sans-serif !important;
-    font-size: 0.9rem !important;
+    font-size: 0.85rem !important;
     font-weight: 700 !important;
     letter-spacing: 0.04em !important;
-    margin-bottom: 0.4rem !important;
+    margin-bottom: 0.3rem !important;
 }}
 
 /* ── RADIO / SEGMENTED INPUTS ────────────────────────── */
@@ -1320,18 +1342,18 @@ html {{
 [data-testid="stRadio"] [role="radiogroup"] {{
     background: linear-gradient(180deg,#fffdfc 0%,#fbf3ee 100%) !important;
     border: 1px solid #e3b5a4 !important;
-    border-radius: 22px !important;
-    padding: 0.4rem !important;
-    gap: 0.5rem !important;
+    border-radius: 20px !important;
+    padding: 0.3rem !important;
+    gap: 0.4rem !important;
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.55);
 }}
 [data-testid="stRadio"] [role="radiogroup"] > label {{
     flex: 1 1 0 !important;
     justify-content: center !important;
     text-align: center !important;
-    min-height: 40px !important;
-    border-radius: 16px !important;
-    padding: 0.4rem 0.8rem !important;
+    min-height: 36px !important;
+    border-radius: 14px !important;
+    padding: 0.3rem 0.6rem !important;
     transition: all 0.25s ease !important;
     border: 1px solid transparent !important;
 }}
@@ -1342,23 +1364,23 @@ html {{
 [data-testid="stRadio"] [role="radiogroup"] > label:has(input:checked) {{
     background: linear-gradient(180deg,#d44d5c 0%,#cb4a5e 100%) !important;
     border-color: #cb4a5e !important;
-    box-shadow: 0 8px 18px rgba(119,51,68,0.18) !important;
+    box-shadow: 0 6px 14px rgba(119,51,68,0.18) !important;
     transform: scale(1.02);
 }}
 [data-testid="stRadio"] [role="radiogroup"] > label:has(input:checked) p {{color:#ffffff !important;}}
 [data-testid="stRadio"] [role="radiogroup"] input {{display:none !important;}}
-[data-testid="stRadio"] [role="radiogroup"] p {{color:#5d3945 !important;font-weight:700 !important;font-size:0.85rem !important;opacity:1 !important;}}
+[data-testid="stRadio"] [role="radiogroup"] p {{color:#5d3945 !important;font-weight:700 !important;font-size:0.8rem !important;opacity:1 !important;}}
 
 /* ── INPUT SURFACES ──────────────────────────────────── */
 [data-testid="stMultiSelect"] [data-baseweb="select"] > div,
 [data-testid="stSelectbox"] [data-baseweb="select"] > div,
 [data-testid="stTextInputRootElement"],
 .stTextInput > div > div {{
-    background: linear-gradient(180deg, #fffefe 0%, #fbf4ef 100%) !important;
+    background: #ffffff !important;
     border: 1.5px solid #e3b5a4 !important;
-    border-radius: 18px !important;
-    min-height: 48px !important;
-    box-shadow: 0 8px 18px rgba(44, 21, 33, 0.06) !important;
+    border-radius: 16px !important;
+    min-height: 44px !important;
+    box-shadow: 0 6px 14px rgba(44, 21, 33, 0.06) !important;
     transition: all 0.25s ease !important;
 }}
 [data-testid="stMultiSelect"] [data-baseweb="select"] > div:hover,
@@ -1374,7 +1396,7 @@ html {{
 [data-testid="stTextInputRootElement"]:focus-within,
 .stTextInput > div > div:focus-within {{
     border-color: #b24758 !important;
-    box-shadow: 0 0 0 4px rgba(212,77,92,0.12), 0 12px 24px rgba(44,21,33,0.08) !important;
+    box-shadow: 0 0 0 3px rgba(212,77,92,0.12), 0 8px 20px rgba(44,21,33,0.08) !important;
 }}
 
 [data-testid="stMultiSelect"] [data-baseweb="tag"] {{
@@ -1397,11 +1419,11 @@ html {{
 
 /* ── TEXT AREA ───────────────────────────────────────── */
 .stTextArea > div > div {{
-    background: linear-gradient(180deg, #fffefe 0%, #fbf4ef 100%) !important;
+    background: #ffffff !important;
     border: 1.5px solid #e3b5a4 !important;
-    border-radius: 22px !important;
-    box-shadow: 0 10px 24px rgba(44,21,33,0.06) !important;
-    padding: 0.4rem !important;
+    border-radius: 16px !important;
+    box-shadow: 0 6px 14px rgba(44,21,33,0.06) !important;
+    padding: 0.2rem !important;
     transition: all 0.25s ease !important;
 }}
 .stTextArea > div > div:hover {{
@@ -1411,20 +1433,20 @@ html {{
 
 .stTextArea > div > div:focus-within {{
     border-color: #b24758 !important;
-    box-shadow: 0 0 0 4px rgba(212,77,92,0.12), 0 14px 28px rgba(44,21,33,0.08) !important;
+    box-shadow: 0 0 0 3px rgba(212,77,92,0.12), 0 8px 20px rgba(44,21,33,0.08) !important;
 }}
 
 .stTextArea textarea {{
     background: transparent !important;
     border: none !important;
-    border-radius: 18px !important;
-    padding: 0.8rem 0.9rem !important;
+    border-radius: 14px !important;
+    padding: 0.6rem 0.8rem !important;
     color: #2a1421 !important;
-    font-size: 0.9rem !important;
+    font-size: 0.85rem !important;
     font-family: 'Inter', sans-serif !important;
-    line-height: 1.6 !important;
+    line-height: 1.5 !important;
     box-shadow: none !important;
-    min-height: 160px !important;
+    min-height: 120px !important;
 }}
 
 .stTextArea textarea:focus {{
@@ -1437,17 +1459,17 @@ html {{
 .stTextInput input::placeholder {{
     color: #9a7b87 !important;
     opacity: 1 !important;
-    font-size: 0.9rem !important;
+    font-size: 0.85rem !important;
 }}
 
 /* ── TEXT INPUT ──────────────────────────────────────── */
 .stTextInput input {{
     background: transparent !important;
     border: none !important;
-    border-radius: 16px !important;
-    padding: 0.5rem 0.7rem !important;
+    border-radius: 14px !important;
+    padding: 0.4rem 0.6rem !important;
     color: #2a1421 !important;
-    font-size: 0.9rem !important;
+    font-size: 0.85rem !important;
     font-family: 'Inter', sans-serif !important;
     box-shadow: none !important;
 }}
@@ -1458,9 +1480,9 @@ html {{
 [data-testid="stMultiSelect"] > div > div {{
     background: transparent !important;
     border: none !important;
-    border-radius: 16px !important;
+    border-radius: 14px !important;
     color: #2a1421 !important;
-    font-size: 0.9rem !important;
+    font-size: 0.85rem !important;
     font-family: 'Inter', sans-serif !important;
     box-shadow: none !important;
 }}
@@ -1476,14 +1498,14 @@ html {{
 /* ── LIGHT TABLE ─────────────────────────────────────── */
 .light-table-wrap {{
     overflow-x: auto;
-    border-radius: 18px;
+    border-radius: 16px;
     border: 1px solid #e3b5a4;
-    box-shadow: 0 10px 24px rgba(39,34,51,0.08);
+    box-shadow: 0 8px 18px rgba(39,34,51,0.06);
     background: #FFFFFF;
     transition: all 0.2s ease;
 }}
 .light-table-wrap:hover {{
-    box-shadow: 0 14px 32px rgba(39,34,51,0.12);
+    box-shadow: 0 12px 24px rgba(39,34,51,0.1);
 }}
 
 .light-table {{
@@ -1491,32 +1513,32 @@ html {{
     border-collapse: separate;
     border-spacing: 0;
     overflow: hidden;
-    border-radius: 18px;
+    border-radius: 16px;
 }}
 
 .light-table thead th {{
     background: #f7f0f5 !important;
     color: #773344 !important;
     font-weight: 700;
-    font-size: 0.85rem;
-    padding: 0.85rem 1rem;
+    font-size: 0.7rem;
+    padding: 0.6rem 0.8rem;
     text-align: left;
     white-space: nowrap;
     letter-spacing: 0.03em;
     border-bottom: 1px solid rgba(0,0,0,0.05);
 }}
 
-.light-table thead th:first-child {{ border-radius: 18px 0 0 0; }}
-.light-table thead th:last-child  {{ border-radius: 0 18px 0 0; }}
+.light-table thead th:first-child {{ border-radius: 16px 0 0 0; }}
+.light-table thead th:last-child  {{ border-radius: 0 16px 0 0; }}
 
 .light-table tbody td {{
     background: #FFFFFF;
     color: #2a1421;
-    font-size: 0.85rem;
-    padding: 0.85rem 1rem;
+    font-size: 0.75rem;
+    padding: 0.6rem 0.8rem;
     border-bottom: 1px solid #e3b5a4;
     vertical-align: middle;
-    line-height: 1.6;
+    line-height: 1.5;
     transition: all 0.2s ease;
 }}
 
@@ -1530,57 +1552,57 @@ html {{
 /* ── OVERVIEW CHART CARD ─────────────────────────────── */
 .overview-chart-card {{
     background: #FFFFFF;
-    border-radius: 18px !important;
-    padding: 0.75rem 1rem 1rem 1.3rem;
+    border-radius: 16px !important;
+    padding: 0.6rem 0.9rem 0.9rem 1.1rem;
     border: 1px solid #D2DCE5 !important;
-    box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
-    margin-bottom: 0.75rem;
+    box-shadow: 0 8px 20px rgba(22, 32, 51, 0.06) !important;
+    margin-bottom: 0.7rem;
     transition: all 0.3s ease;
 }}
 .overview-chart-card:hover {{
     transform: translateY(-2px);
-    box-shadow: 0 16px 32px rgba(22, 32, 51, 0.1) !important;
+    box-shadow: 0 12px 24px rgba(22, 32, 51, 0.1) !important;
 }}
 
 /* ── TOPIC CARDS ─────────────────────────────────────── */
 .topic-card-grid {{
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.7rem;
 }}
 
 .topic-card {{
     background: #FFFFFF;
     border: 1px solid #e3b5a4;
-    border-top: 5px solid #b24758;
-    border-radius: 18px;
-    padding: 1.1rem;
-    box-shadow: 0 8px 18px rgba(39,34,51,0.08);
+    border-top: 4px solid #b24758;
+    border-radius: 16px;
+    padding: 0.9rem;
+    box-shadow: 0 6px 14px rgba(39,34,51,0.06);
     transition: all 0.3s ease;
 }}
 .topic-card:hover {{
-    transform: translateY(-4px);
-    box-shadow: 0 16px 28px rgba(39,34,51,0.12);
-    border-top-width: 6px;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 22px rgba(39,34,51,0.1);
+    border-top-width: 5px;
 }}
 
 .topic-card-title {{
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 800;
     color: #2a1421;
-    line-height: 1.45;
-    margin-bottom: 0.4rem;
+    line-height: 1.4;
+    margin-bottom: 0.3rem;
 }}
 
 .topic-card-pill {{
     display: inline-flex;
     align-items: center;
-    padding: 0.4rem 0.8rem;
+    padding: 0.3rem 0.7rem;
     border-radius: 999px;
     background: #f5e9e2;
     color: #160029;
     border: 1px solid #e3b5a4;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 800;
     transition: all 0.2s ease;
 }}
@@ -1590,7 +1612,7 @@ html {{
 
 .topic-card-count {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: #773344;
 }}
 
@@ -1599,37 +1621,37 @@ html {{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
     flex-wrap: wrap;
     background: #FFFFFF;
     border: 1px solid #e3b5a4;
-    border-left: 5px solid #b24758;
-    border-radius: 14px;
-    padding: 0.6rem 0.9rem;
-    margin-bottom: 0.5rem;
+    border-left: 4px solid #b24758;
+    border-radius: 12px;
+    padding: 0.5rem 0.8rem;
+    margin-bottom: 0.4rem;
     transition: all 0.2s ease;
 }}
 .pager-bar:hover {{
-    border-left-width: 8px;
+    border-left-width: 6px;
 }}
 
 .pager-note {{
     color: #8b6771;
-    font-size: 0.9rem;
-    line-height: 1.5;
+    font-size: 0.8rem;
+    line-height: 1.4;
 }}
 
 .pager-chip {{
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 90px;
-    padding: 0.45rem 0.9rem;
+    min-width: 80px;
+    padding: 0.35rem 0.7rem;
     border-radius: 999px;
     background: #f5e9e2;
     color: #160029;
     border: 1px solid #e3b5a4;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 700;
     transition: all 0.2s ease;
 }}
@@ -1641,26 +1663,26 @@ html {{
 /* ── COMPARISON CARD ─────────────────────────────────── */
 .comparison-card {{
     background: #FFFFFF;
-    border-radius: 16px;
-    padding: 1.2rem;
+    border-radius: 14px;
+    padding: 0.9rem;
     border: 1px solid #e3b5a4;
-    box-shadow: 0 2px 10px rgba(15,32,68,0.06);
-    margin-bottom: 0.75rem;
+    box-shadow: 0 2px 8px rgba(15,32,68,0.05);
+    margin-bottom: 0.7rem;
     height: 100%;
     transition: all 0.3s ease;
 }}
 .comparison-card:hover {{
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(15,32,68,0.1);
+    box-shadow: 0 6px 16px rgba(15,32,68,0.08);
 }}
 
 .comparison-card-header {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     font-weight: 700;
     color: #160029;
-    margin-bottom: 0.55rem;
-    padding-bottom: 0.55rem;
+    margin-bottom: 0.4rem;
+    padding-bottom: 0.4rem;
     border-bottom: 2px solid #f5e9e2;
     line-height: 1.3;
     word-break: break-word;
@@ -1669,35 +1691,35 @@ html {{
 /* ── ALIGNMENT RANKING ───────────────────────────────── */
 .align-panel-title {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 700;
     color: #8b6771;
-    margin-bottom: 0.55rem;
+    margin-bottom: 0.4rem;
     letter-spacing: 0.06em;
     text-transform: uppercase;
 }}
 
 .align-rank-card {{
     background: #FFFFFF;
-    border-radius: 14px;
+    border-radius: 12px;
     border: 1px solid #e3b5a4;
-    box-shadow: 0 2px 8px rgba(15,32,68,0.05);
-    padding: 0.85rem 1rem;
-    margin-bottom: 0.6rem;
+    box-shadow: 0 2px 6px rgba(15,32,68,0.04);
+    padding: 0.7rem 0.9rem;
+    margin-bottom: 0.5rem;
     transition: all 0.25s ease;
 }}
 .align-rank-card:hover {{
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(15,32,68,0.08);
+    box-shadow: 0 5px 12px rgba(15,32,68,0.07);
     border-color: #d44d5c;
 }}
 
 .align-rank-topic {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.92rem;
+    font-size: 0.8rem;
     font-weight: 700;
     color: #160029;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.3rem;
     line-height: 1.4;
     word-break: break-word;
 }}
@@ -1705,28 +1727,28 @@ html {{
 .align-rank-row {{
     display: flex;
     align-items: center;
-    gap: 0.55rem;
-    margin-bottom: 0.5rem;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
     flex-wrap: wrap;
 }}
 
 .align-score {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     font-weight: 700;
     line-height: 1;
 }}
 
 .align-band {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.02em;
 }}
 
 .align-n {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.82rem;
+    font-size: 0.7rem;
     color: #8b6771;
     margin-left: auto;
 }}
@@ -1734,7 +1756,7 @@ html {{
 .align-bar-bg {{
     background: #f5e9e2;
     border-radius: 99px;
-    height: 7px;
+    height: 6px;
     width: 100%;
     overflow: hidden;
 }}
@@ -1742,36 +1764,36 @@ html {{
 .align-bar-fill {{
     height: 100%;
     border-radius: 99px;
-    transition: width 0.6s ease;
+    transition: width 0.5s ease;
 }}
 
 .align-full-row {{
     display: flex;
     align-items: center;
-    gap: 0.55rem;
-    padding: 0.55rem 0;
+    gap: 0.5rem;
+    padding: 0.4rem 0;
     border-bottom: 1px solid #e3b5a4;
     flex-wrap: nowrap;
     transition: all 0.2s ease;
 }}
 .align-full-row:hover {{
     background: #fcf8f5;
-    transform: translateX(4px);
+    transform: translateX(3px);
 }}
 
 .align-full-rank {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 700;
-    min-width: 2rem;
+    min-width: 1.8rem;
     color: #8b6771;
 }}
 
 .align-full-topic {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.92rem;
+    font-size: 0.85rem;
     color: #2a1421;
-    min-width: 150px;
+    min-width: 140px;
     word-break: break-word;
     white-space: normal;
     line-height: 1.4;
@@ -1779,17 +1801,17 @@ html {{
 
 .align-full-score {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.92rem;
+    font-size: 0.85rem;
     font-weight: 700;
-    min-width: 3.5rem;
+    min-width: 3rem;
     text-align: right;
 }}
 
 .align-full-n {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.82rem;
+    font-size: 0.7rem;
     color: #8b6771;
-    min-width: 2.5rem;
+    min-width: 2.2rem;
 }}
 
 /* ── DONUT INSIGHT CARDS ─────────────────────────────── */
@@ -1800,38 +1822,38 @@ html {{
     background: #FFFFFF;
     border-radius: 10px;
     border: 1px solid #e3b5a4;
-    box-shadow: 0 2px 8px rgba(15,32,68,0.05);
-    margin-bottom: 0.55rem;
+    box-shadow: 0 2px 6px rgba(15,32,68,0.04);
+    margin-bottom: 0.5rem;
     overflow: hidden;
     transition: all 0.2s ease;
 }}
 .donut-insight-card:hover {{
-    transform: translateX(4px);
-    box-shadow: 0 4px 12px rgba(15,32,68,0.1);
+    transform: translateX(3px);
+    box-shadow: 0 4px 10px rgba(15,32,68,0.08);
 }}
 
 .donut-insight-accent {{
-    width: 5px;
+    width: 4px;
     min-height: 100%;
     flex-shrink: 0;
     border-radius: 0;
     transition: width 0.2s ease;
 }}
 .donut-insight-card:hover .donut-insight-accent {{
-    width: 8px;
+    width: 6px;
 }}
 
 .donut-insight-body {{
-    padding: 0.8rem 1rem;
+    padding: 0.6rem 0.9rem;
     flex: 1;
 }}
 
 .donut-insight-name {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 700;
     color: #160029;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.2rem;
     word-break: break-word;
 }}
 
@@ -1844,7 +1866,7 @@ html {{
 
 .donut-insight-count {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     font-weight: 700;
     color: #773344;
     line-height: 1;
@@ -1852,7 +1874,7 @@ html {{
 
 .donut-insight-pct {{
     font-family: 'Inter', sans-serif;
-    font-size: 0.88rem;
+    font-size: 0.8rem;
     font-weight: 400;
     color: #8b6771;
 }}
@@ -1861,30 +1883,30 @@ html {{
 .batch-results-shell {{
     background: linear-gradient(180deg, #ffffff 0%, #f9f1ec 100%);
     border: 1px solid #e3b5a4;
-    border-radius: 24px;
-    padding: 1.2rem 1.3rem;
-    box-shadow: 0 12px 26px rgba(44, 21, 33, 0.06);
-    margin: 1.1rem 0 1rem 0;
+    border-radius: 20px;
+    padding: 0.9rem 1rem;
+    box-shadow: 0 8px 18px rgba(44, 21, 33, 0.05);
+    margin: 0.8rem 0 0.8rem 0;
     transition: all 0.3s ease;
 }}
 .batch-results-shell:hover {{
-    box-shadow: 0 16px 34px rgba(44, 21, 33, 0.1);
+    box-shadow: 0 12px 24px rgba(44, 21, 33, 0.08);
 }}
 
 .batch-results-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 700;
     color: #251329;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.2rem;
 }}
 
 .batch-results-copy,
 .batch-readable-note,
 .result-reading-guide-copy {{
     color: #6b5660;
-    font-size: 0.88rem;
-    line-height: 1.6;
+    font-size: 0.8rem;
+    line-height: 1.5;
 }}
 
 .batch-readable-note,
@@ -1892,47 +1914,41 @@ html {{
     background: linear-gradient(180deg, #fffefe 0%, #f8efea 100%);
     border: 1px solid #e3b5a4;
     border-left: 4px solid #d44d5c;
-    border-radius: 20px;
-    padding: 0.85rem 1rem;
-    margin: 1rem 0;
-    box-shadow: 0 8px 20px rgba(44, 21, 33, 0.05);
+    border-radius: 16px;
+    padding: 0.7rem 0.9rem;
+    margin: 0.8rem 0;
+    box-shadow: 0 6px 14px rgba(44, 21, 33, 0.04);
     transition: all 0.2s ease;
 }}
 .batch-readable-note:hover,
 .result-reading-guide:hover {{
-    transform: translateX(4px);
-    border-left-width: 6px;
+    transform: translateX(3px);
+    border-left-width: 5px;
 }}
 
 .result-reading-guide-title {{
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: #a3195b;
-    margin-bottom: 0.25rem;
-}}
-
-.light-table-wrap {{
-    width: 100%;
-    overflow-x: auto;
-    overflow-y: visible;
+    margin-bottom: 0.2rem;
 }}
 
 /* ── FOOTER ──────────────────────────────────────────── */
 .footer-wrap {{
     text-align: center;
-    margin-top: 2.5rem;
-    padding: 1.5rem 2rem;
+    margin-top: 2rem;
+    padding: 1.2rem 1.5rem;
     border-top: 1px solid #e3b5a4;
     animation: fadeInUp 0.6s ease-out;
 }}
 
 .footer-wrap p {{
     color: #8b6771;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-family: 'Inter', sans-serif;
-    line-height: 1.55;
+    line-height: 1.5;
     margin: 0;
 }}
 
@@ -1940,28 +1956,28 @@ html {{
 .tab-minimal-hero {{
     background: linear-gradient(180deg,#fffdfc 0%,#fbf4ef 100%);
     border: 1px solid #e3b5a4;
-    border-radius: 28px;
-    padding: 1.3rem 1.4rem 1.2rem 1.4rem;
-    box-shadow: 0 14px 30px rgba(41,22,35,0.05);
-    margin: 0.2rem 0 1.1rem 0;
+    border-radius: 24px;
+    padding: 0.9rem 1.1rem 0.8rem 1.1rem;
+    box-shadow: 0 10px 22px rgba(41,22,35,0.04);
+    margin: 0.1rem 0 0.8rem 0;
     transition: all 0.3s ease;
 }}
 .tab-minimal-hero:hover {{
-    box-shadow: 0 18px 38px rgba(41,22,35,0.08);
+    box-shadow: 0 14px 28px rgba(41,22,35,0.07);
 }}
 
 .tab-minimal-kicker {{
     color:#b01f55;
-    font-size:0.78rem;
+    font-size:0.65rem;
     font-weight:800;
-    letter-spacing:0.16em;
+    letter-spacing:0.14em;
     text-transform:uppercase;
-    margin-bottom:0.5rem;
+    margin-bottom: 0.3rem;
 }}
 
 .tab-minimal-title {{
     font-family:'Inter Tight','Inter',sans-serif;
-    font-size:1.8rem;
+    font-size: 1.2rem;
     font-weight:800;
     color:#221221;
     line-height:1.1;
@@ -1969,38 +1985,38 @@ html {{
 
 .tab-minimal-copy {{
     color:#766772;
-    font-size:0.95rem;
-    line-height:1.7;
-    margin-top:0.55rem;
-    max-width: 860px;
+    font-size:0.8rem;
+    line-height:1.6;
+    margin-top: 0.4rem;
+    max-width: 800px;
 }}
 
 /* ── WORKSPACE SHELL ────────────────────────────────── */
 .workspace-shell {{
     background: linear-gradient(180deg,#ffffff 0%,#fbf5f1 100%);
     border: 1px solid #e3b5a4;
-    border-radius: 24px;
-    padding: 1.2rem 1.3rem;
-    box-shadow: 0 10px 24px rgba(25,14,36,0.06);
-    margin-bottom: 0.85rem;
+    border-radius: 20px;
+    padding: 0.9rem 1rem;
+    box-shadow: 0 8px 18px rgba(25,14,36,0.05);
+    margin-bottom: 0.7rem;
     transition: all 0.3s ease;
 }}
 .workspace-shell:hover {{
-    box-shadow: 0 14px 30px rgba(25,14,36,0.1);
+    box-shadow: 0 10px 22px rgba(25,14,36,0.08);
 }}
 
 .workspace-kicker {{
-    font-size: 0.76rem;
+    font-size: 0.65rem;
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: #773344;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.2rem;
 }}
 
 .workspace-title {{
     font-family:'Inter Tight','Inter',sans-serif;
-    font-size: 1.2rem;
+    font-size: 0.95rem;
     color:#160029;
     line-height:1.15;
     margin: 0;
@@ -2009,89 +2025,89 @@ html {{
 
 .workspace-copy {{
     color:#5d3945;
-    font-size:0.9rem;
-    line-height:1.65;
-    margin-top:0.3rem;
+    font-size:0.75rem;
+    line-height:1.5;
+    margin-top:0.2rem;
 }}
 
 /* ── SLIM LOADER ─────────────────────────────────────── */
 .slim-loader-kicker {{
-    font-size:0.76rem;
+    font-size:0.65rem;
     font-weight:800;
     letter-spacing:0.12em;
     text-transform:uppercase;
     color:#a3195b;
-    margin-bottom:0.3rem;
+    margin-bottom:0.2rem;
 }}
 
 .slim-loader-title {{
-    font-size:1.05rem;
+    font-size:0.9rem;
     font-weight:800;
     color:#251329;
     line-height:1.2;
-    margin-bottom:0.25rem;
+    margin-bottom:0.2rem;
 }}
 
 .slim-loader-copy {{
-    font-size:0.9rem;
+    font-size:0.8rem;
     color:#766772;
-    line-height:1.68;
+    line-height:1.5;
 }}
 
 .slim-loader-side {{
-    font-size:0.85rem;
+    font-size:0.75rem;
     font-weight:800;
     color:#907785;
     white-space:nowrap;
-    padding-bottom:0.15rem;
+    padding-bottom:0.1rem;
 }}
 
 .dataset-control-caption {{
-    font-size:0.76rem;
+    font-size:0.65rem;
     font-weight:800;
     letter-spacing:0.08em;
     text-transform:uppercase;
     color:#8b6771;
-    margin:0 0 0.4rem 0.1rem;
+    margin:0 0 0.3rem 0.1rem;
 }}
 
 /* ── INPUT EDITOR ────────────────────────────────────── */
 .input-editor-shell {{
     background:linear-gradient(180deg,#fffaf8 0%,#f8efea 100%);
     border:1px solid #e3b5a4;
-    border-radius:22px;
-    padding:1rem 1.1rem 0.9rem 1.1rem;
-    margin:0.3rem 0 0.7rem 0;
-    box-shadow:0 10px 24px rgba(25,14,36,0.05);
+    border-radius:18px;
+    padding:0.7rem 0.9rem 0.6rem 0.9rem;
+    margin:0.2rem 0 0.5rem 0;
+    box-shadow:0 8px 18px rgba(25,14,36,0.04);
     transition: all 0.3s ease;
 }}
 .input-editor-shell:hover {{
-    box-shadow:0 14px 30px rgba(25,14,36,0.08);
+    box-shadow:0 10px 22px rgba(25,14,36,0.07);
 }}
 
 .input-editor-kicker {{
-    font-size:0.76rem;
+    font-size:0.65rem;
     font-weight:800;
     text-transform:uppercase;
     letter-spacing:0.08em;
     color:#a3195b;
-    margin-bottom:0.25rem;
+    margin-bottom:0.2rem;
 }}
 
 .input-editor-title {{
-    font-size:1.05rem;
+    font-size:0.85rem;
     font-weight:800;
     color:#241226;
-    line-height:1.3;
+    line-height:1.2;
 }}
 
 .input-editor-chip {{
-    padding:0.4rem 0.85rem;
+    padding:0.3rem 0.7rem;
     border-radius:999px;
     background:#fff;
     border:1px solid #e3b5a4;
     color:#773344;
-    font-size:0.82rem;
+    font-size:0.7rem;
     font-weight:800;
     white-space:nowrap;
     transition: all 0.2s ease;
@@ -2105,168 +2121,168 @@ html {{
 .batch-shell {{
     background:linear-gradient(180deg,#ffffff 0%,#f9f1ec 100%);
     border:1px solid #e3b5a4;
-    border-radius:26px;
-    padding:1.2rem 1.25rem 1rem 1.25rem;
-    box-shadow:0 12px 28px rgba(25,14,36,0.06);
-    margin:0.2rem 0 1rem 0;
+    border-radius:20px;
+    padding:0.8rem 1rem 0.7rem 1rem;
+    box-shadow:0 8px 20px rgba(25,14,36,0.05);
+    margin:0.1rem 0 0.8rem 0;
     transition: all 0.3s ease;
 }}
 .batch-shell:hover {{
-    box-shadow:0 16px 34px rgba(25,14,36,0.1);
+    box-shadow:0 12px 26px rgba(25,14,36,0.08);
 }}
 
 .batch-kicker {{
-    font-size:0.76rem;
+    font-size:0.65rem;
     font-weight:800;
     letter-spacing:0.08em;
     text-transform:uppercase;
     color:#a3195b;
-    margin-bottom:0.25rem;
+    margin-bottom:0.2rem;
 }}
 
 .batch-title {{
     font-family:'Inter Tight','Inter',sans-serif;
-    font-size:1.25rem;
+    font-size:1rem;
     font-weight:700;
     color:#211120;
     line-height:1.15;
-    margin-bottom:0.35rem;
+    margin-bottom:0.2rem;
 }}
 
 .batch-copy {{
     color:#6d5a68;
-    font-size:0.9rem;
-    line-height:1.7;
-    max-width:860px;
+    font-size:0.8rem;
+    line-height:1.5;
+    max-width:800px;
 }}
 
 .batch-selection-note {{
     background:#fff7f4;
     border:1px solid #e3b5a4;
-    border-radius:16px;
-    padding:0.9rem 1rem;
+    border-radius:14px;
+    padding:0.7rem 0.9rem;
     color:#5f4751;
-    font-size:0.9rem;
-    line-height:1.6;
-    margin:0.85rem 0 1rem 0;
+    font-size:0.8rem;
+    line-height:1.5;
+    margin:0.6rem 0 0.8rem 0;
     transition: all 0.2s ease;
 }}
 .batch-selection-note:hover {{
     background:#fffaf8;
-    transform: translateX(4px);
+    transform: translateX(3px);
 }}
 
 .batch-selection-note strong {{
     color:#160029;
-    font-size:1rem;
+    font-size:0.85rem;
 }}
 
 /* ── CHART PANEL ─────────────────────────────────────── */
 .chart-panel {{
     background:linear-gradient(180deg,#fffefe 0%,#f8efea 100%);
     border:1px solid #e3b5a4;
-    border-radius:22px;
-    padding:1.1rem 1.15rem 1rem 1.15rem;
-    box-shadow:0 10px 24px rgba(25,14,36,0.05);
-    margin:1.1rem 0 0.6rem 0;
+    border-radius:18px;
+    padding:0.9rem 1rem 0.8rem 1rem;
+    box-shadow:0 8px 18px rgba(25,14,36,0.04);
+    margin:0.8rem 0 0.5rem 0;
     transition: all 0.3s ease;
 }}
 .chart-panel:hover {{
-    box-shadow:0 14px 30px rgba(25,14,36,0.08);
+    box-shadow:0 10px 22px rgba(25,14,36,0.07);
 }}
 
 .chart-panel-title {{
     font-family:'Inter Tight','Inter',sans-serif;
-    font-size:1rem;
+    font-size:0.9rem;
     font-weight:700;
     color:#221221;
-    margin-bottom:0.25rem;
+    margin-bottom:0.2rem;
 }}
 
 .chart-panel-copy {{
     color:#6d5a68;
-    font-size:0.9rem;
-    line-height:1.68;
+    font-size:0.8rem;
+    line-height:1.5;
 }}
 
 .chart-conclusion {{
-    margin-top:0.8rem;
-    padding:0.9rem 1rem;
-    border-radius:16px;
+    margin-top:0.6rem;
+    padding:0.7rem 0.9rem;
+    border-radius:14px;
     background:linear-gradient(180deg,#fffaf7 0%,#fff3ed 100%);
     border:1px solid #ead1c8;
     color:#6d5a68;
-    font-size:0.9rem;
-    line-height:1.7;
+    font-size:0.8rem;
+    line-height:1.5;
     transition: all 0.2s ease;
 }}
 .chart-conclusion:hover {{
     background:linear-gradient(180deg,#fffdfb 0%,#fff8f3 100%);
-    transform: translateX(4px);
+    transform: translateX(3px);
 }}
 
 /* ── EXPLORER CARDS ──────────────────────────────────── */
 .explorer-instruction-card {{
     background:linear-gradient(180deg,#fffaf7 0%,#fff2ec 100%);
     border:1px solid #ead1c8;
-    border-left:6px solid #b24758;
-    border-radius:22px;
-    padding:1rem 1.1rem;
-    margin:0.7rem 0 1.1rem 0;
-    box-shadow:0 10px 24px rgba(25,14,36,0.05);
+    border-left:5px solid #b24758;
+    border-radius:18px;
+    padding:0.8rem 1rem;
+    margin:0.5rem 0 0.8rem 0;
+    box-shadow:0 8px 18px rgba(25,14,36,0.04);
     transition: all 0.3s ease;
 }}
 .explorer-instruction-card:hover {{
-    transform: translateX(4px);
-    border-left-width: 8px;
+    transform: translateX(3px);
+    border-left-width: 6px;
 }}
 
 .explorer-instruction-title {{
-    font-size:0.82rem;
+    font-size:0.7rem;
     font-weight:800;
     letter-spacing:0.12em;
     text-transform:uppercase;
     color:#a3195b;
-    margin-bottom:0.45rem;
+    margin-bottom:0.3rem;
 }}
 
 .explorer-instruction-copy {{
-    font-size:0.95rem;
-    line-height:1.78;
+    font-size:0.85rem;
+    line-height:1.6;
     color:#634e59;
 }}
 
 .explorer-orb-grid {{
     display:grid;
     grid-template-columns:repeat(3,minmax(0,1fr));
-    gap:1rem;
-    margin:1rem 0 1.2rem 0;
+    gap:0.8rem;
+    margin:0.8rem 0 1rem 0;
 }}
 
 .explorer-orb {{
     background:linear-gradient(180deg,#fff 0%,#fbf3ef 100%);
     border:1px solid #ead1c8;
     border-radius:999px;
-    padding:1rem 1.1rem;
+    padding:0.7rem 0.9rem;
     display:flex;
     align-items:center;
-    gap:0.9rem;
-    box-shadow:0 10px 20px rgba(25,14,36,0.05);
-    min-height:90px;
+    gap:0.7rem;
+    box-shadow:0 8px 16px rgba(25,14,36,0.04);
+    min-height: 75px;
     transition: all 0.3s ease;
 }}
 .explorer-orb:hover {{
-    transform: translateY(-4px);
-    box-shadow:0 16px 28px rgba(25,14,36,0.1);
+    transform: translateY(-3px);
+    box-shadow:0 12px 22px rgba(25,14,36,0.08);
 }}
 
 .explorer-orb-icon {{
-    width:52px; height:52px;
-    border-radius:999px;
-    display:flex; align-items:center; justify-content:center;
+    width: 38px; height: 38px;
+    border-radius: 999px;
+    display: flex; align-items: center; justify-content: center;
     background:linear-gradient(135deg,#d44d5c 0%,#a63a52 100%);
-    color:#fff; font-weight:800; font-size:1rem;
-    box-shadow:0 8px 18px rgba(164,59,83,0.22);
+    color:#fff; font-weight:800; font-size:0.85rem;
+    box-shadow:0 6px 14px rgba(164,59,83,0.18);
     transition: all 0.2s ease;
 }}
 .explorer-orb:hover .explorer-orb-icon {{
@@ -2274,162 +2290,147 @@ html {{
 }}
 
 .explorer-orb-label {{
-    font-size:0.76rem;
+    font-size:0.6rem;
     font-weight:800;
     letter-spacing:0.08em;
     text-transform:uppercase;
     color:#8b6771;
-    margin-bottom:0.22rem;
+    margin-bottom:0.15rem;
 }}
 
 .explorer-orb-value {{
     font-family:'Inter Tight','Inter',sans-serif;
-    font-size:1.5rem;
+    font-size:1rem;
     font-weight:700;
     color:#241226;
     line-height:1.05;
 }}
 
 .explorer-orb-note {{
-    font-size:0.85rem;
-    line-height:1.55;
+    font-size:0.7rem;
+    line-height:1.4;
     color:#7a6874;
-    margin-top:0.15rem;
+    margin-top:0.1rem;
 }}
 
 /* ── TOPIC FOCUS GRID ────────────────────────────────── */
 .topic-focus-grid {{
     display:grid;
     grid-template-columns:repeat(4,1fr);
-    gap:0.9rem;
-    margin:0.5rem 0 1rem 0;
+    gap:0.7rem;
+    margin:0.4rem 0 0.8rem 0;
 }}
 
 .topic-focus-card {{
     background:linear-gradient(180deg,#fff 0%,#faf4f0 100%);
     border:1px solid #e3b5a4;
-    border-radius:18px;
-    padding:0.9rem 1rem;
+    border-radius:14px;
+    padding:0.7rem 0.8rem;
     transition: all 0.3s ease;
 }}
 .topic-focus-card:hover {{
-    transform: translateY(-3px);
-    box-shadow:0 8px 20px rgba(25,14,36,0.08);
+    transform: translateY(-2px);
+    box-shadow:0 6px 14px rgba(25,14,36,0.06);
 }}
 
 .topic-focus-label {{
-    font-size:0.76rem;
+    font-size:0.65rem;
     font-weight:800;
     letter-spacing:0.08em;
     text-transform:uppercase;
     color:#8b6771;
-    margin-bottom:0.3rem;
+    margin-bottom:0.2rem;
 }}
 
 .topic-focus-value {{
-    font-size:1rem;
+    font-size:0.85rem;
     font-weight:800;
     color:#221221;
-    line-height:1.35;
+    line-height:1.3;
 }}
 
 /* ── SIM LITE SHELL ──────────────────────────────────── */
 .sim-lite-shell {{
     background:linear-gradient(180deg,#ffffff 0%,#fbf3ef 100%);
     border:1px solid #e3b5a4;
-    border-radius:24px;
-    padding:1.1rem 1.15rem 1rem 1.15rem;
-    box-shadow:0 12px 26px rgba(25,14,36,0.06);
+    border-radius:20px;
+    padding:0.8rem 0.9rem 0.7rem 0.9rem;
+    box-shadow:0 8px 20px rgba(25,14,36,0.05);
     transition: all 0.3s ease;
 }}
 .sim-lite-shell:hover {{
-    box-shadow:0 16px 32px rgba(25,14,36,0.1);
+    box-shadow:0 12px 26px rgba(25,14,36,0.08);
 }}
 
-.sim-lite-head {{display:flex;justify-content:space-between;align-items:flex-start;gap:0.85rem;margin-bottom:1rem;}}
-.sim-lite-kicker {{color:#8b6771;font-size:0.78rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.25rem;}}
-.sim-lite-title {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.45rem;font-weight:800;color:#221221;}}
-.sim-lite-pill {{padding:0.44rem 0.9rem;border-radius:999px;border:1px solid #d44d5c;font-weight:800;font-size:1rem;transition: all 0.2s ease;}}
+.sim-lite-head {{display:flex;justify-content:space-between;align-items:flex-start;gap:0.7rem;margin-bottom:0.8rem;}}
+.sim-lite-kicker {{color:#8b6771;font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.2rem;}}
+.sim-lite-title {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.1rem;font-weight:800;color:#221221;}}
+.sim-lite-pill {{padding:0.3rem 0.7rem;border-radius:999px;border:1px solid #d44d5c;font-weight:800;font-size:0.85rem;transition: all 0.2s ease;}}
 .sim-lite-pill:hover {{background:#d44d5c;color:white;transform: scale(1.02);}}
 
-.sim-lite-hero {{display:grid;grid-template-columns:120px 1fr;gap:1rem;align-items:center;margin-bottom:1rem;}}
-.sim-lite-ring {{width:100px;height:100px;border-radius:999px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 18px rgba(25,14,36,0.08);transition: all 0.3s ease;}}
+.sim-lite-hero {{display:grid;grid-template-columns:100px 1fr;gap:0.8rem;align-items:center;margin-bottom:0.8rem;}}
+.sim-lite-ring {{width:85px;height:85px;border-radius:999px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 14px rgba(25,14,36,0.07);transition: all 0.3s ease;}}
 .sim-lite-ring:hover {{transform: scale(1.02);}}
-.sim-lite-ring-inner {{width:72px;height:72px;border-radius:999px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px rgba(227,181,164,0.45);}}
-.sim-lite-ring-inner strong {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.5rem;line-height:1;}}
-.sim-lite-ring-inner span {{font-size:0.76rem;color:#8b6771;margin-top:0.2rem;}}
+.sim-lite-ring-inner {{width:62px;height:62px;border-radius:999px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px rgba(227,181,164,0.45);}}
+.sim-lite-ring-inner strong {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.1rem;line-height:1;}}
+.sim-lite-ring-inner span {{font-size:0.65rem;color:#8b6771;margin-top:0.15rem;}}
 
-.sim-lite-summary-title {{font-size:1rem;font-weight:800;color:#221221;margin-bottom:0.3rem;}}
-.sim-lite-summary-copy {{font-size:0.9rem;line-height:1.7;color:#6d5a68;}}
+.sim-lite-summary-title {{font-size:0.85rem;font-weight:800;color:#221221;margin-bottom:0.2rem;}}
+.sim-lite-summary-copy {{font-size:0.8rem;line-height:1.5;color:#6d5a68;}}
 
 .sim-lite-top-note {{
     display:block;background:#fff8f4;border:1px solid #ead1c8;
-    border-radius:16px;padding:0.85rem 0.95rem;margin:1rem 0 1rem 0;
+    border-radius:14px;padding:0.6rem 0.8rem;margin:0.7rem 0 0.7rem 0;
     transition: all 0.2s ease;
 }}
 .sim-lite-top-note:hover {{
     background:#fffbf8;
-    transform: translateX(4px);
+    transform: translateX(3px);
 }}
-.sim-lite-top-note-title {{display:block;font-size:0.76rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.25rem;}}
-.sim-lite-top-note-copy {{display:block;font-size:0.9rem;line-height:1.65;color:#6d5a68;}}
-
-.sim-lite-metric {{
-    background:#fff;border:1px solid #ead1c8;border-radius:16px;
-    padding:0.9rem 1rem;box-shadow:0 6px 16px rgba(25,14,36,0.04);
-    min-height:110px;margin-bottom:0.7rem;text-align:center;
-    display:flex;flex-direction:column;justify-content:center;
-    transition: all 0.3s ease;
-}}
-.sim-lite-metric:hover {{
-    transform: translateY(-2px);
-    box-shadow:0 10px 22px rgba(25,14,36,0.08);
-}}
-.sim-lite-metric-label {{font-size:0.78rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#8b6771;margin-bottom:0.35rem;}}
-.sim-lite-metric-value {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.8rem;font-weight:700;line-height:1;margin-bottom:0.35rem;text-align:center;}}
-.sim-lite-metric-note {{font-size:0.88rem;line-height:1.6;color:#6d5a68;}}
+.sim-lite-top-note-title {{display:block;font-size:0.65rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.2rem;}}
+.sim-lite-top-note-copy {{display:block;font-size:0.8rem;line-height:1.5;color:#6d5a68;}}
 
 /* ── HISTORY OVERVIEW ────────────────────────────────── */
 .history-table-title {{
-    font-size:1rem;
+    font-size:0.9rem;
     font-weight:800;
     color:#241226;
-    margin-bottom:0.25rem;
+    margin-bottom:0.2rem;
 }}
 
 .history-table-copy {{
-    font-size:0.9rem;
-    line-height:1.68;
+    font-size:0.8rem;
+    line-height:1.5;
     color:#6d5a68;
-    max-width:860px;
+    max-width:800px;
 }}
 
 /* ── LEADERBOARD ─────────────────────────────────────── */
-.leaderboard-shell {{display:grid;gap:0.9rem;margin-top:0.9rem;}}
+.leaderboard-shell {{display:grid;gap:0.7rem;margin-top:0.7rem;}}
 
 .leaderboard-card {{
     display:grid;
-    grid-template-columns:58px 1fr auto;
-    gap:1rem;
+    grid-template-columns:50px 1fr auto;
+    gap:0.8rem;
     align-items:center;
     background:linear-gradient(180deg,#fff 0%,#fbf3ef 100%);
     border:1px solid #e7c2b3;
-    border-radius:20px;
-    padding:1rem 1.1rem;
-    box-shadow:0 8px 18px rgba(25,14,36,0.05);
+    border-radius:16px;
+    padding:0.8rem 1rem;
+    box-shadow:0 6px 14px rgba(25,14,36,0.04);
     transition: all 0.3s ease;
 }}
 .leaderboard-card:hover {{
     transform: translateY(-2px);
-    box-shadow:0 12px 24px rgba(25,14,36,0.1);
+    box-shadow:0 10px 20px rgba(25,14,36,0.08);
     border-color: #d44d5c;
 }}
 
 .leaderboard-rank {{
-    width:44px;height:44px;border-radius:14px;
+    width:38px;height:38px;border-radius:12px;
     background:#fff7f1;border:1px solid #e7c2b3;
     display:flex;align-items:center;justify-content:center;
-    font-size:1.1rem;
+    font-size:0.9rem;
     transition: all 0.2s ease;
 }}
 .leaderboard-card:hover .leaderboard-rank {{
@@ -2438,300 +2439,121 @@ html {{
     border-color: #d44d5c;
 }}
 
-.leaderboard-title {{font-size:1rem;font-weight:800;color:#221221;margin-bottom:0.2rem;}}
-.leaderboard-meta {{font-size:0.85rem;color:#7a6874;line-height:1.55;margin-bottom:0.5rem;}}
-.leaderboard-track {{height:8px;background:#f3dfd7;border-radius:999px;overflow:hidden;}}
-.leaderboard-fill {{height:100%;background:linear-gradient(90deg,#d44d5c 0%,#b24758 100%);border-radius:999px;transition: width 0.6s ease;}}
-.leaderboard-side {{text-align:right;min-width:90px;}}
-.leaderboard-score {{font-size:1.15rem;font-weight:800;color:#221221;}}
-.leaderboard-note {{font-size:0.8rem;color:#8b6771;line-height:1.4;}}
-
-/* ── MINI EXPLAINER CARD ─────────────────────────────── */
-.mini-explainer-card {{
-    background:linear-gradient(180deg,#fffaf7 0%,#fff4ef 100%);
-    border:1px solid #ead1c8;border-radius:18px;
-    padding:1rem 1.05rem;color:#6d5a68;
-    font-size:0.92rem;line-height:1.72;
-    margin:0.6rem 0 1.1rem 0;
-    box-shadow:0 10px 20px rgba(25,14,36,0.04);
-    transition: all 0.2s ease;
-}}
-.mini-explainer-card:hover {{
-    transform: translateX(4px);
-    background:linear-gradient(180deg,#fffdfb 0%,#fff8f3 100%);
-}}
-.mini-explainer-card strong {{color:#221221;}}
+.leaderboard-title {{font-size:0.9rem;font-weight:800;color:#221221;margin-bottom:0.15rem;}}
+.leaderboard-meta {{font-size:0.75rem;color:#7a6874;line-height:1.4;margin-bottom:0.4rem;}}
+.leaderboard-track {{height:6px;background:#f3dfd7;border-radius:999px;overflow:hidden;}}
+.leaderboard-fill {{height:100%;background:linear-gradient(90deg,#d44d5c 0%,#b24758 100%);border-radius:999px;transition: width 0.5s ease;}}
+.leaderboard-side {{text-align:right;min-width:80px;}}
+.leaderboard-score {{font-size:1rem;font-weight:800;color:#221221;}}
+.leaderboard-note {{font-size:0.7rem;color:#8b6771;line-height:1.3;}}
 
 /* ── EMPTY REVIEW CARD ───────────────────────────────── */
 .empty-review-card {{
     background:linear-gradient(180deg,#ffffff 0%,#f9f1ec 100%);
     border:1px solid #e3b5a4;
-    border-radius:24px;
-    padding:1.2rem 1.3rem 1.1rem 1.3rem;
-    box-shadow:0 10px 24px rgba(25,14,36,0.06);
-    min-height:360px;
+    border-radius:20px;
+    padding:0.9rem 1rem 0.8rem 1rem;
+    box-shadow:0 8px 18px rgba(25,14,36,0.05);
+    min-height: 320px;
     display:flex;flex-direction:column;justify-content:space-between;
     transition: all 0.3s ease;
 }}
 .empty-review-card:hover {{
-    box-shadow:0 14px 30px rgba(25,14,36,0.1);
+    box-shadow:0 10px 22px rgba(25,14,36,0.08);
 }}
 
-.empty-review-top {{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;margin-bottom:0.85rem;}}
-.empty-review-title {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.3rem;color:#160029;margin:0.1rem 0 0.25rem 0;font-weight:700;}}
-.empty-review-copy {{color:#5d3945;font-size:0.92rem;line-height:1.68;}}
-.empty-review-pill {{padding:0.44rem 0.85rem;border-radius:999px;background:#fff;border:1px solid #e3b5a4;color:#773344;font-weight:800;font-size:0.84rem;white-space:nowrap;transition: all 0.2s ease;}}
+.empty-review-top {{display:flex;justify-content:space-between;gap:0.8rem;align-items:flex-start;margin-bottom:0.7rem;}}
+.empty-review-title {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.1rem;color:#160029;margin:0.05rem 0 0.2rem 0;font-weight:700;}}
+.empty-review-copy {{color:#5d3945;font-size:0.8rem;line-height:1.5;}}
+.empty-review-pill {{padding:0.3rem 0.7rem;border-radius:999px;background:#fff;border:1px solid #e3b5a4;color:#773344;font-weight:800;font-size:0.75rem;white-space:nowrap;transition: all 0.2s ease;}}
 .empty-review-pill:hover {{background:#e3b5a4;transform: scale(1.02);}}
-.empty-review-list {{display:grid;gap:0.7rem;margin-top:0.6rem;}}
-.empty-review-item {{display:flex;gap:0.85rem;align-items:flex-start;padding:0.9rem 1rem;border-radius:16px;background:#fff;border:1px solid #e3b5a4;transition: all 0.2s ease;}}
-.empty-review-item:hover {{transform: translateX(4px);border-color:#d44d5c;}}
-.empty-review-icon {{width:34px;height:34px;min-width:34px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#d44d5c 0%,#b24758 100%);color:#fff;font-size:0.95rem;font-weight:800;}}
-.empty-review-item strong {{display:block;color:#160029;font-size:0.92rem;margin-bottom:0.18rem;}}
-.empty-review-item span {{display:block;color:#5d3945;font-size:0.88rem;line-height:1.6;}}
-.empty-review-footer {{display:grid;grid-template-columns:repeat(3,1fr);gap:0.7rem;margin-top:1rem;}}
-.empty-review-stat {{background:#fff;border:1px solid #e3b5a4;border-radius:16px;padding:0.85rem;text-align:center;transition: all 0.2s ease;}}
-.empty-review-stat:hover {{transform: translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.05);}}
-.empty-review-stat-label {{font-size:0.74rem;font-weight:800;color:#8b6771;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.25rem;}}
-.empty-review-stat-value {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.25rem;color:#160029;font-weight:700;}}
+.empty-review-list {{display:grid;gap:0.5rem;margin-top:0.5rem;}}
+.empty-review-item {{display:flex;gap:0.7rem;align-items:flex-start;padding:0.7rem 0.8rem;border-radius:14px;background:#fff;border:1px solid #e3b5a4;transition: all 0.2s ease;}}
+.empty-review-item:hover {{transform: translateX(3px);border-color:#d44d5c;}}
+.empty-review-icon {{width:30px;height:30px;min-width:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#d44d5c 0%,#b24758 100%);color:#fff;font-size:0.85rem;font-weight:800;}}
+.empty-review-item strong {{display:block;color:#160029;font-size:0.8rem;margin-bottom:0.15rem;}}
+.empty-review-item span {{display:block;color:#5d3945;font-size:0.75rem;line-height:1.4;}}
+.empty-review-footer {{display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;margin-top:0.8rem;}}
+.empty-review-stat {{background:#fff;border:1px solid #e3b5a4;border-radius:14px;padding:0.6rem;text-align:center;transition: all 0.2s ease;}}
+.empty-review-stat:hover {{transform: translateY(-2px);box-shadow:0 4px 10px rgba(0,0,0,0.04);}}
+.empty-review-stat-label {{font-size:0.65rem;font-weight:800;color:#8b6771;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.15rem;}}
+.empty-review-stat-value {{font-family:'Inter Tight','Inter',sans-serif;font-size:1rem;color:#160029;font-weight:700;}}
 
-/* ── ANALYSIS PANEL ──────────────────────────────────── */
-.analysis-panel {{
-    background:rgba(255,255,255,0.72);
-    border:1px solid rgba(170,133,155,0.28);
-    border-radius:26px;
-    padding:1.2rem 1.3rem;
-    box-shadow:0 14px 34px rgba(52,27,45,0.05);
-    height:100%;
-    transition: all 0.3s ease;
-}}
-.analysis-panel:hover {{
-    box-shadow:0 18px 40px rgba(52,27,45,0.08);
+/* ── RESULT CARDS GRID ───────────────────────────────── */
+.result-cards-grid {{
+    display: grid;
+    grid-template-columns: 1.05fr 1.35fr 1fr;
+    gap: 1.2rem;
+    margin: 0.8rem 0;
 }}
 
-.analysis-panel-title {{
-    font-family:'Inter Tight','Inter',sans-serif;
-    font-size:1.15rem;
-    font-weight:700;
-    color:#2d1830;
-    margin:0 0 0.4rem 0;
+@media (max-width: 900px) {{
+    .result-cards-grid {{
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }}
 }}
 
-.analysis-panel-copy {{color:#6e6070;font-size:0.92rem;line-height:1.78;margin:0 0 1rem 0;}}
-
-.analysis-steps {{display:grid;gap:0.9rem;margin-top:0.15rem;}}
-.analysis-step {{display:grid;grid-template-columns:42px 1fr;gap:0.85rem;align-items:start;padding:0.1rem 0;transition: all 0.2s ease;}}
-.analysis-step:hover {{transform: translateX(4px);}}
-.analysis-step-no {{width:32px;height:32px;border-radius:999px;background:#f0e7ec;color:#a3195b;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.9rem;}}
-.analysis-step-title {{font-weight:700;color:#35233b;font-size:0.95rem;margin-bottom:0.15rem;}}
-.analysis-step-copy {{color:#746675;font-size:0.9rem;line-height:1.72;}}
-.analysis-step + .analysis-step {{border-top:1px solid rgba(170,133,155,0.2);padding-top:0.9rem;}}
-
-/* ── EDITORIAL ───────────────────────────────────────── */
-.editorial-section {{padding:0.1rem 0 0.65rem 0;margin-bottom:0.9rem;}}
-.editorial-kicker {{font-size:0.82rem;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;color:#a3195b;margin-bottom:0.7rem;}}
-.editorial-title {{font-family:'Inter Tight','Inter',sans-serif;font-size:2rem;line-height:1.08;font-weight:700;color:#221221;letter-spacing:-0.03em;margin:0 0 0.85rem 0;max-width:900px;}}
-.editorial-copy {{max-width:980px;font-size:1rem;line-height:1.82;color:#6d5a68;margin:0;}}
-
-/* ── BROWSE / FILTER ─────────────────────────────────── */
-.browse-inline-head {{font-size:0.82rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin:0 0 0.4rem 0.08rem;}}
-.browse-filter-chip-row {{display:flex;flex-wrap:wrap;gap:0.55rem;margin:0.6rem 0 0.95rem 0;padding-top:0.2rem;border-top:1px solid rgba(227,181,164,0.45);}}
-.browse-filter-chip {{display:inline-flex;align-items:center;padding:0.42rem 0.85rem;border-radius:999px;background:#fff8f4;border:1px solid #e3b5a4;color:#773344;font-size:0.85rem;font-weight:700;transition: all 0.2s ease;}}
-.browse-filter-chip:hover {{background:#e3b5a4;transform: scale(1.02);}}
-
-/* ── COMPARISON SELECT ───────────────────────────────── */
-.comparison-select-title {{font-size:0.88rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#8f6f7b;}}
-.comparison-select-copy {{font-size:0.92rem;line-height:1.68;color:#6d5a68;margin-top:0.25rem;}}
-
-/* ── TOPIC PICK SHELL ────────────────────────────────── */
-.topic-pick-shell {{
-    background:linear-gradient(180deg,#fffdfb 0%,#fbf3ef 100%);
-    border:1px solid #e7c3b4;
-    border-radius:24px;
-    padding:1rem 1.15rem;
-    box-shadow:0 10px 24px rgba(25,14,36,0.05);
-    margin:0.5rem 0 1rem 0;
-    transition: all 0.3s ease;
+/* ── SINGLE REVIEW RIGHT COL ────────────────────────── */
+.single-review-right-col {{
+    padding-left: 0.5rem;
 }}
-.topic-pick-shell:hover {{
-    box-shadow:0 14px 30px rgba(25,14,36,0.08);
-}}
-.topic-pick-kicker {{font-size:0.78rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#a3195b;margin-bottom:0.35rem;}}
-.topic-pick-title {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.2rem;font-weight:700;color:#241226;line-height:1.2;margin-bottom:0.35rem;}}
-.topic-pick-copy {{font-size:0.95rem;line-height:1.75;color:#6d5a68;max-width:900px;}}
 
-/* ── INLINE SECTION HEAD ─────────────────────────────── */
-.inline-section-head {{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;margin:0.1rem 0 0.65rem 0;}}
-.inline-section-label {{font-size:0.82rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:#a3195b;margin-bottom:0.4rem;}}
-.inline-section-title {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.05rem;font-weight:700;color:#251329;line-height:1.2;}}
-.inline-section-copy {{color:#766772;font-size:0.95rem;line-height:1.72;max-width:760px;}}
-
-/* ── HISTORY OVERVIEW GRID ───────────────────────────── */
-.history-overview-grid {{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;align-items:start;}}
-.history-overview-card {{background:linear-gradient(180deg,#fffdfb 0%,#fbf3ef 100%);border:1px solid #ead1c8;border-radius:28px;padding:1rem 1.1rem 1rem 1.1rem;box-shadow:0 12px 26px rgba(25,14,36,0.05);overflow:hidden;transition: all 0.3s ease;}}
-.history-overview-card:hover {{box-shadow:0 16px 32px rgba(25,14,36,0.1);}}
-
-/* ── MISC UTILS ──────────────────────────────────────── */
-.metric-card-info {{margin-top:0.15rem;font-size:0.88rem;line-height:1.65;color:#6d5a68;text-align:center;}}
-.metric-card-info strong {{display:block;color:#221221;margin-bottom:0.15rem;}}
-
+/* ── RESULT HERO CARD ───────────────────────────────── */
 .result-hero-card {{
     background:linear-gradient(180deg,#ffffff 0%,#fcf7f3 100%);
-    border:1px solid #e3b5a4;border-radius:24px;
-    padding:1.1rem 1.15rem;box-shadow:0 12px 28px rgba(25,14,36,0.06);
-    display:flex;justify-content:space-between;gap:1rem;
-    align-items:flex-start;flex-wrap:wrap;margin:1rem 0 0.9rem 0;
+    border:1px solid #e3b5a4;border-radius:20px;
+    padding:0.9rem 1rem;box-shadow:0 10px 22px rgba(25,14,36,0.05);
+    display:flex;justify-content:space-between;gap:0.8rem;
+    align-items:flex-start;flex-wrap:wrap;margin:0.8rem 0 0.7rem 0;
     transition: all 0.3s ease;
 }}
 .result-hero-card:hover {{
-    box-shadow:0 16px 34px rgba(25,14,36,0.1);
+    box-shadow:0 14px 26px rgba(25,14,36,0.08);
 }}
-.result-hero-kicker {{color:#8b6771;font-size:0.78rem;font-weight:800;text-transform:uppercase;letter-spacing:0.09em;margin-bottom:0.25rem;}}
-.result-hero-title {{font-family:'Inter Tight','Inter',sans-serif;color:#160029;font-size:1.55rem;line-height:1.08;margin-bottom:0.35rem;font-weight:700;}}
-.result-hero-copy {{color:#5d3945;font-size:0.95rem;line-height:1.68;max-width:760px;}}
-
-/* ── TECH REVIEW TITLE ───────────────────────────────── */
-.tech-review-title {{
-    font-size:0.95rem;
-    font-weight:700;
-    color:#241226;
-    margin:1rem 0 0.5rem 0;
-}}
-
-/* ── EDITORIAL META ──────────────────────────────────── */
-.editorial-meta {{
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.8rem !important;
-    margin-top: 1rem !important;
-    padding-top: 0 !important;
-    border-top: none !important;
-}}
-
-.editorial-meta span {{
-    display: block;
-    background: linear-gradient(180deg, #fffefe 0%, #f8efea 100%);
-    border: 1px solid #e3b5a4;
-    border-radius: 18px;
-    padding: 0.7rem 0.85rem 0.9rem 1rem !important;
-    color: #5d3945 !important;
-    box-shadow: 0 10px 22px rgba(44, 21, 33, 0.05);
-    line-height: 1.5;
-    font-size: 0.9rem;
-    transition: all 0.2s ease;
-}}
-.editorial-meta span:hover {{
-    transform: translateY(-2px);
-    box-shadow: 0 14px 28px rgba(44, 21, 33, 0.08);
-}}
-
-.editorial-meta span:before {{
-    content: '';
-    display: inline-block;
-    width: 10px; height: 10px;
-    border-radius: 999px;
-    background: linear-gradient(135deg, #d44d5c 0%, #b24758 100%);
-    margin-right: 0.6rem;
-    vertical-align: middle;
-    position: static !important;
-}}
-
-/* ── DATASET PANEL ───────────────────────────────────── */
-.dataset-side-panel {{
-    background: linear-gradient(180deg, #fff 0%, #faf3ef 100%);
-    border: 1px solid #e3b5a4;
-    border-radius: 22px;
-    padding: 1.1rem 1.15rem;
-    box-shadow: 0 10px 22px rgba(25,14,36,0.05);
-    transition: all 0.3s ease;
-}}
-.dataset-side-panel:hover {{
-    box-shadow: 0 14px 28px rgba(25,14,36,0.08);
-}}
-.dataset-side-title {{font-family:'Inter Tight','Inter',sans-serif;font-size:1rem;font-weight:700;color:#251329;margin-bottom:0.2rem;}}
-.dataset-side-subtitle {{font-size:0.88rem;line-height:1.6;color:#766772;margin-bottom:0.7rem;}}
-.dataset-model-chip {{padding:0.4rem 0.85rem;border-radius:999px;background:#fff;border:1px solid #e3b5a4;color:#773344;font-size:0.85rem;font-weight:800;white-space:nowrap;transition: all 0.2s ease;}}
-.dataset-model-chip:hover {{background:#e3b5a4;transform: scale(1.02);}}
-.dataset-stat-grid {{display:grid;grid-template-columns:repeat(2,1fr);gap:0.65rem;margin:0.7rem 0;}}
-.dataset-stat-card {{background:#fff;border:1px solid #ead1c8;border-radius:14px;padding:0.75rem 0.85rem;transition: all 0.2s ease;}}
-.dataset-stat-card:hover {{transform: translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.05);}}
-.dataset-stat-label {{font-size:0.74rem;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:#8b6771;margin-bottom:0.18rem;}}
-.dataset-stat-value {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.3rem;font-weight:700;color:#241226;}}
-.dataset-preview-box {{background:#fff8f4;border:1px solid #ead1c8;border-radius:14px;padding:0.8rem 0.9rem;margin-top:0.65rem;transition: all 0.2s ease;}}
-.dataset-preview-box:hover {{background:#fffbf8;transform: translateX(4px);}}
-.dataset-preview-label {{font-size:0.74rem;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:#8b6771;margin-bottom:0.25rem;}}
-.dataset-preview-text {{font-size:0.88rem;line-height:1.65;color:#5d3945;}}
-
-/* ── SCORE METRIC TEXT ───────────────────────────────── */
-.metric-value-text {{
-    font-family:'Inter Tight','Inter',sans-serif !important;
-    font-size:2rem !important;
-    font-weight:700 !important;
-    line-height:1.1 !important;
-    color:#7d3347 !important;
-    letter-spacing:-0.03em;
-    word-break:break-word;
-}}
-
-/* ── SYSTEM PLAIN NOTE ───────────────────────────────── */
-.system-plain-note {{
-    padding:0.2rem 0 0.7rem 0;
-    margin-bottom:0.5rem;
-    color:#6d5a68;
-    font-size:0.95rem;
-    line-height:1.82;
-}}
-.system-plain-note strong {{color:#251329;}}
-
-/* ── OVERVIEW CHART ──────────────────────────────────── */
-.overview-kicker {{font-size:0.76rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#9a7380;margin-bottom:0.25rem;}}
-.overview-title {{font-family:'Inter Tight','Inter',sans-serif;font-size:1rem;font-weight:700;color:#231222;line-height:1.2;margin-bottom:0.2rem;}}
-.overview-copy {{font-size:0.92rem;line-height:1.68;color:#6d5a68;margin-bottom:0.6rem;}}
+.result-hero-kicker {{color:#8b6771;font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.09em;margin-bottom:0.2rem;}}
+.result-hero-title {{font-family:'Inter Tight','Inter',sans-serif;color:#160029;font-size:1rem;line-height:1.08;margin-bottom:0.2rem;font-weight:700;}}
+.result-hero-copy {{color:#5d3945;font-size:0.75rem;line-height:1.5;max-width:700px;}}
 
 /* ── RESPONSIVE ──────────────────────────────────────── */
 @media (max-width: 1200px) {{
     [data-testid="stSidebar"] {{
-        min-width: 300px !important;
-        max-width: 300px !important;
-        width: 300px !important;
+        min-width: 260px !important;
+        max-width: 260px !important;
+        width: 260px !important;
     }}
 }}
 
 @media (max-width: 1100px) {{
-    .hero-image-wrap {{ height: 180px !important; }}
+    .hero-image-wrap {{ height: 120px !important; }}
     .hero-image-content {{ max-width: 65% !important; }}
-    .hero-image-title {{ font-size: 1.75rem !important; }}
+    .hero-image-title {{ font-size: 1.1rem !important; }}
     .explorer-orb-grid {{ grid-template-columns: 1fr; }}
     .topic-focus-grid {{ grid-template-columns: 1fr 1fr; }}
 }}
 
 @media (max-width: 900px) {{
     .hero-image-content {{ max-width: 100% !important; }}
-    .hero-image-title {{ font-size: 1.4rem !important; }}
-    .hero-image-subtitle {{ font-size: 0.85rem !important; max-width: 100% !important; }}
-    .history-overview-grid {{ grid-template-columns: 1fr; }}
+    .hero-image-title {{ font-size: 1rem !important; }}
+    .hero-image-subtitle {{ font-size: 0.65rem !important; max-width: 100% !important; }}
     .topic-focus-grid {{ grid-template-columns: 1fr 1fr; }}
-    .editorial-meta {{ grid-template-columns: 1fr; }}
-    .leaderboard-card {{ grid-template-columns: 44px 1fr; }}
-    .leaderboard-side {{ grid-column: 2; text-align: left; }}
     .sim-lite-hero {{ grid-template-columns: 1fr; }}
     .sim-lite-ring {{ margin: 0 auto; }}
 }}
 
 @media (max-width: 768px) {{
-    .block-container {{ padding-left: 1rem !important; padding-right: 1rem !important; }}
-    .hero-image-wrap {{ height: 200px !important; border-radius: 20px !important; }}
-    .hero-image-overlay {{ padding: 1.5rem 1.5rem; }}
-    .hero-image-title {{ font-size: 1.3rem !important; }}
-    .hero-image-subtitle {{ font-size: 0.85rem; line-height: 1.5; }}
+    .block-container {{ padding-left: 0.8rem !important; padding-right: 0.8rem !important; }}
+    .hero-image-wrap {{ height: 100px !important; border-radius: 16px !important; }}
+    .hero-image-overlay {{ padding: 1rem 1.2rem; }}
+    .hero-image-title {{ font-size: 0.9rem !important; }}
+    .hero-image-subtitle {{ font-size: 0.6rem; line-height: 1.4; }}
     .topic-focus-grid {{ grid-template-columns: 1fr; }}
-    .explorer-summary-grid {{ grid-template-columns: 1fr 1fr; }}
-    .light-table {{ min-width: 540px; }}
+    .light-table {{ min-width: 500px; }}
 }}
 
 @media (max-width: 620px) {{
-    .hero-image-wrap {{ height: 160px !important; }}
-    .hero-image-title {{ font-size: 1.2rem !important; }}
-    .explorer-summary-grid {{ grid-template-columns: 1fr; }}
+    .hero-image-wrap {{ height: 90px !important; }}
+    .hero-image-title {{ font-size: 0.8rem !important; }}
 }}
 
 </style>
@@ -2858,7 +2680,7 @@ def render_metric_card_html(label: str, value: float, description: str = "", is_
     except Exception:
         display = "-"
     stripe_class = f"metric-card metric-card-{band}" if is_score else "metric-card"
-    desc_html = f'<div class="small-note" style="margin-top:0.4rem;">{html.escape(description)}</div>' if description else ""
+    desc_html = f'<div class="small-note" style="margin-top:0.3rem;">{html.escape(description)}</div>' if description else ""
     return (
         f'<div class="{stripe_class}">'
         f'  <div class="metric-label">{html.escape(label)}</div>'
@@ -3142,7 +2964,7 @@ def render_footer():
         <div class="footer-wrap">
             <p>
                 ★ Amirah Alyahaziqah Bt Mohd Jeffry ★ &nbsp;·&nbsp; Bachelor of Computer Science (Hons.)<br>
-                <span style="font-size:0.85rem;">2026 Universiti Teknologi MARA</span>
+                <span style="font-size:0.75rem;">2026 Universiti Teknologi MARA</span>
             </p>
         </div>
     """).strip()
@@ -3158,29 +2980,29 @@ def render_review_workspace_header():
             justify-content: space-between;
             align-items: center;
             gap: 1rem;
-            margin: 0.15rem 0 1rem 0;
-            padding: 0.7rem 1rem;
-            border-radius: 20px;
+            margin: 0.1rem 0 0.8rem 0;
+            padding: 0.5rem 0.8rem;
+            border-radius: 18px;
             border: 1px solid #e3b5a4;
             background: linear-gradient(180deg, #ffffff 0%, #fcf8fb 100%);
-            box-shadow: 0 8px 20px rgba(22, 9, 28, 0.05);
+            box-shadow: 0 6px 16px rgba(22, 9, 28, 0.04);
         }
         .review-workspace-copy {
             min-width: 0;
         }
         .review-workspace-kicker {
             color: #773344;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.09em;
-            margin-bottom: 0.18rem;
+            margin-bottom: 0.15rem;
         }
         .review-workspace-header h1 {
-            margin: 0 0 0.25rem 0;
+            margin: 0 0 0.2rem 0;
             color: #160029;
             font-family: 'Inter Tight', 'Inter', sans-serif;
-            font-size: 1.25rem;
+            font-size: 1rem;
             line-height: 1.1;
             letter-spacing: -0.02em;
             font-weight: 700;
@@ -3188,38 +3010,38 @@ def render_review_workspace_header():
         .review-workspace-header p {
             margin: 0;
             color: #5d5060;
-            font-size: 0.9rem;
-            line-height: 1.55;
-            max-width: 720px;
+            font-size: 0.75rem;
+            line-height: 1.5;
+            max-width: 680px;
         }
         .review-workspace-badges {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.4rem;
             flex-wrap: wrap;
             justify-content: flex-end;
             flex: 0 0 auto;
         }
         .review-badge-card {
-            min-width: 160px;
+            min-width: 140px;
             background: linear-gradient(135deg, #162a63 0%, #4a1d62 55%, #7a1657 100%);
-            border-radius: 16px;
-            padding: 0.6rem 0.8rem;
+            border-radius: 14px;
+            padding: 0.5rem 0.7rem;
             border: 1px solid rgba(253,3,99,0.14);
-            box-shadow: 0 8px 18px rgba(20, 10, 33, 0.12);
+            box-shadow: 0 6px 14px rgba(20, 10, 33, 0.1);
         }
         .review-badge-card span {
             display: block;
             color: rgba(255,255,255,0.62);
-            font-size: 0.74rem;
+            font-size: 0.65rem;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            margin-bottom: 0.15rem;
+            margin-bottom: 0.1rem;
         }
         .review-badge-card strong {
             color: #ffffff;
-            font-size: 0.85rem;
-            line-height: 1.35;
+            font-size: 0.75rem;
+            line-height: 1.3;
             font-weight: 700;
         }
         @media (max-width: 1100px) {
@@ -3258,7 +3080,7 @@ def render_review_workspace_header():
 # INTERACTIVE VISUALIZATION COMPONENTS
 # =========================================================
 
-def render_interactive_gauge(score: float, title: str = "Alignment Score", height: int = 250):
+def render_interactive_gauge(score: float, title: str = "Alignment Score", height: int = 220):
     """Render an interactive gauge chart using Plotly."""
     import plotly.graph_objects as go
     
@@ -3273,13 +3095,13 @@ def render_interactive_gauge(score: float, title: str = "Alignment Score", heigh
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=score,
-        title={'text': title, 'font': {'size': 20, 'color': COLORS["text_primary"]}},
-        number={'suffix': "%", 'font': {'size': 40, 'color': color}},
+        title={'text': title, 'font': {'size': 16, 'color': COLORS["text_primary"]}},
+        number={'suffix': "%", 'font': {'size': 32, 'color': color}},
         gauge={
             'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': COLORS["text_muted"]},
             'bar': {'color': color},
             'bgcolor': "white",
-            'borderwidth': 2,
+            'borderwidth': 1,
             'bordercolor': COLORS["border"],
             'steps': [
                 {'range': [0, 50], 'color': "#FFCDD2"},
@@ -3287,7 +3109,7 @@ def render_interactive_gauge(score: float, title: str = "Alignment Score", heigh
                 {'range': [70, 100], 'color': "#C8E6C9"}
             ],
             'threshold': {
-                'line': {'color': color, 'width': 4},
+                'line': {'color': color, 'width': 3},
                 'thickness': 0.75,
                 'value': score
             }
@@ -3295,21 +3117,20 @@ def render_interactive_gauge(score: float, title: str = "Alignment Score", heigh
     ))
     fig.update_layout(
         height=height,
-        margin=dict(l=20, r=20, t=50, b=20),
+        margin=dict(l=20, r=20, t=40, b=20),
         paper_bgcolor="rgba(0,0,0,0)",
         font={'color': COLORS["text_primary"]}
     )
     st.plotly_chart(fig, use_container_width=True)
 
 
-def render_comparison_bar_chart(scores: dict, title: str = "Score Comparison", height: int = 400):
+def render_comparison_bar_chart(scores: dict, title: str = "Score Comparison", height: int = 350):
     """Render a horizontal bar chart comparing multiple scores."""
     import plotly.graph_objects as go
     
     labels = list(scores.keys())
     values = list(scores.values())
     
-    # Color mapping based on values
     colors = []
     for val in values:
         tier = get_score_tier(val)
@@ -3346,7 +3167,7 @@ def render_comparison_bar_chart(scores: dict, title: str = "Score Comparison", h
     st.plotly_chart(fig, use_container_width=True)
 
 
-def render_radar_chart(categories: dict, title: str = "Performance by Category", height: int = 400):
+def render_radar_chart(categories: dict, title: str = "Performance by Category", height: int = 350):
     """Render a radar chart for multi-category performance."""
     import plotly.graph_objects as go
     
@@ -3357,7 +3178,7 @@ def render_radar_chart(categories: dict, title: str = "Performance by Category",
         r=values,
         theta=labels,
         fill='toself',
-        marker=dict(color=COLORS["lobster_pink"], size=8),
+        marker=dict(color=COLORS["lobster_pink"], size=6),
         line=dict(color=COLORS["wine_plum"], width=2),
         hovertemplate="%{theta}: %{r:.1f}%<extra></extra>"
     ))
@@ -3369,7 +3190,7 @@ def render_radar_chart(categories: dict, title: str = "Performance by Category",
         ),
         title=title,
         height=height,
-        margin=dict(l=60, r=60, t=40, b=40),
+        margin=dict(l=50, r=50, t=40, b=40),
         paper_bgcolor="rgba(0,0,0,0)",
         font={'color': COLORS["text_primary"]}
     )
@@ -3377,14 +3198,13 @@ def render_radar_chart(categories: dict, title: str = "Performance by Category",
     st.plotly_chart(fig, use_container_width=True)
 
 
-def render_timeline_chart(data: list, x_key: str, y_key: str, title: str = "Trend Over Time", height: int = 350):
+def render_timeline_chart(data: list, x_key: str, y_key: str, title: str = "Trend Over Time", height: int = 300):
     """Render a line chart for timeline data."""
     import plotly.graph_objects as go
     
     x_values = [item[x_key] for item in data]
     y_values = [item[y_key] for item in data]
     
-    # Color based on latest value
     latest_value = y_values[-1] if y_values else 0
     tier = get_score_tier(latest_value)
     if tier == "good":
@@ -3398,8 +3218,8 @@ def render_timeline_chart(data: list, x_key: str, y_key: str, title: str = "Tren
         x=x_values,
         y=y_values,
         mode='lines+markers',
-        line=dict(color=line_color, width=3),
-        marker=dict(size=8, color=line_color),
+        line=dict(color=line_color, width=2),
+        marker=dict(size=6, color=line_color),
         fill='tozeroy',
         fillcolor=f"rgba({int(line_color[1:3],16)},{int(line_color[3:5],16)},{int(line_color[5:7],16)},0.1)",
         hovertemplate="Date: %{x}<br>Score: %{y:.1f}%<extra></extra>"
@@ -3421,14 +3241,13 @@ def render_timeline_chart(data: list, x_key: str, y_key: str, title: str = "Tren
     st.plotly_chart(fig, use_container_width=True)
 
 
-def render_donut_chart(values: dict, title: str = "Distribution", height: int = 300):
+def render_donut_chart(values: dict, title: str = "Distribution", height: int = 260):
     """Render a donut chart for distribution data."""
     import plotly.graph_objects as go
     
     labels = list(values.keys())
     sizes = list(values.values())
     
-    # Color mapping for tiers
     color_map = {
         "Good": "#06A77D",
         "Moderate": "#F1A208",
@@ -3463,11 +3282,11 @@ def render_donut_chart(values: dict, title: str = "Distribution", height: int = 
 # ANIMATION AND LOADING UTILITIES
 # =========================================================
 
-def render_skeleton_loader(height: int = 100, width: str = "100%", count: int = 1):
+def render_skeleton_loader(height: int = 80, width: str = "100%", count: int = 1):
     """Render a skeleton loading animation."""
     skeletons = []
     for i in range(count):
-        skeletons.append(f'<div class="skeleton" style="height: {height}px; width: {width}; margin-bottom: 1rem;"></div>')
+        skeletons.append(f'<div class="skeleton" style="height: {height}px; width: {width}; margin-bottom: 0.8rem;"></div>')
     st.markdown(''.join(skeletons), unsafe_allow_html=True)
 
 
@@ -3487,12 +3306,12 @@ def render_toast_message(message: str, type: str = "info", duration: int = 3000)
         right: 20px;
         background: {bg_color};
         color: white;
-        padding: 12px 20px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        padding: 10px 18px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         z-index: 9999;
         font-family: 'Inter', sans-serif;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         animation: slideInRight 0.3s ease;
     ">
         {html.escape(message)}
@@ -3526,16 +3345,16 @@ def render_confetti():
         var particles = [];
         var colors = ['#06A77D', '#F1A208', '#D44D5C', '#773344', '#160029'];
         
-        for(var i = 0; i < 150; i++) {
+        for(var i = 0; i < 100; i++) {
             particles.push({
                 x: Math.random() * canvas.width,
                 y: Math.random() * canvas.height - canvas.height,
-                size: Math.random() * 6 + 2,
-                speedY: Math.random() * 5 + 3,
+                size: Math.random() * 5 + 2,
+                speedY: Math.random() * 4 + 2,
                 speedX: Math.random() * 2 - 1,
                 color: colors[Math.floor(Math.random() * colors.length)],
                 rotation: Math.random() * 360,
-                rotationSpeed: Math.random() * 10 - 5
+                rotationSpeed: Math.random() * 8 - 4
             });
         }
         

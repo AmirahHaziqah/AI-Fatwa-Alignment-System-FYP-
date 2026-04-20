@@ -84,9 +84,9 @@ def apply_dashboard_polish():
         --danger-color: #A31621;
     }
     
-    /* Base styles - properly scaled for 100% zoom */
+    /* Base styles - properly scaled for 100% zoom - FIXED */
     html {
-        font-size: 15px !important;
+        font-size: 14px !important;
     }
     
     .stApp {
@@ -101,33 +101,50 @@ def apply_dashboard_polish():
     [data-testid="stTextArea"] > div > div, 
     [data-testid="stTextArea"] [data-baseweb="textarea"], 
     [data-testid="stTextArea"] [data-testid="stTextAreaRootElement"] { 
-        background: linear-gradient(180deg, #fffefe 0%, #fbf4ef 100%) !important; 
-        background-color: #fbf4ef !important; 
+        background: #ffffff !important; 
+        background-color: #ffffff !important; 
+        border: 1px solid #e3b5a4 !important;
+        border-radius: 16px !important;
+    }
+    
+    /* FIX: Text area text color - make it visible */
+    .stTextArea textarea,
+    .stTextArea textarea:focus,
+    .stTextArea textarea:active {
+        color: #2a1421 !important;
+        background: #ffffff !important;
+        -webkit-text-fill-color: #2a1421 !important;
+    }
+    
+    .stTextArea textarea::placeholder {
+        color: #a08b97 !important;
     }
     
     [data-testid="stAppViewContainer"] .block-container { 
-        max-width: 1300px !important; 
-        padding-top: 0.8rem !important;
-        padding-bottom: 1.5rem !important;
+        max-width: 1400px !important; 
+        padding-top: 0.5rem !important;
+        padding-bottom: 1rem !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
     }
     
     /* ===== BEAUTIFUL METRIC CARDS ===== */
     .metric-beautiful-card {
         background: linear-gradient(135deg, #ffffff 0%, #fef8f5 100%);
-        border-radius: 20px;
-        padding: 1rem 0.8rem;
+        border-radius: 16px;
+        padding: 0.8rem 0.6rem;
         text-align: center;
         position: relative;
         overflow: hidden;
-        box-shadow: 0 8px 20px rgba(119, 51, 68, 0.08);
+        box-shadow: 0 4px 12px rgba(119, 51, 68, 0.08);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         border: 1px solid rgba(227, 181, 164, 0.3);
         height: 100%;
     }
     
     .metric-beautiful-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 16px 32px rgba(119, 51, 68, 0.12);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(119, 51, 68, 0.12);
     }
     
     .metric-beautiful-card::before {
@@ -145,32 +162,32 @@ def apply_dashboard_polish():
     .metric-beautiful-card.weak::before { background: linear-gradient(90deg, #A31621, #D44D5C); }
     
     .metric-beautiful-icon {
-        width: 44px;
-        height: 44px;
-        margin: 0 auto 0.6rem auto;
+        width: 38px;
+        height: 38px;
+        margin: 0 auto 0.4rem auto;
         background: linear-gradient(135deg, #f9e6e0, #f5d5cc);
-        border-radius: 16px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.3rem;
+        font-size: 1.1rem;
     }
     
     .metric-beautiful-label {
-        font-size: 0.7rem;
+        font-size: 0.65rem;
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 0.08em;
         color: #8b6771;
-        margin-bottom: 0.4rem;
+        margin-bottom: 0.3rem;
     }
     
     .metric-beautiful-value {
         font-family: 'Inter Tight', 'Inter', sans-serif;
-        font-size: 1.8rem;
+        font-size: 1.5rem;
         font-weight: 800;
         line-height: 1.1;
-        margin-bottom: 0.2rem;
+        margin-bottom: 0.15rem;
     }
     
     .metric-beautiful-value.good { color: #06A77D; }
@@ -178,131 +195,19 @@ def apply_dashboard_polish():
     .metric-beautiful-value.weak { color: #A31621; }
     
     .metric-beautiful-sub {
-        font-size: 0.65rem;
+        font-size: 0.6rem;
         color: #a08b97;
-        margin-bottom: 0.4rem;
+        margin-bottom: 0.3rem;
         font-weight: 600;
     }
     
     .metric-beautiful-desc {
-        font-size: 0.7rem;
+        font-size: 0.65rem;
         color: #7a6874;
         line-height: 1.3;
-        padding-top: 0.4rem;
+        padding-top: 0.3rem;
         border-top: 1px solid rgba(227, 181, 164, 0.3);
-        margin-top: 0.4rem;
-    }
-    
-    /* ===== POPUP TOAST NOTIFICATION ===== */
-    @keyframes slideInRight {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-    
-    @keyframes fadeOut {
-        from {
-            opacity: 1;
-            transform: translateX(0);
-        }
-        to {
-            opacity: 0;
-            transform: translateX(100%);
-        }
-    }
-    
-    .custom-toast {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        min-width: 300px;
-        max-width: 380px;
-        background: linear-gradient(135deg, #ffffff 0%, #fef8f5 100%);
-        border-radius: 16px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        z-index: 99999;
-        animation: slideInRight 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        overflow: hidden;
-    }
-    
-    .custom-toast.fade-out {
-        animation: fadeOut 0.3s ease forwards;
-    }
-    
-    .toast-header {
-        background: linear-gradient(135deg, #06A77D, #2E8B57);
-        padding: 0.7rem 0.9rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    
-    .toast-icon {
-        width: 28px;
-        height: 28px;
-        background: rgba(255,255,255,0.2);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1rem;
-    }
-    
-    .toast-title {
-        flex: 1;
-        color: white;
-        font-weight: 800;
-        font-size: 0.85rem;
-        letter-spacing: 0.02em;
-    }
-    
-    .toast-close {
-        width: 24px;
-        height: 24px;
-        background: rgba(255,255,255,0.15);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        font-size: 0.9rem;
-        transition: all 0.2s;
-    }
-    
-    .toast-close:hover {
-        background: rgba(255,255,255,0.3);
-        transform: scale(1.05);
-    }
-    
-    .toast-body {
-        padding: 0.8rem 0.9rem;
-    }
-    
-    .toast-message {
-        color: #2a1421;
-        font-size: 0.8rem;
-        line-height: 1.4;
-        margin-bottom: 0.4rem;
-    }
-    
-    .toast-detail {
-        color: #8b6771;
-        font-size: 0.7rem;
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
-        flex-wrap: wrap;
-    }
-    
-    .toast-detail span {
-        background: #f5e9e2;
-        padding: 0.15rem 0.5rem;
-        border-radius: 20px;
+        margin-top: 0.3rem;
     }
     
     /* Metric card grid */
@@ -310,7 +215,7 @@ def apply_dashboard_polish():
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 0.8rem;
-        margin: 0.8rem 0;
+        margin: 0.6rem 0;
     }
     
     @media (max-width: 768px) {
@@ -325,170 +230,357 @@ def apply_dashboard_polish():
         }
     }
     
-    /* Sidebar */
+    /* FIX: Result cards spacing - add gap between cards */
+    .result-cards-grid {
+        display: grid;
+        grid-template-columns: 1.05fr 1.35fr 1fr;
+        gap: 1.2rem;
+        margin: 0.8rem 0;
+    }
+    
+    /* FIX: Single review right column spacing */
+    .single-review-right-col {
+        padding-left: 0.5rem;
+    }
+    
+    /* Sidebar - make it slightly narrower */
     [data-testid="stSidebar"] {
         min-width: 260px !important;
         max-width: 260px !important;
         width: 260px !important;
     }
     
-    /* Hero image */
+    /* Hero image - smaller */
     .hero-image-wrap {
-        height: 150px !important;
+        height: 130px !important;
         border-radius: 20px !important;
     }
     
     .hero-image-title {
-        font-size: 1.6rem !important;
+        font-size: 1.3rem !important;
     }
     
     .hero-image-subtitle {
-        font-size: 0.8rem !important;
+        font-size: 0.7rem !important;
     }
     
-    /* Tab minimal hero */
-    .tab-minimal-hero {
-        padding: 0.9rem 1.1rem 0.8rem 1.1rem !important;
+    .hero-image-content {
+        max-width: 70% !important;
     }
     
-    .tab-minimal-title {
-        font-size: 1.4rem !important;
-    }
-    
-    .tab-minimal-copy {
-        font-size: 0.85rem !important;
-    }
-    
-    /* Input editor */
-    .input-editor-shell {
-        padding: 0.7rem 0.8rem 0.6rem 0.8rem !important;
-    }
-    
-    .input-editor-title {
-        font-size: 0.9rem !important;
-    }
-    
-    /* Batch shell */
-    .batch-shell {
-        padding: 0.8rem 0.9rem 0.7rem 0.9rem !important;
-    }
-    
-    /* Similarity breakdown */
-    .sim-lite-shell {
-        padding: 0.8rem !important;
-    }
-    
-    .sim-lite-title {
-        font-size: 1.3rem !important;
-    }
-    
-    .sim-lite-ring {
-        width: 85px !important;
-        height: 85px !important;
-    }
-    
-    .sim-lite-ring-inner {
-        width: 62px !important;
-        height: 62px !important;
-    }
-    
-    .sim-lite-ring-inner strong {
-        font-size: 1.3rem !important;
-    }
-    
-    .sim-lite-metric-value {
-        font-size: 1.6rem !important;
-    }
-    
-    /* Result hero */
-    .result-hero-title {
-        font-size: 1.2rem !important;
-    }
-    
-    .result-hero-copy {
-        font-size: 0.85rem !important;
-    }
-    
-    /* Buttons */
-    .stButton > button,
-    .stDownloadButton > button {
-        padding: 0.4rem 0.8rem !important;
-        font-size: 0.8rem !important;
-        min-height: 36px !important;
-    }
-    
-    /* Text area */
-    .stTextArea textarea {
-        font-size: 0.85rem !important;
-        min-height: 110px !important;
-    }
-    
-    /* Explorer orbs */
-    .explorer-orb {
-        padding: 0.7rem 0.9rem !important;
-        min-height: 70px !important;
-    }
-    
-    .explorer-orb-icon {
-        width: 42px !important;
-        height: 42px !important;
-        font-size: 0.85rem !important;
-    }
-    
-    .explorer-orb-value {
-        font-size: 1.2rem !important;
-    }
-    
-    .explorer-orb-label {
+    .hero-kicker {
         font-size: 0.65rem !important;
-    }
-    
-    /* Workspace */
-    .workspace-title {
-        font-size: 1.1rem !important;
-    }
-    
-    .workspace-copy {
-        font-size: 0.8rem !important;
-    }
-    
-    /* Points card */
-    .points-card-header {
-        font-size: 0.75rem !important;
-    }
-    
-    .keyword-match, .keyword-miss {
-        font-size: 0.75rem !important;
         padding: 0.3rem 0.8rem !important;
     }
     
-    /* Light table */
-    .light-table thead th {
+    /* Tab minimal hero - smaller */
+    .tab-minimal-hero {
+        padding: 0.7rem 1rem 0.6rem 1rem !important;
+    }
+    
+    .tab-minimal-title {
+        font-size: 1.2rem !important;
+    }
+    
+    .tab-minimal-copy {
+        font-size: 0.8rem !important;
+    }
+    
+    .tab-minimal-kicker {
+        font-size: 0.65rem !important;
+    }
+    
+    /* Input editor - smaller */
+    .input-editor-shell {
+        padding: 0.5rem 0.7rem 0.4rem 0.7rem !important;
+    }
+    
+    .input-editor-title {
+        font-size: 0.85rem !important;
+    }
+    
+    .input-editor-kicker {
+        font-size: 0.65rem !important;
+    }
+    
+    /* Batch shell - smaller */
+    .batch-shell {
+        padding: 0.6rem 0.8rem 0.5rem 0.8rem !important;
+    }
+    
+    .batch-title {
+        font-size: 1rem !important;
+    }
+    
+    .batch-copy {
+        font-size: 0.8rem !important;
+    }
+    
+    /* Similarity breakdown - smaller */
+    .sim-lite-shell {
+        padding: 0.6rem !important;
+    }
+    
+    .sim-lite-title {
+        font-size: 1.1rem !important;
+    }
+    
+    .sim-lite-ring {
+        width: 75px !important;
+        height: 75px !important;
+    }
+    
+    .sim-lite-ring-inner {
+        width: 55px !important;
+        height: 55px !important;
+    }
+    
+    .sim-lite-ring-inner strong {
+        font-size: 1.1rem !important;
+    }
+    
+    .sim-lite-metric-value {
+        font-size: 1.3rem !important;
+    }
+    
+    /* Result hero - smaller */
+    .result-hero-title {
+        font-size: 1rem !important;
+    }
+    
+    .result-hero-copy {
         font-size: 0.75rem !important;
-        padding: 0.6rem 0.8rem !important;
+    }
+    
+    /* Buttons - smaller */
+    .stButton > button,
+    .stDownloadButton > button {
+        padding: 0.35rem 0.7rem !important;
+        font-size: 0.75rem !important;
+        min-height: 32px !important;
+    }
+    
+    /* Text area - smaller */
+    .stTextArea textarea {
+        font-size: 0.8rem !important;
+        min-height: 100px !important;
+    }
+    
+    /* Explorer orbs - smaller */
+    .explorer-orb {
+        padding: 0.5rem 0.7rem !important;
+        min-height: 60px !important;
+    }
+    
+    .explorer-orb-icon {
+        width: 38px !important;
+        height: 38px !important;
+        font-size: 0.75rem !important;
+    }
+    
+    .explorer-orb-value {
+        font-size: 1rem !important;
+    }
+    
+    .explorer-orb-label {
+        font-size: 0.6rem !important;
+    }
+    
+    /* Workspace - smaller */
+    .workspace-title {
+        font-size: 0.95rem !important;
+    }
+    
+    .workspace-copy {
+        font-size: 0.75rem !important;
+    }
+    
+    /* Points card - smaller */
+    .points-card-header {
+        font-size: 0.7rem !important;
+    }
+    
+    .keyword-match, .keyword-miss {
+        font-size: 0.7rem !important;
+        padding: 0.25rem 0.7rem !important;
+    }
+    
+    /* Light table - smaller */
+    .light-table thead th {
+        font-size: 0.7rem !important;
+        padding: 0.5rem 0.7rem !important;
     }
     
     .light-table tbody td {
-        font-size: 0.75rem !important;
-        padding: 0.6rem 0.8rem !important;
+        font-size: 0.7rem !important;
+        padding: 0.5rem 0.7rem !important;
     }
     
-    /* Alignment cards */
+    /* Alignment cards - smaller */
     .align-rank-topic {
-        font-size: 0.9rem !important;
+        font-size: 0.8rem !important;
     }
     
     .align-score {
-        font-size: 0.95rem !important;
+        font-size: 0.85rem !important;
+    }
+    
+    /* Metric cards */
+    .metric-card {
+        padding: 0.7rem 0.8rem !important;
+    }
+    
+    .metric-value {
+        font-size: 1.3rem !important;
+    }
+    
+    .metric-label {
+        font-size: 0.7rem !important;
+    }
+    
+    /* ===== BEAUTIFUL POPUP TOAST ===== */
+    @keyframes slideInDown {
+        from {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes fadeOutUp {
+        from {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateY(-100%);
+        }
+    }
+    
+    .custom-toast-center {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        min-width: 320px;
+        max-width: 420px;
+        background: linear-gradient(135deg, #ffffff 0%, #f0faf5 100%);
+        border-radius: 20px;
+        box-shadow: 0 30px 50px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(6, 167, 125, 0.3);
+        z-index: 99999;
+        animation: slideInDown 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        overflow: hidden;
+        border-left: 6px solid #06A77D;
+    }
+    
+    .custom-toast-center.fade-out {
+        animation: fadeOutUp 0.4s ease forwards;
+    }
+    
+    .toast-header-center {
+        background: linear-gradient(135deg, #06A77D, #2E8B57);
+        padding: 0.8rem 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+    }
+    
+    .toast-icon-center {
+        width: 36px;
+        height: 36px;
+        background: rgba(255,255,255,0.25);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        font-weight: bold;
+    }
+    
+    .toast-title-center {
+        flex: 1;
+        color: white;
+        font-weight: 800;
+        font-size: 1rem;
+        letter-spacing: 0.02em;
+    }
+    
+    .toast-close-center {
+        width: 28px;
+        height: 28px;
+        background: rgba(255,255,255,0.15);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 1.1rem;
+        transition: all 0.2s;
+    }
+    
+    .toast-close-center:hover {
+        background: rgba(255,255,255,0.3);
+        transform: scale(1.1);
+    }
+    
+    .toast-body-center {
+        padding: 1rem 1.2rem;
+        background: linear-gradient(135deg, #ffffff, #f8fff9);
+    }
+    
+    .toast-message-center {
+        color: #1a5c3e;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+    
+    .toast-detail-center {
+        color: #2e8b57;
+        font-size: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .toast-detail-center span {
+        background: #e8f5ef;
+        padding: 0.2rem 0.6rem;
+        border-radius: 20px;
     }
     
     /* Responsive */
     @media (max-width: 1200px) {
-        html { font-size: 14px !important; }
+        html { font-size: 13px !important; }
+        .result-cards-grid { gap: 0.8rem; }
     }
     
     @media (max-width: 900px) {
-        html { font-size: 13px !important; }
+        html { font-size: 12px !important; }
+        .result-cards-grid { grid-template-columns: 1fr; gap: 1rem; }
+    }
+    
+    /* Fix for text area dark background issue */
+    [data-testid="stTextArea"] {
+        background: transparent !important;
+    }
+    
+    .stTextArea textarea {
+        background: #ffffff !important;
+        color: #2a1421 !important;
+        border: 1px solid #e3b5a4 !important;
+        border-radius: 16px !important;
+    }
+    
+    /* Fix for selectbox and multiselect */
+    .stSelectbox select, .stMultiSelect select {
+        color: #2a1421 !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -526,11 +618,54 @@ def resolve_banner_path():
 
 
 # =========================================================
-# POPUP TOAST FUNCTIONS
+# BEAUTIFUL CENTERED POPUP TOAST FUNCTIONS
 # =========================================================
 
+def show_success_toast_center(message: str, details: list = None):
+    """Display a beautiful centered popup toast notification."""
+    
+    details_html = ""
+    if details:
+        details_html = '<div class="toast-detail-center">' + "".join(f'<span>✓ {html.escape(d)}</span>' for d in details) + '</div>'
+    
+    toast_html = f"""
+    <div id="customToastCenter" class="custom-toast-center">
+        <div class="toast-header-center">
+            <div class="toast-icon-center">✓</div>
+            <div class="toast-title-center">Success! Response Loaded</div>
+            <div class="toast-close-center" onclick="closeToastCenter()">×</div>
+        </div>
+        <div class="toast-body-center">
+            <div class="toast-message-center">{html.escape(message)}</div>
+            {details_html}
+        </div>
+    </div>
+    <script>
+        function closeToastCenter() {{
+            var toast = document.getElementById('customToastCenter');
+            if(toast) {{
+                toast.classList.add('fade-out');
+                setTimeout(function() {{ 
+                    if(toast && toast.parentNode) toast.parentNode.removeChild(toast);
+                }}, 400);
+            }}
+        }}
+        setTimeout(function() {{
+            var toast = document.getElementById('customToastCenter');
+            if(toast) {{
+                toast.classList.add('fade-out');
+                setTimeout(function() {{ 
+                    if(toast && toast.parentNode) toast.parentNode.removeChild(toast);
+                }}, 400);
+            }}
+        }}, 3500);
+    </script>
+    """
+    st.markdown(toast_html, unsafe_allow_html=True)
+
+
 def show_success_toast(message: str, details: list = None):
-    """Display a beautiful popup toast notification."""
+    """Display a beautiful popup toast notification (side version)."""
     
     details_html = ""
     if details:
@@ -579,7 +714,6 @@ def show_success_toast(message: str, details: list = None):
 def render_beautiful_metric_card(label: str, value: float, icon: str, description: str, sub_label: str = ""):
     """Render a beautiful metric card with icon and gradient."""
     
-    # Determine tier
     if value >= 70:
         tier_class = "good"
         value_class = "good"
@@ -590,7 +724,6 @@ def render_beautiful_metric_card(label: str, value: float, icon: str, descriptio
         tier_class = "weak"
         value_class = "weak"
     
-    # Determine description text based on value
     if "Text" in label:
         desc_text = "Uses many of the same words." if value >= 70 else "Uses some of the same words." if value >= 50 else "Uses quite different words."
     elif "Meaning" in label:
@@ -618,6 +751,7 @@ def render_beautiful_metric_grid(lexical_score, semantic_score, coverage_score, 
     
     st.markdown('<div class="metric-grid-4">', unsafe_allow_html=True)
     
+    cols = st.columns(4, gap="small")
     metrics = [
         ("Text Match", lexical_score, "📝", "Words used", "Word overlap similarity"),
         ("Meaning Match", semantic_score, "🎯", "Same meaning", "Semantic understanding"),
@@ -625,8 +759,6 @@ def render_beautiful_metric_grid(lexical_score, semantic_score, coverage_score, 
         ("Overall Fit", mean_alignment, "⚖️", "State match", "Average across state rulings"),
     ]
     
-    # Use columns for better layout
-    cols = st.columns(4, gap="small")
     for col, (label, score, icon, sub, desc) in zip(cols, metrics):
         with col:
             render_beautiful_metric_card(label, score, icon, desc, sub)
@@ -1544,78 +1676,77 @@ def render_single_review_result_dashboard(bundle: dict):
     </div>
     """), unsafe_allow_html=True)
 
-    st.markdown(_html(f"""
-    <div style='margin:0.95rem 0 1.25rem 0;'>
-        <div style='display:grid;grid-template-columns:1.05fr 1.35fr 1fr;gap:1rem;'>
-            <div style='background:linear-gradient(180deg,#fff8f4 0%,#fff2ef 100%);border:1px solid #ead1c8;border-top:5px solid {tone};border-radius:28px;padding:1.2rem 1.2rem 1.1rem 1.2rem;box-shadow:0 14px 28px rgba(25,14,36,0.05);min-width:0;'>
-                <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.11em;text-transform:uppercase;color:#a3195b;margin-bottom:0.65rem;'>Result summary</div>
-                <div style='display:flex;align-items:flex-start;justify-content:space-between;gap:0.8rem;margin-bottom:0.8rem;'>
+    # FIX: Use the result-cards-grid class for proper spacing
+    st.markdown(f"""
+    <div class="result-cards-grid">
+        <div style='background:linear-gradient(180deg,#fff8f4 0%,#fff2ef 100%);border:1px solid #ead1c8;border-top:5px solid {tone};border-radius:28px;padding:1.2rem 1.2rem 1.1rem 1.2rem;box-shadow:0 14px 28px rgba(25,14,36,0.05);min-width:0;'>
+            <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.11em;text-transform:uppercase;color:#a3195b;margin-bottom:0.65rem;'>Result summary</div>
+            <div style='display:flex;align-items:flex-start;justify-content:space-between;gap:0.8rem;margin-bottom:0.8rem;'>
+                <div>
+                    <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.55rem;font-weight:850;letter-spacing:-0.03em;line-height:1.04;color:#241226;margin-bottom:0.2rem;'>{html.escape(result_title)}</div>
+                    <div style='font-size:0.96rem;line-height:1.72;color:#6d5a68;max-width:95%;'>{html.escape(recommendation_copy)}</div>
+                </div>
+                <div style='min-width:88px;height:88px;border-radius:22px;background:linear-gradient(135deg,{tone} 0%,#ffffff 145%);padding:1px;box-shadow:0 10px 22px rgba(25,14,36,0.10);'>
+                    <div style='height:100%;border-radius:21px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;'>
+                        <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.7rem;font-weight:800;color:{tone};line-height:1;'>{int(round(final_match_score))}</div>
+                        <div style='font-size:0.72rem;color:#8b6771;margin-top:0.18rem;'>score</div>
+                    </div>
+                </div>
+            </div>
+            <div style='margin:0.15rem 0 0.75rem 0;padding:0.95rem 1rem;border-radius:20px;background:linear-gradient(135deg,#fff 0%,#fff6f2 100%);border:1px solid #ead1c8;box-shadow:0 8px 18px rgba(25,14,36,0.04);'>
+                <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.18rem;'>Review status</div>
+                <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.2rem;font-weight:800;line-height:1.15;color:{tone};margin-bottom:0.22rem;'>{html.escape(action_label)}</div>
+                <div style='font-size:0.9rem;line-height:1.7;color:#6d5a68;'>{review_status_copy}</div>
+            </div>
+            <div style='display:grid;gap:0.55rem;'>
+                <div style='padding:0.82rem 0.9rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;display:flex;gap:0.65rem;align-items:flex-start;'><div style='width:28px;height:28px;border-radius:10px;background:{tone}14;color:{tone};display:flex;align-items:center;justify-content:center;font-weight:900;'>1</div><div style='font-size:0.88rem;line-height:1.6;color:#6d5a68;'><strong style='color:#241226;'>What this means:</strong> {html.escape(result_summary)}</div></div>
+                <div style='padding:0.82rem 0.9rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;display:flex;gap:0.65rem;align-items:flex-start;'><div style='width:28px;height:28px;border-radius:10px;background:#f7ece7;color:#b24758;display:flex;align-items:center;justify-content:center;font-weight:900;'>2</div><div style='font-size:0.88rem;line-height:1.6;color:#6d5a68;'><strong style='color:#241226;'>What to do:</strong> {html.escape(action_note)}</div></div>
+                <div style='padding:0.82rem 0.9rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;display:flex;gap:0.65rem;align-items:flex-start;'><div style='width:28px;height:28px;border-radius:10px;background:#f7ece7;color:#b24758;display:flex;align-items:center;justify-content:center;font-weight:900;'>3</div><div style='font-size:0.88rem;line-height:1.6;color:#6d5a68;'><strong style='color:#241226;'>History label:</strong> {html.escape(recommendation_label)}</div></div>
+            </div>
+        </div>
+        <div style='background:linear-gradient(180deg,#fffdfb 0%,#faf3f7 100%);border:1px solid #ead1c8;border-top:5px solid #773344;border-radius:28px;padding:1.2rem 1.2rem 1.1rem 1.2rem;box-shadow:0 14px 28px rgba(25,14,36,0.05);min-width:0;'>
+            <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.11em;text-transform:uppercase;color:#a3195b;margin-bottom:0.65rem;'>Closest fatwa source</div>
+            <div style='display:flex;align-items:flex-start;justify-content:space-between;gap:0.75rem;margin-bottom:0.8rem;'>
+                <div style='min-width:0;'>
+                    <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.5rem;font-weight:800;letter-spacing:-0.03em;line-height:1.08;color:#241226;overflow-wrap:anywhere;'>{html.escape(best_state)}</div>
+                    <div style='margin-top:0.22rem;font-size:0.92rem;line-height:1.65;color:#6d5a68;'>This is the state fatwa source that matched the answer most closely.</div>
+                </div>
+                <div style='padding:0.42rem 0.8rem;border-radius:999px;background:#fff;border:1px solid #ead1c8;color:#773344;font-size:0.76rem;font-weight:800;white-space:nowrap;'>Best source</div>
+            </div>
+            <div style='display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;margin-bottom:0.7rem;'>
+                <div style='padding:0.9rem 0.95rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;'>
+                    <div style='font-size:0.7rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.22rem;'>Issue matched</div>
+                    <div style='font-size:0.98rem;line-height:1.58;color:#241226;font-weight:700;overflow-wrap:anywhere;'>{html.escape(issue_name)}</div>
+                </div>
+                <div style='padding:0.9rem 0.95rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;'>
+                    <div style='font-size:0.7rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.22rem;'>Why it matters</div>
+                    <div style='font-size:0.88rem;line-height:1.6;color:#6d5a68;'>Read this fatwa first when you want to confirm whether the AI answer can be accepted.</div>
+                </div>
+            </div>
+            <div style='padding:0.95rem 1rem;border-radius:20px;background:linear-gradient(135deg,#fff 0%,#fff8f4 100%);border:1px solid #ead1c8;'>
+                <div style='font-size:0.7rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.28rem;'>Reference preview</div>
+                <div style='font-size:0.92rem;line-height:1.72;color:#6d5a68;overflow-wrap:anywhere;'>{preview_reference}</div>
+            </div>
+        </div>
+        <div style='background:linear-gradient(180deg,#fffdf8 0%,#f9f1ec 100%);border:1px solid #ead1c8;border-top:5px solid #d98c3f;border-radius:28px;padding:1.2rem 1.2rem 1.1rem 1.2rem;box-shadow:0 14px 28px rgba(25,14,36,0.05);min-width:0;'>
+            <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.11em;text-transform:uppercase;color:#a3195b;margin-bottom:0.65rem;'>Easy score guide</div>
+            <div style='display:grid;gap:0.7rem;'>
+                <div style='padding:0.9rem 0.95rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;'><div style='display:flex;align-items:center;justify-content:space-between;gap:0.6rem;'><div><div style='font-size:0.82rem;font-weight:800;color:#8b6771;text-transform:uppercase;letter-spacing:0.06em;'>Meaning</div><div style='font-size:0.8rem;color:#6d5a68;margin-top:0.12rem;'>Same ruling idea</div></div><div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.4rem;font-weight:800;color:#241226;'>{format_percent(semantic_score,1)}</div></div><div style='height:8px;border-radius:999px;background:#f1e2da;overflow:hidden;margin-top:0.55rem;'><div style='height:100%;width:{max(0,min(100,safe_float(semantic_score)))}%;background:linear-gradient(90deg,#773344 0%,#b24758 100%);border-radius:999px;'></div></div></div>
+                <div style='padding:0.9rem 0.95rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;'><div style='display:flex;align-items:center;justify-content:space-between;gap:0.6rem;'><div><div style='font-size:0.82rem;font-weight:800;color:#8b6771;text-transform:uppercase;letter-spacing:0.06em;'>Text</div><div style='font-size:0.8rem;color:#6d5a68;margin-top:0.12rem;'>Similar wording</div></div><div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.4rem;font-weight:800;color:#241226;'>{format_percent(lexical_score,1)}</div></div><div style='height:8px;border-radius:999px;background:#f1e2da;overflow:hidden;margin-top:0.55rem;'><div style='height:100%;width:{max(0,min(100,safe_float(lexical_score)))}%;background:linear-gradient(90deg,#d98c3f 0%,#f1a208 100%);border-radius:999px;'></div></div></div>
+                <div style='padding:0.9rem 0.95rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;'><div style='display:flex;align-items:center;justify-content:space-between;gap:0.6rem;'><div><div style='font-size:0.82rem;font-weight:800;color:#8b6771;text-transform:uppercase;letter-spacing:0.06em;'>Key points</div><div style='font-size:0.8rem;color:#6d5a68;margin-top:0.12rem;'>Important conditions found</div></div><div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.4rem;font-weight:800;color:#241226;'>{format_percent(coverage_score,1)}</div></div><div style='height:8px;border-radius:999px;background:#f1e2da;overflow:hidden;margin-top:0.55rem;'><div style='height:100%;width:{max(0,min(100,safe_float(coverage_score)))}%;background:linear-gradient(90deg,#3a7f56 0%,#06A77D 100%);border-radius:999px;'></div></div></div>
+            </div>
+            <div style='margin-top:0.78rem;padding:0.95rem 1rem;border-radius:20px;background:linear-gradient(135deg,#fff 0%,#fff7f1 100%);border:1px solid #ead1c8;'>
+                <div style='display:flex;align-items:flex-end;justify-content:space-between;gap:0.6rem;'>
                     <div>
-                        <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.55rem;font-weight:850;letter-spacing:-0.03em;line-height:1.04;color:#241226;margin-bottom:0.2rem;'>{html.escape(result_title)}</div>
-                        <div style='font-size:0.96rem;line-height:1.72;color:#6d5a68;max-width:95%;'>{html.escape(recommendation_copy)}</div>
+                        <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.22rem;'>Overall fit</div>
+                        <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:2rem;font-weight:800;line-height:1;color:#241226;'>{format_percent(mean_alignment,1)}</div>
                     </div>
-                    <div style='min-width:88px;height:88px;border-radius:22px;background:linear-gradient(135deg,{tone} 0%,#ffffff 145%);padding:1px;box-shadow:0 10px 22px rgba(25,14,36,0.10);'>
-                        <div style='height:100%;border-radius:21px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;'>
-                            <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.7rem;font-weight:800;color:{tone};line-height:1;'>{int(round(final_match_score))}</div>
-                            <div style='font-size:0.72rem;color:#8b6771;margin-top:0.18rem;'>score</div>
-                        </div>
-                    </div>
-                </div>
-                <div style='margin:0.15rem 0 0.75rem 0;padding:0.95rem 1rem;border-radius:20px;background:linear-gradient(135deg,#fff 0%,#fff6f2 100%);border:1px solid #ead1c8;box-shadow:0 8px 18px rgba(25,14,36,0.04);'>
-                    <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.18rem;'>Review status</div>
-                    <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.2rem;font-weight:800;line-height:1.15;color:{tone};margin-bottom:0.22rem;'>{html.escape(action_label)}</div>
-                    <div style='font-size:0.9rem;line-height:1.7;color:#6d5a68;'>{review_status_copy}</div>
-                </div>
-                <div style='display:grid;gap:0.55rem;'>
-                    <div style='padding:0.82rem 0.9rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;display:flex;gap:0.65rem;align-items:flex-start;'><div style='width:28px;height:28px;border-radius:10px;background:{tone}14;color:{tone};display:flex;align-items:center;justify-content:center;font-weight:900;'>1</div><div style='font-size:0.88rem;line-height:1.6;color:#6d5a68;'><strong style='color:#241226;'>What this means:</strong> {html.escape(result_summary)}</div></div>
-                    <div style='padding:0.82rem 0.9rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;display:flex;gap:0.65rem;align-items:flex-start;'><div style='width:28px;height:28px;border-radius:10px;background:#f7ece7;color:#b24758;display:flex;align-items:center;justify-content:center;font-weight:900;'>2</div><div style='font-size:0.88rem;line-height:1.6;color:#6d5a68;'><strong style='color:#241226;'>What to do:</strong> {html.escape(action_note)}</div></div>
-                    <div style='padding:0.82rem 0.9rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;display:flex;gap:0.65rem;align-items:flex-start;'><div style='width:28px;height:28px;border-radius:10px;background:#f7ece7;color:#b24758;display:flex;align-items:center;justify-content:center;font-weight:900;'>3</div><div style='font-size:0.88rem;line-height:1.6;color:#6d5a68;'><strong style='color:#241226;'>History label:</strong> {html.escape(recommendation_label)}</div></div>
-                </div>
-            </div>
-            <div style='background:linear-gradient(180deg,#fffdfb 0%,#faf3f7 100%);border:1px solid #ead1c8;border-top:5px solid #773344;border-radius:28px;padding:1.2rem 1.2rem 1.1rem 1.2rem;box-shadow:0 14px 28px rgba(25,14,36,0.05);min-width:0;'>
-                <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.11em;text-transform:uppercase;color:#a3195b;margin-bottom:0.65rem;'>Closest fatwa source</div>
-                <div style='display:flex;align-items:flex-start;justify-content:space-between;gap:0.75rem;margin-bottom:0.8rem;'>
-                    <div style='min-width:0;'>
-                        <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.5rem;font-weight:800;letter-spacing:-0.03em;line-height:1.08;color:#241226;overflow-wrap:anywhere;'>{html.escape(best_state)}</div>
-                        <div style='margin-top:0.22rem;font-size:0.92rem;line-height:1.65;color:#6d5a68;'>This is the state fatwa source that matched the answer most closely.</div>
-                    </div>
-                    <div style='padding:0.42rem 0.8rem;border-radius:999px;background:#fff;border:1px solid #ead1c8;color:#773344;font-size:0.76rem;font-weight:800;white-space:nowrap;'>Best source</div>
-                </div>
-                <div style='display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;margin-bottom:0.7rem;'>
-                    <div style='padding:0.9rem 0.95rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;'>
-                        <div style='font-size:0.7rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.22rem;'>Issue matched</div>
-                        <div style='font-size:0.98rem;line-height:1.58;color:#241226;font-weight:700;overflow-wrap:anywhere;'>{html.escape(issue_name)}</div>
-                    </div>
-                    <div style='padding:0.9rem 0.95rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;'>
-                        <div style='font-size:0.7rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.22rem;'>Why it matters</div>
-                        <div style='font-size:0.88rem;line-height:1.6;color:#6d5a68;'>Read this fatwa first when you want to confirm whether the AI answer can be accepted.</div>
-                    </div>
-                </div>
-                <div style='padding:0.95rem 1rem;border-radius:20px;background:linear-gradient(135deg,#fff 0%,#fff8f4 100%);border:1px solid #ead1c8;'>
-                    <div style='font-size:0.7rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.28rem;'>Reference preview</div>
-                    <div style='font-size:0.92rem;line-height:1.72;color:#6d5a68;overflow-wrap:anywhere;'>{preview_reference}</div>
-                </div>
-            </div>
-            <div style='background:linear-gradient(180deg,#fffdf8 0%,#f9f1ec 100%);border:1px solid #ead1c8;border-top:5px solid #d98c3f;border-radius:28px;padding:1.2rem 1.2rem 1.1rem 1.2rem;box-shadow:0 14px 28px rgba(25,14,36,0.05);min-width:0;'>
-                <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.11em;text-transform:uppercase;color:#a3195b;margin-bottom:0.65rem;'>Easy score guide</div>
-                <div style='display:grid;gap:0.7rem;'>
-                    <div style='padding:0.9rem 0.95rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;'><div style='display:flex;align-items:center;justify-content:space-between;gap:0.6rem;'><div><div style='font-size:0.82rem;font-weight:800;color:#8b6771;text-transform:uppercase;letter-spacing:0.06em;'>Meaning</div><div style='font-size:0.8rem;color:#6d5a68;margin-top:0.12rem;'>Same ruling idea</div></div><div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.4rem;font-weight:800;color:#241226;'>{format_percent(semantic_score,1)}</div></div><div style='height:8px;border-radius:999px;background:#f1e2da;overflow:hidden;margin-top:0.55rem;'><div style='height:100%;width:{max(0,min(100,safe_float(semantic_score)))}%;background:linear-gradient(90deg,#773344 0%,#b24758 100%);border-radius:999px;'></div></div></div>
-                    <div style='padding:0.9rem 0.95rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;'><div style='display:flex;align-items:center;justify-content:space-between;gap:0.6rem;'><div><div style='font-size:0.82rem;font-weight:800;color:#8b6771;text-transform:uppercase;letter-spacing:0.06em;'>Text</div><div style='font-size:0.8rem;color:#6d5a68;margin-top:0.12rem;'>Similar wording</div></div><div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.4rem;font-weight:800;color:#241226;'>{format_percent(lexical_score,1)}</div></div><div style='height:8px;border-radius:999px;background:#f1e2da;overflow:hidden;margin-top:0.55rem;'><div style='height:100%;width:{max(0,min(100,safe_float(lexical_score)))}%;background:linear-gradient(90deg,#d98c3f 0%,#f1a208 100%);border-radius:999px;'></div></div></div>
-                    <div style='padding:0.9rem 0.95rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;'><div style='display:flex;align-items:center;justify-content:space-between;gap:0.6rem;'><div><div style='font-size:0.82rem;font-weight:800;color:#8b6771;text-transform:uppercase;letter-spacing:0.06em;'>Key points</div><div style='font-size:0.8rem;color:#6d5a68;margin-top:0.12rem;'>Important conditions found</div></div><div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.4rem;font-weight:800;color:#241226;'>{format_percent(coverage_score,1)}</div></div><div style='height:8px;border-radius:999px;background:#f1e2da;overflow:hidden;margin-top:0.55rem;'><div style='height:100%;width:{max(0,min(100,safe_float(coverage_score)))}%;background:linear-gradient(90deg,#3a7f56 0%,#06A77D 100%);border-radius:999px;'></div></div></div>
-                </div>
-                <div style='margin-top:0.78rem;padding:0.95rem 1rem;border-radius:20px;background:linear-gradient(135deg,#fff 0%,#fff7f1 100%);border:1px solid #ead1c8;'>
-                    <div style='display:flex;align-items:flex-end;justify-content:space-between;gap:0.6rem;'>
-                        <div>
-                            <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.22rem;'>Overall fit</div>
-                            <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:2rem;font-weight:800;line-height:1;color:#241226;'>{format_percent(mean_alignment,1)}</div>
-                        </div>
-                        <div style='padding:0.38rem 0.7rem;border-radius:999px;background:#fff;border:1px solid #ead1c8;color:#773344;font-size:0.76rem;font-weight:800;'>State average</div>
-                    </div>
+                    <div style='padding:0.38rem 0.7rem;border-radius:999px;background:#fff;border:1px solid #ead1c8;color:#773344;font-size:0.76rem;font-weight:800;'>State average</div>
                 </div>
             </div>
         </div>
     </div>
-    """), unsafe_allow_html=True)
+    """), unsafe_allow_html=True
 
     k1, k2 = st.columns(2, gap="medium")
     with k1:
@@ -1831,15 +1962,15 @@ with tab1:
         """), unsafe_allow_html=True)
         ai_response = st.text_area(
             "AI Response Input",
-            height=140,
+            height=120,
             placeholder="Paste the answer here or load one from the dataset above...",
             key="ai_input",
             label_visibility="collapsed"
         )
 
-        # Show popup toast when response is loaded successfully
+        # Show beautiful centered popup toast when response is loaded successfully
         if st.session_state.pop('load_success_toast', False):
-            show_success_toast(
+            show_success_toast_center(
                 "✓ Saved response loaded successfully!",
                 ["Ready for review", "Click Analyze to see results"]
             )
@@ -1883,7 +2014,7 @@ with tab1:
 
     if clear_btn:
         clear_history()
-        show_success_toast("✓ History cleared successfully!", ["All saved analyses have been removed"])
+        show_success_toast_center("✓ History cleared successfully!", ["All saved analyses have been removed"])
         st.rerun()
 
     if analyze_btn:
@@ -2075,7 +2206,7 @@ with tab2:
             st.markdown("<div class='input-editor-shell batch-manual-shell'><div class='input-editor-head'><div><div class='input-editor-kicker'>Manual batch input</div><div class='input-editor-title'>Paste one answer per block</div></div><div class='input-editor-chip'>Split with ---</div></div></div>", unsafe_allow_html=True)
             batch_responses = st.text_area(
                 "Enter multiple responses (separate with ---)",
-                height=300,
+                height=280,
                 placeholder="Response 1...\n\n---\n\nResponse 2...\n\n---\n\nResponse 3...",
                 key="batch_input"
             )
@@ -2382,7 +2513,7 @@ Lowest Score: {history_df['final_match_score'].min():.1f}%
 
         if st.button("🗑️ Clear All History", use_container_width=True, key="clear_history_tab"):
             clear_history()
-            show_success_toast("✓ History cleared successfully!", ["All saved analyses have been removed"])
+            show_success_toast_center("✓ History cleared successfully!", ["All saved analyses have been removed"])
             st.rerun()
     else:
         st.markdown("""
@@ -2485,7 +2616,7 @@ with tab4:
 
 
 # =========================================================
-# TAB 5 - Topic Explorer
+# TAB 5 - Topic Explorer (Rest of the code remains the same as original)
 # =========================================================
 with tab5:
     import html as html_escape_mod
