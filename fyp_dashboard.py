@@ -1676,8 +1676,8 @@ def render_single_review_result_dashboard(bundle: dict):
     </div>
     """), unsafe_allow_html=True)
 
-    # FIX: Use the result-cards-grid class for proper spacing
-    st.markdown(f"""
+    # Use a properly formatted f-string without syntax errors
+    result_html = f"""
     <div class="result-cards-grid">
         <div style='background:linear-gradient(180deg,#fff8f4 0%,#fff2ef 100%);border:1px solid #ead1c8;border-top:5px solid {tone};border-radius:28px;padding:1.2rem 1.2rem 1.1rem 1.2rem;box-shadow:0 14px 28px rgba(25,14,36,0.05);min-width:0;'>
             <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.11em;text-transform:uppercase;color:#a3195b;margin-bottom:0.65rem;'>Result summary</div>
@@ -1746,7 +1746,8 @@ def render_single_review_result_dashboard(bundle: dict):
             </div>
         </div>
     </div>
-    """), unsafe_allow_html=True
+    """
+    st.markdown(result_html, unsafe_allow_html=True)
 
     k1, k2 = st.columns(2, gap="medium")
     with k1:
@@ -1765,7 +1766,6 @@ def render_single_review_result_dashboard(bundle: dict):
             <div class='keyword-container'>{missing_html}</div>
         </div>
         """), unsafe_allow_html=True)
-
 
 # =========================================================
 # COMPACT HEADER
