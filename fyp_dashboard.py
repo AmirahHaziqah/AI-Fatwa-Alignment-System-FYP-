@@ -2643,7 +2643,7 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
 ])
 
 # =========================================================
-# TAB 1 - Single Review (Simplified - Full version continues)
+# TAB 1 - Single Review
 # =========================================================
 with tab1:
     render_minimal_tab_intro(
@@ -2899,31 +2899,962 @@ with tab1:
 
 
 # =========================================================
-# TAB 2 - Batch Review (Full implementation would continue here)
+# TAB 2 - Batch Review
 # =========================================================
 with tab2:
-    st.info("Batch Review tab - Full implementation available in complete code package.")
+    render_minimal_tab_intro(
+        "Batch review",
+        "Structured comparison across responses",
+        "Compare several answers side by side and see which model performs better."
+    )
+
+    batch_mode = st.radio(
+        "Choose input method",
+        options=["Load from dataset", "Manual input"],
+        horizontal=True,
+        key="batch_mode_radio"
+    )
+
+    responses_to_run = []
+
+    st.markdown(_html("""
+    <div class='batch-shell compact'>
+        <div class='batch-shell-head'>
+            <div>
+                <div class='batch-kicker'>Review builder</div>
+                <div class='batch-title'>Batch comparison</div>
+                <div class='batch-copy'>Compare several saved or manual answers in one view.</div>
+            </div>
+        </div>
+    </div>
+    """), unsafe_allow_html=True)
+
+    if batch_mode == "Load from dataset" and AI_DATASET_AVAILABLE:
+        available_models_b = sorted(ai_answer_df["model"].unique().tolist())
+        question_map_b = (
+            fatwa_df[["question_id", "question_text"]]
+            .drop_duplicates("question_id")
+            .sort_values("question_id")
+        )
+
+        st.markdown("<div class='batch-filter-grid'>", unsafe_allow_html=True)
+        bc1, bc2 = st.columns([0.4, 0.6])
+        with bc1:
+            selected_models_b = st.multiselect(
+                "Select AI Models",
+                options=available_models_b,
+                default=available_models_b,
+                key="batch_models_select"
+            )
+        with bc2:
+            q_options_b = {
+                (row["question_text"] if row["question_text"] else row["question_id"]): row["question_id"]
+                for _, row in question_map_b.iterrows()
+            }
+            selected_questions_b = st.multiselect(
+                "Select Questions (leave empty = all)",
+                options=list(q_options_b.keys()),
+                key="batch_questions_select"
+            )
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        filtered_df = ai_answer_df.copy()
+        if selected_models_b:
+            filtered_df = filtered_df[filtered_df["model"].isin(selected_models_b)]
+        if selected_questions_b:
+            selected_qids = [q_options_b[q] for q in selected_questions_b]
+            filtered_df = filtered_df[filtered_df["question_id"].isin(selected_qids)]
+
+        st.markdown(f"<div class='batch-selection-note'><strong>{len(filtered_df)}</strong> responses are ready for batch review.</div>", unsafe_allow_html=True)
+
+        for _, row in filtered_df.iterrows():
+            q_text = question_map_b[question_map_b["question_id"] == row["question_id"]]["question_text"]
+            label = q_text.iloc[0][:60] if not q_text.empty else row["question_id"]
+            responses_to_run.append((label, row["model"], row["ai_answer_raw"]))
+
+        run_batch_btn = st.button(
+            f"Run Batch Analysis ({len(responses_to_run)} responses)",
+            use_container_width=True,
+            key="batch_dataset_run"
+        )
+
+    else:
+        mc1, mc2 = st.columns([0.68, 0.32])
+        with mc1:
+            st.markdown("<div class='input-editor-shell batch-manual-shell'><div class='input-editor-head'><div><div class='input-editor-kicker'>Manual batch input</div><div class='input-editor-title'>Paste one answer per block</div></div><div class='input-editor-chip'>Split with ---</div></div></div>", unsafe_allow_html=True)
+            batch_responses = st.text_area(
+                "Enter multiple responses (separate with ---)",
+                height=300,
+                placeholder="Response 1...\n\n---\n\nResponse 2...\n\n---\n\nResponse 3...",
+                key="batch_input"
+            )
+        with mc2:
+            st.markdown(_html("""
+            <div class='batch-guide-card'>
+                <div class='batch-guide-kicker'>How to paste responses</div>
+                <div class='batch-guide-step'><strong>1.</strong><span>Paste the first answer as a full paragraph.</span></div>
+                <div class='batch-guide-step'><strong>2.</strong><span>Add <strong>---</strong> on a new line.</span></div>
+                <div class='batch-guide-step'><strong>3.</strong><span>Paste the next answer and repeat for the rest.</span></div>
+            </div>
+            """), unsafe_allow_html=True)
+
+        if batch_responses.strip():
+            manual_texts = [r.strip() for r in batch_responses.split("---") if r.strip()]
+            responses_to_run = [(f"Response {i+1}", "Manual", t) for i, t in enumerate(manual_texts)]
+
+        st.markdown(f"<div class='batch-selection-note'><strong>{len(responses_to_run)}</strong> responses are ready for batch review.</div>", unsafe_allow_html=True)
+        run_batch_btn = st.button("Start Batch Analysis", use_container_width=True, key="batch_analyze")
+
+    if run_batch_btn:
+        if not responses_to_run:
+            st.warning("Please choose or paste at least one response before starting batch analysis.")
+        elif not ensure_analysis_dependencies():
+            st.stop()
+        else:
+            with st.spinner("Running batch analysis..."):
+                batch_results = []
+                batch_numeric = []
+                for label, model_name, response_text in responses_to_run:
+                    best_question_row, question_scores_df = detect_best_question(response_text, fatwa_df)
+                    if best_question_row is None or question_scores_df.empty:
+                        continue
+                    current_question_id = str(best_question_row["question_id"])
+                    state_subset = fatwa_df[fatwa_df["question_id"].astype(str).str.strip() == current_question_id].copy()
+                    best_state_bundle, state_results_df = unpack_state_comparison(compare_states_within_question(response_text, state_subset))
+                    if state_results_df.empty or not best_state_bundle:
+                        continue
+                    best_state_row = state_results_df.sort_values("alignment_score", ascending=False).iloc[0]
+                    interp_label, _ = interpret(best_state_row["alignment_score"])
+                    compliance = classify_shariah_compliance(
+                        final_match_score=best_state_row["alignment_score"],
+                        lexical_similarity=best_state_row.get("lexical_similarity", 0),
+                        semantic_similarity=best_state_row.get("semantic_similarity", 0),
+                        coverage=best_state_row.get("coverage", 0),
+                        confidence=best_question_row.get("confidence", "Unknown"),
+                        matched_keywords=best_state_row.get("matched_keywords", "-"),
+                        missing_keywords=best_state_row.get("missing_keywords", "-"),
+                        ai_text=response_text,
+                    )
+                    batch_results.append({
+                        "Label": label,
+                        "Model": model_name,
+                        "Detected Topic": short_topic_label(best_question_row.get("issue", "Related Fatwa Topic")),
+                        "Best State": best_state_row.get("state", "-"),
+                        "Final Match": format_percent(best_state_row.get("alignment_score", 0), 1),
+                        "Meaning Match": format_percent(best_state_row.get("semantic_similarity", 0), 1),
+                        "Text Match": format_percent(best_state_row.get("lexical_similarity", 0), 1),
+                        "Key Points": format_percent(best_state_row.get("coverage", 0), 1),
+                        "Recommendation": interp_label,
+                        "Compliance": compliance.get("level", "Unclear"),
+                    })
+                    batch_numeric.append({
+                        "label": label,
+                        "model": model_name,
+                        "score": safe_float(best_state_row.get("alignment_score", 0)),
+                        "semantic": safe_float(best_state_row.get("semantic_similarity", 0)),
+                        "lexical": safe_float(best_state_row.get("lexical_similarity", 0)),
+                        "coverage": safe_float(best_state_row.get("coverage", 0)),
+                    })
+
+                st.session_state.batch_results_df = pd.DataFrame(batch_results) if batch_results else None
+                st.session_state.batch_numeric_df = pd.DataFrame(batch_numeric) if batch_numeric else None
+
+    if st.session_state.get("batch_results_df") is None:
+        pass
+    elif st.session_state.batch_results_df.empty:
+        st.warning("No valid responses were available for batch analysis.")
+    else:
+        batch_df = st.session_state.batch_results_df.copy()
+        num_df = st.session_state.batch_numeric_df.copy() if st.session_state.get("batch_numeric_df") is not None else pd.DataFrame()
+
+        st.markdown("<div class='batch-results-shell'><div class='batch-results-title'>Batch analysis summary</div><div class='batch-results-copy'>See which model performed better, which state matched best, and how strong each answer was overall.</div></div>", unsafe_allow_html=True)
+        m1, m2, m3, m4 = st.columns(4)
+        summary_cards = [
+            ("Responses reviewed", str(len(batch_df))),
+            ("Average fit", f"{num_df['score'].mean():.1f}%" if not num_df.empty else "-"),
+            ("Average meaning match", f"{num_df['semantic'].mean():.1f}%" if not num_df.empty else "-"),
+            ("Average key points", f"{num_df['coverage'].mean():.1f}%" if not num_df.empty else "-"),
+        ]
+        for col, (label, value) in zip([m1, m2, m3, m4], summary_cards):
+            with col:
+                st.markdown(f"<div class='metric-card'><div class='metric-label'>{label}</div><div class='metric-value' style='font-size:1.5rem'>{value}</div></div>", unsafe_allow_html=True)
+
+        render_batch_score_chart(num_df)
+        st.markdown("<div class='batch-readable-note'><strong>Quick guide:</strong> final match is the overall result, meaning match shows how close the answer is in meaning, text match shows wording overlap, and key points shows how many important fatwa conditions were covered.</div>", unsafe_allow_html=True)
+        batch_page_size = 5
+        batch_start, batch_end, batch_page, batch_total_pages = paginate_with_buttons("batch_results", len(batch_df), batch_page_size)
+        st.markdown(build_light_table_html(batch_df.iloc[batch_start:batch_end]), unsafe_allow_html=True)
+        dl1, dl2 = st.columns(2)
+        with dl1:
+            st.download_button("Download CSV", batch_df.to_csv(index=False), f"batch_analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv", "text/csv", use_container_width=True)
+        with dl2:
+            if EXCEL_AVAILABLE:
+                st.download_button("Download Excel", export_to_excel(batch_df), f"batch_analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", use_container_width=True)
 
 
 # =========================================================
 # TAB 3 - History & Export
 # =========================================================
 with tab3:
-    st.info("History & Export tab - Full implementation available in complete code package.")
+    render_minimal_tab_intro(
+        "History and export",
+        "Saved alignment runs",
+        "Review past results, spot score trends, and export your analysis records in one place."
+    )
+
+    if st.session_state.analysis_history:
+        history_df = get_history_df()
+
+        st.markdown("<h3 class='section-subtitle'>Performance Dashboard</h3>", unsafe_allow_html=True)
+        h1, h2, h3, h4 = st.columns(4)
+
+        with h1:
+            st.markdown(
+                f"<div class='metric-card'><div class='metric-label'>Total Analyses</div><div class='metric-value'>{len(history_df)}</div></div>",
+                unsafe_allow_html=True
+            )
+        with h2:
+            st.markdown(
+                f"<div class='metric-card'><div class='metric-label'>Average Score</div><div class='metric-value'>{history_df['final_match_score'].mean():.1f}%</div></div>",
+                unsafe_allow_html=True
+            )
+        with h3:
+            st.markdown(
+                f"<div class='metric-card'><div class='metric-label'>Highest Score</div><div class='metric-value'>{history_df['final_match_score'].max():.1f}%</div></div>",
+                unsafe_allow_html=True
+            )
+        with h4:
+            recommendation_mode = history_df["recommendation_label"].mode()
+            most_common_recommendation = recommendation_mode.iloc[0] if not recommendation_mode.empty else "-"
+            st.markdown(
+                f"<div class='metric-card'><div class='metric-label'>Most Common Recommendation</div><div class='metric-value' style='font-size:1.25rem;'>{most_common_recommendation}</div></div>",
+                unsafe_allow_html=True
+            )
+
+        st.markdown("<div class='divider'></div>", unsafe_allow_html=True)
+
+        st.markdown("<h3 class='section-subtitle'>History Overview</h3>", unsafe_allow_html=True)
+        st.markdown("<div class='system-plain-note'>The history overview tracks how saved analyses move across the main fit score over time and how results distribute across alignment bands.</div>", unsafe_allow_html=True)
+
+        render_history_overview(history_df)
+
+        st.markdown("<div class='divider'></div>", unsafe_allow_html=True)
+
+        st.markdown("<h3 class='section-subtitle'>History Table</h3>", unsafe_allow_html=True)
+        st.markdown(_html("""
+        <div class='history-table-shell'>
+            <div class='history-table-head'>
+                <div>
+                    <div class='history-table-title'>Compact review table</div>
+                    <div class='history-table-copy'>This version keeps only the fields users usually compare first, so the table fits the screen more cleanly without horizontal swiping.</div>
+                </div>
+                <div class='history-table-pill'>Screen-fit layout</div>
+            </div>
+        """), unsafe_allow_html=True)
+
+        search_term = st.text_input(
+            "Search by topic, issue, state, recommendation, or compliance",
+            placeholder="Enter search term...",
+            key="history_search"
+        )
+        display_df = build_history_display_table(history_df)
+
+        if search_term:
+            filtered_df = display_df[
+                display_df["Topic"].astype(str).str.contains(search_term, case=False, na=False) |
+                display_df["Issue"].astype(str).str.contains(search_term, case=False, na=False) |
+                display_df["Best Match"].astype(str).str.contains(search_term, case=False, na=False) |
+                display_df["Review"].astype(str).str.contains(search_term, case=False, na=False)
+            ]
+        else:
+            filtered_df = display_df
+
+        history_page_size = 5
+        history_start, history_end, history_page, history_total_pages = paginate_with_buttons("history_table", len(filtered_df), history_page_size)
+        if len(filtered_df):
+            st.markdown(
+                f"<div class='pager-bar'><div class='pager-note'>Showing {history_start + 1} to {min(history_end, len(filtered_df))} of {len(filtered_df)} analyses.</div><div class='pager-note'>Page {history_page} of {history_total_pages}</div></div>",
+                unsafe_allow_html=True
+            )
+        st.markdown(build_light_table_html(filtered_df.iloc[history_start:history_end]), unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        st.markdown("<div class='divider'></div>", unsafe_allow_html=True)
+        st.markdown("<h3 class='section-subtitle'>Export Options</h3>", unsafe_allow_html=True)
+
+        export_df = history_df.copy()
+        if "timestamp" in export_df.columns:
+            export_df["_sort_time"] = pd.to_datetime(export_df["timestamp"], errors="coerce")
+            export_df = export_df.sort_values("_sort_time", ascending=False).drop(columns=["_sort_time"])
+
+        export_df["final_match_score"] = export_df["final_match_score"].apply(lambda x: format_percent(x, 1))
+        export_df["mean_alignment"] = export_df["mean_alignment"].apply(lambda x: format_percent(x, 1))
+        export_df["word_match"] = export_df["lexical_similarity"].apply(lambda x: format_percent(x, 1))
+        export_df["meaning_match"] = export_df["semantic_similarity"].apply(lambda x: format_percent(x, 1))
+        export_df["key_fatwa_points"] = export_df["coverage"].apply(lambda x: format_percent(x, 1))
+
+        export_df = export_df.rename(columns={
+            "timestamp": "Timestamp",
+            "topic_label": "Detected Topic",
+            "specific_issue": "Specific Issue",
+            "detection_confidence": "Topic Detection Confidence",
+            "best_state": "Best Match",
+            "recommendation_label": "Recommendation",
+            "recommendation_reason": "Recommendation Reason",
+            "compliance_level": "Compliance",
+            "compliance_reason": "Compliance Reason",
+        })
+
+        export_df["Detected Topic"] = export_df["Detected Topic"].apply(short_topic_label)
+
+        export_df = export_df[
+            [
+                "Timestamp",
+                "Detected Topic",
+                "Specific Issue",
+                "Topic Detection Confidence",
+                "Best Match",
+                "Recommendation",
+                "Recommendation Reason",
+                "Compliance",
+                "Compliance Reason",
+                "final_match_score",
+                "mean_alignment",
+                "word_match",
+                "meaning_match",
+                "key_fatwa_points"
+            ]
+        ]
+
+        e1, e2, e3, e4 = st.columns(4)
+
+        with e1:
+            csv = export_df.to_csv(index=False)
+            st.download_button(
+                "CSV",
+                csv,
+                f"analysis_history_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                "text/csv",
+                use_container_width=True
+            )
+
+        with e2:
+            if EXCEL_AVAILABLE:
+                excel = export_to_excel(export_df)
+                st.download_button(
+                    "Excel",
+                    excel,
+                    f"analysis_history_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx",
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    use_container_width=True
+                )
+            else:
+                st.info("Excel export unavailable. Please install openpyxl.")
+
+        with e3:
+            json_str = export_df.to_json(indent=2, orient="records")
+            st.download_button(
+                "JSON",
+                json_str,
+                f"analysis_history_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
+                "application/json",
+                use_container_width=True
+            )
+
+        with e4:
+            summary = f"""Analysis Summary Report
+Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+
+
+=== STATISTICS ===
+Total Analyses: {len(history_df)}
+Average Score: {history_df['final_match_score'].mean():.1f}%
+Highest Score: {history_df['final_match_score'].max():.1f}%
+Lowest Score: {history_df['final_match_score'].min():.1f}%
+
+=== RECOMMENDATION ===
+{history_df['recommendation_label'].value_counts().to_string()}
+
+=== COMPLIANCE ===
+{history_df['compliance_level'].value_counts().to_string()}
+
+=== TOPICS ===
+{history_df['topic_label'].value_counts().head(10).to_string()}
+"""
+            st.download_button(
+                "Report",
+                summary,
+                f"summary_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
+                "text/plain",
+                use_container_width=True
+            )
+
+        if st.button("Clear All History", use_container_width=True, key="clear_history_tab"):
+            clear_history()
+            st.success("History cleared successfully.")
+            st.rerun()
+    else:
+        st.markdown("""
+        <div class="msg-box msg-warning" style="text-align:center; padding:3rem;">
+            <h3 style="margin-bottom:1rem;">No Analysis History</h3>
+            <p class="small-note">Start by analyzing AI responses in the Single Analysis tab.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
 
 # =========================================================
 # TAB 4 - Fatwa Explorer
 # =========================================================
 with tab4:
-    st.info("Fatwa Explorer tab - Full implementation available in complete code package.")
+    render_minimal_tab_intro(
+        "Fatwa explorer",
+        "Reference fatwa search and browsing",
+        "Browse the reference database by topic, state, or keyword."
+    )
+    st.markdown("""
+    <div class='explorer-instruction-card'>
+        <div class='explorer-instruction-title'>How to use this page</div>
+        <div class='explorer-instruction-copy'>Start by choosing a topic, then narrow by state or source if needed. Use <strong>Show all</strong> to clear the filters again. The cards below update instantly, so you can move from a broad browse to the exact official fatwa text more easily.</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    topic_counts = (
+        fatwa_df.groupby("issue")
+        .size()
+        .reset_index(name="count")
+        .sort_values("count", ascending=False)
+    )
+
+    total_topics = topic_counts["issue"].nunique()
+    total_fatwas = len(fatwa_df)
+    total_states = fatwa_df["state"].nunique()
+
+    st.markdown("<div style='height:0.35rem;'></div>", unsafe_allow_html=True)
+
+    explorer_topics = ["All topics"] + sorted([t for t in fatwa_df["issue"].fillna("").astype(str).str.strip().unique().tolist() if t])
+    explorer_states = ["All states / sources"] + sorted([s for s in fatwa_df["state"].fillna("").astype(str).str.strip().unique().tolist() if s])
+
+    ex1, ex2, ex3 = st.columns([1, 1, 0.42], gap='medium')
+    with ex1:
+        st.markdown("<div class='browse-inline-head'>Choose a topic</div>", unsafe_allow_html=True)
+        selected_topic_filter = st.selectbox(
+            "Choose a topic",
+            explorer_topics,
+            key="fatwa_explorer_topic",
+            label_visibility='collapsed'
+        )
+    with ex2:
+        st.markdown("<div class='browse-inline-head'>Choose a state / source</div>", unsafe_allow_html=True)
+        selected_state_filter = st.selectbox(
+            "Choose a state / source",
+            explorer_states,
+            key="fatwa_explorer_state",
+            label_visibility='collapsed'
+        )
+    with ex3:
+        st.markdown("<div class='browse-inline-head'>Reset filters</div>", unsafe_allow_html=True)
+        st.button("Show all", key="browse_reset_filters", use_container_width=True, on_click=reset_fatwa_explorer_filters)
+
+    active_topic = selected_topic_filter if selected_topic_filter != 'All topics' else 'All topics'
+    active_state = selected_state_filter if selected_state_filter != 'All states / sources' else 'All states / sources'
+    st.markdown(f"<div class='browse-filter-chip-row'><span class='browse-filter-chip'>Topic: {html.escape(active_topic)}</span><span class='browse-filter-chip'>State / source: {html.escape(active_state)}</span></div>", unsafe_allow_html=True)
+
+    filtered_fatwa = fatwa_df.copy()
+    if selected_topic_filter != "All topics":
+        filtered_fatwa = filtered_fatwa[filtered_fatwa["issue"].astype(str).str.strip() == selected_topic_filter]
+    if selected_state_filter != "All states / sources":
+        filtered_fatwa = filtered_fatwa[filtered_fatwa["state"].astype(str).str.strip() == selected_state_filter]
+
+    result_topics = filtered_fatwa["issue"].astype(str).str.strip().replace('', np.nan).dropna().nunique()
+    result_states = filtered_fatwa["state"].astype(str).str.strip().replace('', np.nan).dropna().nunique()
+    st.markdown(f"""
+    <div class='explorer-orb-grid'>
+        <div class='explorer-orb'>
+            <div class='explorer-orb-icon'>#</div>
+            <div><div class='explorer-orb-label'>Records found</div><div class='explorer-orb-value'>{len(filtered_fatwa)}</div><div class='explorer-orb-note'>Official fatwa entries currently visible</div></div>
+        </div>
+        <div class='explorer-orb'>
+            <div class='explorer-orb-icon'>T</div>
+            <div><div class='explorer-orb-label'>Topics shown</div><div class='explorer-orb-value'>{result_topics}</div><div class='explorer-orb-note'>Distinct issue groups in the filtered list</div></div>
+        </div>
+        <div class='explorer-orb'>
+            <div class='explorer-orb-icon'>S</div>
+            <div><div class='explorer-orb-label'>States shown</div><div class='explorer-orb-value'>{result_states}</div><div class='explorer-orb-note'>States or sources represented right now</div></div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if not filtered_fatwa.empty:
+        display_rows = filtered_fatwa.head(8).reset_index(drop=True)
+        for start_idx in range(0, len(display_rows), 2):
+            cols = st.columns(2, gap='medium')
+            for col_idx, row_idx in enumerate(range(start_idx, min(start_idx + 2, len(display_rows)))):
+                row = display_rows.iloc[row_idx]
+                with cols[col_idx]:
+                    render_fatwa_reference_card(
+                        state=str(row.get("state", "")),
+                        topic=str(row.get("issue", "")),
+                        fatwa_text=str(row.get("fatwa_text", "")),
+                        question_text=str(row.get("question_text", "")).strip(),
+                    )
+    else:
+        st.markdown("""
+        <div class="msg-box msg-warning" style="text-align:center; padding:2rem;">
+            <strong>No matching fatwa found.</strong><br>
+            <span class="small-note">Choose another topic or state to continue browsing the reference database.</span>
+        </div>
+        """, unsafe_allow_html=True)
 
 
 # =========================================================
 # TAB 5 - Topic Explorer
 # =========================================================
 with tab5:
-    st.info("Topic Explorer tab - Full implementation available in complete code package.")
+    import html as html_escape_mod
+
+    render_minimal_tab_intro(
+        "Topic explorer",
+        "Compare states on a topic",
+        "See topic coverage, compare states, and read fatwa texts side by side."
+    )
+    st.markdown("""
+    <div class='explorer-instruction-card'>
+        <div class='explorer-instruction-title'>How the topic view works</div>
+        <div class='explorer-instruction-copy'>This page reads from your saved analysis history. The charts update as your history grows, so the rankings and difficulty view always reflect the latest saved runs. After that, choose one topic below to compare state coverage and read the fatwa wording side by side.</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    analysis_df = fatwa_df.copy()
+    analysis_df["issue"] = analysis_df["issue"].fillna("").astype(str).str.strip()
+    analysis_df["state"] = analysis_df["state"].fillna("").astype(str).str.strip()
+    analysis_df["fatwa_text"] = analysis_df["fatwa_text"].fillna("").astype(str).str.strip()
+    analysis_df["question_text"] = analysis_df["question_text"].fillna("").astype(str).str.strip()
+    analysis_df["issue_display"] = analysis_df["issue"].replace("", "Uncategorized")
+
+    all_topics = sorted(analysis_df["issue_display"].unique().tolist())
+    all_states = sorted([s for s in analysis_df["state"].unique().tolist() if s])
+
+    topic_counts_full = (
+        analysis_df.groupby("issue_display")
+        .size()
+        .reset_index(name="count")
+        .sort_values("count", ascending=False)
+    )
+
+    sc1, sc2, sc3, sc4 = st.columns(4)
+    with sc1:
+        st.markdown(
+            f"<div class='metric-card'><div class='metric-label'>Unique Topics</div>"
+            f"<div class='metric-value'>{len(all_topics)}</div></div>",
+            unsafe_allow_html=True
+        )
+    with sc2:
+        st.markdown(
+            f"<div class='metric-card'><div class='metric-label'>Total Fatwa Records</div>"
+            f"<div class='metric-value'>{len(analysis_df)}</div></div>",
+            unsafe_allow_html=True
+        )
+    with sc3:
+        st.markdown(
+            f"<div class='metric-card'><div class='metric-label'>States / Sources</div>"
+            f"<div class='metric-value'>{len(all_states)}</div></div>",
+            unsafe_allow_html=True
+        )
+    with sc4:
+        most_covered = topic_counts_full.iloc[0]["issue_display"] if not topic_counts_full.empty else "-"
+        st.markdown(
+            f"<div class='metric-card'><div class='metric-label'>Most Covered Topic</div>"
+            f"<div class='metric-value' style='font-size:1.1rem; line-height:1.3;'>"
+            f"{short_topic_label(most_covered)}</div></div>",
+            unsafe_allow_html=True
+        )
+
+    st.markdown("<div class='divider'></div>", unsafe_allow_html=True)
+
+    chart_bg = "transparent"
+    label_col = "#132C47"
+
+    st.markdown("<h3 class='section-subtitle'>Fatwa Distribution by Category</h3>", unsafe_allow_html=True)
+    st.markdown("""
+    <div class="msg-box msg-info" style="margin-bottom:0.6rem; border-left-color:#773344; background:#faf3f7;">
+        This shows what proportion of all fatwa records fall under each broad topic category.
+        Hover over a slice to see the exact count and percentage.
+    </div>
+    """, unsafe_allow_html=True)
+
+    def broad_category(topic):
+        t = str(topic).lower()
+        if "abortion" in t:
+            return "Abortion"
+        if "contra" in t or "contraceptive" in t:
+            return "Contraceptives"
+        if "clone" in t or "cloning" in t or "stem cell" in t:
+            return "Cloning & Stem Cell"
+        if "ivf" in t or "gamete" in t or "surrogacy" in t or "sperm" in t or "milk bank" in t:
+            return "ART & Reproductive"
+        return "Other"
+
+    donut_df = analysis_df.copy()
+    donut_df["category"] = donut_df["issue_display"].apply(broad_category)
+    donut_counts = (
+        donut_df.groupby("category")
+        .size()
+        .reset_index(name="count")
+        .sort_values("count", ascending=False)
+    )
+    total_donut = donut_counts["count"].sum()
+    donut_counts["pct"] = (donut_counts["count"] / total_donut * 100).round(1)
+
+    donut_palette = ["#160029", "#B24758", "#D98C3F", "#8E2F4F", "#6F3A4F"]
+
+    d1, d2 = st.columns([1.2, 0.8])
+
+    with d1:
+        donut_chart = (
+            alt.Chart(donut_counts)
+            .mark_arc(innerRadius=70, outerRadius=120, cornerRadius=6, padAngle=0.02)
+            .encode(
+                theta=alt.Theta("count:Q", stack=True),
+                color=alt.Color(
+                    "category:N",
+                    scale=alt.Scale(
+                        domain=donut_counts["category"].tolist(),
+                        range=donut_palette[: len(donut_counts)],
+                    ),
+                    legend=alt.Legend(
+                        title=None,
+                        labelFontSize=12,
+                        labelColor=label_col,
+                        symbolSize=120,
+                        orient="bottom",
+                        columns=2,
+                    ),
+                ),
+                tooltip=[
+                    alt.Tooltip("category:N", title="Category"),
+                    alt.Tooltip("count:Q", title="Fatwas"),
+                    alt.Tooltip("pct:Q", title="Percentage", format=".1f"),
+                ],
+            )
+            .properties(height=360, padding={"top": 30, "bottom": 10, "left": 10, "right": 10}, background=chart_bg)
+            .configure_view(stroke=None, fill=chart_bg)
+        )
+        st.altair_chart(donut_chart, use_container_width=True)
+
+    with d2:
+        st.markdown("<div style='height:0.4rem;'></div>", unsafe_allow_html=True)
+        for _, row in donut_counts.iterrows():
+            cat = row["category"]
+            cnt = row["count"]
+            pct = row["pct"]
+            cidx = donut_counts["category"].tolist().index(cat)
+            c_hex = donut_palette[cidx % len(donut_palette)]
+            st.markdown(f"""
+            <div class="donut-insight-card">
+                <div class="donut-insight-accent" style="background:{c_hex};"></div>
+                <div class="donut-insight-body">
+                    <div class="donut-insight-name">{cat}</div>
+                    <div class="donut-insight-stats">
+                        <span class="donut-insight-count">{cnt}</span>
+                        <span class="donut-insight-pct">&nbsp;fatwas &nbsp;·&nbsp; {pct}%</span>
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+    st.markdown("<div class='divider'></div>", unsafe_allow_html=True)
+
+    st.markdown("<h3 class='section-subtitle'>AI Alignment Score by Topic</h3>", unsafe_allow_html=True)
+    st.markdown("""
+    <div class="msg-box msg-info" style="margin-bottom:1rem; border-left-color:#773344; background:#faf3f7;">
+        Topics are ranked by how well AI models aligned with their fatwas on average.
+        High scores mean AI responses were semantically close to the official fatwa.
+        Low scores reveal where AI struggled the most — useful for your FYP analysis.
+    </div>
+    """, unsafe_allow_html=True)
+
+    history_df = get_history_df()
+
+    if history_df.empty or "topic_label" not in history_df.columns or "final_match_score" not in history_df.columns:
+        st.markdown("""
+        <div class="msg-box msg-warning">
+            No analysis history found yet. Run some responses through
+            <strong>Single Analysis</strong> or <strong>Batch Analysis</strong> first,
+            then come back here to see topic-level alignment rankings.
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        valid_history_df = history_df.copy()
+        valid_history_df["topic_label"] = valid_history_df["topic_label"].fillna("").astype(str).str.strip()
+        valid_history_df = valid_history_df[valid_history_df["topic_label"] != ""]
+        valid_history_df["final_match_score"] = pd.to_numeric(valid_history_df["final_match_score"], errors="coerce")
+        valid_history_df = valid_history_df[valid_history_df["final_match_score"].notna()]
+
+        topic_scores = (
+            valid_history_df
+            .groupby("topic_label")["final_match_score"]
+            .agg(["mean", "count"])
+            .reset_index()
+            .rename(columns={
+                "topic_label": "topic",
+                "mean": "avg_score",
+                "count": "responses"
+            })
+            .sort_values("avg_score", ascending=False)
+            .reset_index(drop=True)
+        )
+
+        topic_scores["avg_score"] = pd.to_numeric(topic_scores["avg_score"], errors="coerce").fillna(0.0).round(1)
+        topic_scores["short_label"] = topic_scores["topic"].apply(short_topic_label)
+        topic_scores["rank"] = range(1, len(topic_scores) + 1)
+
+        def score_band(s):
+            if s >= 70:
+                return "Good", "#06A77D", "●"
+            if s >= 50:
+                return "Moderate", "#C27D06", "●"
+            return "Weak", "#A31621", "●"
+
+        top3 = topic_scores.head(3)
+        bot3 = topic_scores.tail(3).iloc[::-1]
+
+        hi_col, lo_col = st.columns(2)
+
+        with hi_col:
+            st.markdown("<div class='align-panel-title'>Highest Alignment</div>", unsafe_allow_html=True)
+            for _, r in top3.iterrows():
+                band, color, icon = score_band(r["avg_score"])
+                st.markdown(f"""
+                <div class="align-rank-card" style="border-left:4px solid {color};">
+                    <div class="align-rank-topic">{r['short_label']}</div>
+                    <div class="align-rank-row">
+                        <span class="align-score" style="color:{color};">{r['avg_score']}%</span>
+                        <span class="align-band" style="color:{color};">{icon} {band}</span>
+                        <span class="align-n">{int(r['responses'])} response{'s' if r['responses'] != 1 else ''}</span>
+                    </div>
+                    <div class="align-bar-bg">
+                        <div class="align-bar-fill" style="width:{min(r['avg_score'], 100)}%;background:{color};"></div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+        with lo_col:
+            st.markdown("<div class='align-panel-title'>Lowest Alignment</div>", unsafe_allow_html=True)
+            for _, r in bot3.iterrows():
+                band, color, icon = score_band(r["avg_score"])
+                st.markdown(f"""
+                <div class="align-rank-card" style="border-left:4px solid {color};">
+                    <div class="align-rank-topic">{r['short_label']}</div>
+                    <div class="align-rank-row">
+                        <span class="align-score" style="color:{color};">{r['avg_score']}%</span>
+                        <span class="align-band" style="color:{color};">{icon} {band}</span>
+                        <span class="align-n">{int(r['responses'])} response{'s' if r['responses'] != 1 else ''}</span>
+                    </div>
+                    <div class="align-bar-bg">
+                        <div class="align-bar-fill" style="width:{min(r['avg_score'], 100)}%;background:{color};"></div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+        with st.expander("See full ranking for all topics"):
+            for _, r in topic_scores.iterrows():
+                band, color, icon = score_band(r["avg_score"])
+                st.markdown(f"""
+                <div class="align-full-row">
+                    <span class="align-full-rank" style="color:{color};">#{int(r['rank'])}</span>
+                    <span class="align-full-topic">{r['short_label']}</span>
+                    <div class="align-bar-bg" style="flex:1;margin:0 0.8rem;">
+                        <div class="align-bar-fill" style="width:{min(r['avg_score'], 100)}%;background:{color};"></div>
+                    </div>
+                    <span class="align-full-score" style="color:{color};">{r['avg_score']}%</span>
+                    <span class="align-full-n">({int(r['responses'])})</span>
+                </div>
+                """, unsafe_allow_html=True)
+
+        st.markdown("<div class='divider'></div>", unsafe_allow_html=True)
+
+        st.markdown("<h3 class='section-subtitle'>Topic Difficulty Analysis</h3>", unsafe_allow_html=True)
+        st.markdown("""
+        <div class="msg-box msg-info" style="margin-bottom:1rem; border-left-color:#773344; background:#faf3f7;">
+            This section ranks topics from harder to easier based on the same average alignment scores.
+            Scores of 70% and above are treated as good, 50% to 69.9% as moderate, and below 50% as weak.
+        </div>
+        """, unsafe_allow_html=True)
+
+        topic_perf = (
+            valid_history_df.groupby("topic_label")["final_match_score"]
+            .agg(["mean", "count"])
+            .reset_index()
+            .rename(columns={"mean": "avg_score", "count": "total_responses"})
+        )
+
+        topic_perf = topic_perf[topic_perf["total_responses"] >= 1].copy()
+        topic_perf["avg_score"] = pd.to_numeric(topic_perf["avg_score"], errors="coerce").fillna(0.0).round(1)
+        topic_perf["short_label"] = topic_perf["topic_label"].apply(short_topic_label)
+
+        hardest_topics = topic_perf.sort_values(["avg_score", "total_responses"], ascending=[True, False]).head(3)
+        easiest_topics = topic_perf.sort_values(["avg_score", "total_responses"], ascending=[False, False]).head(3)
+
+        dcol1, dcol2 = st.columns(2)
+
+        with dcol1:
+            st.markdown("<div class='align-panel-title'>Hardest Topics for AI</div>", unsafe_allow_html=True)
+            for i, (_, row) in enumerate(hardest_topics.iterrows(), start=1):
+                s = row['avg_score']
+                sc = "#A31621" if s < 50 else "#C27D06" if s < 70 else "#06A77D"
+                st.markdown(f"""
+                <div class="align-rank-card" style="border-left:4px solid #A31621;">
+                    <div class="align-rank-topic">#{i} {row['short_label']}</div>
+                    <div class="align-rank-row">
+                        <span class="align-score" style="color:{sc};">{s}%</span>
+                        <span class="align-band" style="color:#A31621;">⚑ Harder Topic</span>
+                        <span class="align-n">{int(row['total_responses'])} record{'s' if row['total_responses'] != 1 else ''}</span>
+                    </div>
+                    <div class="align-bar-bg">
+                        <div class="align-bar-fill" style="width:{min(s, 100)}%;background:#A31621;"></div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+        with dcol2:
+            st.markdown("<div class='align-panel-title'>Easiest Topics for AI</div>", unsafe_allow_html=True)
+            for i, (_, row) in enumerate(easiest_topics.iterrows(), start=1):
+                s = row['avg_score']
+                sc = "#A31621" if s < 50 else "#C27D06" if s < 70 else "#06A77D"
+                st.markdown(f"""
+                <div class="align-rank-card" style="border-left:4px solid #06A77D;">
+                    <div class="align-rank-topic">#{i} {row['short_label']}</div>
+                    <div class="align-rank-row">
+                        <span class="align-score" style="color:{sc};">{s}%</span>
+                        <span class="align-band" style="color:#06A77D;">✔ More Stable</span>
+                        <span class="align-n">{int(row['total_responses'])} record{'s' if row['total_responses'] != 1 else ''}</span>
+                    </div>
+                    <div class="align-bar-bg">
+                        <div class="align-bar-fill" style="width:{min(s, 100)}%;background:#06A77D;"></div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+    st.markdown("<div class='divider'></div>", unsafe_allow_html=True)
+
+    st.markdown("<h3 class='section-subtitle'>Topic deep-dive</h3>", unsafe_allow_html=True)
+    st.markdown("<div class='topic-pick-shell'><div class='topic-pick-kicker'>State comparison workspace</div><div class='topic-pick-title'>Choose one topic and compare all state fatwas clearly</div><div class='topic-pick-copy'>This section helps you see coverage, missing states, and the full fatwa wording side by side in one place.</div></div>", unsafe_allow_html=True)
+
+    topic_options = topic_counts_full["issue_display"].tolist()
+
+    st.markdown("""
+    <div class='comparison-select-head'>
+        <div>
+            <div class='comparison-select-title'>Choose a topic</div>
+            <div class='comparison-select-copy'>Pick one topic to see which states cover it, where coverage is missing, and how the actual fatwa wording compares side by side.</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    selected_topic = st.selectbox(
+        "Choose a topic",
+        options=topic_options,
+        index=0 if topic_options else None,
+        key="topic_analysis_select"
+    )
+
+    if selected_topic:
+        selected_df = analysis_df[analysis_df["issue_display"] == selected_topic].copy()
+        covering_states = sorted([s for s in selected_df["state"].dropna().unique().tolist() if s])
+        missing_states = sorted([s for s in all_states if s not in covering_states])
+
+        st.markdown(f"""
+        <div class='topic-focus-grid'>
+            <div class='topic-focus-card'><div class='topic-focus-label'>Selected topic</div><div class='topic-focus-value'>{html_escape_mod.escape(short_topic_label(selected_topic))}</div></div>
+            <div class='topic-focus-card'><div class='topic-focus-label'>Fatwa records</div><div class='topic-focus-value'>{len(selected_df)}</div></div>
+            <div class='topic-focus-card'><div class='topic-focus-label'>States covering</div><div class='topic-focus-value'>{len(covering_states)}</div></div>
+            <div class='topic-focus-card'><div class='topic-focus-label'>States missing</div><div class='topic-focus-value'>{len(missing_states)}</div></div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown(f"""
+        <div class="msg-box msg-success">
+            <strong>Topic:</strong> {html_escape_mod.escape(selected_topic)}<br>
+            <strong>Fatwa Records:</strong> {len(selected_df)}&nbsp;&nbsp;
+            <strong>States Covering:</strong> {len(covering_states)}&nbsp;&nbsp;
+            <strong>States Missing:</strong> {len(missing_states)}
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("<h3 class='section-subtitle'>States That Cover This Topic</h3>", unsafe_allow_html=True)
+
+        if covering_states:
+            chips_html = "".join(
+                [f"<span class='keyword-match'>{html_escape_mod.escape(s)}</span>" for s in covering_states]
+            )
+        else:
+            chips_html = "<span class='small-note'>No states found for this topic.</span>"
+
+        st.markdown(f"""
+        <div class="points-card">
+            <div class="points-card-header">Covered By</div>
+            <div class="keyword-container">{chips_html}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        if missing_states:
+            st.markdown("<h3 class='section-subtitle'>States With No Fatwa on This Topic</h3>", unsafe_allow_html=True)
+            missing_chips_html = "".join(
+                [f"<span class='keyword-miss'>{html_escape_mod.escape(s)}</span>" for s in missing_states]
+            )
+            st.markdown(f"""
+            <div class="points-card">
+                <div class="points-card-header">Coverage Gaps</div>
+                <div class="keyword-container">{missing_chips_html}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.markdown("<div style='height:0.5rem;'></div>", unsafe_allow_html=True)
+
+        st.markdown("<h3 class='section-subtitle'>Side-by-Side Fatwa Comparison</h3>", unsafe_allow_html=True)
+        st.markdown("""
+        <div class="msg-box msg-info" style="margin-bottom:0.8rem; border-left-color:#773344; background:#faf3f7;">
+            Each column shows one state's fatwa ruling on this topic.
+            Scroll horizontally if there are many states.
+        </div>
+        """, unsafe_allow_html=True)
+
+        if covering_states:
+            chunk_size = 2
+            state_chunks = [
+                covering_states[i:i + chunk_size]
+                for i in range(0, len(covering_states), chunk_size)
+            ]
+
+            for chunk in state_chunks:
+                cols = st.columns(len(chunk))
+                for col, state_name in zip(cols, chunk):
+                    state_rows = selected_df[selected_df["state"] == state_name]
+                    with col:
+                        for _, row in state_rows.iterrows():
+                            fatwa_text_val = str(row.get("fatwa_text", "")).strip()
+                            question_text_val = str(row.get("question_text", "")).strip()
+
+                            question_line = (
+                                f'<div class="fatwa-meta-pill" style="margin-bottom:0.6rem;">Reference: '
+                                f'{html_escape_mod.escape(question_text_val)}</div>'
+                                if question_text_val else ""
+                            )
+
+                            st.markdown(f"""
+                            <div class="comparison-card">
+                                <div class="comparison-card-header">{html_escape_mod.escape(state_name)}</div>
+                                {question_line}
+                                <div class="fatwa-text-panel">
+                                    <p>{html_escape_mod.escape(fatwa_text_val) if fatwa_text_val else "<em>No fatwa text available.</em>"}</p>
+                                </div>
+                            </div>
+                            """, unsafe_allow_html=True)
+        else:
+            st.markdown("""
+            <div class="msg-box msg-warning" style="text-align:center; padding:2rem;">
+                <strong>No fatwa records found for this topic.</strong>
+            </div>
+            """, unsafe_allow_html=True)
 
 
 # =========================================================
