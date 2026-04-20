@@ -2091,11 +2091,6 @@ with tab1:
             </div>
             """, unsafe_allow_html=True)
 
-        b1, b2 = st.columns([0.62, 0.38], gap="small")
-        with b1:
-            analyze_btn = st.button("Analyze response", use_container_width=True, key="analyze_single")
-        with b2:
-            clear_btn = st.button("Clear history", use_container_width=True, key="clear_all_single")
     with review_right:
         st.markdown("<div class='single-review-right-col'>", unsafe_allow_html=True)
         if st.session_state.get("current_analysis"):
@@ -2104,6 +2099,12 @@ with tab1:
             render_single_review_empty_state(total_analyses, avg_score_sidebar, recent_topics)
         st.markdown("</div>", unsafe_allow_html=True)
 
+    # Buttons rendered once at tab level — outside both columns to avoid duplication
+    b1, b2 = st.columns([0.62, 0.38], gap="small")
+    with b1:
+        analyze_btn = st.button("Analyze response", use_container_width=True, key="analyze_single")
+    with b2:
+        clear_btn = st.button("Clear history", use_container_width=True, key="clear_all_single")
 
     # Remove the extra spacing by not adding additional empty divs
     # The result will appear directly below without extra margin
@@ -2161,11 +2162,11 @@ with tab1:
                     "specific_issue": specific_issue,
                     "detection_confidence": confidence,
                     "best_state": best_state["state"],
-                    "final_match_score": final_match_score,
-                    "mean_alignment": mean_alignment,
-                    "lexical_similarity": lexical_score,
-                    "semantic_similarity": semantic_score,
-                    "coverage": coverage_score,
+                    "final_match_score": round(float(final_match_score), 2) if not pd.isna(final_match_score) else 0.0,
+                    "mean_alignment": round(float(mean_alignment), 2) if not pd.isna(mean_alignment) else 0.0,
+                    "lexical_similarity": round(float(lexical_score), 2) if not pd.isna(lexical_score) else 0.0,
+                    "semantic_similarity": round(float(semantic_score), 2) if not pd.isna(semantic_score) else 0.0,
+                    "coverage": round(float(coverage_score), 2) if not pd.isna(coverage_score) else 0.0,
                     "compliance_level": compliance_level,
                     "compliance_reason": compliance_reason,
                     "recommendation_label": recommendation_label,
@@ -2482,11 +2483,10 @@ with tab3:
 
         if search_term:
             filtered_df = display_df[
-                display_df["Detected Topic"].astype(str).str.contains(search_term, case=False, na=False) |
-                display_df["Specific Issue"].astype(str).str.contains(search_term, case=False, na=False) |
+                display_df["Topic"].astype(str).str.contains(search_term, case=False, na=False) |
+                display_df["Issue"].astype(str).str.contains(search_term, case=False, na=False) |
                 display_df["Best Match"].astype(str).str.contains(search_term, case=False, na=False) |
-                display_df["Recommendation"].astype(str).str.contains(search_term, case=False, na=False) |
-                display_df["Compliance"].astype(str).str.contains(search_term, case=False, na=False)
+                display_df["Review"].astype(str).str.contains(search_term, case=False, na=False)
             ]
         else:
             filtered_df = display_df
@@ -2907,6 +2907,9 @@ with tab5:
         valid_history_df = history_df.copy()
         valid_history_df["topic_label"] = valid_history_df["topic_label"].fillna("").astype(str).str.strip()
         valid_history_df = valid_history_df[valid_history_df["topic_label"] != ""]
+        # Drop rows where final_match_score is NaN so avg_score is never NaN
+        valid_history_df["final_match_score"] = pd.to_numeric(valid_history_df["final_match_score"], errors="coerce")
+        valid_history_df = valid_history_df[valid_history_df["final_match_score"].notna()]
 
         topic_scores = (
             valid_history_df
@@ -2922,7 +2925,7 @@ with tab5:
             .reset_index(drop=True)
         )
 
-        topic_scores["avg_score"] = topic_scores["avg_score"].round(1)
+        topic_scores["avg_score"] = pd.to_numeric(topic_scores["avg_score"], errors="coerce").fillna(0.0).round(1)
         topic_scores["short_label"] = topic_scores["topic"].apply(short_topic_label)
         topic_scores["rank"] = range(1, len(topic_scores) + 1)
 
@@ -3007,7 +3010,7 @@ with tab5:
         )
 
         topic_perf = topic_perf[topic_perf["total_responses"] >= 1].copy()
-        topic_perf["avg_score"] = topic_perf["avg_score"].round(1)
+        topic_perf["avg_score"] = pd.to_numeric(topic_perf["avg_score"], errors="coerce").fillna(0.0).round(1)
         topic_perf["short_label"] = topic_perf["topic_label"].apply(short_topic_label)
 
         hardest_topics = topic_perf.sort_values(["avg_score", "total_responses"], ascending=[True, False]).head(3)

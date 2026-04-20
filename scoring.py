@@ -429,7 +429,7 @@ STATIC_TOPIC_ALIASES: Dict[str, Set[str]] = {
     "Surrogacy": {"surrogacy", "ibu tumpang", "khidmat ibu tumpang", "sewa rahim", "rahim tumpang", "surrogate", "gestational carrier"},
     "Gamete Implantation for Reproduction": {"gamete implantation", "implantation of gamete", "implantasi gamet", "mencantumkan benih", "pencantuman benih", "benih sebelum akad nikah", "benih selepas kematian suami", "benih selepas penceraian", "memasukkan embrio", "embrio ke dalam rahim"},
     "IVF": {"ivf", "bayi tabung", "bayi tabung uji", "in vitro fertilization", "persenyawaan in vitro", "test tube baby", "benih pihak ketiga", "bayi tabung dari segi wali", "wali dan harta pusaka"},
-    "Human Milk Bank": {"bank susu", "bank susu ibu", "bank susu manusia", "pendermaan susu ibu", "susu ibu penderma", "hubungan mahram susuan", "anak susuan menjadi mahram", "rekod pendermaan susu", "darurat bayi pramatang"},
+    "Human Milk Bank": {"bank susu ibu", "bank susu manusia", "pendermaan susu ibu", "susu ibu penderma", "hubungan mahram susuan", "anak susuan menjadi mahram", "rekod pendermaan susu", "darurat bayi pramatang", "bank susu", "penderma susu"},
     "Abortion due to fetal abnormality": {"kecacatan janin", "janin tidak normal", "abnormality of fetus", "fetal abnormality"},
     "Abortion for maternal health": {"nyawa ibu terancam", "kesihatan ibu", "maternal health", "keselamatan ibu"},
     "Abortion ruling": {"pengguguran kandungan", "janin mangsa yang dirogol", "abortion ruling"},
@@ -438,10 +438,16 @@ STATIC_TOPIC_ALIASES: Dict[str, Set[str]] = {
     "Abortion for OKU victims": {"mangsa oku", "oku akibat rogol", "orang kurang upaya"},
     "Abortion in high-risk groups": {"golongan berisiko tinggi", "high risk pregnancy", "berisiko tinggi"},
     "Provision of contraceptives": {"membekalkan bahan kontraseptif", "pasangan berkahwin", "contraceptives for married couples"},
-    "Contraceptives for unmarried individuals": {"belum berkahwin", "individu belum berkahwin", "unmarried contraceptives"},
-    "Contraceptives for rape victims": {"kontraseptif kepada mangsa rogol", "rape victims contraceptives"},
-    "Contraceptives for adolescents": {"kontraseptif kepada remaja", "remaja berisiko tinggi", "adolescent contraceptives"},
-    "Contraceptives for HIV/AIDS prevention": {"kondom", "mencegah hiv", "hiv aids prevention", "pencegahan hiv", "pencegahan aids"},
+    "Contraceptives for unmarried individuals": {"belum berkahwin", "individu belum berkahwin", "unmarried contraceptives", "kontraseptif kepada individu belum berkahwin"},
+    "Contraceptives for rape victims": {"kontraseptif kepada mangsa rogol", "rape victims contraceptives", "mangsa rogol kontraseptif"},
+    "Contraceptives for adolescents": {
+        "kontraseptif kepada remaja", "remaja berisiko tinggi", "adolescent contraceptives",
+        "membekalkan kontraseptif kepada remaja", "kontraseptif remaja", "bekalkan kontraseptif",
+        "remaja yang berisiko", "remaja berisiko", "bekalan kontraseptif remaja",
+        "hukum membekalkan kontraseptif", "kontraseptif kepada golongan remaja",
+        "kontraseptif untuk remaja", "remaja dan kontraseptif",
+    },
+    "Contraceptives for HIV/AIDS prevention": {"kondom pencegahan hiv", "mencegah hiv", "hiv aids prevention", "pencegahan hiv", "pencegahan aids", "kondom hiv", "hiv kontraseptif"},
     "Abortion due to genetic disease (Example, Thalassemia)": {"penyakit genetik serius", "genetic disease abortion", "thalassemia", "talasemia", "penyakit genetik"},
     "Abortion of Foetus with Thalassemia": {"janin talasemia", "janin thalassemia", "40 hari", "120 hari", "sebelum 120 hari", "telah berumur 120 hari"},
     "Sperm Bank": {"bank air mani", "bank sperma", "air mani manusia", "permanian beradas", "bank mani", "simpanan sperma"},
@@ -516,12 +522,24 @@ def _expand_dynamic_aliases(issue_name: str, question_texts: List[str]) -> Set[s
         aliases.update({"thalassemia", "talasemia", "40 hari", "120 hari", "sebelum 120 hari"})
     if "ivf" in issue_name.lower() or "bayi tabung" in " ".join(question_texts).lower():
         aliases.update({"ivf", "bayi tabung", "bayi tabung uji", "in vitro fertilization"})
-    if "milk" in issue_name.lower() or "susu" in " ".join(question_texts).lower():
-        aliases.update({"bank susu", "bank susu ibu", "mahram susuan", "anak susuan"})
+    if "milk" in issue_name.lower() or ("susu" in " ".join(question_texts).lower() and "remaja" not in " ".join(question_texts).lower() and "kontraseptif" not in " ".join(question_texts).lower()):
+        aliases.update({"bank susu ibu", "bank susu manusia", "mahram susuan", "anak susuan", "penderma susu", "bank susu"})
     if "sperm" in issue_name.lower() or "air mani" in " ".join(question_texts).lower():
         aliases.update({"bank air mani", "bank sperma", "air mani manusia"})
     if "contraceptives" in issue_name.lower() or "kontraseptif" in " ".join(question_texts).lower():
-        aliases.update({"kontraseptif", "kondom", "contraceptive"})
+        aliases.update({"kontraseptif", "contraceptive", "membekalkan kontraseptif"})
+        if "remaja" in " ".join(question_texts).lower() or "adolescent" in issue_name.lower():
+            aliases.update({
+                "kontraseptif kepada remaja", "remaja berisiko tinggi", "remaja berisiko",
+                "membekalkan kontraseptif kepada remaja", "hukum membekalkan kontraseptif",
+                "kontraseptif remaja", "bekalan kontraseptif remaja",
+            })
+        if "belum berkahwin" in " ".join(question_texts).lower() or "unmarried" in issue_name.lower():
+            aliases.update({"belum berkahwin", "individu belum berkahwin"})
+        if "rogol" in " ".join(question_texts).lower() or "rape" in issue_name.lower():
+            aliases.update({"mangsa rogol kontraseptif", "kontraseptif kepada mangsa rogol"})
+        if "hiv" in " ".join(question_texts).lower() or "hiv" in issue_name.lower():
+            aliases.update({"kondom pencegahan hiv", "pencegahan hiv", "pencegahan aids"})
     if "cloning" in issue_name.lower() or "pengklonan" in " ".join(question_texts).lower():
         aliases.update({"pengklonan manusia", "klon manusia"})
     if "stem cell" in issue_name.lower() or "sel stem" in " ".join(question_texts).lower():
@@ -624,6 +642,133 @@ def infer_topic_label(best_question_row, fatwa_subset):
     return "Related Fatwa Topic"
 
 
+def _disambiguate_topic(ai_text: str, issue_df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Post-scoring disambiguation: apply score penalties to topics that are
+    unlikely given strong keyword evidence of a different topic in the AI text.
+    This prevents e.g. Human Milk Bank from winning when the text is clearly
+    about contraceptives for adolescents.
+    """
+    clean = TextCleaner.clean(ai_text)
+    tokens = set(clean.split())
+
+    # Strong positive signals: if these words appear prominently, boost those topics
+    TOPIC_POSITIVE_SIGNALS = {
+        "Contraceptives for adolescents": {
+            "required_any": ["remaja", "adolescent", "teenager"],
+            "supporting": ["kontraseptif", "contraceptive", "berisiko", "risk"],
+            "boost": 18.0,
+        },
+        "Contraceptives for unmarried individuals": {
+            "required_any": ["belum berkahwin", "unmarried"],
+            "supporting": ["kontraseptif", "contraceptive"],
+            "boost": 18.0,
+        },
+        "Contraceptives for rape victims": {
+            "required_any": ["rogol", "rape"],
+            "supporting": ["kontraseptif", "contraceptive"],
+            "boost": 18.0,
+        },
+        "Contraceptives for HIV/AIDS prevention": {
+            "required_any": ["hiv", "aids"],
+            "supporting": ["kontraseptif", "contraceptive", "kondom"],
+            "boost": 18.0,
+        },
+        "Provision of contraceptives": {
+            "required_any": ["kontraseptif", "contraceptive"],
+            "supporting": ["berkahwin", "pasangan"],
+            "boost": 10.0,
+        },
+        "IVF": {
+            "required_any": ["ivf", "bayi tabung", "in vitro"],
+            "supporting": ["persenyawaan", "fertilization"],
+            "boost": 18.0,
+        },
+        "Human Milk Bank": {
+            "required_any": ["bank susu", "penderma susu", "bank susu ibu"],
+            "supporting": ["mahram susuan", "anak susuan"],
+            "boost": 18.0,
+            "penalty_if_absent": 20.0,  # penalise if required_any not found
+        },
+        "Surrogacy": {
+            "required_any": ["ibu tumpang", "surrogacy", "surrogate", "sewa rahim"],
+            "supporting": ["rahim", "tumpang"],
+            "boost": 18.0,
+            "penalty_if_absent": 15.0,
+        },
+        "Sperm Bank": {
+            "required_any": ["bank air mani", "bank sperma", "sperm bank"],
+            "supporting": ["mani", "sperma"],
+            "boost": 18.0,
+            "penalty_if_absent": 15.0,
+        },
+        "Abortion resulting from rape": {
+            "required_any": ["rogol", "rape"],
+            "supporting": ["pengguguran", "abortion", "kandungan"],
+            "boost": 15.0,
+        },
+        "Abortion for OKU victims": {
+            "required_any": ["oku", "orang kurang upaya"],
+            "supporting": ["pengguguran", "abortion"],
+            "boost": 15.0,
+        },
+        "Abortion due to genetic disease (Example, Thalassemia)": {
+            "required_any": ["thalassemia", "talasemia", "genetic"],
+            "supporting": ["pengguguran", "genetik", "penyakit"],
+            "boost": 15.0,
+        },
+        "Abortion of Foetus with Thalassemia": {
+            "required_any": ["thalassemia", "talasemia"],
+            "supporting": ["120 hari", "40 hari", "janin"],
+            "boost": 15.0,
+        },
+        "Human Cloning (Reproductive)": {
+            "required_any": ["pengklonan", "cloning", "klon"],
+            "supporting": ["pembiakan", "reproduktif"],
+            "boost": 18.0,
+            "penalty_if_absent": 15.0,
+        },
+        "Human Cloning (Therapeutic)": {
+            "required_any": ["pengklonan", "cloning", "klon"],
+            "supporting": ["perubatan", "terapeutik"],
+            "boost": 18.0,
+            "penalty_if_absent": 15.0,
+        },
+        "Stem Cell Research": {
+            "required_any": ["sel stem", "stem cell"],
+            "supporting": ["penyelidikan", "research"],
+            "boost": 18.0,
+            "penalty_if_absent": 15.0,
+        },
+    }
+
+    result_df = issue_df.copy()
+
+    for topic, signals in TOPIC_POSITIVE_SIGNALS.items():
+        if topic not in result_df["issue"].values:
+            continue
+
+        required_any = signals.get("required_any", [])
+        supporting = signals.get("supporting", [])
+        boost = signals.get("boost", 10.0)
+        penalty = signals.get("penalty_if_absent", 0.0)
+
+        found_required = any(req in clean for req in required_any)
+        found_supporting = any(sup in clean for sup in supporting)
+
+        mask = result_df["issue"] == topic
+        if found_required:
+            extra = boost + (5.0 if found_supporting else 0.0)
+            result_df.loc[mask, "issue_score"] = result_df.loc[mask, "issue_score"] + extra
+        elif penalty > 0:
+            result_df.loc[mask, "issue_score"] = (result_df.loc[mask, "issue_score"] - penalty).clip(lower=0)
+
+    return result_df.sort_values(
+        by=["issue_score", "rule_boost", "issue_tfidf", "issue_sbert", "coverage"],
+        ascending=False,
+    ).reset_index(drop=True)
+
+
 def detect_best_question(ai_text, fatwa_df):
     sbert_engine = load_sbert_engine()
     issue_profiles = _build_issue_profiles(fatwa_df)
@@ -673,6 +818,9 @@ def detect_best_question(ai_text, fatwa_df):
         by=["issue_score", "rule_boost", "issue_tfidf", "issue_sbert", "coverage"],
         ascending=False,
     ).reset_index(drop=True)
+
+    # ---- disambiguation: re-rank using keyword presence signals ----
+    issue_df = _disambiguate_topic(ai_text, issue_df)
 
     best_issue = issue_df.iloc[0]["issue"]
     narrowed_df = fatwa_df[fatwa_df["issue"] == best_issue].copy()
