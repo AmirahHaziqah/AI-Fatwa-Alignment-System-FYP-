@@ -3,8 +3,12 @@ import html
 import os
 import textwrap
 from typing import Optional
+import time
 
 import streamlit as st
+import plotly.graph_objects as go
+import plotly.express as px
+from streamlit.components.v1 import html as components_html
 
 from utils import get_score_tier, get_score_tier_colors, get_score_css_class
 
@@ -102,6 +106,82 @@ html {{
     scroll-behavior: smooth;
 }}
 
+/* ── ANIMATIONS ──────────────────────────────────────── */
+@keyframes fadeInUp {{
+    from {{
+        opacity: 0;
+        transform: translateY(20px);
+    }}
+    to {{
+        opacity: 1;
+        transform: translateY(0);
+    }}
+}}
+
+@keyframes slideInLeft {{
+    from {{
+        opacity: 0;
+        transform: translateX(-30px);
+    }}
+    to {{
+        opacity: 1;
+        transform: translateX(0);
+    }}
+}}
+
+@keyframes slideInRight {{
+    from {{
+        opacity: 0;
+        transform: translateX(30px);
+    }}
+    to {{
+        opacity: 1;
+        transform: translateX(0);
+    }}
+}}
+
+@keyframes pulse {{
+    0% {{ transform: scale(1); }}
+    50% {{ transform: scale(1.02); }}
+    100% {{ transform: scale(1); }}
+}}
+
+@keyframes shimmer {{
+    0% {{ background-position: -1000px 0; }}
+    100% {{ background-position: 1000px 0; }}
+}}
+
+@keyframes glow {{
+    0% {{ box-shadow: 0 0 5px rgba(212,77,92,0.3); }}
+    50% {{ box-shadow: 0 0 20px rgba(212,77,92,0.6); }}
+    100% {{ box-shadow: 0 0 5px rgba(212,77,92,0.3); }}
+}}
+
+.fade-in-up {{
+    animation: fadeInUp 0.6s ease-out;
+}}
+
+.slide-in-left {{
+    animation: slideInLeft 0.5s ease-out;
+}}
+
+.slide-in-right {{
+    animation: slideInRight 0.5s ease-out;
+}}
+
+.pulse-on-hover:hover {{
+    animation: pulse 0.3s ease;
+}}
+
+/* Gradient text for headers */
+.gradient-text {{
+    background: linear-gradient(135deg, #773344 0%, #D44D5C 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+}}
+
 /* ── APP BACKGROUND ──────────────────────────────────── */
 [data-testid="stAppViewContainer"] {{
     background: linear-gradient(180deg, #f4f6f9 0%, #efe6ea 100%) !important;
@@ -121,6 +201,26 @@ html {{
 [data-testid="stHeader"] {{ background: transparent; }}
 [data-testid="stToolbar"] {{ right: 1rem; }}
 
+/* ── CUSTOM SCROLLBAR ────────────────────────────────── */
+::-webkit-scrollbar {{
+    width: 8px;
+    height: 8px;
+}}
+
+::-webkit-scrollbar-track {{
+    background: #f1f1f1;
+    border-radius: 10px;
+}}
+
+::-webkit-scrollbar-thumb {{
+    background: linear-gradient(135deg, #773344 0%, #D44D5C 100%);
+    border-radius: 10px;
+}}
+
+::-webkit-scrollbar-thumb:hover {{
+    background: linear-gradient(135deg, #D44D5C 0%, #773344 100%);
+}}
+
 /* ── SIDEBAR ─────────────────────────────────────────── */
 [data-testid="stSidebar"] {{
     min-width: 280px !important;
@@ -129,6 +229,7 @@ html {{
     background: linear-gradient(180deg, #160029 0%, #773344 55%, #5f2840 100%) !important;
     border-right: 1px solid rgba(255,255,255,0.08) !important;
     box-shadow: 16px 0 34px rgba(22,0,41,0.18) !important;
+    animation: slideInLeft 0.5s ease-out;
 }}
 
 [data-testid="stSidebar"] > div:first-child {{
@@ -155,6 +256,11 @@ html {{
     padding: 1.2rem 1rem;
     margin-bottom: 0.5rem;
     box-shadow: 0 10px 24px rgba(33,50,65,0.22);
+    transition: all 0.3s ease;
+}}
+.sidebar-brand-card:hover {{
+    transform: translateX(4px);
+    border-left-width: 8px;
 }}
 .sidebar-brand-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
@@ -182,6 +288,7 @@ html {{
     background: {COLORS["teal_lt"]} !important;
     margin-bottom: 1rem !important;
     border-radius: 2px;
+    animation: slideInRight 0.4s ease-out;
 }}
 
 .sidebar-title {{
@@ -212,6 +319,11 @@ html {{
     border-radius: 18px !important;
     padding: 1rem !important;
     margin-bottom: 0.8rem;
+    transition: all 0.3s ease;
+}}
+.sidebar-workspace-card:hover {{
+    transform: translateY(-2px);
+    box-shadow: 0 16px 32px rgba(13, 24, 47, 0.25) !important;
 }}
 
 .sidebar-kicker {{
@@ -257,6 +369,11 @@ html {{
     border-top: 4px solid #1C7293 !important;
     border-radius: 14px;
     padding: 0.7rem 0.7rem;
+    transition: all 0.2s ease;
+}}
+.sidebar-highlight-chip:hover {{
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }}
 
 .sidebar-highlight-label {{
@@ -283,6 +400,10 @@ html {{
     border-radius: 18px !important;
     padding: 1rem !important;
     margin-bottom: 0.9rem !important;
+    transition: all 0.3s ease;
+}}
+.sidebar-section-card:hover {{
+    transform: translateX(4px);
 }}
 
 .sidebar-section-card * {{
@@ -342,6 +463,7 @@ html {{
     height: 100%;
     border-radius: 999px;
     box-shadow: 0 0 0 1px rgba(255,255,255,0.08) inset;
+    transition: width 0.6s ease;
 }}
 
 /* ── SIDEBAR ACTION LIST ─────────────────────────────── */
@@ -358,6 +480,12 @@ html {{
     border-radius: 14px !important;
     background: rgba(255,255,255,0.05) !important;
     border: 1px solid rgba(158,179,194,0.14) !important;
+    transition: all 0.25s ease;
+}}
+.sidebar-action-item:hover {{
+    transform: translateX(6px);
+    background: rgba(255,255,255,0.1) !important;
+    border-color: rgba(212,77,92,0.4) !important;
 }}
 
 .sidebar-action-icon {{
@@ -372,6 +500,11 @@ html {{
     color: #FFFFFF !important;
     font-size: 0.9rem;
     font-weight: 800;
+    transition: all 0.2s ease;
+}}
+.sidebar-action-item:hover .sidebar-action-icon {{
+    transform: scale(1.05);
+    background: #d44d5c !important;
 }}
 
 .sidebar-action-title {{
@@ -396,6 +529,10 @@ html {{
     color: rgba(255,255,255,0.88) !important;
     line-height: 1.5;
     font-size: 0.85rem;
+    transition: all 0.2s ease;
+}}
+.sidebar-mini-note:hover {{
+    background: rgba(255,255,255,0.1) !important;
 }}
 
 .sidebar-mini-note strong {{
@@ -421,6 +558,12 @@ html {{
     font-weight: 700;
     line-height: 1.2;
     box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+    transition: all 0.2s ease;
+}}
+.sidebar-topic-pill:hover {{
+    transform: scale(1.05);
+    background: rgba(212,77,92,0.3) !important;
+    border-color: #d44d5c !important;
 }}
 
 /* ── SIDEBAR LEGEND CARD ─────────────────────────────── */
@@ -445,6 +588,11 @@ html {{
     border-radius: 14px;
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(158,179,194,0.14);
+    transition: all 0.2s ease;
+}}
+.sidebar-legend-item:hover {{
+    background: rgba(255,255,255,0.1);
+    transform: translateX(4px);
 }}
 
 .sidebar-legend-dot {{
@@ -453,6 +601,10 @@ html {{
     border-radius: 999px;
     margin-top: 0.2rem;
     box-shadow: 0 0 0 3px rgba(255,255,255,0.08);
+    transition: all 0.2s ease;
+}}
+.sidebar-legend-item:hover .sidebar-legend-dot {{
+    transform: scale(1.2);
 }}
 
 .sidebar-legend-name {{
@@ -491,7 +643,12 @@ html {{
     font-size: 0.85rem !important;
     padding: 0.5rem 1rem !important;
     border: none !important;
-    transition: all 0.18s ease !important;
+    transition: all 0.25s ease !important;
+}}
+
+.stTabs [data-baseweb="tab"]:hover {{
+    background: rgba(212,77,92,0.1) !important;
+    transform: translateY(-1px);
 }}
 
 .stTabs [aria-selected="true"] {{
@@ -499,10 +656,12 @@ html {{
     color: white !important;
     font-weight: 700 !important;
     box-shadow: 0 6px 18px rgba(119,51,68,0.20) !important;
+    animation: pulse 0.3s ease;
 }}
 
 .stTabs [data-baseweb="tab-panel"] {{
     padding-top: 1.5rem;
+    animation: fadeInUp 0.4s ease-out;
 }}
 
 /* ── HERO BANNER (MAIN CONTENT) ──────────────────────── */
@@ -515,6 +674,7 @@ html {{
     border: 1px solid rgba(158,179,194,0.20);
     box-shadow: 0 18px 40px rgba(22, 0, 41, 0.14);
     background: linear-gradient(90deg, #0b2a56 0%, #4c224d 55%, #65104d 100%);
+    animation: fadeInUp 0.6s ease-out;
 }}
 
 .hero-single-image {{
@@ -527,6 +687,10 @@ html {{
     display: block;
     opacity: 0.62;
     filter: saturate(0.92) contrast(1.02) brightness(0.80);
+    transition: transform 0.5s ease;
+}}
+.hero-image-wrap:hover .hero-single-image {{
+    transform: scale(1.05);
 }}
 
 .hero-image-overlay {{
@@ -567,6 +731,11 @@ html {{
     text-transform: uppercase;
     margin-bottom: 0.7rem;
     backdrop-filter: blur(4px);
+    transition: all 0.2s ease;
+}}
+.hero-kicker:hover {{
+    background: rgba(212,77,92,0.3);
+    transform: scale(1.02);
 }}
 
 .hero-image-title {{
@@ -602,6 +771,11 @@ html {{
     border: 1px solid #e3b5a4;
     box-shadow: 0 10px 28px rgba(59, 29, 74, 0.06);
     background: linear-gradient(135deg, #160029, #773344);
+    transition: all 0.3s ease;
+}}
+.section-banner:hover {{
+    transform: translateY(-2px);
+    box-shadow: 0 16px 32px rgba(59, 29, 74, 0.12);
 }}
 
 .section-banner-title {{
@@ -622,13 +796,18 @@ html {{
     border: 1px solid #D2DCE5 !important;
     box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
     color: #2a1421;
+    transition: all 0.3s ease;
 }}
 
-.card {{ transition: all 0.22s ease; height: 100%; }}
+.card {{
+    transition: all 0.3s ease;
+    height: 100%;
+    animation: fadeInUp 0.5s ease-out;
+}}
 .card:hover {{
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(15,32,68,0.10);
-    border-color: #e3b5a4;
+    transform: translateY(-6px) !important;
+    box-shadow: 0 20px 40px rgba(22, 32, 51, 0.12) !important;
+    border-color: #d44d5c !important;
 }}
 
 .card-header {{
@@ -654,6 +833,11 @@ html {{
     height: 100%;
     position: relative;
     overflow: hidden;
+    transition: all 0.3s ease;
+}}
+.metric-card:hover {{
+    transform: translateY(-4px);
+    box-shadow: 0 16px 32px rgba(22, 32, 51, 0.1) !important;
 }}
 
 .metric-card::before {{
@@ -662,13 +846,15 @@ html {{
     top: 0; left: 0; right: 0;
     height: 5px;
     background: linear-gradient(90deg, #d44d5c 0%, #773344 100%) !important;
+    transition: height 0.2s ease;
+}}
+.metric-card:hover::before {{
+    height: 6px;
 }}
 
 .metric-card-good::before {{ background: #06A77D !important; }}
 .metric-card-mid::before  {{ background: #F1A208 !important; }}
 .metric-card-low::before  {{ background: #A31621 !important; }}
-
-/* TITLE HIERARCHY — KEY RULE: section title > card title > body text */
 
 .metric-label {{
     font-size: 0.8rem;
@@ -685,6 +871,10 @@ html {{
     font-weight: 700;
     color: #773344;
     line-height: 1.1;
+    transition: all 0.2s ease;
+}}
+.metric-card:hover .metric-value {{
+    transform: scale(1.02);
 }}
 
 .metric-value-good {{ color: #06A77D !important; }}
@@ -692,7 +882,6 @@ html {{
 .metric-value-low  {{ color: #A31621 !important; }}
 
 /* ── SECTION TITLES ──────────────────────────────────── */
-/* These are the BIG titles — visible, clear labels for each section */
 .section-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
     font-size: 1.3rem;
@@ -712,9 +901,12 @@ html {{
     width: 48px; height: 3px;
     background: linear-gradient(90deg, #d44d5c 0%, #773344 100%);
     border-radius: 2px;
+    transition: width 0.3s ease;
+}}
+.section-title:hover::after {{
+    width: 100%;
 }}
 
-/* Section subtitle — slightly smaller than main title */
 .section-subtitle {{
     font-family: 'Inter', sans-serif;
     font-size: 1rem;
@@ -736,6 +928,11 @@ html {{
     color: #2a1421;
     line-height: 1.6;
     font-size: 0.9rem;
+    transition: all 0.2s ease;
+}}
+.msg-box:hover {{
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(15,32,68,0.1);
 }}
 
 .msg-box strong {{ color: #160029; }}
@@ -758,6 +955,10 @@ html {{
     border-radius: 999px;
     font-size: 0.85rem;
     font-weight: 600;
+    transition: all 0.2s ease;
+}}
+.keyword-match:hover, .keyword-miss:hover {{
+    transform: scale(1.05);
 }}
 
 .keyword-match {{
@@ -765,11 +966,19 @@ html {{
     color: #198754 !important;
     border: 1px solid rgba(25,135,84,0.18) !important;
 }}
+.keyword-match:hover {{
+    background: rgba(25,135,84,0.2) !important;
+    box-shadow: 0 2px 8px rgba(25,135,84,0.2);
+}}
 
 .keyword-miss {{
     background: rgba(180,35,79,0.08) !important;
     color: #b4234f !important;
     border: 1px solid rgba(180,35,79,0.18) !important;
+}}
+.keyword-miss:hover {{
+    background: rgba(180,35,79,0.15) !important;
+    box-shadow: 0 2px 8px rgba(180,35,79,0.15);
 }}
 
 /* ── FATWA BOX ───────────────────────────────────────── */
@@ -781,6 +990,12 @@ html {{
     box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
     color: #2a1421;
     margin-bottom: 0.75rem;
+    transition: all 0.3s ease;
+}}
+.fatwa-box:hover {{
+    transform: translateY(-2px);
+    box-shadow: 0 16px 32px rgba(22, 32, 51, 0.1) !important;
+    border-color: #d44d5c !important;
 }}
 
 .fatwa-meta-row {{
@@ -801,9 +1016,13 @@ html {{
     color: #5f2840;
     font-size: 0.8rem;
     font-weight: 600;
+    transition: all 0.2s ease;
+}}
+.fatwa-meta-pill:hover {{
+    background: #e3b5a4;
+    transform: translateY(-1px);
 }}
 
-/* Fatwa title — big enough to read easily */
 .fatwa-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
     font-size: 1.2rem;
@@ -819,9 +1038,12 @@ html {{
     border: 1px solid #e3b5a4;
     border-radius: 12px;
     padding: 0.9rem 1rem;
+    transition: all 0.2s ease;
+}}
+.fatwa-box:hover .fatwa-text-panel {{
+    background: linear-gradient(180deg, #ffffff 0%, #fff5f0 100%);
 }}
 
-/* Fatwa body text — comfortable reading size */
 .fatwa-text-panel p {{
     margin: 0;
     color: #160029;
@@ -840,6 +1062,11 @@ html {{
     font-weight: 700;
     letter-spacing: 0.03em;
     text-transform: uppercase;
+    transition: all 0.2s ease;
+}}
+.badge:hover {{
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }}
 
 .badge-good {{ background: rgba(25,135,84,0.12) !important; color: #198754 !important; border: 1px solid rgba(25,135,84,0.26) !important; }}
@@ -854,6 +1081,13 @@ html {{
     display: flex; align-items: center; justify-content: center;
     position: relative;
     box-shadow: 0 4px 20px rgba(15,32,68,0.14);
+    transition: all 0.3s ease;
+    animation: fadeInUp 0.5s ease-out;
+}}
+.score-circle:hover {{
+    transform: scale(1.02);
+    box-shadow: 0 8px 30px rgba(212,77,92,0.3);
+    animation: glow 1.5s infinite;
 }}
 
 .score-circle::before {{
@@ -888,6 +1122,12 @@ html {{
     padding: 1rem;
     border-radius: 10px;
     border: 1px solid #e3b5a4;
+    transition: all 0.2s ease;
+}}
+.info-item:hover {{
+    transform: translateY(-2px);
+    background: #e8f0f5;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }}
 
 .info-label {{
@@ -911,7 +1151,7 @@ html {{
 /* ── DIVIDER ─────────────────────────────────────────── */
 .divider {{
     height: 1px;
-    background: #e3b5a4;
+    background: linear-gradient(90deg, transparent, #e3b5a4, transparent);
     margin: 2rem 0;
     opacity: 0.8;
 }}
@@ -927,6 +1167,11 @@ html {{
     height: 100%;
     position: relative;
     overflow: hidden;
+    transition: all 0.3s ease;
+}}
+.result-card:hover {{
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(22, 32, 51, 0.12) !important;
 }}
 
 .result-card::before {{
@@ -935,6 +1180,10 @@ html {{
     top: 0; left: 0; right: 0;
     height: 5px;
     background: linear-gradient(90deg, #d44d5c 0%, #773344 100%) !important;
+    transition: height 0.2s ease;
+}}
+.result-card:hover::before {{
+    height: 6px;
 }}
 
 .result-card-good::before  {{ background: #06A77D !important; }}
@@ -955,6 +1204,10 @@ html {{
     font-size: 1.6rem;
     font-weight: 700;
     margin: 0.4rem 0 0.5rem 0;
+    transition: all 0.2s ease;
+}}
+.result-card:hover .result-card-score {{
+    transform: scale(1.02);
 }}
 
 .result-card-score-good {{ color: #06A77D; }}
@@ -975,6 +1228,11 @@ html {{
     border: 1px solid #D2DCE5 !important;
     box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
     height: 100%;
+    transition: all 0.3s ease;
+}}
+.points-card:hover {{
+    transform: translateY(-2px);
+    box-shadow: 0 16px 32px rgba(22, 32, 51, 0.1) !important;
 }}
 
 .points-card-header {{
@@ -1004,12 +1262,17 @@ html {{
     border: 1px solid #D2DCE5 !important;
     box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
     margin-bottom: 0.75rem;
+    transition: all 0.3s ease;
+}}
+.chart-card:hover {{
+    transform: translateY(-2px);
+    box-shadow: 0 16px 32px rgba(22, 32, 51, 0.1) !important;
 }}
 
 /* ── BUTTONS ─────────────────────────────────────────── */
 .stButton > button,
 .stDownloadButton > button {{
-    background: #cb4a5e !important;
+    background: linear-gradient(135deg, #cb4a5e 0%, #d44d5c 100%) !important;
     color: white !important;
     border: none !important;
     border-radius: 12px !important;
@@ -1018,23 +1281,23 @@ html {{
     padding: 0.55rem 1.1rem !important;
     font-size: 0.9rem !important;
     box-shadow: 0 10px 22px rgba(119,51,68,0.18) !important;
-    transition: all 0.18s ease !important;
+    transition: all 0.3s ease !important;
     letter-spacing: 0.01em !important;
     min-height: 44px !important;
 }}
 
 .stButton > button:hover,
 .stDownloadButton > button:hover {{
-    transform: translateY(-1px) !important;
-    box-shadow: 0 5px 16px rgba(15,32,68,0.24) !important;
-    background: #b54256 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 12px 28px rgba(119,51,68,0.28) !important;
+    background: linear-gradient(135deg, #d44d5c 0%, #e05568 100%) !important;
     color: white !important;
 }}
 
 .stButton > button:active,
 .stDownloadButton > button:active {{
     transform: translateY(0px) !important;
-    box-shadow: 0 2px 6px rgba(15,32,68,0.14) !important;
+    box-shadow: 0 4px 12px rgba(119,51,68,0.2) !important;
 }}
 
 /* ── INPUT LABELS ────────────────────────────────────── */
@@ -1069,14 +1332,18 @@ html {{
     min-height: 40px !important;
     border-radius: 16px !important;
     padding: 0.4rem 0.8rem !important;
-    transition: all 0.18s ease !important;
+    transition: all 0.25s ease !important;
     border: 1px solid transparent !important;
 }}
-[data-testid="stRadio"] [role="radiogroup"] > label:hover {{background:#faf4f8 !important;}}
+[data-testid="stRadio"] [role="radiogroup"] > label:hover {{
+    background:#faf4f8 !important;
+    transform: translateY(-1px);
+}}
 [data-testid="stRadio"] [role="radiogroup"] > label:has(input:checked) {{
     background: linear-gradient(180deg,#d44d5c 0%,#cb4a5e 100%) !important;
     border-color: #cb4a5e !important;
     box-shadow: 0 8px 18px rgba(119,51,68,0.18) !important;
+    transform: scale(1.02);
 }}
 [data-testid="stRadio"] [role="radiogroup"] > label:has(input:checked) p {{color:#ffffff !important;}}
 [data-testid="stRadio"] [role="radiogroup"] input {{display:none !important;}}
@@ -1092,7 +1359,14 @@ html {{
     border-radius: 18px !important;
     min-height: 48px !important;
     box-shadow: 0 8px 18px rgba(44, 21, 33, 0.06) !important;
-    transition: border-color 0.18s ease, box-shadow 0.18s ease !important;
+    transition: all 0.25s ease !important;
+}}
+[data-testid="stMultiSelect"] [data-baseweb="select"] > div:hover,
+[data-testid="stSelectbox"] [data-baseweb="select"] > div:hover,
+[data-testid="stTextInputRootElement"]:hover,
+.stTextInput > div > div:hover {{
+    border-color: #d44d5c !important;
+    transform: translateY(-1px);
 }}
 
 [data-testid="stMultiSelect"] [data-baseweb="select"] > div:focus-within,
@@ -1108,6 +1382,10 @@ html {{
     color:#4a2030 !important;
     border-radius:999px !important;
     border:1px solid rgba(178,71,88,0.18) !important;
+    transition: all 0.2s ease;
+}}
+[data-testid="stMultiSelect"] [data-baseweb="tag"]:hover {{
+    transform: scale(1.02);
 }}
 [data-testid="stMultiSelect"] [data-baseweb="tag"] * {{color:#4a2030 !important;}}
 [data-testid="stMultiSelect"] input,
@@ -1124,7 +1402,11 @@ html {{
     border-radius: 22px !important;
     box-shadow: 0 10px 24px rgba(44,21,33,0.06) !important;
     padding: 0.4rem !important;
-    transition: border-color 0.18s ease, box-shadow 0.18s ease !important;
+    transition: all 0.25s ease !important;
+}}
+.stTextArea > div > div:hover {{
+    border-color: #d44d5c !important;
+    transform: translateY(-1px);
 }}
 
 .stTextArea > div > div:focus-within {{
@@ -1198,6 +1480,10 @@ html {{
     border: 1px solid #e3b5a4;
     box-shadow: 0 10px 24px rgba(39,34,51,0.08);
     background: #FFFFFF;
+    transition: all 0.2s ease;
+}}
+.light-table-wrap:hover {{
+    box-shadow: 0 14px 32px rgba(39,34,51,0.12);
 }}
 
 .light-table {{
@@ -1208,7 +1494,6 @@ html {{
     border-radius: 18px;
 }}
 
-/* Table headers — readable labels */
 .light-table thead th {{
     background: #f7f0f5 !important;
     color: #773344 !important;
@@ -1224,7 +1509,6 @@ html {{
 .light-table thead th:first-child {{ border-radius: 18px 0 0 0; }}
 .light-table thead th:last-child  {{ border-radius: 0 18px 0 0; }}
 
-/* Table cell text — comfortable size */
 .light-table tbody td {{
     background: #FFFFFF;
     color: #2a1421;
@@ -1233,10 +1517,14 @@ html {{
     border-bottom: 1px solid #e3b5a4;
     vertical-align: middle;
     line-height: 1.6;
+    transition: all 0.2s ease;
 }}
 
 .light-table tbody tr:nth-child(even) td {{ background: #FCF8F5; }}
-.light-table tbody tr:hover td {{ background: #F8EFE8; transition: background 0.14s ease; }}
+.light-table tbody tr:hover td {{
+    background: #F8EFE8;
+    transform: translateX(2px);
+}}
 .light-table tbody tr:last-child td {{ border-bottom: none; }}
 
 /* ── OVERVIEW CHART CARD ─────────────────────────────── */
@@ -1247,6 +1535,11 @@ html {{
     border: 1px solid #D2DCE5 !important;
     box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
     margin-bottom: 0.75rem;
+    transition: all 0.3s ease;
+}}
+.overview-chart-card:hover {{
+    transform: translateY(-2px);
+    box-shadow: 0 16px 32px rgba(22, 32, 51, 0.1) !important;
 }}
 
 /* ── TOPIC CARDS ─────────────────────────────────────── */
@@ -1263,6 +1556,12 @@ html {{
     border-radius: 18px;
     padding: 1.1rem;
     box-shadow: 0 8px 18px rgba(39,34,51,0.08);
+    transition: all 0.3s ease;
+}}
+.topic-card:hover {{
+    transform: translateY(-4px);
+    box-shadow: 0 16px 28px rgba(39,34,51,0.12);
+    border-top-width: 6px;
 }}
 
 .topic-card-title {{
@@ -1283,6 +1582,10 @@ html {{
     border: 1px solid #e3b5a4;
     font-size: 0.8rem;
     font-weight: 800;
+    transition: all 0.2s ease;
+}}
+.topic-card:hover .topic-card-pill {{
+    background: #e3b5a4;
 }}
 
 .topic-card-count {{
@@ -1304,6 +1607,10 @@ html {{
     border-radius: 14px;
     padding: 0.6rem 0.9rem;
     margin-bottom: 0.5rem;
+    transition: all 0.2s ease;
+}}
+.pager-bar:hover {{
+    border-left-width: 8px;
 }}
 
 .pager-note {{
@@ -1324,6 +1631,11 @@ html {{
     border: 1px solid #e3b5a4;
     font-size: 0.85rem;
     font-weight: 700;
+    transition: all 0.2s ease;
+}}
+.pager-chip:hover {{
+    background: #e3b5a4;
+    transform: scale(1.02);
 }}
 
 /* ── COMPARISON CARD ─────────────────────────────────── */
@@ -1335,6 +1647,11 @@ html {{
     box-shadow: 0 2px 10px rgba(15,32,68,0.06);
     margin-bottom: 0.75rem;
     height: 100%;
+    transition: all 0.3s ease;
+}}
+.comparison-card:hover {{
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(15,32,68,0.1);
 }}
 
 .comparison-card-header {{
@@ -1367,15 +1684,14 @@ html {{
     box-shadow: 0 2px 8px rgba(15,32,68,0.05);
     padding: 0.85rem 1rem;
     margin-bottom: 0.6rem;
-    transition: transform 0.16s ease, box-shadow 0.16s ease;
+    transition: all 0.25s ease;
 }}
-
 .align-rank-card:hover {{
-    transform: translateY(-1px);
-    box-shadow: 0 5px 16px rgba(15,32,68,0.08);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(15,32,68,0.08);
+    border-color: #d44d5c;
 }}
 
-/* Rank card topic label */
 .align-rank-topic {{
     font-family: 'Inter', sans-serif;
     font-size: 0.92rem;
@@ -1426,7 +1742,7 @@ html {{
 .align-bar-fill {{
     height: 100%;
     border-radius: 99px;
-    transition: width 0.4s ease;
+    transition: width 0.6s ease;
 }}
 
 .align-full-row {{
@@ -1436,6 +1752,11 @@ html {{
     padding: 0.55rem 0;
     border-bottom: 1px solid #e3b5a4;
     flex-wrap: nowrap;
+    transition: all 0.2s ease;
+}}
+.align-full-row:hover {{
+    background: #fcf8f5;
+    transform: translateX(4px);
 }}
 
 .align-full-rank {{
@@ -1482,6 +1803,11 @@ html {{
     box-shadow: 0 2px 8px rgba(15,32,68,0.05);
     margin-bottom: 0.55rem;
     overflow: hidden;
+    transition: all 0.2s ease;
+}}
+.donut-insight-card:hover {{
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(15,32,68,0.1);
 }}
 
 .donut-insight-accent {{
@@ -1489,6 +1815,10 @@ html {{
     min-height: 100%;
     flex-shrink: 0;
     border-radius: 0;
+    transition: width 0.2s ease;
+}}
+.donut-insight-card:hover .donut-insight-accent {{
+    width: 8px;
 }}
 
 .donut-insight-body {{
@@ -1535,6 +1865,10 @@ html {{
     padding: 1.2rem 1.3rem;
     box-shadow: 0 12px 26px rgba(44, 21, 33, 0.06);
     margin: 1.1rem 0 1rem 0;
+    transition: all 0.3s ease;
+}}
+.batch-results-shell:hover {{
+    box-shadow: 0 16px 34px rgba(44, 21, 33, 0.1);
 }}
 
 .batch-results-title {{
@@ -1562,6 +1896,12 @@ html {{
     padding: 0.85rem 1rem;
     margin: 1rem 0;
     box-shadow: 0 8px 20px rgba(44, 21, 33, 0.05);
+    transition: all 0.2s ease;
+}}
+.batch-readable-note:hover,
+.result-reading-guide:hover {{
+    transform: translateX(4px);
+    border-left-width: 6px;
 }}
 
 .result-reading-guide-title {{
@@ -1585,6 +1925,7 @@ html {{
     margin-top: 2.5rem;
     padding: 1.5rem 2rem;
     border-top: 1px solid #e3b5a4;
+    animation: fadeInUp 0.6s ease-out;
 }}
 
 .footer-wrap p {{
@@ -1596,7 +1937,6 @@ html {{
 }}
 
 /* ── TAB MINIMAL HERO ───────────────────────────────── */
-/* The big section intro banner at top of each tab */
 .tab-minimal-hero {{
     background: linear-gradient(180deg,#fffdfc 0%,#fbf4ef 100%);
     border: 1px solid #e3b5a4;
@@ -1604,9 +1944,12 @@ html {{
     padding: 1.3rem 1.4rem 1.2rem 1.4rem;
     box-shadow: 0 14px 30px rgba(41,22,35,0.05);
     margin: 0.2rem 0 1.1rem 0;
+    transition: all 0.3s ease;
+}}
+.tab-minimal-hero:hover {{
+    box-shadow: 0 18px 38px rgba(41,22,35,0.08);
 }}
 
-/* Section kicker label — small category label above the big title */
 .tab-minimal-kicker {{
     color:#b01f55;
     font-size:0.78rem;
@@ -1616,7 +1959,6 @@ html {{
     margin-bottom:0.5rem;
 }}
 
-/* Big tab title — this should be the most prominent text on the page */
 .tab-minimal-title {{
     font-family:'Inter Tight','Inter',sans-serif;
     font-size:1.8rem;
@@ -1625,7 +1967,6 @@ html {{
     line-height:1.1;
 }}
 
-/* Tab subtitle — description below the big title */
 .tab-minimal-copy {{
     color:#766772;
     font-size:0.95rem;
@@ -1642,6 +1983,10 @@ html {{
     padding: 1.2rem 1.3rem;
     box-shadow: 0 10px 24px rgba(25,14,36,0.06);
     margin-bottom: 0.85rem;
+    transition: all 0.3s ease;
+}}
+.workspace-shell:hover {{
+    box-shadow: 0 14px 30px rgba(25,14,36,0.1);
 }}
 
 .workspace-kicker {{
@@ -1653,7 +1998,6 @@ html {{
     margin-bottom: 0.3rem;
 }}
 
-/* Card / panel title — clearly bigger than body text, smaller than section title */
 .workspace-title {{
     font-family:'Inter Tight','Inter',sans-serif;
     font-size: 1.2rem;
@@ -1719,6 +2063,10 @@ html {{
     padding:1rem 1.1rem 0.9rem 1.1rem;
     margin:0.3rem 0 0.7rem 0;
     box-shadow:0 10px 24px rgba(25,14,36,0.05);
+    transition: all 0.3s ease;
+}}
+.input-editor-shell:hover {{
+    box-shadow:0 14px 30px rgba(25,14,36,0.08);
 }}
 
 .input-editor-kicker {{
@@ -1746,6 +2094,11 @@ html {{
     font-size:0.82rem;
     font-weight:800;
     white-space:nowrap;
+    transition: all 0.2s ease;
+}}
+.input-editor-chip:hover {{
+    background:#e3b5a4;
+    transform: scale(1.02);
 }}
 
 /* ── BATCH SHELL ─────────────────────────────────────── */
@@ -1756,6 +2109,10 @@ html {{
     padding:1.2rem 1.25rem 1rem 1.25rem;
     box-shadow:0 12px 28px rgba(25,14,36,0.06);
     margin:0.2rem 0 1rem 0;
+    transition: all 0.3s ease;
+}}
+.batch-shell:hover {{
+    box-shadow:0 16px 34px rgba(25,14,36,0.1);
 }}
 
 .batch-kicker {{
@@ -1792,6 +2149,11 @@ html {{
     font-size:0.9rem;
     line-height:1.6;
     margin:0.85rem 0 1rem 0;
+    transition: all 0.2s ease;
+}}
+.batch-selection-note:hover {{
+    background:#fffaf8;
+    transform: translateX(4px);
 }}
 
 .batch-selection-note strong {{
@@ -1807,6 +2169,10 @@ html {{
     padding:1.1rem 1.15rem 1rem 1.15rem;
     box-shadow:0 10px 24px rgba(25,14,36,0.05);
     margin:1.1rem 0 0.6rem 0;
+    transition: all 0.3s ease;
+}}
+.chart-panel:hover {{
+    box-shadow:0 14px 30px rgba(25,14,36,0.08);
 }}
 
 .chart-panel-title {{
@@ -1832,6 +2198,11 @@ html {{
     color:#6d5a68;
     font-size:0.9rem;
     line-height:1.7;
+    transition: all 0.2s ease;
+}}
+.chart-conclusion:hover {{
+    background:linear-gradient(180deg,#fffdfb 0%,#fff8f3 100%);
+    transform: translateX(4px);
 }}
 
 /* ── EXPLORER CARDS ──────────────────────────────────── */
@@ -1843,6 +2214,11 @@ html {{
     padding:1rem 1.1rem;
     margin:0.7rem 0 1.1rem 0;
     box-shadow:0 10px 24px rgba(25,14,36,0.05);
+    transition: all 0.3s ease;
+}}
+.explorer-instruction-card:hover {{
+    transform: translateX(4px);
+    border-left-width: 8px;
 }}
 
 .explorer-instruction-title {{
@@ -1877,6 +2253,11 @@ html {{
     gap:0.9rem;
     box-shadow:0 10px 20px rgba(25,14,36,0.05);
     min-height:90px;
+    transition: all 0.3s ease;
+}}
+.explorer-orb:hover {{
+    transform: translateY(-4px);
+    box-shadow:0 16px 28px rgba(25,14,36,0.1);
 }}
 
 .explorer-orb-icon {{
@@ -1886,6 +2267,10 @@ html {{
     background:linear-gradient(135deg,#d44d5c 0%,#a63a52 100%);
     color:#fff; font-weight:800; font-size:1rem;
     box-shadow:0 8px 18px rgba(164,59,83,0.22);
+    transition: all 0.2s ease;
+}}
+.explorer-orb:hover .explorer-orb-icon {{
+    transform: scale(1.05);
 }}
 
 .explorer-orb-label {{
@@ -1925,6 +2310,11 @@ html {{
     border:1px solid #e3b5a4;
     border-radius:18px;
     padding:0.9rem 1rem;
+    transition: all 0.3s ease;
+}}
+.topic-focus-card:hover {{
+    transform: translateY(-3px);
+    box-shadow:0 8px 20px rgba(25,14,36,0.08);
 }}
 
 .topic-focus-label {{
@@ -1950,15 +2340,21 @@ html {{
     border-radius:24px;
     padding:1.1rem 1.15rem 1rem 1.15rem;
     box-shadow:0 12px 26px rgba(25,14,36,0.06);
+    transition: all 0.3s ease;
+}}
+.sim-lite-shell:hover {{
+    box-shadow:0 16px 32px rgba(25,14,36,0.1);
 }}
 
 .sim-lite-head {{display:flex;justify-content:space-between;align-items:flex-start;gap:0.85rem;margin-bottom:1rem;}}
 .sim-lite-kicker {{color:#8b6771;font-size:0.78rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.25rem;}}
 .sim-lite-title {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.45rem;font-weight:800;color:#221221;}}
-.sim-lite-pill {{padding:0.44rem 0.9rem;border-radius:999px;border:1px solid #d44d5c;font-weight:800;font-size:1rem;}}
+.sim-lite-pill {{padding:0.44rem 0.9rem;border-radius:999px;border:1px solid #d44d5c;font-weight:800;font-size:1rem;transition: all 0.2s ease;}}
+.sim-lite-pill:hover {{background:#d44d5c;color:white;transform: scale(1.02);}}
 
 .sim-lite-hero {{display:grid;grid-template-columns:120px 1fr;gap:1rem;align-items:center;margin-bottom:1rem;}}
-.sim-lite-ring {{width:100px;height:100px;border-radius:999px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 18px rgba(25,14,36,0.08);}}
+.sim-lite-ring {{width:100px;height:100px;border-radius:999px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 18px rgba(25,14,36,0.08);transition: all 0.3s ease;}}
+.sim-lite-ring:hover {{transform: scale(1.02);}}
 .sim-lite-ring-inner {{width:72px;height:72px;border-radius:999px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px rgba(227,181,164,0.45);}}
 .sim-lite-ring-inner strong {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.5rem;line-height:1;}}
 .sim-lite-ring-inner span {{font-size:0.76rem;color:#8b6771;margin-top:0.2rem;}}
@@ -1969,6 +2365,11 @@ html {{
 .sim-lite-top-note {{
     display:block;background:#fff8f4;border:1px solid #ead1c8;
     border-radius:16px;padding:0.85rem 0.95rem;margin:1rem 0 1rem 0;
+    transition: all 0.2s ease;
+}}
+.sim-lite-top-note:hover {{
+    background:#fffbf8;
+    transform: translateX(4px);
 }}
 .sim-lite-top-note-title {{display:block;font-size:0.76rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.25rem;}}
 .sim-lite-top-note-copy {{display:block;font-size:0.9rem;line-height:1.65;color:#6d5a68;}}
@@ -1978,6 +2379,11 @@ html {{
     padding:0.9rem 1rem;box-shadow:0 6px 16px rgba(25,14,36,0.04);
     min-height:110px;margin-bottom:0.7rem;text-align:center;
     display:flex;flex-direction:column;justify-content:center;
+    transition: all 0.3s ease;
+}}
+.sim-lite-metric:hover {{
+    transform: translateY(-2px);
+    box-shadow:0 10px 22px rgba(25,14,36,0.08);
 }}
 .sim-lite-metric-label {{font-size:0.78rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#8b6771;margin-bottom:0.35rem;}}
 .sim-lite-metric-value {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.8rem;font-weight:700;line-height:1;margin-bottom:0.35rem;text-align:center;}}
@@ -2011,6 +2417,12 @@ html {{
     border-radius:20px;
     padding:1rem 1.1rem;
     box-shadow:0 8px 18px rgba(25,14,36,0.05);
+    transition: all 0.3s ease;
+}}
+.leaderboard-card:hover {{
+    transform: translateY(-2px);
+    box-shadow:0 12px 24px rgba(25,14,36,0.1);
+    border-color: #d44d5c;
 }}
 
 .leaderboard-rank {{
@@ -2018,12 +2430,18 @@ html {{
     background:#fff7f1;border:1px solid #e7c2b3;
     display:flex;align-items:center;justify-content:center;
     font-size:1.1rem;
+    transition: all 0.2s ease;
+}}
+.leaderboard-card:hover .leaderboard-rank {{
+    background:linear-gradient(135deg,#d44d5c 0%,#cb4a5e 100%);
+    color: white;
+    border-color: #d44d5c;
 }}
 
 .leaderboard-title {{font-size:1rem;font-weight:800;color:#221221;margin-bottom:0.2rem;}}
 .leaderboard-meta {{font-size:0.85rem;color:#7a6874;line-height:1.55;margin-bottom:0.5rem;}}
 .leaderboard-track {{height:8px;background:#f3dfd7;border-radius:999px;overflow:hidden;}}
-.leaderboard-fill {{height:100%;background:linear-gradient(90deg,#d44d5c 0%,#b24758 100%);border-radius:999px;}}
+.leaderboard-fill {{height:100%;background:linear-gradient(90deg,#d44d5c 0%,#b24758 100%);border-radius:999px;transition: width 0.6s ease;}}
 .leaderboard-side {{text-align:right;min-width:90px;}}
 .leaderboard-score {{font-size:1.15rem;font-weight:800;color:#221221;}}
 .leaderboard-note {{font-size:0.8rem;color:#8b6771;line-height:1.4;}}
@@ -2036,6 +2454,11 @@ html {{
     font-size:0.92rem;line-height:1.72;
     margin:0.6rem 0 1.1rem 0;
     box-shadow:0 10px 20px rgba(25,14,36,0.04);
+    transition: all 0.2s ease;
+}}
+.mini-explainer-card:hover {{
+    transform: translateX(4px);
+    background:linear-gradient(180deg,#fffdfb 0%,#fff8f3 100%);
 }}
 .mini-explainer-card strong {{color:#221221;}}
 
@@ -2048,19 +2471,26 @@ html {{
     box-shadow:0 10px 24px rgba(25,14,36,0.06);
     min-height:360px;
     display:flex;flex-direction:column;justify-content:space-between;
+    transition: all 0.3s ease;
+}}
+.empty-review-card:hover {{
+    box-shadow:0 14px 30px rgba(25,14,36,0.1);
 }}
 
 .empty-review-top {{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;margin-bottom:0.85rem;}}
 .empty-review-title {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.3rem;color:#160029;margin:0.1rem 0 0.25rem 0;font-weight:700;}}
 .empty-review-copy {{color:#5d3945;font-size:0.92rem;line-height:1.68;}}
-.empty-review-pill {{padding:0.44rem 0.85rem;border-radius:999px;background:#fff;border:1px solid #e3b5a4;color:#773344;font-weight:800;font-size:0.84rem;white-space:nowrap;}}
+.empty-review-pill {{padding:0.44rem 0.85rem;border-radius:999px;background:#fff;border:1px solid #e3b5a4;color:#773344;font-weight:800;font-size:0.84rem;white-space:nowrap;transition: all 0.2s ease;}}
+.empty-review-pill:hover {{background:#e3b5a4;transform: scale(1.02);}}
 .empty-review-list {{display:grid;gap:0.7rem;margin-top:0.6rem;}}
-.empty-review-item {{display:flex;gap:0.85rem;align-items:flex-start;padding:0.9rem 1rem;border-radius:16px;background:#fff;border:1px solid #e3b5a4;}}
+.empty-review-item {{display:flex;gap:0.85rem;align-items:flex-start;padding:0.9rem 1rem;border-radius:16px;background:#fff;border:1px solid #e3b5a4;transition: all 0.2s ease;}}
+.empty-review-item:hover {{transform: translateX(4px);border-color:#d44d5c;}}
 .empty-review-icon {{width:34px;height:34px;min-width:34px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#d44d5c 0%,#b24758 100%);color:#fff;font-size:0.95rem;font-weight:800;}}
 .empty-review-item strong {{display:block;color:#160029;font-size:0.92rem;margin-bottom:0.18rem;}}
 .empty-review-item span {{display:block;color:#5d3945;font-size:0.88rem;line-height:1.6;}}
 .empty-review-footer {{display:grid;grid-template-columns:repeat(3,1fr);gap:0.7rem;margin-top:1rem;}}
-.empty-review-stat {{background:#fff;border:1px solid #e3b5a4;border-radius:16px;padding:0.85rem;text-align:center;}}
+.empty-review-stat {{background:#fff;border:1px solid #e3b5a4;border-radius:16px;padding:0.85rem;text-align:center;transition: all 0.2s ease;}}
+.empty-review-stat:hover {{transform: translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.05);}}
 .empty-review-stat-label {{font-size:0.74rem;font-weight:800;color:#8b6771;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.25rem;}}
 .empty-review-stat-value {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.25rem;color:#160029;font-weight:700;}}
 
@@ -2072,6 +2502,10 @@ html {{
     padding:1.2rem 1.3rem;
     box-shadow:0 14px 34px rgba(52,27,45,0.05);
     height:100%;
+    transition: all 0.3s ease;
+}}
+.analysis-panel:hover {{
+    box-shadow:0 18px 40px rgba(52,27,45,0.08);
 }}
 
 .analysis-panel-title {{
@@ -2085,7 +2519,8 @@ html {{
 .analysis-panel-copy {{color:#6e6070;font-size:0.92rem;line-height:1.78;margin:0 0 1rem 0;}}
 
 .analysis-steps {{display:grid;gap:0.9rem;margin-top:0.15rem;}}
-.analysis-step {{display:grid;grid-template-columns:42px 1fr;gap:0.85rem;align-items:start;padding:0.1rem 0;}}
+.analysis-step {{display:grid;grid-template-columns:42px 1fr;gap:0.85rem;align-items:start;padding:0.1rem 0;transition: all 0.2s ease;}}
+.analysis-step:hover {{transform: translateX(4px);}}
 .analysis-step-no {{width:32px;height:32px;border-radius:999px;background:#f0e7ec;color:#a3195b;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.9rem;}}
 .analysis-step-title {{font-weight:700;color:#35233b;font-size:0.95rem;margin-bottom:0.15rem;}}
 .analysis-step-copy {{color:#746675;font-size:0.9rem;line-height:1.72;}}
@@ -2100,7 +2535,8 @@ html {{
 /* ── BROWSE / FILTER ─────────────────────────────────── */
 .browse-inline-head {{font-size:0.82rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin:0 0 0.4rem 0.08rem;}}
 .browse-filter-chip-row {{display:flex;flex-wrap:wrap;gap:0.55rem;margin:0.6rem 0 0.95rem 0;padding-top:0.2rem;border-top:1px solid rgba(227,181,164,0.45);}}
-.browse-filter-chip {{display:inline-flex;align-items:center;padding:0.42rem 0.85rem;border-radius:999px;background:#fff8f4;border:1px solid #e3b5a4;color:#773344;font-size:0.85rem;font-weight:700;}}
+.browse-filter-chip {{display:inline-flex;align-items:center;padding:0.42rem 0.85rem;border-radius:999px;background:#fff8f4;border:1px solid #e3b5a4;color:#773344;font-size:0.85rem;font-weight:700;transition: all 0.2s ease;}}
+.browse-filter-chip:hover {{background:#e3b5a4;transform: scale(1.02);}}
 
 /* ── COMPARISON SELECT ───────────────────────────────── */
 .comparison-select-title {{font-size:0.88rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#8f6f7b;}}
@@ -2114,6 +2550,10 @@ html {{
     padding:1rem 1.15rem;
     box-shadow:0 10px 24px rgba(25,14,36,0.05);
     margin:0.5rem 0 1rem 0;
+    transition: all 0.3s ease;
+}}
+.topic-pick-shell:hover {{
+    box-shadow:0 14px 30px rgba(25,14,36,0.08);
 }}
 .topic-pick-kicker {{font-size:0.78rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#a3195b;margin-bottom:0.35rem;}}
 .topic-pick-title {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.2rem;font-weight:700;color:#241226;line-height:1.2;margin-bottom:0.35rem;}}
@@ -2127,7 +2567,8 @@ html {{
 
 /* ── HISTORY OVERVIEW GRID ───────────────────────────── */
 .history-overview-grid {{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;align-items:start;}}
-.history-overview-card {{background:linear-gradient(180deg,#fffdfb 0%,#fbf3ef 100%);border:1px solid #ead1c8;border-radius:28px;padding:1rem 1.1rem 1rem 1.1rem;box-shadow:0 12px 26px rgba(25,14,36,0.05);overflow:hidden;}}
+.history-overview-card {{background:linear-gradient(180deg,#fffdfb 0%,#fbf3ef 100%);border:1px solid #ead1c8;border-radius:28px;padding:1rem 1.1rem 1rem 1.1rem;box-shadow:0 12px 26px rgba(25,14,36,0.05);overflow:hidden;transition: all 0.3s ease;}}
+.history-overview-card:hover {{box-shadow:0 16px 32px rgba(25,14,36,0.1);}}
 
 /* ── MISC UTILS ──────────────────────────────────────── */
 .metric-card-info {{margin-top:0.15rem;font-size:0.88rem;line-height:1.65;color:#6d5a68;text-align:center;}}
@@ -2139,6 +2580,10 @@ html {{
     padding:1.1rem 1.15rem;box-shadow:0 12px 28px rgba(25,14,36,0.06);
     display:flex;justify-content:space-between;gap:1rem;
     align-items:flex-start;flex-wrap:wrap;margin:1rem 0 0.9rem 0;
+    transition: all 0.3s ease;
+}}
+.result-hero-card:hover {{
+    box-shadow:0 16px 34px rgba(25,14,36,0.1);
 }}
 .result-hero-kicker {{color:#8b6771;font-size:0.78rem;font-weight:800;text-transform:uppercase;letter-spacing:0.09em;margin-bottom:0.25rem;}}
 .result-hero-title {{font-family:'Inter Tight','Inter',sans-serif;color:#160029;font-size:1.55rem;line-height:1.08;margin-bottom:0.35rem;font-weight:700;}}
@@ -2172,6 +2617,11 @@ html {{
     box-shadow: 0 10px 22px rgba(44, 21, 33, 0.05);
     line-height: 1.5;
     font-size: 0.9rem;
+    transition: all 0.2s ease;
+}}
+.editorial-meta span:hover {{
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(44, 21, 33, 0.08);
 }}
 
 .editorial-meta span:before {{
@@ -2192,15 +2642,22 @@ html {{
     border-radius: 22px;
     padding: 1.1rem 1.15rem;
     box-shadow: 0 10px 22px rgba(25,14,36,0.05);
+    transition: all 0.3s ease;
+}}
+.dataset-side-panel:hover {{
+    box-shadow: 0 14px 28px rgba(25,14,36,0.08);
 }}
 .dataset-side-title {{font-family:'Inter Tight','Inter',sans-serif;font-size:1rem;font-weight:700;color:#251329;margin-bottom:0.2rem;}}
 .dataset-side-subtitle {{font-size:0.88rem;line-height:1.6;color:#766772;margin-bottom:0.7rem;}}
-.dataset-model-chip {{padding:0.4rem 0.85rem;border-radius:999px;background:#fff;border:1px solid #e3b5a4;color:#773344;font-size:0.85rem;font-weight:800;white-space:nowrap;}}
+.dataset-model-chip {{padding:0.4rem 0.85rem;border-radius:999px;background:#fff;border:1px solid #e3b5a4;color:#773344;font-size:0.85rem;font-weight:800;white-space:nowrap;transition: all 0.2s ease;}}
+.dataset-model-chip:hover {{background:#e3b5a4;transform: scale(1.02);}}
 .dataset-stat-grid {{display:grid;grid-template-columns:repeat(2,1fr);gap:0.65rem;margin:0.7rem 0;}}
-.dataset-stat-card {{background:#fff;border:1px solid #ead1c8;border-radius:14px;padding:0.75rem 0.85rem;}}
+.dataset-stat-card {{background:#fff;border:1px solid #ead1c8;border-radius:14px;padding:0.75rem 0.85rem;transition: all 0.2s ease;}}
+.dataset-stat-card:hover {{transform: translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.05);}}
 .dataset-stat-label {{font-size:0.74rem;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:#8b6771;margin-bottom:0.18rem;}}
 .dataset-stat-value {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.3rem;font-weight:700;color:#241226;}}
-.dataset-preview-box {{background:#fff8f4;border:1px solid #ead1c8;border-radius:14px;padding:0.8rem 0.9rem;margin-top:0.65rem;}}
+.dataset-preview-box {{background:#fff8f4;border:1px solid #ead1c8;border-radius:14px;padding:0.8rem 0.9rem;margin-top:0.65rem;transition: all 0.2s ease;}}
+.dataset-preview-box:hover {{background:#fffbf8;transform: translateX(4px);}}
 .dataset-preview-label {{font-size:0.74rem;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:#8b6771;margin-bottom:0.25rem;}}
 .dataset-preview-text {{font-size:0.88rem;line-height:1.65;color:#5d3945;}}
 
@@ -2795,3 +3252,318 @@ def render_review_workspace_header():
         """,
         unsafe_allow_html=True,
     )
+
+
+# =========================================================
+# INTERACTIVE VISUALIZATION COMPONENTS
+# =========================================================
+
+def render_interactive_gauge(score: float, title: str = "Alignment Score", height: int = 250):
+    """Render an interactive gauge chart using Plotly."""
+    import plotly.graph_objects as go
+    
+    tier = get_score_tier(score)
+    if tier == "good":
+        color = "#06A77D"
+    elif tier == "moderate":
+        color = "#F1A208"
+    else:
+        color = "#A31621"
+    
+    fig = go.Figure(go.Indicator(
+        mode="gauge+number",
+        value=score,
+        title={'text': title, 'font': {'size': 20, 'color': COLORS["text_primary"]}},
+        number={'suffix': "%", 'font': {'size': 40, 'color': color}},
+        gauge={
+            'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': COLORS["text_muted"]},
+            'bar': {'color': color},
+            'bgcolor': "white",
+            'borderwidth': 2,
+            'bordercolor': COLORS["border"],
+            'steps': [
+                {'range': [0, 50], 'color': "#FFCDD2"},
+                {'range': [50, 70], 'color': "#FFF9C4"},
+                {'range': [70, 100], 'color': "#C8E6C9"}
+            ],
+            'threshold': {
+                'line': {'color': color, 'width': 4},
+                'thickness': 0.75,
+                'value': score
+            }
+        }
+    ))
+    fig.update_layout(
+        height=height,
+        margin=dict(l=20, r=20, t=50, b=20),
+        paper_bgcolor="rgba(0,0,0,0)",
+        font={'color': COLORS["text_primary"]}
+    )
+    st.plotly_chart(fig, use_container_width=True)
+
+
+def render_comparison_bar_chart(scores: dict, title: str = "Score Comparison", height: int = 400):
+    """Render a horizontal bar chart comparing multiple scores."""
+    import plotly.graph_objects as go
+    
+    labels = list(scores.keys())
+    values = list(scores.values())
+    
+    # Color mapping based on values
+    colors = []
+    for val in values:
+        tier = get_score_tier(val)
+        if tier == "good":
+            colors.append("#06A77D")
+        elif tier == "moderate":
+            colors.append("#F1A208")
+        else:
+            colors.append("#A31621")
+    
+    fig = go.Figure(go.Bar(
+        x=values,
+        y=labels,
+        orientation='h',
+        marker_color=colors,
+        text=[f"{v:.1f}%" for v in values],
+        textposition='outside',
+        hovertemplate="%{y}: %{x:.1f}%<extra></extra>"
+    ))
+    
+    fig.update_layout(
+        title=title,
+        xaxis_title="Score (%)",
+        yaxis_title="",
+        height=height,
+        margin=dict(l=10, r=10, t=40, b=10),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        font={'color': COLORS["text_primary"]},
+        xaxis=dict(range=[0, 100], gridcolor=COLORS["border"]),
+        yaxis=dict(gridcolor=COLORS["border"])
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
+
+
+def render_radar_chart(categories: dict, title: str = "Performance by Category", height: int = 400):
+    """Render a radar chart for multi-category performance."""
+    import plotly.graph_objects as go
+    
+    labels = list(categories.keys())
+    values = list(categories.values())
+    
+    fig = go.Figure(data=go.Scatterpolar(
+        r=values,
+        theta=labels,
+        fill='toself',
+        marker=dict(color=COLORS["lobster_pink"], size=8),
+        line=dict(color=COLORS["wine_plum"], width=2),
+        hovertemplate="%{theta}: %{r:.1f}%<extra></extra>"
+    ))
+    
+    fig.update_layout(
+        polar=dict(
+            radialaxis=dict(visible=True, range=[0, 100], gridcolor=COLORS["border"]),
+            angularaxis=dict(gridcolor=COLORS["border"], linecolor=COLORS["border"])
+        ),
+        title=title,
+        height=height,
+        margin=dict(l=60, r=60, t=40, b=40),
+        paper_bgcolor="rgba(0,0,0,0)",
+        font={'color': COLORS["text_primary"]}
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
+
+
+def render_timeline_chart(data: list, x_key: str, y_key: str, title: str = "Trend Over Time", height: int = 350):
+    """Render a line chart for timeline data."""
+    import plotly.graph_objects as go
+    
+    x_values = [item[x_key] for item in data]
+    y_values = [item[y_key] for item in data]
+    
+    # Color based on latest value
+    latest_value = y_values[-1] if y_values else 0
+    tier = get_score_tier(latest_value)
+    if tier == "good":
+        line_color = "#06A77D"
+    elif tier == "moderate":
+        line_color = "#F1A208"
+    else:
+        line_color = "#A31621"
+    
+    fig = go.Figure(go.Scatter(
+        x=x_values,
+        y=y_values,
+        mode='lines+markers',
+        line=dict(color=line_color, width=3),
+        marker=dict(size=8, color=line_color),
+        fill='tozeroy',
+        fillcolor=f"rgba({int(line_color[1:3],16)},{int(line_color[3:5],16)},{int(line_color[5:7],16)},0.1)",
+        hovertemplate="Date: %{x}<br>Score: %{y:.1f}%<extra></extra>"
+    ))
+    
+    fig.update_layout(
+        title=title,
+        xaxis_title="Date",
+        yaxis_title="Score (%)",
+        height=height,
+        margin=dict(l=10, r=10, t=40, b=10),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        font={'color': COLORS["text_primary"]},
+        yaxis=dict(range=[0, 100], gridcolor=COLORS["border"]),
+        xaxis=dict(gridcolor=COLORS["border"])
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
+
+
+def render_donut_chart(values: dict, title: str = "Distribution", height: int = 300):
+    """Render a donut chart for distribution data."""
+    import plotly.graph_objects as go
+    
+    labels = list(values.keys())
+    sizes = list(values.values())
+    
+    # Color mapping for tiers
+    color_map = {
+        "Good": "#06A77D",
+        "Moderate": "#F1A208",
+        "Weak": "#A31621"
+    }
+    colors = [color_map.get(label, COLORS["lobster_pink"]) for label in labels]
+    
+    fig = go.Figure(data=[go.Pie(
+        labels=labels,
+        values=sizes,
+        hole=0.4,
+        marker_colors=colors,
+        textinfo='label+percent',
+        textposition='auto',
+        hovertemplate="%{label}: %{value} (%{percent})<extra></extra>"
+    )])
+    
+    fig.update_layout(
+        title=title,
+        height=height,
+        margin=dict(l=20, r=20, t=40, b=20),
+        paper_bgcolor="rgba(0,0,0,0)",
+        font={'color': COLORS["text_primary"]},
+        showlegend=True,
+        legend=dict(orientation="h", yanchor="bottom", y=-0.1, xanchor="center", x=0.5)
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
+
+
+# =========================================================
+# ANIMATION AND LOADING UTILITIES
+# =========================================================
+
+def render_skeleton_loader(height: int = 100, width: str = "100%", count: int = 1):
+    """Render a skeleton loading animation."""
+    skeletons = []
+    for i in range(count):
+        skeletons.append(f'<div class="skeleton" style="height: {height}px; width: {width}; margin-bottom: 1rem;"></div>')
+    st.markdown(''.join(skeletons), unsafe_allow_html=True)
+
+
+def render_toast_message(message: str, type: str = "info", duration: int = 3000):
+    """Render a temporary toast notification."""
+    bg_color = {
+        "success": "#06A77D",
+        "error": "#A31621",
+        "warning": "#F1A208",
+        "info": "#773344"
+    }.get(type, "#773344")
+    
+    toast_html = f"""
+    <div id="toast-message" style="
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: {bg_color};
+        color: white;
+        padding: 12px 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 9999;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        animation: slideInRight 0.3s ease;
+    ">
+        {html.escape(message)}
+    </div>
+    <script>
+        setTimeout(function() {{
+            var toast = document.getElementById('toast-message');
+            if(toast) {{
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s';
+                setTimeout(function() {{ toast.remove(); }}, 300);
+            }}
+        }}, {duration});
+    </script>
+    """
+    st.markdown(toast_html, unsafe_allow_html=True)
+
+
+def render_confetti():
+    """Render a confetti animation for celebration moments."""
+    confetti_html = """
+    <canvas id="confetti-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9998;"></canvas>
+    <script>
+    (function() {
+        var canvas = document.getElementById('confetti-canvas');
+        if(!canvas) return;
+        var ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        var particles = [];
+        var colors = ['#06A77D', '#F1A208', '#D44D5C', '#773344', '#160029'];
+        
+        for(var i = 0; i < 150; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height - canvas.height,
+                size: Math.random() * 6 + 2,
+                speedY: Math.random() * 5 + 3,
+                speedX: Math.random() * 2 - 1,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                rotation: Math.random() * 360,
+                rotationSpeed: Math.random() * 10 - 5
+            });
+        }
+        
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            var allDone = true;
+            for(var i = 0; i < particles.length; i++) {
+                var p = particles[i];
+                p.y += p.speedY;
+                p.x += p.speedX;
+                p.rotation += p.rotationSpeed;
+                if(p.y < canvas.height + 50) allDone = false;
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rotation * Math.PI / 180);
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+                ctx.restore();
+            }
+            if(!allDone) requestAnimationFrame(animate);
+            else canvas.remove();
+        }
+        animate();
+        
+        setTimeout(function() {
+            if(canvas) canvas.remove();
+        }, 3000);
+    })();
+    </script>
+    """
+    st.markdown(confetti_html, unsafe_allow_html=True)
