@@ -75,8 +75,28 @@ apply_theme()
 def apply_dashboard_polish():
     st.markdown("""
     <style>
-    :root { color-scheme: light !important; }
-    html, body, [data-testid="stAppViewContainer"] { background-color:#f4f6f9 !important; }
+    :root { 
+        color-scheme: light !important;
+        --primary-color: #D44D5C;
+        --secondary-color: #773344;
+        --success-color: #06A77D;
+        --warning-color: #F1A208;
+        --danger-color: #A31621;
+    }
+    
+    /* Base styles - properly scaled for 100% zoom */
+    html {
+        font-size: 15px !important;
+    }
+    
+    .stApp {
+        background-color: #f4f6f9 !important;
+    }
+    
+    html, body, [data-testid="stAppViewContainer"] { 
+        background-color: #f4f6f9 !important; 
+        overflow-x: hidden !important;
+    }
     
     [data-testid="stTextArea"] > div > div, 
     [data-testid="stTextArea"] [data-baseweb="textarea"], 
@@ -85,1225 +105,390 @@ def apply_dashboard_polish():
         background-color: #fbf4ef !important; 
     }
     
-    [data-testid="stAppViewContainer"] textarea, 
-    textarea { 
-        background: #fbf4ef !important; 
-        background-color: #fbf4ef !important; 
-        color: #2a1421 !important; 
-        -webkit-text-fill-color: #2a1421 !important; 
-        caret-color: #773344 !important; 
-    }
-    
-    [data-testid="stAppViewContainer"] textarea::placeholder, 
-    textarea::placeholder { 
-        color: #9a7b87 !important; 
-        -webkit-text-fill-color: #9a7b87 !important; 
-        opacity: 1 !important; 
-    }
-    
     [data-testid="stAppViewContainer"] .block-container { 
-        max-width: 1400px !important; 
-        padding-top: 1rem !important;
-        padding-bottom: 2rem !important;
+        max-width: 1300px !important; 
+        padding-top: 0.8rem !important;
+        padding-bottom: 1.5rem !important;
     }
     
-    .workspace-shell {
-        background: linear-gradient(180deg, #ffffff 0%, #fbf5f1 100%);
-        border: 1px solid #e3b5a4;
-        border-radius: 24px;
-        padding: 1.05rem 1.1rem;
-        box-shadow: 0 10px 24px rgba(25,14,36,0.06);
-        margin-bottom: 0.85rem;
+    /* ===== BEAUTIFUL METRIC CARDS ===== */
+    .metric-beautiful-card {
+        background: linear-gradient(135deg, #ffffff 0%, #fef8f5 100%);
+        border-radius: 20px;
+        padding: 1rem 0.8rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 20px rgba(119, 51, 68, 0.08);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(227, 181, 164, 0.3);
+        height: 100%;
     }
     
-    .workspace-shell-tight {
-        padding: 0.95rem 1rem;
+    .metric-beautiful-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 32px rgba(119, 51, 68, 0.12);
     }
     
-    .workspace-title-row {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 1rem;
-        margin-bottom: 0.55rem;
+    .metric-beautiful-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
     }
     
-    .workspace-kicker {
-        font-size: 0.72rem;
-        font-weight: 800;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: #773344;
-        margin-bottom: 0.22rem;
-    }
+    .metric-beautiful-card.good::before { background: linear-gradient(90deg, #06A77D, #2E8B57); }
+    .metric-beautiful-card.moderate::before { background: linear-gradient(90deg, #F1A208, #D4A04B); }
+    .metric-beautiful-card.weak::before { background: linear-gradient(90deg, #A31621, #D44D5C); }
     
-    .workspace-title {
-        font-family: 'Inter Tight', 'Inter', sans-serif;
-        font-size: 1.22rem;
-        color: #160029;
-        line-height: 1.12;
-        margin: 0;
-        font-weight: 700;
-    }
-    
-    .workspace-copy {
-        color: #5d3945;
-        font-size: 0.86rem;
-        line-height: 1.55;
-        margin-top: 0.22rem;
-    }
-    
-    .workspace-chip-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.55rem;
-        margin-top: 0.6rem;
-    }
-    
-    .workspace-chip {
-        display: inline-flex;
-        align-items: center;
-        padding: 0.42rem 0.78rem;
-        border-radius: 999px;
-        background: #fff;
-        border: 1px solid #e3b5a4;
-        color: #773344;
-        font-size: 0.76rem;
-        font-weight: 700;
-        box-shadow: 0 2px 6px rgba(25,14,36,0.04);
-    }
-    
-    .input-help-note {
-        background: #f7ece7;
-        border: 1px solid #e3b5a4;
-        border-left: 4px solid #b24758;
+    .metric-beautiful-icon {
+        width: 44px;
+        height: 44px;
+        margin: 0 auto 0.6rem auto;
+        background: linear-gradient(135deg, #f9e6e0, #f5d5cc);
         border-radius: 16px;
-        padding: 0.85rem 0.95rem;
-        color: #5d3945;
-        font-size: 0.88rem;
-        line-height: 1.65;
-        margin: 0.55rem 0 0.8rem 0;
-    }
-    
-    .input-help-note strong {
-        color: #160029;
-    }
-    
-    .empty-review-card {
-        background: linear-gradient(180deg, #ffffff 0%, #f9f1ec 100%);
-        border: 1px solid #e3b5a4;
-        border-radius: 24px;
-        padding: 1rem 1rem 1.05rem 1rem;
-        box-shadow: 0 10px 24px rgba(25,14,36,0.06);
-        min-height: 380px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-    
-    .empty-review-top {
-        display: flex;
-        justify-content: space-between;
-        gap: 0.9rem;
-        align-items: flex-start;
-        margin-bottom: 0.7rem;
-    }
-    
-    .empty-review-title {
-        font-family: 'Inter Tight', 'Inter', sans-serif;
-        font-size: 1.25rem;
-        color: #160029;
-        margin: 0.1rem 0 0.2rem 0;
-        font-weight: 700;
-    }
-    
-    .empty-review-copy {
-        color: #5d3945;
-        font-size: 0.88rem;
-        line-height: 1.65;
-    }
-    
-    .empty-review-pill {
-        padding: 0.42rem 0.8rem;
-        border-radius: 999px;
-        background: #fff;
-        border: 1px solid #e3b5a4;
-        color: #773344;
-        font-weight: 800;
-        font-size: 0.78rem;
-        white-space: nowrap;
-    }
-    
-    .empty-review-list {
-        display: grid;
-        gap: 0.7rem;
-        margin-top: 0.5rem;
-    }
-    
-    .empty-review-item {
-        display: flex;
-        gap: 0.75rem;
-        align-items: flex-start;
-        padding: 0.85rem 0.9rem;
-        border-radius: 16px;
-        background: #fff;
-        border: 1px solid #e3b5a4;
-        transition: all 0.2s ease;
-    }
-    
-    .empty-review-item:hover {
-        transform: translateX(4px);
-        border-color: #d44d5c;
-    }
-    
-    .empty-review-icon {
-        width: 34px;
-        height: 34px;
-        min-width: 34px;
-        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, #d44d5c 0%, #b24758 100%);
-        color: #fff;
-        font-size: 0.92rem;
+        font-size: 1.3rem;
+    }
+    
+    .metric-beautiful-label {
+        font-size: 0.7rem;
         font-weight: 800;
-    }
-    
-    .empty-review-item strong {
-        display: block;
-        color: #160029;
-        font-size: 0.84rem;
-        margin-bottom: 0.12rem;
-    }
-    
-    .empty-review-item span {
-        display: block;
-        color: #5d3945;
-        font-size: 0.8rem;
-        line-height: 1.55;
-    }
-    
-    .empty-review-footer {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 0.65rem;
-        margin-top: 0.9rem;
-    }
-    
-    .empty-review-stat {
-        background: #fff;
-        border: 1px solid #e3b5a4;
-        border-radius: 16px;
-        padding: 0.8rem;
-        text-align: center;
-        transition: all 0.2s ease;
-    }
-    
-    .empty-review-stat:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
-    
-    .empty-review-stat-label {
-        font-size: 0.68rem;
-        font-weight: 800;
-        color: #8b6771;
         text-transform: uppercase;
-        letter-spacing: 0.06em;
-        margin-bottom: 0.24rem;
+        letter-spacing: 0.08em;
+        color: #8b6771;
+        margin-bottom: 0.4rem;
     }
     
-    .empty-review-stat-value {
+    .metric-beautiful-value {
         font-family: 'Inter Tight', 'Inter', sans-serif;
-        font-size: 1.15rem;
-        color: #160029;
-        font-weight: 700;
+        font-size: 1.8rem;
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 0.2rem;
     }
     
-    .hero-image-wrap {
-        height: 170px !important;
-        border-radius: 24px !important;
+    .metric-beautiful-value.good { color: #06A77D; }
+    .metric-beautiful-value.moderate { color: #D4A04B; }
+    .metric-beautiful-value.weak { color: #A31621; }
+    
+    .metric-beautiful-sub {
+        font-size: 0.65rem;
+        color: #a08b97;
+        margin-bottom: 0.4rem;
+        font-weight: 600;
     }
     
-    .hero-image-overlay {
-        justify-content: flex-start !important;
-        text-align: left !important;
-        padding: 1.2rem 1.4rem !important;
-        background: linear-gradient(90deg, rgba(10,35,68,0.82), rgba(107,22,80,0.48)) !important;
+    .metric-beautiful-desc {
+        font-size: 0.7rem;
+        color: #7a6874;
+        line-height: 1.3;
+        padding-top: 0.4rem;
+        border-top: 1px solid rgba(227, 181, 164, 0.3);
+        margin-top: 0.4rem;
     }
     
-    .hero-image-title {
-        font-size: 1.95rem !important;
-        line-height: 1.02 !important;
-    }
-    
-    .hero-image-subtitle {
-        max-width: 620px !important;
-        font-size: 0.9rem !important;
-        line-height: 1.5 !important;
-    }
-    
-    .sidebar-workspace-card,
-    .sidebar-section-card {
-        border-radius: 20px !important;
-    }
-    
-    .metric-card,
-    .result-card,
-    .points-card,
-    .fatwa-box,
-    .card,
-    .overview-chart-card {
-        border-radius: 20px !important;
-    }
-    
-    .topic-card {
-        border-radius: 18px !important;
-    }
-    
-    @media (max-width: 900px) {
-        .empty-review-footer {
-            grid-template-columns: 1fr;
+    /* ===== POPUP TOAST NOTIFICATION ===== */
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
         }
     }
     
-    .editorial-section {
-        padding: 0.1rem 0 0.55rem 0;
-        margin-bottom: 0.8rem;
+    @keyframes fadeOut {
+        from {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateX(100%);
+        }
     }
     
-    .editorial-kicker {
-        font-size: 0.78rem;
-        font-weight: 800;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-        color: #a3195b;
-        margin-bottom: 0.7rem;
-    }
-    
-    .editorial-title {
-        font-family: 'Inter Tight', 'Inter', sans-serif;
-        font-size: 2.05rem;
-        line-height: 1.08;
-        font-weight: 700;
-        color: #221221;
-        letter-spacing: -0.03em;
-        margin: 0 0 0.8rem 0;
-        max-width: 900px;
-    }
-    
-    .editorial-copy {
-        max-width: 980px;
-        font-size: 1.06rem;
-        line-height: 1.8;
-        color: #6d5a68;
-        margin: 0;
-    }
-    
-    .editorial-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-        margin-top: 1rem;
-        padding-top: 0.95rem;
-        border-top: 1px solid rgba(163,25,91,0.12);
-        font-size: 0.9rem;
-        color: #7f7180;
-    }
-    
-    .editorial-meta span {
-        position: relative;
-        padding-left: 0.95rem;
-    }
-    
-    .editorial-meta span:before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0.52rem;
-        width: 4px;
-        height: 4px;
-        border-radius: 999px;
-        background: #cc5d76;
-    }
-    
-    .tab-minimal-hero {
-        background: linear-gradient(180deg, #fffdfc 0%, #fbf2ee 100%);
-        border: 1px solid rgba(227,181,164,0.9);
-        border-radius: 26px;
-        padding: 1.15rem 1.2rem 1rem 1.2rem;
-        box-shadow: 0 12px 28px rgba(44,21,33,0.05);
-        margin: 0.05rem 0 0.35rem 0;
-    }
-    
-    .tab-minimal-kicker {
-        font-size: 0.72rem;
-        font-weight: 800;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: #a3195b;
-        margin-bottom: 0.38rem;
-    }
-    
-    .tab-minimal-title {
-        font-family: 'Inter Tight', 'Inter', sans-serif;
-        font-size: 1.88rem;
-        font-weight: 700;
-        line-height: 1.06;
-        color: #221221;
-        letter-spacing: -0.03em;
-        margin: 0;
-    }
-    
-    .tab-minimal-copy {
-        margin-top: 0.55rem;
-        max-width: 860px;
-        color: #6d5a68;
-        font-size: 0.96rem;
-        line-height: 1.75;
-    }
-    
-    .single-review-hero {
-        margin-bottom: 0.95rem !important;
-        padding: 1.25rem 1.3rem 1.1rem 1.3rem !important;
-    }
-    
-    .single-review-hero .tab-minimal-title {
-        font-size: 2rem !important;
-        max-width: 980px;
-    }
-    
-    .single-review-hero .tab-minimal-copy {
-        max-width: 980px !important;
-    }
-    
-    .input-editor-shell {
-        background: linear-gradient(180deg, #fffaf8 0%, #f8efea 100%);
-        border: 1px solid #e3b5a4;
-        border-radius: 22px;
-        padding: 1rem 1rem 0.85rem 1rem;
-        margin: 0.25rem 0 0.65rem 0;
-        box-shadow: 0 10px 24px rgba(25,14,36,0.05);
-    }
-    
-    .input-editor-head {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 0.8rem;
-        margin-bottom: 0.45rem;
-    }
-    
-    .input-editor-kicker {
-        font-size: 0.72rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: #a3195b;
-        margin-bottom: 0.18rem;
-    }
-    
-    .input-editor-title {
-        font-size: 1rem;
-        font-weight: 800;
-        color: #241226;
-        line-height: 1.3;
-    }
-    
-    .input-editor-chip {
-        padding: 0.38rem 0.78rem;
-        border-radius: 999px;
-        background: #fff;
-        border: 1px solid #e3b5a4;
-        color: #773344;
-        font-size: 0.76rem;
-        font-weight: 800;
-        white-space: nowrap;
-    }
-    
-    .batch-shell {
-        background: linear-gradient(180deg, #ffffff 0%, #f9f1ec 100%);
-        border: 1px solid #e3b5a4;
-        border-radius: 26px;
-        padding: 1.1rem 1.15rem 1rem 1.15rem;
-        box-shadow: 0 12px 28px rgba(25,14,36,0.06);
-        margin: 0.15rem 0 0.95rem 0;
-    }
-    
-    .batch-shell-head {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 1rem;
-    }
-    
-    .batch-kicker {
-        font-size: 0.72rem;
-        font-weight: 800;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: #a3195b;
-        margin-bottom: 0.2rem;
-    }
-    
-    .batch-title {
-        font-family: 'Inter Tight', 'Inter', sans-serif;
-        font-size: 1.22rem;
-        font-weight: 700;
-        color: #211120;
-        line-height: 1.15;
-        margin-bottom: 0.28rem;
-    }
-    
-    .batch-copy {
-        color: #6d5a68;
-        font-size: 0.92rem;
-        line-height: 1.72;
-        max-width: 860px;
-    }
-    
-    .sim-lite-shell {
-        background: linear-gradient(180deg, #ffffff 0%, #fbf3ef 100%);
-        border: 1px solid #e3b5a4;
-        border-radius: 24px;
-        padding: 1rem;
-        box-shadow: 0 12px 24px rgba(25,14,36,0.06);
-        margin-bottom: 0.75rem;
-    }
-    
-    .sim-lite-head {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 0.85rem;
-        margin-bottom: 0.9rem;
-    }
-    
-    .sim-lite-kicker {
-        font-size: 0.72rem;
-        font-weight: 800;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: #8b6771;
-        margin-bottom: 0.2rem;
-    }
-    
-    .sim-lite-title {
-        font-family: 'Inter Tight', 'Inter', sans-serif;
-        font-size: 1.8rem;
-        font-weight: 700;
-        line-height: 1.08;
-        color: #221221;
-    }
-    
-    .sim-lite-pill {
-        padding: 0.42rem 0.9rem;
-        border-radius: 999px;
-        border: 1px solid #e3b5a4;
-        background: #fff7f4;
-        font-size: 1rem;
-        font-weight: 800;
-        white-space: nowrap;
-    }
-    
-    .sim-lite-hero {
-        display: grid;
-        grid-template-columns: 120px 1fr;
-        gap: 1rem;
-        align-items: center;
-        margin-bottom: 0.85rem;
-    }
-    
-    .sim-lite-ring {
-        width: 108px;
-        height: 108px;
-        border-radius: 999px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 8px 18px rgba(25,14,36,0.08);
-    }
-    
-    .sim-lite-ring-inner {
-        width: 78px;
-        height: 78px;
-        border-radius: 999px;
-        background: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        box-shadow: inset 0 0 0 1px rgba(227,181,164,0.45);
-    }
-    
-    .sim-lite-ring-inner strong {
-        font-family: 'Inter Tight', 'Inter', sans-serif;
-        font-size: 1.7rem;
-        line-height: 1;
-    }
-    
-    .sim-lite-ring-inner span {
-        font-size: 0.72rem;
-        color: #8b6771;
-        margin-top: 0.2rem;
-    }
-    
-    .sim-lite-summary-title {
-        font-size: 1.05rem;
-        font-weight: 800;
-        color: #221221;
-        margin-bottom: 0.28rem;
-    }
-    
-    .sim-lite-summary-copy {
-        font-size: 0.9rem;
-        line-height: 1.7;
-        color: #6d5a68;
-    }
-    
-    .sim-lite-metric {
-        background: #fff;
-        border: 1px solid #ead1c8;
+    .custom-toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        min-width: 300px;
+        max-width: 380px;
+        background: linear-gradient(135deg, #ffffff 0%, #fef8f5 100%);
         border-radius: 16px;
-        padding: 0.9rem 0.95rem;
-        box-shadow: 0 6px 16px rgba(25,14,36,0.04);
-        min-height: 124px;
-        margin-bottom: 0.65rem;
-        text-align: center;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        z-index: 99999;
+        animation: slideInRight 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        overflow: hidden;
+    }
+    
+    .custom-toast.fade-out {
+        animation: fadeOut 0.3s ease forwards;
+    }
+    
+    .toast-header {
+        background: linear-gradient(135deg, #06A77D, #2E8B57);
+        padding: 0.7rem 0.9rem;
         display: flex;
-        flex-direction: column;
-        justify-content: center;
-        transition: all 0.2s ease;
-    }
-    
-    .sim-lite-metric:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 22px rgba(25,14,36,0.08);
-    }
-    
-    .sim-lite-metric-label {
-        font-size: 0.74rem;
-        font-weight: 800;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        color: #8b6771;
-        margin-bottom: 0.34rem;
-    }
-    
-    .sim-lite-metric-value {
-        font-family: 'Inter Tight', 'Inter', sans-serif;
-        font-size: 1.85rem;
-        font-weight: 700;
-        line-height: 1;
-        margin-bottom: 0.34rem;
-        text-align: center;
-    }
-    
-    .sim-lite-metric-note {
-        font-size: 0.82rem;
-        line-height: 1.55;
-        color: #6d5a68;
-    }
-    
-    .metric-card-info {
-        margin-top: 0.1rem;
-        font-size: 0.84rem;
-        line-height: 1.6;
-        color: #6d5a68;
-        text-align: center;
-    }
-    
-    .metric-card-info strong {
-        display: block;
-        color: #221221;
-        margin-bottom: 0.12rem;
-    }
-    
-    .result-hero-card {
-        background: linear-gradient(180deg, #ffffff 0%, #fcf7f3 100%);
-        border: 1px solid #e3b5a4;
-        border-radius: 24px;
-        padding: 1.1rem 1.15rem;
-        box-shadow: 0 12px 28px rgba(25,14,36,0.06);
-        display: flex;
-        justify-content: space-between;
-        gap: 1rem;
-        align-items: flex-start;
-        flex-wrap: wrap;
-        margin: 1rem 0 0.9rem 0;
-    }
-    
-    .result-hero-kicker {
-        color: #8b6771;
-        font-size: 0.78rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.09em;
-        margin-bottom: 0.25rem;
-    }
-    
-    .result-hero-title {
-        font-family: 'Inter Tight', 'Inter', sans-serif;
-        color: #160029;
-        font-size: 1.55rem;
-        line-height: 1.08;
-        margin-bottom: 0.35rem;
-        font-weight: 700;
-    }
-    
-    .result-hero-copy {
-        color: #5d3945;
-        font-size: 0.95rem;
-        line-height: 1.68;
-        max-width: 760px;
-    }
-    
-    .points-card {
-        background: #FFFFFF;
-        border-radius: 18px !important;
-        padding: 1rem 1.2rem;
-        border: 1px solid #D2DCE5 !important;
-        box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
-        height: 100%;
-        transition: all 0.3s ease;
-    }
-    
-    .points-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 16px 32px rgba(22, 32, 51, 0.1) !important;
-    }
-    
-    .points-card-header {
-        font-family: 'Inter', sans-serif;
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: #160029;
-        margin-bottom: 0.5rem;
-        padding-bottom: 0.55rem;
-        border-bottom: 1px solid #e3b5a4;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-    
-    .keyword-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-top: 0.85rem;
-    }
-    
-    .keyword-match, .keyword-miss {
-        display: inline-flex;
         align-items: center;
-        padding: 0.4rem 1rem;
-        border-radius: 999px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        transition: all 0.2s ease;
+        gap: 0.5rem;
     }
     
-    .keyword-match:hover, .keyword-miss:hover {
+    .toast-icon {
+        width: 28px;
+        height: 28px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+    }
+    
+    .toast-title {
+        flex: 1;
+        color: white;
+        font-weight: 800;
+        font-size: 0.85rem;
+        letter-spacing: 0.02em;
+    }
+    
+    .toast-close {
+        width: 24px;
+        height: 24px;
+        background: rgba(255,255,255,0.15);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+    }
+    
+    .toast-close:hover {
+        background: rgba(255,255,255,0.3);
         transform: scale(1.05);
     }
     
-    .keyword-match {
-        background: rgba(25,135,84,0.10) !important;
-        color: #198754 !important;
-        border: 1px solid rgba(25,135,84,0.18) !important;
+    .toast-body {
+        padding: 0.8rem 0.9rem;
     }
     
-    .keyword-miss {
-        background: rgba(180,35,79,0.08) !important;
-        color: #b4234f !important;
-        border: 1px solid rgba(180,35,79,0.18) !important;
-    }
-    
-    .light-table-wrap {
-        overflow-x: auto;
-        border-radius: 18px;
-        border: 1px solid #e3b5a4;
-        box-shadow: 0 10px 24px rgba(39,34,51,0.08);
-        background: #FFFFFF;
-        margin-top: 0.75rem;
-    }
-    
-    .light-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-        overflow: hidden;
-        border-radius: 18px;
-    }
-    
-    .light-table thead th {
-        background: #f7f0f5 !important;
-        color: #773344 !important;
-        font-weight: 700;
-        font-size: 0.85rem;
-        padding: 0.85rem 1rem;
-        text-align: left;
-        white-space: nowrap;
-        letter-spacing: 0.03em;
-        border-bottom: 1px solid rgba(0,0,0,0.05);
-    }
-    
-    .light-table tbody td {
-        background: #FFFFFF;
+    .toast-message {
         color: #2a1421;
-        font-size: 0.85rem;
-        padding: 0.85rem 1rem;
-        border-bottom: 1px solid #e3b5a4;
-        vertical-align: middle;
-        line-height: 1.6;
+        font-size: 0.8rem;
+        line-height: 1.4;
+        margin-bottom: 0.4rem;
     }
     
-    .light-table tbody tr:hover td {
-        background: #F8EFE8;
-        transition: background 0.14s ease;
-    }
-    
-    .pager-bar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-        background: #FFFFFF;
-        border: 1px solid #e3b5a4;
-        border-left: 5px solid #b24758;
-        border-radius: 14px;
-        padding: 0.6rem 0.9rem;
-        margin-bottom: 0.5rem;
-    }
-    
-    .pager-note {
+    .toast-detail {
         color: #8b6771;
-        font-size: 0.9rem;
-        line-height: 1.5;
+        font-size: 0.7rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        flex-wrap: wrap;
     }
     
-    .pager-chip {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 90px;
-        padding: 0.45rem 0.9rem;
-        border-radius: 999px;
+    .toast-detail span {
         background: #f5e9e2;
-        color: #160029;
-        border: 1px solid #e3b5a4;
-        font-size: 0.85rem;
-        font-weight: 700;
+        padding: 0.15rem 0.5rem;
+        border-radius: 20px;
     }
     
-    .explorer-orb-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 1rem;
-        margin: 0.8rem 0 1.1rem 0;
-    }
-    
-    .explorer-orb {
-        background: linear-gradient(180deg, #fff 0%, #fbf3ef 100%);
-        border: 1px solid #ead1c8;
-        border-radius: 999px;
-        padding: 1rem 1.15rem;
-        display: flex;
-        align-items: center;
-        gap: 0.9rem;
-        box-shadow: 0 10px 20px rgba(25,14,36,0.05);
-        min-height: 92px;
-        transition: all 0.3s ease;
-    }
-    
-    .explorer-orb:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 16px 28px rgba(25,14,36,0.1);
-    }
-    
-    .explorer-orb-icon {
-        width: 54px;
-        height: 54px;
-        border-radius: 999px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: linear-gradient(135deg, #d44d5c 0%, #a63a52 100%);
-        color: #fff;
-        font-weight: 800;
-        font-size: 1.05rem;
-        box-shadow: 0 8px 18px rgba(164,59,83,0.22);
-    }
-    
-    .explorer-orb-label {
-        font-size: 0.74rem;
-        font-weight: 800;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: #8b6771;
-        margin-bottom: 0.18rem;
-    }
-    
-    .explorer-orb-value {
-        font-family: 'Inter Tight', 'Inter', sans-serif;
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #241226;
-        line-height: 1.05;
-    }
-    
-    .explorer-orb-note {
-        font-size: 0.82rem;
-        line-height: 1.5;
-        color: #7a6874;
-        margin-top: 0.1rem;
-    }
-    
-    .divider {
-        height: 1px;
-        background: linear-gradient(90deg, transparent, #e3b5a4, transparent);
-        margin: 2rem 0;
-        opacity: 0.8;
-    }
-    
-    .section-subtitle {
-        font-family: 'Inter', sans-serif;
-        font-size: 1rem;
-        font-weight: 700;
-        color: #160029;
-        margin: 1.3rem 0 0.9rem 0;
-        letter-spacing: -0.01em;
-    }
-    
-    .align-panel-title {
-        font-family: 'Inter', sans-serif;
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: #8b6771;
-        margin-bottom: 0.55rem;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-    }
-    
-    .align-rank-card {
-        background: linear-gradient(180deg, #ffffff 0%, #fbf3ef 100%);
-        border: 1px solid #e8c4b6;
-        border-radius: 22px;
-        padding: 0.95rem 1rem 0.9rem 1rem;
-        box-shadow: 0 10px 22px rgba(25,14,36,0.04);
-        margin-bottom: 0.75rem;
-        transition: all 0.25s ease;
-    }
-    
-    .align-rank-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(15,32,68,0.08);
-        border-color: #d44d5c;
-    }
-    
-    .align-rank-topic {
-        font-family: 'Inter Tight', 'Inter', sans-serif;
-        font-size: 1.02rem;
-        font-weight: 700;
-        color: #261428;
-        line-height: 1.25;
-        margin-bottom: 0.45rem;
-    }
-    
-    .align-rank-row {
-        display: flex;
-        align-items: center;
-        gap: 0.55rem;
-        flex-wrap: wrap;
-        margin-bottom: 0.55rem;
-    }
-    
-    .align-score {
-        font-family: 'Inter Tight', 'Inter', sans-serif;
-        font-size: 1.05rem;
-        font-weight: 700;
-    }
-    
-    .align-band {
-        font-size: 0.86rem;
-        font-weight: 700;
-    }
-    
-    .align-n {
-        margin-left: auto;
-        font-size: 0.84rem;
-        color: #8b6771;
-    }
-    
-    .align-bar-bg {
-        height: 6px;
-        border-radius: 999px;
-        background: #efe2dc;
-        overflow: hidden;
-    }
-    
-    .align-bar-fill {
-        height: 100%;
-        border-radius: 999px;
-        transition: width 0.6s ease;
-    }
-    
-    .topic-pick-shell {
-        background: linear-gradient(180deg, #fffdfb 0%, #fbf3ef 100%);
-        border: 1px solid #e7c3b4;
-        border-radius: 24px;
-        padding: 1rem 1.05rem;
-        box-shadow: 0 10px 24px rgba(25,14,36,0.05);
-        margin: 0.4rem 0 0.95rem 0;
-    }
-    
-    .topic-pick-kicker {
-        font-size: 0.74rem;
-        font-weight: 800;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: #a3195b;
-        margin-bottom: 0.3rem;
-    }
-    
-    .topic-pick-title {
-        font-family: 'Inter Tight', 'Inter', sans-serif;
-        font-size: 1.2rem;
-        font-weight: 700;
-        color: #241226;
-        line-height: 1.2;
-        margin-bottom: 0.3rem;
-    }
-    
-    .topic-pick-copy {
-        font-size: 0.95rem;
-        line-height: 1.75;
-        color: #6d5a68;
-        max-width: 900px;
-    }
-    
-    .topic-focus-grid {
+    /* Metric card grid */
+    .metric-grid-4 {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 0.8rem;
-        margin: 0.3rem 0 0.9rem 0;
-    }
-    
-    .topic-focus-card {
-        background: linear-gradient(180deg, #fff 0%, #faf4f0 100%);
-        border: 1px solid #e3b5a4;
-        border-radius: 18px;
-        padding: 0.85rem 0.95rem;
-        transition: all 0.3s ease;
-    }
-    
-    .topic-focus-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(25,14,36,0.08);
-    }
-    
-    .topic-focus-label {
-        font-size: 0.7rem;
-        font-weight: 800;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: #8b6771;
-        margin-bottom: 0.24rem;
-    }
-    
-    .topic-focus-value {
-        font-size: 1rem;
-        font-weight: 800;
-        color: #221221;
-        line-height: 1.35;
-    }
-    
-    .comparison-card {
-        background: linear-gradient(180deg, #fff 0%, #fbf4f0 100%);
-        border: 1px solid #e8c4b6;
-        border-radius: 22px;
-        padding: 1rem;
-        box-shadow: 0 10px 22px rgba(25,14,36,0.05);
-        margin-bottom: 0.9rem;
-        transition: all 0.3s ease;
-    }
-    
-    .comparison-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(15,32,68,0.1);
-    }
-    
-    .comparison-card-header {
-        font-family: 'Inter Tight', 'Inter', sans-serif;
-        font-size: 0.98rem;
-        font-weight: 700;
-        color: #251329;
-        margin-bottom: 0.45rem;
-    }
-    
-    .fatwa-text-panel {
-        background: #fffdfb !important;
-        border-radius: 14px !important;
-        padding: 1rem 1.05rem !important;
-        border: 1px solid #e3b5a4;
-    }
-    
-    .fatwa-text-panel p {
-        margin: 0;
-        color: #160029;
-        line-height: 1.7;
-        font-size: 0.95rem;
-        white-space: pre-wrap;
-        word-break: break-word;
-    }
-    
-    .msg-box {
-        padding: 0.85rem 1rem;
-        border-radius: 16px !important;
-        margin: 1rem 0;
-        background: #FFFFFF;
-        border: 1px solid #e3b5a4;
-        border-left: 5px solid #773344;
-        box-shadow: 0 2px 8px rgba(15,32,68,0.05);
-        color: #2a1421;
-        line-height: 1.6;
-        font-size: 0.9rem;
-    }
-    
-    .msg-box strong {
-        color: #160029;
-    }
-    
-    .msg-success {
-        border-left-color: #06A77D !important;
-        background: #f6fbf8 !important;
-    }
-    
-    .msg-info {
-        border-left-color: #773344 !important;
-        background: #faf4f8 !important;
-    }
-    
-    .msg-warning {
-        border-left-color: #F1A208 !important;
-        background: #fff8ef !important;
-    }
-    
-    .metric-card {
-        background: #FFFFFF;
-        border-radius: 18px !important;
-        padding: 1rem 1.2rem;
-        border: 1px solid #D2DCE5 !important;
-        box-shadow: 0 10px 28px rgba(22, 32, 51, 0.06) !important;
-        text-align: center;
-        height: 100%;
-        position: relative;
-        overflow: hidden;
-        transition: all 0.3s ease;
-    }
-    
-    .metric-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 16px 32px rgba(22, 32, 51, 0.1) !important;
-    }
-    
-    .metric-label {
-        font-size: 0.8rem;
-        font-weight: 700;
-        color: #8b6771;
-        margin-bottom: 0.6rem;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-    }
-    
-    .metric-value {
-        font-family: 'Inter Tight', 'Inter', sans-serif;
-        font-size: 1.6rem;
-        font-weight: 700;
-        color: #773344;
-        line-height: 1.1;
-    }
-    
-    .stButton > button,
-    .stDownloadButton > button {
-        background: linear-gradient(135deg, #cb4a5e 0%, #d44d5c 100%) !important;
-        color: white !important;
-        border: none !important;
-        border-radius: 12px !important;
-        font-weight: 700 !important;
-        font-family: 'Inter', sans-serif !important;
-        padding: 0.55rem 1.1rem !important;
-        font-size: 0.9rem !important;
-        box-shadow: 0 10px 22px rgba(119,51,68,0.18) !important;
-        transition: all 0.3s ease !important;
-        letter-spacing: 0.01em !important;
-        min-height: 44px !important;
-    }
-    
-    .stButton > button:hover,
-    .stDownloadButton > button:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 12px 28px rgba(119,51,68,0.28) !important;
-        background: linear-gradient(135deg, #d44d5c 0%, #e05568 100%) !important;
-    }
-    
-    [data-testid="stRadio"] [role="radiogroup"] {
-        background: linear-gradient(180deg, #fffdfc 0%, #fbf3ee 100%) !important;
-        border: 1px solid #e3b5a4 !important;
-        border-radius: 22px !important;
-        padding: 0.4rem !important;
-        gap: 0.5rem !important;
-    }
-    
-    [data-testid="stRadio"] [role="radiogroup"] > label {
-        flex: 1 1 0 !important;
-        justify-content: center !important;
-        text-align: center !important;
-        min-height: 40px !important;
-        border-radius: 16px !important;
-        padding: 0.4rem 0.8rem !important;
-        transition: all 0.25s ease !important;
-    }
-    
-    [data-testid="stRadio"] [role="radiogroup"] > label:has(input:checked) {
-        background: linear-gradient(180deg, #d44d5c 0%, #cb4a5e 100%) !important;
-        border-color: #cb4a5e !important;
-        box-shadow: 0 8px 18px rgba(119,51,68,0.18) !important;
-    }
-    
-    [data-testid="stRadio"] [role="radiogroup"] > label:has(input:checked) p {
-        color: #ffffff !important;
-    }
-    
-    @media (max-width: 1100px) {
-        .explorer-orb-grid {
-            grid-template-columns: 1fr;
-        }
-        .topic-focus-grid {
-            grid-template-columns: 1fr 1fr;
-        }
+        margin: 0.8rem 0;
     }
     
     @media (max-width: 768px) {
-        .hero-image-wrap {
-            height: 200px !important;
+        .metric-grid-4 {
+            grid-template-columns: repeat(2, 1fr);
         }
-        .hero-image-title {
-            font-size: 1.3rem !important;
-        }
-        .topic-focus-grid {
+    }
+    
+    @media (max-width: 480px) {
+        .metric-grid-4 {
             grid-template-columns: 1fr;
         }
-        .sim-lite-hero {
-            grid-template-columns: 1fr;
-        }
-        .sim-lite-ring {
-            margin: 0 auto;
-        }
-        .explorer-orb-grid {
-            grid-template-columns: 1fr;
-        }
+    }
+    
+    /* Sidebar */
+    [data-testid="stSidebar"] {
+        min-width: 260px !important;
+        max-width: 260px !important;
+        width: 260px !important;
+    }
+    
+    /* Hero image */
+    .hero-image-wrap {
+        height: 150px !important;
+        border-radius: 20px !important;
+    }
+    
+    .hero-image-title {
+        font-size: 1.6rem !important;
+    }
+    
+    .hero-image-subtitle {
+        font-size: 0.8rem !important;
+    }
+    
+    /* Tab minimal hero */
+    .tab-minimal-hero {
+        padding: 0.9rem 1.1rem 0.8rem 1.1rem !important;
+    }
+    
+    .tab-minimal-title {
+        font-size: 1.4rem !important;
+    }
+    
+    .tab-minimal-copy {
+        font-size: 0.85rem !important;
+    }
+    
+    /* Input editor */
+    .input-editor-shell {
+        padding: 0.7rem 0.8rem 0.6rem 0.8rem !important;
+    }
+    
+    .input-editor-title {
+        font-size: 0.9rem !important;
+    }
+    
+    /* Batch shell */
+    .batch-shell {
+        padding: 0.8rem 0.9rem 0.7rem 0.9rem !important;
+    }
+    
+    /* Similarity breakdown */
+    .sim-lite-shell {
+        padding: 0.8rem !important;
+    }
+    
+    .sim-lite-title {
+        font-size: 1.3rem !important;
+    }
+    
+    .sim-lite-ring {
+        width: 85px !important;
+        height: 85px !important;
+    }
+    
+    .sim-lite-ring-inner {
+        width: 62px !important;
+        height: 62px !important;
+    }
+    
+    .sim-lite-ring-inner strong {
+        font-size: 1.3rem !important;
+    }
+    
+    .sim-lite-metric-value {
+        font-size: 1.6rem !important;
+    }
+    
+    /* Result hero */
+    .result-hero-title {
+        font-size: 1.2rem !important;
+    }
+    
+    .result-hero-copy {
+        font-size: 0.85rem !important;
+    }
+    
+    /* Buttons */
+    .stButton > button,
+    .stDownloadButton > button {
+        padding: 0.4rem 0.8rem !important;
+        font-size: 0.8rem !important;
+        min-height: 36px !important;
+    }
+    
+    /* Text area */
+    .stTextArea textarea {
+        font-size: 0.85rem !important;
+        min-height: 110px !important;
+    }
+    
+    /* Explorer orbs */
+    .explorer-orb {
+        padding: 0.7rem 0.9rem !important;
+        min-height: 70px !important;
+    }
+    
+    .explorer-orb-icon {
+        width: 42px !important;
+        height: 42px !important;
+        font-size: 0.85rem !important;
+    }
+    
+    .explorer-orb-value {
+        font-size: 1.2rem !important;
+    }
+    
+    .explorer-orb-label {
+        font-size: 0.65rem !important;
+    }
+    
+    /* Workspace */
+    .workspace-title {
+        font-size: 1.1rem !important;
+    }
+    
+    .workspace-copy {
+        font-size: 0.8rem !important;
+    }
+    
+    /* Points card */
+    .points-card-header {
+        font-size: 0.75rem !important;
+    }
+    
+    .keyword-match, .keyword-miss {
+        font-size: 0.75rem !important;
+        padding: 0.3rem 0.8rem !important;
+    }
+    
+    /* Light table */
+    .light-table thead th {
+        font-size: 0.75rem !important;
+        padding: 0.6rem 0.8rem !important;
+    }
+    
+    .light-table tbody td {
+        font-size: 0.75rem !important;
+        padding: 0.6rem 0.8rem !important;
+    }
+    
+    /* Alignment cards */
+    .align-rank-topic {
+        font-size: 0.9rem !important;
+    }
+    
+    .align-score {
+        font-size: 0.95rem !important;
+    }
+    
+    /* Responsive */
+    @media (max-width: 1200px) {
+        html { font-size: 14px !important; }
+    }
+    
+    @media (max-width: 900px) {
+        html { font-size: 13px !important; }
     }
     </style>
     """, unsafe_allow_html=True)
@@ -1341,7 +526,116 @@ def resolve_banner_path():
 
 
 # =========================================================
-# MISSING FUNCTIONS - ADDED HERE
+# POPUP TOAST FUNCTIONS
+# =========================================================
+
+def show_success_toast(message: str, details: list = None):
+    """Display a beautiful popup toast notification."""
+    
+    details_html = ""
+    if details:
+        details_html = '<div class="toast-detail">' + "".join(f'<span>{html.escape(d)}</span>' for d in details) + '</div>'
+    
+    toast_html = f"""
+    <div id="customToast" class="custom-toast">
+        <div class="toast-header">
+            <div class="toast-icon">✓</div>
+            <div class="toast-title">Success!</div>
+            <div class="toast-close" onclick="closeToast()">×</div>
+        </div>
+        <div class="toast-body">
+            <div class="toast-message">{html.escape(message)}</div>
+            {details_html}
+        </div>
+    </div>
+    <script>
+        function closeToast() {{
+            var toast = document.getElementById('customToast');
+            if(toast) {{
+                toast.classList.add('fade-out');
+                setTimeout(function() {{ 
+                    if(toast && toast.parentNode) toast.parentNode.removeChild(toast);
+                }}, 300);
+            }}
+        }}
+        setTimeout(function() {{
+            var toast = document.getElementById('customToast');
+            if(toast) {{
+                toast.classList.add('fade-out');
+                setTimeout(function() {{ 
+                    if(toast && toast.parentNode) toast.parentNode.removeChild(toast);
+                }}, 300);
+            }}
+        }}, 4000);
+    </script>
+    """
+    st.markdown(toast_html, unsafe_allow_html=True)
+
+
+# =========================================================
+# BEAUTIFUL METRIC CARD RENDERER
+# =========================================================
+
+def render_beautiful_metric_card(label: str, value: float, icon: str, description: str, sub_label: str = ""):
+    """Render a beautiful metric card with icon and gradient."""
+    
+    # Determine tier
+    if value >= 70:
+        tier_class = "good"
+        value_class = "good"
+    elif value >= 50:
+        tier_class = "moderate"
+        value_class = "moderate"
+    else:
+        tier_class = "weak"
+        value_class = "weak"
+    
+    # Determine description text based on value
+    if "Text" in label:
+        desc_text = "Uses many of the same words." if value >= 70 else "Uses some of the same words." if value >= 50 else "Uses quite different words."
+    elif "Meaning" in label:
+        desc_text = "Very close in meaning." if value >= 70 else "Quite close in meaning." if value >= 50 else "Not very close in meaning."
+    elif "Key" in label or "Points" in label:
+        desc_text = "Most main points are included." if value >= 70 else "Some main points are included." if value >= 50 else "Important points are still missing."
+    else:
+        desc_text = description
+    
+    html_content = f"""
+    <div class="metric-beautiful-card {tier_class}">
+        <div class="metric-beautiful-icon">{icon}</div>
+        <div class="metric-beautiful-label">{label}</div>
+        <div class="metric-beautiful-value {value_class}">{value:.0f}%</div>
+        <div class="metric-beautiful-sub">{sub_label}</div>
+        <div class="metric-beautiful-desc">{desc_text}</div>
+    </div>
+    """
+    
+    st.markdown(html_content, unsafe_allow_html=True)
+
+
+def render_beautiful_metric_grid(lexical_score, semantic_score, coverage_score, mean_alignment):
+    """Render 4 beautiful metric cards in a grid."""
+    
+    st.markdown('<div class="metric-grid-4">', unsafe_allow_html=True)
+    
+    metrics = [
+        ("Text Match", lexical_score, "📝", "Words used", "Word overlap similarity"),
+        ("Meaning Match", semantic_score, "🎯", "Same meaning", "Semantic understanding"),
+        ("Key Points", coverage_score, "✓", "Main points", "Important conditions found"),
+        ("Overall Fit", mean_alignment, "⚖️", "State match", "Average across state rulings"),
+    ]
+    
+    # Use columns for better layout
+    cols = st.columns(4, gap="small")
+    for col, (label, score, icon, sub, desc) in zip(cols, metrics):
+        with col:
+            render_beautiful_metric_card(label, score, icon, desc, sub)
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+
+
+# =========================================================
+# MISSING FUNCTIONS
 # =========================================================
 
 def _html(block: str) -> str:
@@ -1663,36 +957,6 @@ def get_specific_issue(best_question_row):
     return "No specific issue identified"
 
 
-def get_detected_topic_explanation(topic_label, specific_issue):
-    topic_label = str(topic_label).strip()
-    specific_issue = str(specific_issue).strip()
-
-    if specific_issue and specific_issue != "No specific issue identified":
-        if topic_label and topic_label.lower() in specific_issue.lower():
-            return (
-                f"The system matched the response directly to the topic '{topic_label}' "
-                f"and linked it to the closest reference issue: '{specific_issue}'."
-            )
-        return (
-            f"The system classified the response under the broader topic "
-            f"'{topic_label}' and matched it most closely to the specific issue: "
-            f"'{specific_issue}'."
-        )
-
-    return (
-        f"The system classified the response under the broader topic '{topic_label}', "
-        f"but no clearer specific issue could be extracted from the matched reference."
-    )
-
-
-def get_badge_html(label: str) -> str:
-    if label in {"High", "Good Match", "Strong Match", "Fully Compliant", "High Alignment", "Strong Alignment"}:
-        return '<span class="badge badge-good">{}</span>'.format(label)
-    if label in {"Medium", "Moderate Match", "Partially Compliant", "Needs Review", "Partial Alignment", "Moderate Alignment"}:
-        return '<span class="badge badge-mid">{}</span>'.format(label)
-    return '<span class="badge badge-low">{}</span>'.format(label)
-
-
 def get_recommendation(semantic_similarity, coverage, final_match_score):
     """Return a plain-language result label and explanation for end users."""
     final_match_score = safe_float(final_match_score)
@@ -1843,40 +1107,6 @@ def get_history_df() -> pd.DataFrame:
 
 def get_score_band(score):
     return get_score_band_label(score)
-
-
-def get_learning_note(topic_label):
-    topic_label = str(topic_label).strip()
-
-    notes = {
-        "IVF": {
-            "title": "Fatwa Learning Insight",
-            "text": "IVF is generally permissible only when the sperm and ovum come from a legally married husband and wife, and the procedure happens within the valid marriage period."
-        },
-        "Surrogacy": {
-            "title": "Fatwa Learning Insight",
-            "text": "Surrogacy is generally prohibited because it may create confusion in lineage, motherhood, and family rights under Islamic law."
-        },
-        "Gamete Implantation for Reproduction": {
-            "title": "Fatwa Learning Insight",
-            "text": "Gamete implantation cases are usually assessed based on whether the reproductive material belongs only to the legally married couple and whether lineage remains protected."
-        },
-        "Human Milk Bank": {
-            "title": "Fatwa Learning Insight",
-            "text": "Human milk bank issues are sensitive because milk feeding may establish mahram relationships, and uncontrolled donation can create uncertainty in nasab and kinship."
-        },
-        "Sperm Bank": {
-            "title": "Fatwa Learning Insight",
-            "text": "Sperm banks are generally prohibited because third-party sperm introduces lineage and paternity concerns that conflict with core Islamic family principles."
-        },
-    }
-
-    default_note = {
-        "title": "Fatwa Learning Insight",
-        "text": "This topic should be understood not only through wording similarity, but also through underlying Islamic principles such as lineage, harm prevention, dignity, and family rights."
-    }
-
-    return notes.get(topic_label, default_note)
 
 
 def build_history_display_table(history_df: pd.DataFrame) -> pd.DataFrame:
@@ -2225,130 +1455,8 @@ def render_batch_score_chart(num_df: pd.DataFrame):
             _render_grouped_bars(summary_df, 'label', 'Metric comparison by response', 'Side-by-side bars make it easier to compare meaning match, text match, and key fatwa points for each response.')
 
 
-def render_circular_metric_chart(metric_name: str, score: float, description: str):
-    """Render a circular progress chart (donut) for a single metric."""
-    score_val = max(0, min(100, score))
-    color = "#06A77D" if score_val >= 70 else "#F1A208" if score_val >= 50 else "#A31621"
-    degrees = int(score_val * 3.6)
-    
-    html_content = f"""
-    <div style="text-align: center; padding: 0.2rem;">
-        <div style="position: relative; width: 80px; height: 80px; margin: 0 auto;">
-            <div style="width: 80px; height: 80px; border-radius: 50%; background: conic-gradient({color} {degrees}deg, #e6d8e2 {degrees}deg); display: flex; align-items: center; justify-content: center;">
-                <div style="width: 60px; height: 60px; border-radius: 50%; background: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                    <strong style="font-family: 'Inter Tight', 'Inter', sans-serif; font-size: 0.8rem; color: {color};">{score_val:.0f}%</strong>
-                </div>
-            </div>
-        </div>
-        <div style="margin-top: 0.4rem;">
-            <div style="font-weight: 700; font-size: 0.7rem; color: #3b1d4a;">{metric_name}</div>
-            <div style="font-size: 0.6rem; color: #8b6771; margin-top: 0.1rem;">{description}</div>
-        </div>
-    </div>
-    """
-    
-    st.markdown(html_content, unsafe_allow_html=True)
-
-
-def render_metric_circular_grid(lexical_score, semantic_score, coverage_score, mean_alignment):
-    """Render 4 circular metric charts in a grid."""
-    
-    col1, col2, col3, col4 = st.columns(4, gap="small")
-    
-    with col1:
-        render_circular_metric_chart("TF-IDF", lexical_score, "Word overlap")
-    
-    with col2:
-        render_circular_metric_chart("SBERT", semantic_score, "Meaning match")
-    
-    with col3:
-        render_circular_metric_chart("Coverage", coverage_score, "Key terms found")
-    
-    with col4:
-        render_circular_metric_chart("Mean Align", mean_alignment, "Avg across states")
-        
-
-def build_metric_explainer_text(metric_key: str, score: float) -> str:
-    score = safe_float(score)
-    if metric_key == "text":
-        return "Uses many of the same words." if score >= 70 else "Uses some of the same words." if score >= 50 else "Uses quite different words."
-    if metric_key == "meaning":
-        return "Very close in meaning." if score >= 70 else "Quite close in meaning." if score >= 50 else "Not very close in meaning."
-    if metric_key == "key_points":
-        return "Most main points are included." if score >= 70 else "Some main points are included." if score >= 50 else "Important points are still missing."
-    return "Strong across state rulings." if score >= 70 else "Mixed across state rulings." if score >= 50 else "Weak across state rulings."
-
-
-def build_score_method_copy(final_match_score, lexical_score, semantic_score, coverage_score, mean_alignment):
-    final_match_score = safe_float(final_match_score)
-    if final_match_score >= 70:
-        return "This final score means the answer is close to the fatwa and gets most important points right."
-    if final_match_score >= 50:
-        return "This final score means the answer is partly correct, but some important points still need checking."
-    return "This final score means the answer is not close enough to the fatwa yet and needs careful review."
-
-
-def build_confidence_explainer(confidence: str) -> str:
-    confidence = str(confidence).strip().lower()
-    if confidence == "high":
-        return "The topic match looks clear."
-    if confidence == "medium":
-        return "The topic match looks fairly clear."
-    return "The topic match is less certain."
-
-
-def build_compliance_explainer(level: str) -> str:
-    level = str(level).strip().lower()
-    if level == "fully compliant":
-        return "It follows the ruling well."
-    if level == "partially compliant":
-        return "Some parts fit, but it still needs review."
-    if level == "non-compliant":
-        return "It does not fit the ruling closely."
-    return "The status is not clear yet and needs manual review."
-
-
-def build_professional_result_label(score: float) -> str:
-    score = safe_float(score)
-    if score >= 70:
-        return "Strong Alignment"
-    if score >= 50:
-        return "Moderate Alignment"
-    return "Low Alignment"
-
-
-def get_action_label(score: float) -> str:
-    score = safe_float(score)
-    if score >= 70:
-        return "Good to Use"
-    if score >= 50:
-        return "Needs Review"
-    return "Not Reliable"
-
-
-def build_user_result_title(score: float) -> str:
-    return build_professional_result_label(score)
-
-
-def build_user_result_summary(score: float) -> str:
-    score = safe_float(score)
-    if score >= 70:
-        return "This answer is generally close to the matched fatwa and covers the main ruling points."
-    if score >= 50:
-        return "This answer is partly correct, but some important ruling details still need human review."
-    return "This answer is still too far from the fatwa, so it needs careful checking before anyone relies on it."
-
-
-def build_action_note(score: float) -> str:
-    score = safe_float(score)
-    if score >= 70:
-        return "Use as a strong draft, then do a quick final check."
-    if score >= 50:
-        return "Check the fatwa text before accepting this answer."
-    return "Rewrite or review this answer manually first."
-
-
 def render_similarity_breakdown(bundle: dict):
+    """Render the similarity breakdown with beautiful metric cards."""
     final_match_score = safe_float(bundle.get("final_match_score"))
     lexical_score = safe_float(bundle.get("lexical_score"))
     semantic_score = safe_float(bundle.get("semantic_score"))
@@ -2357,8 +1465,8 @@ def render_similarity_breakdown(bundle: dict):
 
     score_color = score_status_color(final_match_score)
     ring_degrees = max(0.0, min(360.0, final_match_score * 3.6))
-    conclusion_copy = build_score_method_copy(final_match_score, lexical_score, semantic_score, coverage_score, mean_alignment)
-    conclusion_label = build_professional_result_label(final_match_score)
+    conclusion_copy = "This final score means the answer is close to the fatwa and gets most important points right." if final_match_score >= 70 else "This final score means the answer is partly correct, but some important points still need checking." if final_match_score >= 50 else "This final score means the answer is not close enough to the fatwa yet and needs careful review."
+    conclusion_label = "Strong Alignment" if final_match_score >= 70 else "Moderate Alignment" if final_match_score >= 50 else "Low Alignment"
 
     st.markdown(_html(f"""
     <div class='sim-lite-shell'>
@@ -2388,23 +1496,8 @@ def render_similarity_breakdown(bundle: dict):
     </div>
     """), unsafe_allow_html=True)
 
-    metric_items = [
-        ("Text match", lexical_score, "text", "Words used"),
-        ("Meaning match", semantic_score, "meaning", "Same meaning"),
-        ("Key points", coverage_score, "key_points", "Main points"),
-        ("Overall fit", mean_alignment, "overall", "State match"),
-    ]
-    cols = st.columns(2, gap='small')
-    for idx, (label, value, key_name, subhead) in enumerate(metric_items):
-        tone = score_status_color(value)
-        with cols[idx % 2]:
-            st.markdown(_html(f"""
-            <div class='sim-lite-metric'>
-                <div class='sim-lite-metric-label'>{html.escape(label)}</div>
-                <div class='sim-lite-metric-value' style='color:{tone};'>{int(round(value))}%</div>
-                <div class='metric-card-info'><strong style='color:#221221;'>{html.escape(subhead)}.</strong> {html.escape(build_metric_explainer_text(key_name, value))}</div>
-            </div>
-            """), unsafe_allow_html=True)
+    # Use the beautiful metric grid
+    render_beautiful_metric_grid(lexical_score, semantic_score, coverage_score, mean_alignment)
 
 
 def render_single_review_result_dashboard(bundle: dict):
@@ -2416,7 +1509,7 @@ def render_single_review_result_dashboard(bundle: dict):
     topic_label = str(bundle.get("topic_label", "-"))
     specific_issue = str(bundle.get("specific_issue", "-"))
     best_state = str(bundle.get("best_state_name", "-"))
-    recommendation_label = str(bundle.get("recommendation_label", build_professional_result_label(final_match_score)))
+    recommendation_label = str(bundle.get("recommendation_label", "Moderate Alignment"))
     recommendation_reason = str(bundle.get("recommendation_reason", ""))
     compliance_level = str(bundle.get("compliance_level", "Unclear"))
     confidence = str(bundle.get("confidence", "Unknown"))
@@ -2427,14 +1520,14 @@ def render_single_review_result_dashboard(bundle: dict):
     tone = score_status_color(final_match_score)
 
     preview_reference = html.escape((fatwa_text[:180] + "...") if fatwa_text and len(fatwa_text) > 180 else (fatwa_text or "No text available"))
-    result_title = build_user_result_title(final_match_score)
-    result_summary = build_user_result_summary(final_match_score)
-    action_label = get_action_label(final_match_score)
-    action_note = build_action_note(final_match_score)
-    confidence_copy = build_confidence_explainer(confidence)
-    compliance_copy = build_compliance_explainer(compliance_level)
+    result_title = "Strong Alignment" if final_match_score >= 70 else "Moderate Alignment" if final_match_score >= 50 else "Low Alignment"
+    result_summary = "This answer is generally close to the matched fatwa and covers the main ruling points." if final_match_score >= 70 else "This answer is partly correct, but some important ruling details still need human review." if final_match_score >= 50 else "This answer is still too far from the fatwa, so it needs careful checking before anyone relies on it."
+    action_label = "Good to Use" if final_match_score >= 70 else "Needs Review" if final_match_score >= 50 else "Not Reliable"
+    action_note = "Use as a strong draft, then do a quick final check." if final_match_score >= 70 else "Check the fatwa text before accepting this answer." if final_match_score >= 50 else "Rewrite or review this answer manually first."
+    confidence_copy = "The topic match looks clear." if confidence == "High" else "The topic match looks fairly clear." if confidence == "Medium" else "The topic match is less certain."
+    compliance_copy = "It follows the ruling well." if compliance_level == "Fully Compliant" else "Some parts fit, but it still needs review." if compliance_level == "Partially Compliant" else "It does not fit the ruling closely." if compliance_level == "Non-Compliant" else "The status is not clear yet and needs manual review."
     recommendation_copy = html.escape(recommendation_reason) if recommendation_reason else html.escape(result_summary)
-    review_status_copy = html.escape(build_score_method_copy(final_match_score, lexical_score, semantic_score, coverage_score, mean_alignment))
+    review_status_copy = html.escape("This final score means the answer is close to the fatwa and gets most important points right." if final_match_score >= 70 else "This final score means the answer is partly correct, but some important points still need checking." if final_match_score >= 50 else "This final score means the answer is not close enough to the fatwa yet and needs careful review.")
 
     st.markdown(_html(f"""
     <div class='result-hero-card'>
@@ -2709,7 +1802,7 @@ with tab1:
                 )
             with ctrl3:
                 st.markdown("<div class='dataset-control-caption'>Action</div>", unsafe_allow_html=True)
-                load_btn = st.button("Load response →", use_container_width=True, key="ds_load_btn_primary")
+                load_btn = st.button("📂 Load response →", use_container_width=True, key="ds_load_btn_primary")
 
             st.markdown("</div>", unsafe_allow_html=True)
 
@@ -2744,14 +1837,12 @@ with tab1:
             label_visibility="collapsed"
         )
 
+        # Show popup toast when response is loaded successfully
         if st.session_state.pop('load_success_toast', False):
-            st.markdown("""
-            <div class='floating-success-toast'>
-                <div class='floating-success-icon'>✓</div>
-                <div class='floating-success-title'>Saved response loaded</div>
-                <div class='floating-success-copy'>The selected dataset answer has been placed into the response workspace and is ready for review.</div>
-            </div>
-            """, unsafe_allow_html=True)
+            show_success_toast(
+                "✓ Saved response loaded successfully!",
+                ["Ready for review", "Click Analyze to see results"]
+            )
 
     with review_right:
         st.markdown("<div class='single-review-right-col'>", unsafe_allow_html=True)
@@ -2786,13 +1877,13 @@ with tab1:
 
     b1, b2 = st.columns([0.62, 0.38], gap="small")
     with b1:
-        analyze_btn = st.button("Analyze response", use_container_width=True, key="analyze_single")
+        analyze_btn = st.button("🔍 Analyze response", use_container_width=True, key="analyze_single")
     with b2:
-        clear_btn = st.button("Clear history", use_container_width=True, key="clear_all_single")
+        clear_btn = st.button("🗑️ Clear history", use_container_width=True, key="clear_all_single")
 
     if clear_btn:
         clear_history()
-        st.success("History cleared successfully.")
+        show_success_toast("✓ History cleared successfully!", ["All saved analyses have been removed"])
         st.rerun()
 
     if analyze_btn:
@@ -2973,7 +2064,7 @@ with tab2:
             responses_to_run.append((label, row["model"], row["ai_answer_raw"]))
 
         run_batch_btn = st.button(
-            f"Run Batch Analysis ({len(responses_to_run)} responses)",
+            f"▶ Run Batch Analysis ({len(responses_to_run)} responses)",
             use_container_width=True,
             key="batch_dataset_run"
         )
@@ -3003,7 +2094,7 @@ with tab2:
             responses_to_run = [(f"Response {i+1}", "Manual", t) for i, t in enumerate(manual_texts)]
 
         st.markdown(f"<div class='batch-selection-note'><strong>{len(responses_to_run)}</strong> responses are ready for batch review.</div>", unsafe_allow_html=True)
-        run_batch_btn = st.button("Start Batch Analysis", use_container_width=True, key="batch_analyze")
+        run_batch_btn = st.button("▶ Start Batch Analysis", use_container_width=True, key="batch_analyze")
 
     if run_batch_btn:
         if not responses_to_run:
@@ -3086,10 +2177,10 @@ with tab2:
         st.markdown(build_light_table_html(batch_df.iloc[batch_start:batch_end]), unsafe_allow_html=True)
         dl1, dl2 = st.columns(2)
         with dl1:
-            st.download_button("Download CSV", batch_df.to_csv(index=False), f"batch_analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv", "text/csv", use_container_width=True)
+            st.download_button("📥 Download CSV", batch_df.to_csv(index=False), f"batch_analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv", "text/csv", use_container_width=True)
         with dl2:
             if EXCEL_AVAILABLE:
-                st.download_button("Download Excel", export_to_excel(batch_df), f"batch_analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", use_container_width=True)
+                st.download_button("📊 Download Excel", export_to_excel(batch_df), f"batch_analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", use_container_width=True)
 
 
 # =========================================================
@@ -3153,7 +2244,7 @@ with tab3:
         """), unsafe_allow_html=True)
 
         search_term = st.text_input(
-            "Search by topic, issue, state, recommendation, or compliance",
+            "🔍 Search by topic, issue, state, recommendation, or compliance",
             placeholder="Enter search term...",
             key="history_search"
         )
@@ -3231,7 +2322,7 @@ with tab3:
         with e1:
             csv = export_df.to_csv(index=False)
             st.download_button(
-                "CSV",
+                "📄 CSV",
                 csv,
                 f"analysis_history_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
                 "text/csv",
@@ -3242,7 +2333,7 @@ with tab3:
             if EXCEL_AVAILABLE:
                 excel = export_to_excel(export_df)
                 st.download_button(
-                    "Excel",
+                    "📊 Excel",
                     excel,
                     f"analysis_history_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx",
                     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -3254,7 +2345,7 @@ with tab3:
         with e3:
             json_str = export_df.to_json(indent=2, orient="records")
             st.download_button(
-                "JSON",
+                "📋 JSON",
                 json_str,
                 f"analysis_history_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
                 "application/json",
@@ -3282,16 +2373,16 @@ Lowest Score: {history_df['final_match_score'].min():.1f}%
 {history_df['topic_label'].value_counts().head(10).to_string()}
 """
             st.download_button(
-                "Report",
+                "📑 Report",
                 summary,
                 f"summary_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
                 "text/plain",
                 use_container_width=True
             )
 
-        if st.button("Clear All History", use_container_width=True, key="clear_history_tab"):
+        if st.button("🗑️ Clear All History", use_container_width=True, key="clear_history_tab"):
             clear_history()
-            st.success("History cleared successfully.")
+            show_success_toast("✓ History cleared successfully!", ["All saved analyses have been removed"])
             st.rerun()
     else:
         st.markdown("""
@@ -3318,25 +2409,12 @@ with tab4:
     </div>
     """, unsafe_allow_html=True)
 
-    topic_counts = (
-        fatwa_df.groupby("issue")
-        .size()
-        .reset_index(name="count")
-        .sort_values("count", ascending=False)
-    )
-
-    total_topics = topic_counts["issue"].nunique()
-    total_fatwas = len(fatwa_df)
-    total_states = fatwa_df["state"].nunique()
-
-    st.markdown("<div style='height:0.35rem;'></div>", unsafe_allow_html=True)
-
     explorer_topics = ["All topics"] + sorted([t for t in fatwa_df["issue"].fillna("").astype(str).str.strip().unique().tolist() if t])
     explorer_states = ["All states / sources"] + sorted([s for s in fatwa_df["state"].fillna("").astype(str).str.strip().unique().tolist() if s])
 
     ex1, ex2, ex3 = st.columns([1, 1, 0.42], gap='medium')
     with ex1:
-        st.markdown("<div class='browse-inline-head'>Choose a topic</div>", unsafe_allow_html=True)
+        st.markdown("<div class='browse-inline-head'>📚 Choose a topic</div>", unsafe_allow_html=True)
         selected_topic_filter = st.selectbox(
             "Choose a topic",
             explorer_topics,
@@ -3344,7 +2422,7 @@ with tab4:
             label_visibility='collapsed'
         )
     with ex2:
-        st.markdown("<div class='browse-inline-head'>Choose a state / source</div>", unsafe_allow_html=True)
+        st.markdown("<div class='browse-inline-head'>📍 Choose a state / source</div>", unsafe_allow_html=True)
         selected_state_filter = st.selectbox(
             "Choose a state / source",
             explorer_states,
@@ -3352,12 +2430,12 @@ with tab4:
             label_visibility='collapsed'
         )
     with ex3:
-        st.markdown("<div class='browse-inline-head'>Reset filters</div>", unsafe_allow_html=True)
+        st.markdown("<div class='browse-inline-head'>🔄 Reset filters</div>", unsafe_allow_html=True)
         st.button("Show all", key="browse_reset_filters", use_container_width=True, on_click=reset_fatwa_explorer_filters)
 
     active_topic = selected_topic_filter if selected_topic_filter != 'All topics' else 'All topics'
     active_state = selected_state_filter if selected_state_filter != 'All states / sources' else 'All states / sources'
-    st.markdown(f"<div class='browse-filter-chip-row'><span class='browse-filter-chip'>Topic: {html.escape(active_topic)}</span><span class='browse-filter-chip'>State / source: {html.escape(active_state)}</span></div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='browse-filter-chip-row'><span class='browse-filter-chip'>📌 Topic: {html.escape(active_topic)}</span><span class='browse-filter-chip'>📍 State / source: {html.escape(active_state)}</span></div>", unsafe_allow_html=True)
 
     filtered_fatwa = fatwa_df.copy()
     if selected_topic_filter != "All topics":
@@ -3370,15 +2448,15 @@ with tab4:
     st.markdown(f"""
     <div class='explorer-orb-grid'>
         <div class='explorer-orb'>
-            <div class='explorer-orb-icon'>#</div>
+            <div class='explorer-orb-icon'>📄</div>
             <div><div class='explorer-orb-label'>Records found</div><div class='explorer-orb-value'>{len(filtered_fatwa)}</div><div class='explorer-orb-note'>Official fatwa entries currently visible</div></div>
         </div>
         <div class='explorer-orb'>
-            <div class='explorer-orb-icon'>T</div>
+            <div class='explorer-orb-icon'>🏷️</div>
             <div><div class='explorer-orb-label'>Topics shown</div><div class='explorer-orb-value'>{result_topics}</div><div class='explorer-orb-note'>Distinct issue groups in the filtered list</div></div>
         </div>
         <div class='explorer-orb'>
-            <div class='explorer-orb-icon'>S</div>
+            <div class='explorer-orb-icon'>🗺️</div>
             <div><div class='explorer-orb-label'>States shown</div><div class='explorer-orb-value'>{result_states}</div><div class='explorer-orb-note'>States or sources represented right now</div></div>
         </div>
     </div>
@@ -3474,7 +2552,7 @@ with tab5:
     chart_bg = "transparent"
     label_col = "#132C47"
 
-    st.markdown("<h3 class='section-subtitle'>Fatwa Distribution by Category</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 class='section-subtitle'>📊 Fatwa Distribution by Category</h3>", unsafe_allow_html=True)
     st.markdown("""
     <div class="msg-box msg-info" style="margin-bottom:0.6rem; border-left-color:#773344; background:#faf3f7;">
         This shows what proportion of all fatwa records fall under each broad topic category.
@@ -3564,7 +2642,7 @@ with tab5:
 
     st.markdown("<div class='divider'></div>", unsafe_allow_html=True)
 
-    st.markdown("<h3 class='section-subtitle'>AI Alignment Score by Topic</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 class='section-subtitle'>🤖 AI Alignment Score by Topic</h3>", unsafe_allow_html=True)
     st.markdown("""
     <div class="msg-box msg-info" style="margin-bottom:1rem; border-left-color:#773344; background:#faf3f7;">
         Topics are ranked by how well AI models aligned with their fatwas on average.
@@ -3621,7 +2699,7 @@ with tab5:
         hi_col, lo_col = st.columns(2)
 
         with hi_col:
-            st.markdown("<div class='align-panel-title'>Highest Alignment</div>", unsafe_allow_html=True)
+            st.markdown("<div class='align-panel-title'>🏆 Highest Alignment</div>", unsafe_allow_html=True)
             for _, r in top3.iterrows():
                 band, color, icon = score_band(r["avg_score"])
                 st.markdown(f"""
@@ -3639,7 +2717,7 @@ with tab5:
                 """, unsafe_allow_html=True)
 
         with lo_col:
-            st.markdown("<div class='align-panel-title'>Lowest Alignment</div>", unsafe_allow_html=True)
+            st.markdown("<div class='align-panel-title'>⚠️ Lowest Alignment</div>", unsafe_allow_html=True)
             for _, r in bot3.iterrows():
                 band, color, icon = score_band(r["avg_score"])
                 st.markdown(f"""
@@ -3656,7 +2734,7 @@ with tab5:
                 </div>
                 """, unsafe_allow_html=True)
 
-        with st.expander("See full ranking for all topics"):
+        with st.expander("📋 See full ranking for all topics"):
             for _, r in topic_scores.iterrows():
                 band, color, icon = score_band(r["avg_score"])
                 st.markdown(f"""
@@ -3673,7 +2751,7 @@ with tab5:
 
         st.markdown("<div class='divider'></div>", unsafe_allow_html=True)
 
-        st.markdown("<h3 class='section-subtitle'>Topic Difficulty Analysis</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 class='section-subtitle'>📈 Topic Difficulty Analysis</h3>", unsafe_allow_html=True)
         st.markdown("""
         <div class="msg-box msg-info" style="margin-bottom:1rem; border-left-color:#773344; background:#faf3f7;">
             This section ranks topics from harder to easier based on the same average alignment scores.
@@ -3698,7 +2776,7 @@ with tab5:
         dcol1, dcol2 = st.columns(2)
 
         with dcol1:
-            st.markdown("<div class='align-panel-title'>Hardest Topics for AI</div>", unsafe_allow_html=True)
+            st.markdown("<div class='align-panel-title'>🔴 Hardest Topics for AI</div>", unsafe_allow_html=True)
             for i, (_, row) in enumerate(hardest_topics.iterrows(), start=1):
                 s = row['avg_score']
                 sc = "#A31621" if s < 50 else "#C27D06" if s < 70 else "#06A77D"
@@ -3717,7 +2795,7 @@ with tab5:
                 """, unsafe_allow_html=True)
 
         with dcol2:
-            st.markdown("<div class='align-panel-title'>Easiest Topics for AI</div>", unsafe_allow_html=True)
+            st.markdown("<div class='align-panel-title'>🟢 Easiest Topics for AI</div>", unsafe_allow_html=True)
             for i, (_, row) in enumerate(easiest_topics.iterrows(), start=1):
                 s = row['avg_score']
                 sc = "#A31621" if s < 50 else "#C27D06" if s < 70 else "#06A77D"
@@ -3737,7 +2815,7 @@ with tab5:
 
     st.markdown("<div class='divider'></div>", unsafe_allow_html=True)
 
-    st.markdown("<h3 class='section-subtitle'>Topic deep-dive</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 class='section-subtitle'>🔍 Topic deep-dive</h3>", unsafe_allow_html=True)
     st.markdown("<div class='topic-pick-shell'><div class='topic-pick-kicker'>State comparison workspace</div><div class='topic-pick-title'>Choose one topic and compare all state fatwas clearly</div><div class='topic-pick-copy'>This section helps you see coverage, missing states, and the full fatwa wording side by side in one place.</div></div>", unsafe_allow_html=True)
 
     topic_options = topic_counts_full["issue_display"].tolist()
