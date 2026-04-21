@@ -2195,7 +2195,7 @@ def render_footer():
         <div class="footer-wrap">
             <p>
                 <strong>AI Fatwa Alignment Dashboard</strong><br>
-                ✦Amirah Alyahaziqah Bt Mohd Jeffry✦ <br>
+                ✦Amirah Alyahaziqah Bt Mohd Jeffry✦
                 &nbsp;·&nbsp; Bachelor of Computer Science (Hons.) <br>
                 <span style="font-size:0.74rem; color:#a08b97;">
                     2026 &nbsp;·&nbsp; Universiti Teknologi MARA (UiTM)
