@@ -415,131 +415,193 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
 .sidebar-legend-note {{ margin-top: 0.7rem; font-size: 0.76rem; line-height: 1.5; color: rgba(255,255,255,0.68); }}
 
 /* ══════════════════════════════════════════════════════════
-   TABS
+   TABS — REDESIGNED PROFESSIONAL
 ══════════════════════════════════════════════════════════ */
+/* Tab list container */
 .stTabs [data-baseweb="tab-list"] {{
-    background: #ede6eb !important;
-    border-radius: 14px !important;
-    padding: 5px !important;
-    gap: 3px !important;
-    border: 1px solid #ddd0d9 !important;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.05) !important;
+    background: #ffffff !important;
+    border-radius: 0 0 0 0 !important;
+    padding: 0 0.2rem !important;
+    gap: 0 !important;
+    border: none !important;
+    border-bottom: 2px solid #e8dced !important;
+    box-shadow: none !important;
+    margin-bottom: 0 !important;
 }}
+
+/* Each tab */
 .stTabs [data-baseweb="tab"] {{
     background: transparent !important;
-    border-radius: 9px !important;
-    color: #6d4a5b !important;
+    border-radius: 0 !important;
+    color: #8a6a7a !important;
     font-weight: 600 !important;
-    font-size: 0.82rem !important;
-    padding: 0.42rem 1rem !important;
+    font-size: 0.84rem !important;
+    padding: 0.72rem 1.1rem !important;
     border: none !important;
+    border-bottom: 3px solid transparent !important;
+    margin-bottom: -2px !important;
     transition: all 0.22s ease !important;
+    letter-spacing: 0.01em !important;
+    position: relative !important;
 }}
+
+/* Tab hover */
 .stTabs [data-baseweb="tab"]:hover {{
-    background: rgba(212,77,92,0.09) !important;
+    background: rgba(212,77,92,0.05) !important;
     color: #c04060 !important;
+    border-bottom-color: rgba(212,77,92,0.3) !important;
 }}
+
+/* Active tab */
 .stTabs [aria-selected="true"] {{
-    background: linear-gradient(135deg, #c94a5c 0%, #b8405a 100%) !important;
-    color: white !important;
-    font-weight: 700 !important;
-    box-shadow: 0 4px 14px rgba(119,51,68,0.22) !important;
+    background: transparent !important;
+    color: #c94a5c !important;
+    font-weight: 800 !important;
+    border-bottom: 3px solid #c94a5c !important;
+    box-shadow: none !important;
 }}
+
+/* Indicator line override */
+.stTabs [data-baseweb="tab-highlight"] {{
+    background: #c94a5c !important;
+    height: 3px !important;
+}}
+
+/* Tab border override (Streamlit internal) */
+.stTabs [data-baseweb="tab-border"] {{
+    background: #e8dced !important;
+    height: 2px !important;
+}}
+
+/* Tab panel */
 .stTabs [data-baseweb="tab-panel"] {{
-    padding-top: 1.2rem;
-    animation: fadeInUp 0.4s ease-out;
+    padding-top: 1rem !important;
+    animation: fadeInUp 0.38s ease-out;
 }}
 
 /* ══════════════════════════════════════════════════════════
-   HERO BANNER — UPDATED (BIGGER + BETTER TEXT)
+   HERO BANNER — KEPT FOR BACKWARD COMPAT (hidden usage)
 ══════════════════════════════════════════════════════════ */
 .hero-image-wrap {{
     position: relative;
-    height: 200px !important; /* increased from 128px */
+    height: 180px !important;
     border-radius: 20px !important;
     overflow: hidden;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     border: 1px solid rgba(158,179,194,0.18);
     box-shadow: 0 14px 36px rgba(22,0,41,0.18);
     background: linear-gradient(110deg, #0a2246 0%, #3e1840 55%, #5c0c3c 100%);
     animation: fadeInUp 0.55s ease-out;
 }}
-
 .hero-single-image {{
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    opacity: 0.65;
-    filter: saturate(0.9) contrast(1.05) brightness(0.8);
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; object-position: center;
+    opacity: 0.65; filter: saturate(0.9) contrast(1.05) brightness(0.8);
     transition: transform 0.6s ease;
 }}
-
-.hero-image-wrap:hover .hero-single-image {{
-    transform: scale(1.05);
-}}
-
+.hero-image-wrap:hover .hero-single-image {{ transform: scale(1.05); }}
 .hero-image-overlay {{
-    position: absolute;
-    inset: 0;
-    z-index: 3;
-    background: linear-gradient(
-        90deg,
-        rgba(8,30,60,0.95) 0%,
-        rgba(22,28,68,0.85) 30%,
-        rgba(58,22,68,0.45) 60%,
-        rgba(80,12,60,0.20) 100%
-    );
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 2rem 2.4rem; /* more breathing space */
+    position: absolute; inset: 0; z-index: 3;
+    background: linear-gradient(90deg, rgba(8,30,60,0.95) 0%, rgba(22,28,68,0.85) 30%, rgba(58,22,68,0.45) 60%, rgba(80,12,60,0.20) 100%);
+    display: flex; align-items: center; justify-content: flex-start;
+    padding: 1.8rem 2.4rem;
 }}
-
-.hero-image-content {{
-    width: 100%;
-    max-width: 60%;
-}}
-
-/* Kicker */
+.hero-image-content {{ width: 100%; max-width: 65%; }}
 .hero-kicker {{
-    display: inline-flex;
-    align-items: center;
-    padding: 0.35rem 0.9rem;
-    border-radius: 999px;
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.25);
-    color: #ffffff;
-    font-size: 0.75rem !important; /* bigger */
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 0.6rem;
+    display: inline-flex; align-items: center;
+    padding: 0.3rem 0.85rem; border-radius: 999px;
+    background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25);
+    color: #ffffff; font-size: 0.72rem !important; font-weight: 800;
+    letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.5rem;
 }}
-
-/* Title */
 .hero-image-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.9rem !important; /* BIG increase */
-    font-weight: 900;
-    line-height: 1.15;
-    letter-spacing: -0.02em;
-    color: #ffffff !important;
-    margin: 0 0 0.5rem 0;
-    text-shadow: 0 4px 14px rgba(0,0,0,0.35);
+    font-size: 1.75rem !important; font-weight: 900; line-height: 1.12;
+    letter-spacing: -0.02em; color: #ffffff !important;
+    margin: 0 0 0.45rem 0; text-shadow: 0 4px 14px rgba(0,0,0,0.35);
+}}
+.hero-image-subtitle {{
+    font-size: 0.9rem !important; font-weight: 500; line-height: 1.6;
+    color: rgba(255,255,255,0.92) !important; margin: 0; max-width: 95%;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25);
 }}
 
-/* Subtitle */
-.hero-image-subtitle {{
-    font-size: 0.95rem !important; /* readable */
-    font-weight: 500;
-    line-height: 1.6;
-    color: rgba(255,255,255,0.92) !important;
-    margin: 0;
-    max-width: 95%;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.25);
+/* ══════════════════════════════════════════════════════════
+   DASHBOARD HEADER — REPLACES BANNER
+══════════════════════════════════════════════════════════ */
+.dash-header-wrap {{
+    background: linear-gradient(135deg, #100022 0%, #2e0d22 45%, #5c1235 100%);
+    border-radius: 18px;
+    padding: 1.2rem 1.8rem;
+    margin-bottom: 0.4rem;
+    box-shadow: 0 8px 28px rgba(16,0,34,0.24);
+    border: 1px solid rgba(255,255,255,0.07);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    animation: fadeInUp 0.45s ease-out;
+    position: relative;
+    overflow: hidden;
+}}
+.dash-header-wrap::before {{
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #D44D5C 0%, #773344 50%, #D44D5C 100%);
+    background-size: 200% 100%;
+    animation: shimmer 3s linear infinite;
+}}
+.dash-header-wrap::after {{
+    content: '';
+    position: absolute;
+    bottom: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(212,77,92,0.15) 0%, transparent 70%);
+    pointer-events: none;
+}}
+.dash-header-left {{ flex: 1; min-width: 0; }}
+.dash-header-kicker {{
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.28rem 0.8rem; border-radius: 999px;
+    background: rgba(212,77,92,0.20); border: 1px solid rgba(212,77,92,0.35);
+    color: #ffccd5; font-size: 0.68rem; font-weight: 800;
+    letter-spacing: 0.10em; text-transform: uppercase;
+    margin-bottom: 0.55rem;
+}}
+.dash-header-title {{
+    font-family: 'Inter Tight', 'Inter', sans-serif;
+    font-size: 1.65rem; font-weight: 900; line-height: 1.1;
+    letter-spacing: -0.03em; color: #ffffff;
+    margin: 0 0 0.4rem 0;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}}
+.dash-header-subtitle {{
+    font-size: 0.88rem; font-weight: 400; line-height: 1.65;
+    color: rgba(255,255,255,0.75); margin: 0; max-width: 680px;
+}}
+.dash-header-right {{
+    display: flex; flex-direction: column; gap: 0.55rem;
+    align-items: flex-end; flex-shrink: 0;
+}}
+.dash-header-badge {{
+    padding: 0.45rem 0.9rem; border-radius: 12px;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+    text-align: right; transition: all 0.2s ease; min-width: 130px;
+}}
+.dash-header-badge:hover {{
+    background: rgba(255,255,255,0.13); transform: translateX(-2px);
+}}
+.dash-header-badge-label {{
+    font-size: 0.6rem; font-weight: 800; letter-spacing: 0.09em;
+    text-transform: uppercase; color: rgba(255,255,255,0.5);
+    margin-bottom: 0.1rem;
+}}
+.dash-header-badge-value {{
+    font-size: 0.8rem; font-weight: 700; color: rgba(255,255,255,0.9);
+    line-height: 1.2;
 }}
 
 /* ══════════════════════════════════════════════════════════
@@ -899,11 +961,23 @@ div[data-testid="stHorizontalBlock"] .stButton > button {{
     box-shadow: 0 2px 8px rgba(119,51,68,0.18) !important;
 }}
 
-button[key="ds_load_btn_primary"] {{
-        font-size: 0.65rem !important;
-        padding: 0.2rem 0.5rem !important;
-        min-height: 30px !important;
-    }}
+/* ── Load button explicit override ──────────────────────── */
+div[data-testid="stButton"] button[kind="secondary"],
+div[data-testid="stButton"] button {{
+    background: linear-gradient(135deg, #c44460 0%, #a83250 100%) !important;
+    color: white !important;
+    -webkit-text-fill-color: white !important;
+}}
+
+/* Dataset load button override — keep same red style */
+div[data-testid="column"] .stButton > button,
+.stButton > button[kind="primary"],
+.stButton > button[kind="secondary"] {{
+    background: linear-gradient(135deg, #c44460 0%, #a83250 100%) !important;
+    color: white !important;
+    -webkit-text-fill-color: white !important;
+    border: none !important;
+}}
 
 /* ══════════════════════════════════════════════════════════
    INPUT LABELS
@@ -2154,38 +2228,39 @@ def render_hero_banner(
     subtitle="How closely do AI responses align with Malaysian Assisted Reproductive Technology (ART) rulings?",
     kicker="Fatwa Alignment Dashboard",
 ):
-    image_uri = _image_to_data_uri(image_path)
+    """Legacy banner — kept for backward compatibility. Calls the new header internally."""
+    render_dashboard_header(title=title, subtitle=subtitle, kicker=kicker)
 
+
+def render_dashboard_header(
+    title="AI Fatwa Alignment Dashboard",
+    subtitle="How closely do AI Responses align with Malaysian ART rulings?",
+    kicker="⚖️  Fatwa Alignment Reviewer · Assisted Reproductive Technology (ART)",
+):
+    """Render the sleek compact dashboard header (replaces the old image banner)."""
     safe_title = html.escape(title)
     safe_subtitle = html.escape(subtitle)
     safe_kicker = html.escape(kicker)
 
-    if image_uri:
-        html_block = f"""
-        <div class="hero-image-wrap">
-            <img class="hero-single-image" src="{image_uri}" alt="Hero banner">
-            <div class="hero-image-overlay">
-                <div class="hero-image-content">
-                    <div class="hero-kicker">{safe_kicker}</div>
-                    <div class="hero-image-title">{safe_title}</div>
-                    <div class="hero-image-subtitle">{safe_subtitle}</div>
-                </div>
+    html_block = f"""
+    <div class="dash-header-wrap">
+        <div class="dash-header-left">
+            <div class="dash-header-kicker">{safe_kicker}</div>
+            <div class="dash-header-title">{safe_title}</div>
+            <div class="dash-header-subtitle">{safe_subtitle}</div>
+        </div>
+        <div class="dash-header-right">
+            <div class="dash-header-badge">
+                <div class="dash-header-badge-label">System</div>
+                <div class="dash-header-badge-value">Fatwa Alignment</div>
+            </div>
+            <div class="dash-header-badge">
+                <div class="dash-header-badge-label">Domain</div>
+                <div class="dash-header-badge-value">ART · Malaysian Fatwas</div>
             </div>
         </div>
-        """
-    else:
-        html_block = f"""
-        <div class="hero-image-wrap">
-            <div class="hero-image-overlay">
-                <div class="hero-image-content">
-                    <div class="hero-kicker">{safe_kicker}</div>
-                    <div class="hero-image-title">{safe_title}</div>
-                    <div class="hero-image-subtitle">{safe_subtitle}</div>
-                </div>
-            </div>
-        </div>
-        """
-
+    </div>
+    """
     st.markdown(html_block, unsafe_allow_html=True)
 
 

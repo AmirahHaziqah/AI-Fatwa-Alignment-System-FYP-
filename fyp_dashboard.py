@@ -48,6 +48,7 @@ from styling import (
     render_footer,
     render_sidebar_theme_legend,
     render_hero_banner,
+    render_dashboard_header,
     render_section_banner,
     render_sidebar_profile_card,
     render_sidebar_section,
@@ -250,28 +251,7 @@ def apply_dashboard_polish():
         width: 260px !important;
     }
     
-    /* Hero image - smaller */
-    .hero-image-wrap {
-        height: 130px !important;
-        border-radius: 20px !important;
-    }
-    
-    .hero-image-title {
-        font-size: 1.5rem !important;
-    }
-    
-    .hero-image-subtitle {
-        font-size: 1.3rem !important;
-    }
-    
-    .hero-image-content {
-        max-width: 70% !important;
-    }
-    
-    .hero-kicker {
-        font-size: 0.65rem !important;
-        padding: 0.3rem 0.8rem !important;
-    }
+    /* Header is now a compact bar — no image sizing needed */
     
     /* Tab minimal hero - smaller */
     .tab-minimal-hero {
@@ -581,6 +561,28 @@ def apply_dashboard_polish():
     /* Fix for selectbox and multiselect */
     .stSelectbox select, .stMultiSelect select {
         color: #2a1421 !important;
+    }
+
+    /* ===== CRITICAL: Fix ALL button text color — prevent black buttons ===== */
+    .stButton > button,
+    .stDownloadButton > button,
+    button[data-testid="baseButton-secondary"],
+    button[data-testid="baseButton-primary"] {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        background: linear-gradient(135deg, #c44460 0%, #a83250 100%) !important;
+        border: none !important;
+    }
+    .stButton > button:hover,
+    .stDownloadButton > button:hover {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        background: linear-gradient(135deg, #d44d5c 0%, #b8405a 100%) !important;
+    }
+    .stButton > button *,
+    .stDownloadButton > button * {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
     }
            
     </style>
@@ -1793,17 +1795,21 @@ def render_single_review_result_dashboard(bundle: dict):
 # COMPACT HEADER
 # =========================================================
 def render_dashboard_shell_header(title="AI Fatwa Alignment System", subtitle="How closely do AI responses align with Malaysian Assisted Reproductive Technology (ART) rulings?", kicker="Fatwa Alignment Dashboard"):
-    banner_path = resolve_header_banner_path()
     st.markdown(
         """
         <style>
-        .dashboard-shell-header {margin-bottom: 0.18rem;}
+        .dashboard-shell-header { margin-bottom: 0; }
+        /* Remove any extra spacing Streamlit adds before tabs */
+        .stTabs { margin-top: 0 !important; }
+        [data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"]:first-child {
+            gap: 0 !important;
+        }
         </style>
         <div class="dashboard-shell-header"></div>
         """,
         unsafe_allow_html=True,
     )
-    render_hero_banner(banner_path, title=title, subtitle=subtitle, kicker=kicker)
+    render_dashboard_header(title=title, subtitle=subtitle, kicker=kicker)
 
 
 section_banner_path = resolve_header_banner_path()
