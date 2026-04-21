@@ -1783,6 +1783,21 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
     .hero-image-title {{ font-size: 0.8rem !important; }}
 }}
 
+/* FORCE BOLD TEXT */
+strong {{
+    font-weight: 800 !important;
+}}
+
+.stTabs strong,
+[data-testid="stRadio"] strong {{
+    font-weight: 800 !important;
+    font-size: 0.9rem;
+}}
+
+[data-testid="stRadio"] p {{
+    font-weight: 800 !important;
+}}
+
 </style>
 
 """,

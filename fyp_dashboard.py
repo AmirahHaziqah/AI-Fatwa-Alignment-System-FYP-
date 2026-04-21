@@ -1874,11 +1874,11 @@ render_dashboard_shell_header(
 )
 
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    " <strong> Single Review </strong> ",
-    " <strong> Batch Review </strong>",
-    " <strong> History & Export </strong>",
-    " <strong> Fatwa Explorer </strong>",
-    " <strong> Topic Explorer </strong>",
+    " Single Review",
+    " Batch Review",
+    " History & Export",
+    " Fatwa Explorer",
+    " Topic Explorer",
 ])
 
 # =========================================================
