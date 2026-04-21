@@ -257,11 +257,11 @@ def apply_dashboard_polish():
     }
     
     .hero-image-title {
-        font-size: 1.3rem !important;
+        font-size: 1.5rem !important;
     }
     
     .hero-image-subtitle {
-        font-size: 0.7rem !important;
+        font-size: 1.3rem !important;
     }
     
     .hero-image-content {
@@ -1869,8 +1869,8 @@ with st.sidebar:
 # =========================================================
 render_dashboard_shell_header(
     title="AI Fatwa Alignment Dashboard",
-    subtitle="Measure how closely AI-generated answers match official Malaysian ART fatwa rulings — automatically, accurately, and at scale.",
-    kicker="⚖️  Fatwa Alignment Reviewer · ART Reproductive Technology",
+    subtitle="How closely do AI Responses align with Malaysian ART rulings?",
+    kicker="⚖️  Fatwa Alignment Reviewer · Assisted Reproductive Technology (ART)",
 )
 
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
