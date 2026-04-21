@@ -2330,8 +2330,8 @@ def render_dashboard_header(
     if bg_uri:
         bg_style = (
             f"background-image: url('{bg_uri}'); "
-            "background-size: contain; "
-            "background-position: center ; "
+            "background-size: cover; "
+            "background-position: center top; "
             "background-repeat: no-repeat;"
         )
         overlay_class = "dash-header-overlay-img"
