@@ -582,6 +582,18 @@ def apply_dashboard_polish():
     .stSelectbox select, .stMultiSelect select {
         color: #2a1421 !important;
     }
+
+     /* MAKE STREAMLIT TABS BOLD */
+button[data-baseweb="tab"] {
+    font-weight: 800 !important;
+    font-size: 0.95rem !important;
+}
+
+/* ACTIVE TAB EVEN STRONGER */
+button[data-baseweb="tab"][aria-selected="true"] {
+    font-weight: 900 !important;
+}
+                           
     </style>
     """, unsafe_allow_html=True)
 
