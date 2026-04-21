@@ -1088,7 +1088,9 @@ div[data-testid="column"] .stButton > button,
 .stTextArea textarea:focus {{ border: none !important; box-shadow: none !important; outline: none !important; }}
 .stTextArea textarea::placeholder,
 .stTextInput input::placeholder {{
-    color: #dda15e !important; opacity: 1 !important; font-size: 0.75rem !important;
+    color: #8a6a7a !important; 
+    opacity: 1 !important; 
+    font-size: 0.75rem !important;
 }}
 
 /* ══════════════════════════════════════════════════════════
