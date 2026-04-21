@@ -2296,7 +2296,7 @@ def render_dashboard_header(
 
     # Try to find a background image file from the project folder
     bg_candidates = [
-        "dashboard_background.jpg","hero_banner.jpg", "hero_banner.png",
+        "dashboard_background.png","hero_banner.jpg", "hero_banner.png",
     ]
     bg_uri = None
     for c in bg_candidates:
