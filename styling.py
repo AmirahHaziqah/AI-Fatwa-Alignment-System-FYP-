@@ -1792,6 +1792,7 @@ strong {{
 [data-testid="stRadio"] strong {{
     font-weight: 800 !important;
     font-size: 0.9rem;
+    letter-spacing: 0.02em;
 }}
 
 [data-testid="stRadio"] p {{
