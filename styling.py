@@ -870,11 +870,11 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
     background: linear-gradient(135deg, #c44460 0%, #a83250 100%) !important;
     color: white !important;
     border: none !important;
-    border-radius: 10px !important;
+    border-radius: 8px !important;
     font-weight: 700 !important;
     font-family: 'Inter', sans-serif !important;
-    padding: 0.38rem 0.85rem !important;
-    font-size: 0.82rem !important;
+    padding: 0.3rem 0.8rem !important;
+    font-size: 0.8rem !important;
     box-shadow: 0 4px 14px rgba(119,51,68,0.20) !important;
     transition: all 0.25s ease !important;
     letter-spacing: 0.01em !important;
