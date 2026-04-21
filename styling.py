@@ -2121,50 +2121,50 @@ html {{
 .batch-shell {{
     background:linear-gradient(180deg,#ffffff 0%,#f9f1ec 100%);
     border:1px solid #e3b5a4;
-    border-radius:20px;
-    padding:0.8rem 1rem 0.7rem 1rem;
-    box-shadow:0 8px 20px rgba(25,14,36,0.05);
-    margin:0.1rem 0 0.8rem 0;
+    border-radius:16px;
+    padding:0.55rem 0.8rem 0.5rem 0.8rem;
+    box-shadow:0 6px 16px rgba(25,14,36,0.04);
+    margin:0.1rem 0 0.5rem 0;
     transition: all 0.3s ease;
 }}
 .batch-shell:hover {{
-    box-shadow:0 12px 26px rgba(25,14,36,0.08);
+    box-shadow:0 10px 22px rgba(25,14,36,0.07);
 }}
 
 .batch-kicker {{
-    font-size:0.65rem;
+    font-size:0.6rem;
     font-weight:800;
     letter-spacing:0.08em;
     text-transform:uppercase;
     color:#a3195b;
-    margin-bottom:0.2rem;
+    margin-bottom:0.15rem;
 }}
 
 .batch-title {{
     font-family:'Inter Tight','Inter',sans-serif;
-    font-size:1rem;
+    font-size:0.88rem;
     font-weight:700;
     color:#211120;
     line-height:1.15;
-    margin-bottom:0.2rem;
+    margin-bottom:0.15rem;
 }}
 
 .batch-copy {{
     color:#6d5a68;
-    font-size:0.8rem;
-    line-height:1.5;
+    font-size:0.72rem;
+    line-height:1.45;
     max-width:800px;
 }}
 
 .batch-selection-note {{
     background:#fff7f4;
     border:1px solid #e3b5a4;
-    border-radius:14px;
-    padding:0.7rem 0.9rem;
+    border-radius:12px;
+    padding:0.5rem 0.8rem;
     color:#5f4751;
-    font-size:0.8rem;
-    line-height:1.5;
-    margin:0.6rem 0 0.8rem 0;
+    font-size:0.75rem;
+    line-height:1.4;
+    margin:0.4rem 0 0.6rem 0;
     transition: all 0.2s ease;
 }}
 .batch-selection-note:hover {{
@@ -2554,6 +2554,67 @@ html {{
 @media (max-width: 620px) {{
     .hero-image-wrap {{ height: 90px !important; }}
     .hero-image-title {{ font-size: 0.8rem !important; }}
+}}
+
+/* ── TOPIC DEEP-DIVE (Tab 5) ─────────────────────────── */
+.topic-pick-shell {{
+    background: linear-gradient(135deg, #ffffff 0%, #fef8f5 100%);
+    border: 1px solid #e3b5a4;
+    border-left: 4px solid #D44D5C;
+    border-radius: 16px;
+    padding: 1rem 1.2rem 0.9rem 1.2rem;
+    margin: 0.6rem 0 0.4rem 0;
+    box-shadow: 0 4px 12px rgba(119, 51, 68, 0.06);
+}}
+
+.topic-pick-kicker {{
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #a3195b;
+    margin-bottom: 0.25rem;
+}}
+
+.topic-pick-title {{
+    font-family: 'Inter Tight', 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #211120;
+    line-height: 1.2;
+    margin-bottom: 0.3rem;
+}}
+
+.topic-pick-copy {{
+    font-size: 0.78rem;
+    color: #6d5a68;
+    line-height: 1.5;
+    max-width: 680px;
+}}
+
+.comparison-select-head {{
+    background: #ffffff;
+    border: 1px solid rgba(227, 181, 164, 0.4);
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    margin: 0.8rem 0 0.4rem 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+}}
+
+.comparison-select-title {{
+    font-family: 'Inter Tight', 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #211120;
+    margin-bottom: 0.2rem;
+}}
+
+.comparison-select-copy {{
+    font-size: 0.75rem;
+    color: #6d5a68;
+    line-height: 1.45;
 }}
 
 </style>

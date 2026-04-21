@@ -641,24 +641,34 @@ def show_success_toast_center(message: str, details: list = None):
         </div>
     </div>
     <script>
-        function closeToastCenter() {{
-            var toast = document.getElementById('customToastCenter');
-            if(toast) {{
-                toast.classList.add('fade-out');
-                setTimeout(function() {{ 
-                    if(toast && toast.parentNode) toast.parentNode.removeChild(toast);
-                }}, 400);
+        (function() {{
+            function getToast() {{
+                var el = document.getElementById('customToastCenter');
+                if (el) return el;
+                try {{ return window.parent.document.getElementById('customToastCenter'); }} catch(e) {{}}
+                try {{
+                    var frames = window.parent.document.querySelectorAll('iframe');
+                    for (var i = 0; i < frames.length; i++) {{
+                        try {{
+                            var found = frames[i].contentDocument.getElementById('customToastCenter');
+                            if (found) return found;
+                        }} catch(e) {{}}
+                    }}
+                }} catch(e) {{}}
+                return null;
             }}
-        }}
-        setTimeout(function() {{
-            var toast = document.getElementById('customToastCenter');
-            if(toast) {{
-                toast.classList.add('fade-out');
-                setTimeout(function() {{ 
-                    if(toast && toast.parentNode) toast.parentNode.removeChild(toast);
-                }}, 400);
+            function dismissToast() {{
+                var toast = getToast();
+                if (toast) {{
+                    toast.style.animation = 'fadeOutUp 0.4s ease forwards';
+                    setTimeout(function() {{
+                        if (toast && toast.parentNode) toast.parentNode.removeChild(toast);
+                    }}, 400);
+                }}
             }}
-        }}, 3500);
+            window.closeToastCenter = dismissToast;
+            setTimeout(dismissToast, 4000);
+        }})();
     </script>
     """
     st.markdown(toast_html, unsafe_allow_html=True)
@@ -684,24 +694,34 @@ def show_success_toast(message: str, details: list = None):
         </div>
     </div>
     <script>
-        function closeToast() {{
-            var toast = document.getElementById('customToast');
-            if(toast) {{
-                toast.classList.add('fade-out');
-                setTimeout(function() {{ 
-                    if(toast && toast.parentNode) toast.parentNode.removeChild(toast);
-                }}, 300);
+        (function() {{
+            function getToast() {{
+                var el = document.getElementById('customToast');
+                if (el) return el;
+                try {{ return window.parent.document.getElementById('customToast'); }} catch(e) {{}}
+                try {{
+                    var frames = window.parent.document.querySelectorAll('iframe');
+                    for (var i = 0; i < frames.length; i++) {{
+                        try {{
+                            var found = frames[i].contentDocument.getElementById('customToast');
+                            if (found) return found;
+                        }} catch(e) {{}}
+                    }}
+                }} catch(e) {{}}
+                return null;
             }}
-        }}
-        setTimeout(function() {{
-            var toast = document.getElementById('customToast');
-            if(toast) {{
-                toast.classList.add('fade-out');
-                setTimeout(function() {{ 
-                    if(toast && toast.parentNode) toast.parentNode.removeChild(toast);
-                }}, 300);
+            function dismissToast() {{
+                var toast = getToast();
+                if (toast) {{
+                    toast.style.animation = 'fadeOutUp 0.4s ease forwards';
+                    setTimeout(function() {{
+                        if (toast && toast.parentNode) toast.parentNode.removeChild(toast);
+                    }}, 300);
+                }}
             }}
-        }}, 4000);
+            window.closeToast = dismissToast;
+            setTimeout(dismissToast, 4000);
+        }})();
     </script>
     """
     st.markdown(toast_html, unsafe_allow_html=True)
