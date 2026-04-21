@@ -484,7 +484,7 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
 ══════════════════════════════════════════════════════════ */
 .hero-image-wrap {{
     position: relative;
-    height: 260px !important;
+    height: 360px !important;
     border-radius: 20px !important;
     overflow: hidden;
     margin-bottom: 0.5rem;
