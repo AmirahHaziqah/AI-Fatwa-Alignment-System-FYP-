@@ -2598,9 +2598,6 @@ html {{
     border-radius: 12px;
     padding: 0.75rem 1rem;
     margin: 0.8rem 0 0.4rem 0;
-    display: flex;
-    align-items: flex-start;
-    gap: 0.8rem;
 }}
 
 .comparison-select-title {{

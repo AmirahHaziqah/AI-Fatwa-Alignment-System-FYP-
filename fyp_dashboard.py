@@ -622,109 +622,185 @@ def resolve_banner_path():
 # =========================================================
 
 def show_success_toast_center(message: str, details: list = None):
-    """Display a beautiful centered popup toast notification."""
-    
-    details_html = ""
+    """Display a centered success popup using components.html() so JS runs in a real document context."""
+
+    details_items = ""
     if details:
-        details_html = '<div class="toast-detail-center">' + "".join(f'<span>✓ {html.escape(d)}</span>' for d in details) + '</div>'
-    
+        details_items = "".join(
+            f'<div class="toast-pill">✓ {html.escape(d)}</div>'
+            for d in details
+        )
+
+    # components.html() renders in its own iframe with a real document —
+    # JS can find elements normally. We inject the toast into the PARENT
+    # document (the Streamlit app) so it floats over the whole page.
     toast_html = f"""
-    <div id="customToastCenter" class="custom-toast-center">
-        <div class="toast-header-center">
-            <div class="toast-icon-center">✓</div>
-            <div class="toast-title-center">Success! Response Loaded</div>
-            <div class="toast-close-center" onclick="closeToastCenter()">×</div>
-        </div>
-        <div class="toast-body-center">
-            <div class="toast-message-center">{html.escape(message)}</div>
-            {details_html}
-        </div>
-    </div>
-    <script>
-        (function() {{
-            function getToast() {{
-                var el = document.getElementById('customToastCenter');
-                if (el) return el;
-                try {{ return window.parent.document.getElementById('customToastCenter'); }} catch(e) {{}}
-                try {{
-                    var frames = window.parent.document.querySelectorAll('iframe');
-                    for (var i = 0; i < frames.length; i++) {{
-                        try {{
-                            var found = frames[i].contentDocument.getElementById('customToastCenter');
-                            if (found) return found;
-                        }} catch(e) {{}}
-                    }}
-                }} catch(e) {{}}
-                return null;
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body {{ margin:0; padding:0; background:transparent; }}
+</style>
+</head>
+<body>
+<script>
+(function() {{
+    var parentDoc = window.parent.document;
+
+    // Remove any existing toast first
+    var old = parentDoc.getElementById('amirahToast');
+    if (old) old.parentNode.removeChild(old);
+
+    // Inject styles into parent if not already there
+    if (!parentDoc.getElementById('amirahToastStyle')) {{
+        var style = parentDoc.createElement('style');
+        style.id = 'amirahToastStyle';
+        style.textContent = `
+            @keyframes toastIn {{
+                from {{ opacity:0; transform:translate(-50%,-50%) scale(0.85); }}
+                to   {{ opacity:1; transform:translate(-50%,-50%) scale(1); }}
             }}
-            function dismissToast() {{
-                var toast = getToast();
-                if (toast) {{
-                    toast.style.animation = 'fadeOutUp 0.4s ease forwards';
-                    setTimeout(function() {{
-                        if (toast && toast.parentNode) toast.parentNode.removeChild(toast);
-                    }}, 400);
-                }}
+            @keyframes toastOut {{
+                from {{ opacity:1; transform:translate(-50%,-50%) scale(1); }}
+                to   {{ opacity:0; transform:translate(-50%,-50%) scale(0.85); }}
             }}
-            window.closeToastCenter = dismissToast;
-            setTimeout(dismissToast, 4000);
-        }})();
-    </script>
-    """
-    st.markdown(toast_html, unsafe_allow_html=True)
+            #amirahToast {{
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 999999;
+                min-width: 340px;
+                max-width: 440px;
+                background: #ffffff;
+                border-radius: 20px;
+                overflow: hidden;
+                box-shadow: 0 24px 60px rgba(0,0,0,0.22), 0 0 0 1px rgba(6,167,125,0.2);
+                animation: toastIn 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
+                font-family: 'Inter', sans-serif;
+            }}
+            #amirahToast.hiding {{
+                animation: toastOut 0.35s ease forwards;
+            }}
+            .at-header {{
+                background: linear-gradient(135deg, #06A77D 0%, #049E76 100%);
+                padding: 1rem 1.1rem;
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+            }}
+            .at-checkmark {{
+                width: 36px; height: 36px;
+                background: rgba(255,255,255,0.22);
+                border-radius: 50%;
+                display: flex; align-items: center; justify-content: center;
+                font-size: 1.2rem; font-weight: 900; color: #fff;
+                flex-shrink: 0;
+            }}
+            .at-title {{
+                flex: 1;
+                color: #fff;
+                font-weight: 800;
+                font-size: 0.95rem;
+                letter-spacing: 0.01em;
+            }}
+            .at-close {{
+                width: 28px; height: 28px;
+                background: rgba(255,255,255,0.18);
+                border-radius: 50%;
+                display: flex; align-items: center; justify-content: center;
+                cursor: pointer;
+                color: #fff;
+                font-size: 1.1rem;
+                line-height: 1;
+                flex-shrink: 0;
+                transition: background 0.2s;
+                user-select: none;
+            }}
+            .at-close:hover {{ background: rgba(255,255,255,0.32); }}
+            .at-body {{
+                padding: 1rem 1.2rem 1.1rem 1.2rem;
+                background: #f8fff9;
+            }}
+            .at-message {{
+                color: #1a5c3e;
+                font-size: 0.88rem;
+                font-weight: 600;
+                line-height: 1.5;
+                margin-bottom: 0.55rem;
+            }}
+            .at-pills {{
+                display: flex; flex-wrap: wrap; gap: 0.4rem;
+            }}
+            .toast-pill {{
+                background: #e6f5ef;
+                color: #1a7a56;
+                font-size: 0.72rem;
+                font-weight: 600;
+                padding: 0.22rem 0.65rem;
+                border-radius: 20px;
+            }}
+            .at-bar-wrap {{
+                height: 3px;
+                background: rgba(6,167,125,0.15);
+                overflow: hidden;
+            }}
+            .at-bar {{
+                height: 3px;
+                background: #06A77D;
+                width: 100%;
+                transform-origin: left;
+                animation: barShrink 4s linear forwards;
+            }}
+            @keyframes barShrink {{
+                from {{ transform: scaleX(1); }}
+                to   {{ transform: scaleX(0); }}
+            }}
+        `;
+        parentDoc.head.appendChild(style);
+    }}
+
+    // Build toast element
+    var toast = parentDoc.createElement('div');
+    toast.id = 'amirahToast';
+    toast.innerHTML = `
+        <div class="at-header">
+            <div class="at-checkmark">✓</div>
+            <div class="at-title">Response Loaded Successfully</div>
+            <div class="at-close" id="amirahToastClose">✕</div>
+        </div>
+        <div class="at-body">
+            <div class="at-message">{html.escape(message)}</div>
+            <div class="at-pills">{details_items}</div>
+        </div>
+        <div class="at-bar-wrap"><div class="at-bar"></div></div>
+    `;
+    parentDoc.body.appendChild(toast);
+
+    function dismiss() {{
+        var t = parentDoc.getElementById('amirahToast');
+        if (!t || t._dismissing) return;
+        t._dismissing = true;
+        t.classList.add('hiding');
+        setTimeout(function() {{
+            var el = parentDoc.getElementById('amirahToast');
+            if (el) el.parentNode.removeChild(el);
+        }}, 380);
+    }}
+
+    parentDoc.getElementById('amirahToastClose').addEventListener('click', dismiss);
+    setTimeout(dismiss, 4200);
+}})();
+</script>
+</body>
+</html>
+"""
+    components.html(toast_html, height=0)
 
 
 def show_success_toast(message: str, details: list = None):
-    """Display a beautiful popup toast notification (side version)."""
-    
-    details_html = ""
-    if details:
-        details_html = '<div class="toast-detail">' + "".join(f'<span>{html.escape(d)}</span>' for d in details) + '</div>'
-    
-    toast_html = f"""
-    <div id="customToast" class="custom-toast">
-        <div class="toast-header">
-            <div class="toast-icon">✓</div>
-            <div class="toast-title">Success!</div>
-            <div class="toast-close" onclick="closeToast()">×</div>
-        </div>
-        <div class="toast-body">
-            <div class="toast-message">{html.escape(message)}</div>
-            {details_html}
-        </div>
-    </div>
-    <script>
-        (function() {{
-            function getToast() {{
-                var el = document.getElementById('customToast');
-                if (el) return el;
-                try {{ return window.parent.document.getElementById('customToast'); }} catch(e) {{}}
-                try {{
-                    var frames = window.parent.document.querySelectorAll('iframe');
-                    for (var i = 0; i < frames.length; i++) {{
-                        try {{
-                            var found = frames[i].contentDocument.getElementById('customToast');
-                            if (found) return found;
-                        }} catch(e) {{}}
-                    }}
-                }} catch(e) {{}}
-                return null;
-            }}
-            function dismissToast() {{
-                var toast = getToast();
-                if (toast) {{
-                    toast.style.animation = 'fadeOutUp 0.4s ease forwards';
-                    setTimeout(function() {{
-                        if (toast && toast.parentNode) toast.parentNode.removeChild(toast);
-                    }}, 300);
-                }}
-            }}
-            window.closeToast = dismissToast;
-            setTimeout(dismissToast, 4000);
-        }})();
-    </script>
-    """
-    st.markdown(toast_html, unsafe_allow_html=True)
+    """Display a success popup toast (alias to the centered version)."""
+    show_success_toast_center(message, details)
 
 
 # =========================================================
@@ -2639,7 +2715,7 @@ with tab4:
 # TAB 5 - Topic Explorer (Rest of the code remains the same as original)
 # =========================================================
 with tab5:
-    import html as html_escape_mod
+    html_escape_mod = html  # use top-level html import
 
     render_minimal_tab_intro(
         "Topic explorer",
