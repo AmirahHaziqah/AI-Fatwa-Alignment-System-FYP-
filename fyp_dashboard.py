@@ -63,7 +63,7 @@ from styling import (
 # PAGE CONFIG
 # =========================================================
 st.set_page_config(
-    page_title="AI Fatwa Alignment Dashboard",
+    page_title="AI Fatwa Alignment Dashboard | ART Ruling Reviewer",
     page_icon="⚖️",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -975,10 +975,10 @@ def ensure_analysis_dependencies() -> bool:
     if sbert_is_ready():
         return True
     st.error(
-        "Semantic similarity model is not available. Please install and load sentence-transformers / all-MiniLM-L6-v2 before running analysis."
+        "⚠️ The semantic similarity model (SBERT) is not available. Please install sentence-transformers and ensure all-MiniLM-L6-v2 is downloaded before running the analysis."
     )
     st.info(
-        "Why this matters: your final score depends heavily on semantic similarity, so running without SBERT can make results misleading."
+        "💡 The final alignment score relies heavily on semantic similarity. Without SBERT, results will be unreliable."
     )
     return False
 
@@ -1805,8 +1805,8 @@ with st.sidebar:
         """
         <div class="sidebar-clean-header compact-sidebar-header">
             <div class="sidebar-kicker-line"></div>
-            <h1 class="sidebar-title">AI Fatwa Review</h1>
-            <h3 class="sidebar-subtitle">A structured approach to reviewing and validating AI-generated responses.</h3>
+            <h1 class="sidebar-title">Fatwa Alignment</h1>
+            <h3 class="sidebar-subtitle">Review, score, and compare how well AI answers align with Malaysian ART fatwa guidance.</h3>
         </div>
         """,
         unsafe_allow_html=True
@@ -1814,7 +1814,7 @@ with st.sidebar:
 
     if not sbert_is_ready():
         st.markdown(
-            "<div class='msg-box msg-warning'><strong>SBERT unavailable.</strong> Semantic scoring may be incomplete.</div>",
+            "<div class='msg-box msg-warning'><strong>⚠️ Semantic model not loaded.</strong> Some scores may be missing or incomplete. Please check your sentence-transformers installation.</div>",
             unsafe_allow_html=True,
         )
 
@@ -1867,14 +1867,18 @@ with st.sidebar:
 # =========================================================
 # GLOBAL HEADER + TABS
 # =========================================================
-render_dashboard_shell_header()
+render_dashboard_shell_header(
+    title="AI Fatwa Alignment Dashboard",
+    subtitle="Measure how closely AI-generated answers match official Malaysian ART fatwa rulings — automatically, accurately, and at scale.",
+    kicker="⚖️  Fatwa Alignment Reviewer · ART Reproductive Technology",
+)
 
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "Single Review",
-    "Batch Review",
-    "History & Export",
-    "Fatwa Explorer",
-    "Topic Explorer"
+    "🔍 Single Review",
+    "📊 Batch Review",
+    "🕑 History & Export",
+    "📚 Fatwa Explorer",
+    "🗂️ Topic Explorer",
 ])
 
 # =========================================================
@@ -1944,7 +1948,7 @@ with tab1:
                 )
             with ctrl3:
                 st.markdown("<div class='dataset-control-caption'>Action</div>", unsafe_allow_html=True)
-                load_btn = st.button("📂 Load response →", use_container_width=True, key="ds_load_btn_primary")
+                load_btn = st.button("📂  Load Selected Response", use_container_width=True, key="ds_load_btn_primary")
 
             st.markdown("</div>", unsafe_allow_html=True)
 
@@ -1958,7 +1962,7 @@ with tab1:
                     st.session_state["load_success_toast"] = True
                     st.rerun()
                 else:
-                    st.warning(f"No pre-collected response found for {selected_model}.")
+                    st.warning(f"⚠️ No saved response found for model '{selected_model}' on this question. Try another model.")
 
         st.markdown(_html("""
             <div class='input-editor-shell'>
@@ -1974,7 +1978,7 @@ with tab1:
         ai_response = st.text_area(
             "AI Response Input",
             height=120,
-            placeholder="Paste the answer here or load one from the dataset above...",
+            placeholder="Paste the full AI-generated answer here. Longer and more specific answers produce better alignment scores...",
             key="ai_input",
             label_visibility="collapsed"
         )
@@ -2019,9 +2023,9 @@ with tab1:
 
     b1, b2 = st.columns([0.62, 0.38], gap="small")
     with b1:
-        analyze_btn = st.button("🔍 Analyze response", use_container_width=True, key="analyze_single")
+        analyze_btn = st.button("🔍  Analyze This Response", use_container_width=True, key="analyze_single")
     with b2:
-        clear_btn = st.button("🗑️ Clear history", use_container_width=True, key="clear_all_single")
+        clear_btn = st.button("🗑️  Clear History", use_container_width=True, key="clear_all_single")
 
     if clear_btn:
         clear_history()
@@ -2030,17 +2034,17 @@ with tab1:
 
     if analyze_btn:
         if not ai_response.strip():
-            st.warning("Please paste an AI response before analyzing.")
+            st.warning("⚠️ Please paste or load an AI response before running the analysis.")
         elif not ensure_analysis_dependencies():
             st.stop()
         else:
-            with st.spinner("Analyzing response..."):
+            with st.spinner("🔍 Analyzing response — this may take a few seconds..."):
                 ensure_similarity_engine_loaded()
                 best_question, question_scores = detect_best_question(ai_response, fatwa_df)
                 detected_subset = fatwa_df[fatwa_df["question_id"] == best_question["question_id"]].copy()
                 best_state, state_results = unpack_state_comparison(compare_states_within_question(ai_response, detected_subset))
                 if not best_state or state_results.empty:
-                    st.warning("No state-level fatwa comparison could be generated for this response.")
+                    st.warning("⚠️ No state-level fatwa comparison could be generated. Try a longer or more specific answer.")
                     st.stop()
 
                 topic_label = infer_topic_label(best_question, detected_subset)
@@ -2218,7 +2222,7 @@ with tab2:
             batch_responses = st.text_area(
                 "Enter multiple responses (separate with ---)",
                 height=280,
-                placeholder="Response 1...\n\n---\n\nResponse 2...\n\n---\n\nResponse 3...",
+                placeholder="Paste the first answer here...\n\n---\n\nPaste the second answer here...\n\n---\n\nAdd as many as you need, separated by ---",
                 key="batch_input"
             )
         with mc2:
@@ -2236,15 +2240,15 @@ with tab2:
             responses_to_run = [(f"Response {i+1}", "Manual", t) for i, t in enumerate(manual_texts)]
 
         st.markdown(f"<div class='batch-selection-note'><strong>{len(responses_to_run)}</strong> responses are ready for batch review.</div>", unsafe_allow_html=True)
-        run_batch_btn = st.button("▶ Start Batch Analysis", use_container_width=True, key="batch_analyze")
+        run_batch_btn = st.button("▶  Run Batch Analysis", use_container_width=True, key="batch_analyze")
 
     if run_batch_btn:
         if not responses_to_run:
-            st.warning("Please choose or paste at least one response before starting batch analysis.")
+            st.warning("⚠️ Please load or paste at least one response before running batch analysis.")
         elif not ensure_analysis_dependencies():
             st.stop()
         else:
-            with st.spinner("Running batch analysis..."):
+            with st.spinner("🔍 Running batch analysis — please wait..."):
                 batch_results = []
                 batch_numeric = []
                 for label, model_name, response_text in responses_to_run:
@@ -2319,10 +2323,10 @@ with tab2:
         st.markdown(build_light_table_html(batch_df.iloc[batch_start:batch_end]), unsafe_allow_html=True)
         dl1, dl2 = st.columns(2)
         with dl1:
-            st.download_button("📥 Download CSV", batch_df.to_csv(index=False), f"batch_analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv", "text/csv", use_container_width=True)
+            st.download_button("📥  Download as CSV", batch_df.to_csv(index=False), f"batch_analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv", "text/csv", use_container_width=True)
         with dl2:
             if EXCEL_AVAILABLE:
-                st.download_button("📊 Download Excel", export_to_excel(batch_df), f"batch_analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", use_container_width=True)
+                st.download_button("📊  Download as Excel", export_to_excel(batch_df), f"batch_analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", use_container_width=True)
 
 
 # =========================================================
@@ -2464,7 +2468,7 @@ with tab3:
         with e1:
             csv = export_df.to_csv(index=False)
             st.download_button(
-                "📄 CSV",
+                "📄  Download as CSV",
                 csv,
                 f"analysis_history_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
                 "text/csv",
@@ -2475,7 +2479,7 @@ with tab3:
             if EXCEL_AVAILABLE:
                 excel = export_to_excel(export_df)
                 st.download_button(
-                    "📊 Excel",
+                    "📊  Download as Excel",
                     excel,
                     f"analysis_history_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx",
                     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -2487,7 +2491,7 @@ with tab3:
         with e3:
             json_str = export_df.to_json(indent=2, orient="records")
             st.download_button(
-                "📋 JSON",
+                "📋  Download as JSON",
                 json_str,
                 f"analysis_history_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
                 "application/json",
@@ -2515,7 +2519,7 @@ Lowest Score: {history_df['final_match_score'].min():.1f}%
 {history_df['topic_label'].value_counts().head(10).to_string()}
 """
             st.download_button(
-                "📑 Report",
+                "📑  Download Summary Report",
                 summary,
                 f"summary_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
                 "text/plain",
@@ -2529,8 +2533,8 @@ Lowest Score: {history_df['final_match_score'].min():.1f}%
     else:
         st.markdown("""
         <div class="msg-box msg-warning" style="text-align:center; padding:3rem;">
-            <h3 style="margin-bottom:1rem;">No Analysis History</h3>
-            <p class="small-note">Start by analyzing AI responses in the Single Analysis tab.</p>
+            <h3 style="margin-bottom:0.75rem;">📂 No History Yet</h3>
+            <p class="small-note">You haven't run any analyses yet. Go to <strong>Single Review</strong> or <strong>Batch Review</strong> and analyse some responses — they will appear here automatically.</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -2620,8 +2624,8 @@ with tab4:
     else:
         st.markdown("""
         <div class="msg-box msg-warning" style="text-align:center; padding:2rem;">
-            <strong>No matching fatwa found.</strong><br>
-            <span class="small-note">Choose another topic or state to continue browsing the reference database.</span>
+            <strong>📭 No matching fatwa records found.</strong><br>
+            <span class="small-note">Try selecting a different topic or state, or click <em>Show all</em> to clear your filters.</span>
         </div>
         """, unsafe_allow_html=True)
 
@@ -2664,19 +2668,19 @@ with tab5:
     sc1, sc2, sc3, sc4 = st.columns(4)
     with sc1:
         st.markdown(
-            f"<div class='metric-card'><div class='metric-label'>Unique Topics</div>"
+            f"<div class='metric-card'><div class='metric-label'>Topics in Database</div>"
             f"<div class='metric-value'>{len(all_topics)}</div></div>",
             unsafe_allow_html=True
         )
     with sc2:
         st.markdown(
-            f"<div class='metric-card'><div class='metric-label'>Total Fatwa Records</div>"
+            f"<div class='metric-card'><div class='metric-label'>Total Fatwa Entries</div>"
             f"<div class='metric-value'>{len(analysis_df)}</div></div>",
             unsafe_allow_html=True
         )
     with sc3:
         st.markdown(
-            f"<div class='metric-card'><div class='metric-label'>States / Sources</div>"
+            f"<div class='metric-card'><div class='metric-label'>States & Sources</div>"
             f"<div class='metric-value'>{len(all_states)}</div></div>",
             unsafe_allow_html=True
         )
@@ -2798,8 +2802,8 @@ with tab5:
     if history_df.empty or "topic_label" not in history_df.columns or "final_match_score" not in history_df.columns:
         st.markdown("""
         <div class="msg-box msg-warning">
-            No analysis history found yet. Run some responses through
-            <strong>Single Analysis</strong> or <strong>Batch Analysis</strong> first,
+            📂 No analysis history found yet. Run some responses through
+            <strong>Single Review</strong> or <strong>Batch Review</strong> first,
             then come back here to see topic-level alignment rankings.
         </div>
         """, unsafe_allow_html=True)
@@ -2893,7 +2897,7 @@ with tab5:
 
         st.markdown("<div class='divider'></div>", unsafe_allow_html=True)
 
-        st.markdown("<h3 class='section-subtitle'>📈 Topic Difficulty Analysis</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 class='section-subtitle'>📈 Topic Difficulty — Harder vs Easier for AI</h3>", unsafe_allow_html=True)
         st.markdown("""
         <div class="msg-box msg-info" style="margin-bottom:1rem; border-left-color:#773344; background:#faf3f7;">
             This section ranks topics from harder to easier based on the same average alignment scores.
@@ -2957,7 +2961,7 @@ with tab5:
 
     st.markdown("<div class='divider'></div>", unsafe_allow_html=True)
 
-    st.markdown("<h3 class='section-subtitle'>🔍 Topic deep-dive</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 class='section-subtitle'>🔍 Topic Deep-Dive — Compare State Fatwas Side by Side</h3>", unsafe_allow_html=True)
     st.markdown("<div class='topic-pick-shell'><div class='topic-pick-kicker'>State comparison workspace</div><div class='topic-pick-title'>Choose one topic and compare all state fatwas clearly</div><div class='topic-pick-copy'>This section helps you see coverage, missing states, and the full fatwa wording side by side in one place.</div></div>", unsafe_allow_html=True)
 
     topic_options = topic_counts_full["issue_display"].tolist()
@@ -2991,14 +2995,7 @@ with tab5:
         </div>
         """, unsafe_allow_html=True)
 
-        st.markdown(f"""
-        <div class="msg-box msg-success">
-            <strong>Topic:</strong> {html_escape_mod.escape(selected_topic)}<br>
-            <strong>Fatwa Records:</strong> {len(selected_df)}&nbsp;&nbsp;
-            <strong>States Covering:</strong> {len(covering_states)}&nbsp;&nbsp;
-            <strong>States Missing:</strong> {len(missing_states)}
-        </div>
-        """, unsafe_allow_html=True)
+        # (summary already shown in the topic-focus-grid above)
 
         st.markdown("<h3 class='section-subtitle'>States That Cover This Topic</h3>", unsafe_allow_html=True)
 

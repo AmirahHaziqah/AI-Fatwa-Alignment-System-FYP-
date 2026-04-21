@@ -836,11 +836,11 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
     font-weight: 700 !important;
     font-family: 'Inter', sans-serif !important;
     padding: 0.38rem 0.85rem !important;
-    font-size: 0.78rem !important;
+    font-size: 0.82rem !important;
     box-shadow: 0 4px 14px rgba(119,51,68,0.20) !important;
     transition: all 0.25s ease !important;
     letter-spacing: 0.01em !important;
-    min-height: 36px !important;
+    min-height: 40px !important;
 }}
 .stButton > button:hover,
 .stDownloadButton > button:hover {{
@@ -1603,6 +1603,108 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
 }}
 .comparison-select-copy {{ font-size: 0.74rem; color: #6d5a68; line-height: 1.5; }}
 
+
+/* ══════════════════════════════════════════════════════════
+   TECH REVIEW TABLE TITLE
+══════════════════════════════════════════════════════════ */
+.tech-review-title {{
+    font-size: 0.82rem; font-weight: 800; color: #251329;
+    margin: 0.7rem 0 0.35rem 0; letter-spacing: 0.01em;
+}}
+
+/* ══════════════════════════════════════════════════════════
+   BATCH GUIDE CARD (manual input helper)
+══════════════════════════════════════════════════════════ */
+.batch-guide-card {{
+    background: linear-gradient(180deg, #fefefe 0%, #faf3f6 100%);
+    border: 1px solid #dfd7e4; border-left: 4px solid #c94a5c;
+    border-radius: 14px; padding: 0.85rem 1rem;
+    box-shadow: 0 3px 10px rgba(25,14,36,0.04);
+    transition: all 0.2s ease;
+}}
+.batch-guide-card:hover {{ transform: translateX(3px); border-left-width: 5px; }}
+.batch-guide-kicker {{
+    font-size: 0.62rem; font-weight: 800; letter-spacing: 0.10em;
+    text-transform: uppercase; color: #a0205a; margin-bottom: 0.55rem;
+}}
+.batch-guide-step {{
+    display: flex; gap: 0.5rem; align-items: flex-start;
+    font-size: 0.82rem; line-height: 1.55; color: #5a4050;
+    margin-bottom: 0.45rem;
+}}
+.batch-guide-step strong {{ color: #c94a5c; font-size: 0.88rem; flex-shrink: 0; }}
+.batch-guide-step span {{ color: #5a4050; }}
+
+/* ══════════════════════════════════════════════════════════
+   FATWA EXPLORER — BROWSER INLINE HEAD
+══════════════════════════════════════════════════════════ */
+.browse-inline-head {{
+    font-size: 0.72rem; font-weight: 800; letter-spacing: 0.06em;
+    text-transform: uppercase; color: #7a5a6a;
+    margin: 0 0 0.3rem 0.1rem;
+}}
+.browse-filter-chip-row {{
+    display: flex; flex-wrap: wrap; gap: 0.4rem;
+    margin: 0.45rem 0 0.7rem 0;
+}}
+.browse-filter-chip {{
+    display: inline-flex; align-items: center;
+    padding: 0.28rem 0.7rem; border-radius: 999px;
+    background: #f4ecf5; color: #3a1830;
+    border: 1px solid #dbbdd6;
+    font-size: 0.72rem; font-weight: 700; transition: all 0.18s ease;
+}}
+.browse-filter-chip:hover {{ background: #dbbdd6; transform: scale(1.02); }}
+
+/* ══════════════════════════════════════════════════════════
+   SLIM LOADER HEAD (flex row)
+══════════════════════════════════════════════════════════ */
+.slim-loader-head {{
+    display: flex; justify-content: space-between; align-items: flex-end;
+    gap: 0.6rem; margin-bottom: 0.5rem;
+}}
+
+/* ══════════════════════════════════════════════════════════
+   DATASET LOADER MINIMAL
+══════════════════════════════════════════════════════════ */
+.dataset-loader-minimal {{
+    background: linear-gradient(180deg, #fefefe 0%, #faf3f6 100%);
+    border: 1px solid #dfd7e4; border-radius: 14px;
+    padding: 0.6rem 0.85rem; margin-bottom: 0.5rem;
+    box-shadow: 0 2px 8px rgba(25,14,36,0.04);
+}}
+
+/* ══════════════════════════════════════════════════════════
+   BATCH FILTER GRID
+══════════════════════════════════════════════════════════ */
+.batch-filter-grid {{
+    background: linear-gradient(180deg, #fefefe 0%, #faf3f6 100%);
+    border: 1px solid #dfd7e4; border-radius: 14px;
+    padding: 0.7rem 0.85rem; margin-bottom: 0.55rem;
+    box-shadow: 0 2px 8px rgba(25,14,36,0.04);
+}}
+
+/* ══════════════════════════════════════════════════════════
+   COVERAGE CARD (keyword points)
+══════════════════════════════════════════════════════════ */
+.coverage-card {{
+    margin-bottom: 0.55rem;
+    min-height: 80px;
+}}
+
+/* ══════════════════════════════════════════════════════════
+   INPUT-EDITOR HEAD (flex row)
+══════════════════════════════════════════════════════════ */
+.input-editor-head {{
+    display: flex; justify-content: space-between;
+    align-items: flex-start; gap: 0.6rem;
+    margin-bottom: 0.3rem;
+}}
+.batch-shell-head {{
+    display: flex; justify-content: space-between;
+    align-items: flex-start; gap: 0.6rem;
+}}
+
 /* ══════════════════════════════════════════════════════════
    DIVIDER
 ══════════════════════════════════════════════════════════ */
@@ -1709,12 +1811,14 @@ def create_score_circle(score):
     """
 
 def score_color(score: float) -> str:
+    """Return the semantic hex colour for a score value."""
     tier = get_score_tier(score)
     _, _, text_color = get_score_tier_colors(tier)
     return text_color
 
 
 def score_css_band(score: float) -> str:
+    """Return the CSS band class (good / mid / low) for a score."""
     return get_score_css_class(get_score_tier(score))
 
 
@@ -2048,11 +2152,16 @@ def render_surface_card(title: str, subtitle: str = "", body_html: str = "", sof
 
 
 def render_footer():
+    """Render the page footer with author and institution details."""
     html_block = textwrap.dedent("""
         <div class="footer-wrap">
             <p>
-                ★ Amirah Alyahaziqah Bt Mohd Jeffry ★ &nbsp;·&nbsp; Bachelor of Computer Science (Hons.)<br>
-                <span style="font-size:0.75rem;">2026 Universiti Teknologi MARA</span>
+                ⚖️ <strong>AI Fatwa Alignment Dashboard</strong><br>
+                Amirah Alyahaziqah Bt Mohd Jeffry
+                &nbsp;·&nbsp; Bachelor of Computer Science (Hons.) in Data Science<br>
+                <span style="font-size:0.74rem; color:#a08b97;">
+                    2026 &nbsp;·&nbsp; Universiti Teknologi MARA (UiTM)
+                </span>
             </p>
         </div>
     """).strip()
