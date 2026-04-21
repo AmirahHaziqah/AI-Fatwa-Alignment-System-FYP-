@@ -530,19 +530,15 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
    DASHBOARD HEADER — REPLACES BANNER
 ══════════════════════════════════════════════════════════ */
 .dash-header-wrap {{
-    background: linear-gradient(135deg, #100022 0%, #2e0d22 45%, #5c1235 100%);
+    position: relative;
     border-radius: 18px;
-    padding: 1.2rem 1.8rem;
     margin-bottom: 0.4rem;
     box-shadow: 0 8px 28px rgba(16,0,34,0.24);
     border: 1px solid rgba(255,255,255,0.07);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
-    animation: fadeInUp 0.45s ease-out;
-    position: relative;
     overflow: hidden;
+    animation: fadeInUp 0.45s ease-out;
+    min-height: 110px;
+    background: linear-gradient(135deg, #100022 0%, #2e0d22 45%, #5c1235 100%);
 }}
 .dash-header-wrap::before {{
     content: '';
@@ -552,21 +548,32 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
     background: linear-gradient(90deg, #D44D5C 0%, #773344 50%, #D44D5C 100%);
     background-size: 200% 100%;
     animation: shimmer 3s linear infinite;
+    z-index: 4;
 }}
-.dash-header-wrap::after {{
-    content: '';
-    position: absolute;
-    bottom: -60px; right: -60px;
-    width: 200px; height: 200px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(212,77,92,0.15) 0%, transparent 70%);
-    pointer-events: none;
+/* Overlay when image is present */
+.dash-header-overlay-img {{
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg,
+        rgba(10,5,25,0.92) 0%,
+        rgba(28,8,32,0.82) 40%,
+        rgba(60,10,40,0.50) 70%,
+        rgba(80,10,45,0.20) 100%);
+    display: flex; align-items: center;
+    padding: 1.4rem 1.8rem;
+    z-index: 2;
+}}
+/* Overlay when no image */
+.dash-header-overlay-plain {{
+    position: absolute; inset: 0;
+    display: flex; align-items: center;
+    padding: 1.4rem 1.8rem;
+    z-index: 2;
 }}
 .dash-header-left {{ flex: 1; min-width: 0; }}
 .dash-header-kicker {{
     display: inline-flex; align-items: center; gap: 0.5rem;
     padding: 0.28rem 0.8rem; border-radius: 999px;
-    background: rgba(212,77,92,0.20); border: 1px solid rgba(212,77,92,0.35);
+    background: rgba(212,77,92,0.22); border: 1px solid rgba(212,77,92,0.38);
     color: #ffccd5; font-size: 0.68rem; font-weight: 800;
     letter-spacing: 0.10em; text-transform: uppercase;
     margin-bottom: 0.55rem;
@@ -575,33 +582,13 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
     font-family: 'Inter Tight', 'Inter', sans-serif;
     font-size: 1.65rem; font-weight: 900; line-height: 1.1;
     letter-spacing: -0.03em; color: #ffffff;
-    margin: 0 0 0.4rem 0;
-    text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    margin: 0 0 0.38rem 0;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.4);
 }}
 .dash-header-subtitle {{
     font-size: 0.88rem; font-weight: 400; line-height: 1.65;
-    color: rgba(255,255,255,0.75); margin: 0; max-width: 680px;
-}}
-.dash-header-right {{
-    display: flex; flex-direction: column; gap: 0.55rem;
-    align-items: flex-end; flex-shrink: 0;
-}}
-.dash-header-badge {{
-    padding: 0.45rem 0.9rem; border-radius: 12px;
-    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
-    text-align: right; transition: all 0.2s ease; min-width: 130px;
-}}
-.dash-header-badge:hover {{
-    background: rgba(255,255,255,0.13); transform: translateX(-2px);
-}}
-.dash-header-badge-label {{
-    font-size: 0.6rem; font-weight: 800; letter-spacing: 0.09em;
-    text-transform: uppercase; color: rgba(255,255,255,0.5);
-    margin-bottom: 0.1rem;
-}}
-.dash-header-badge-value {{
-    font-size: 0.8rem; font-weight: 700; color: rgba(255,255,255,0.9);
-    line-height: 1.2;
+    color: rgba(255,255,255,0.78); margin: 0; max-width: 680px;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.3);
 }}
 
 /* ══════════════════════════════════════════════════════════
@@ -1405,8 +1392,73 @@ div[data-testid="column"] .stButton > button,
 .workspace-copy {{ color: #5d3945; font-size: 0.75rem; line-height: 1.55; margin-top: 0.18rem; }}
 
 /* ══════════════════════════════════════════════════════════
-   SLIM LOADER
+   DATASET LOADER — REDESIGNED BEAUTIFUL CARD
 ══════════════════════════════════════════════════════════ */
+.ds-loader-card {{
+    background: linear-gradient(135deg, #ffffff 0%, #fdf4f8 100%);
+    border: 1px solid #e5cedc;
+    border-left: 4px solid #c94a5c;
+    border-radius: 16px;
+    padding: 0.85rem 1rem 0.75rem 1rem;
+    margin-bottom: 0.65rem;
+    box-shadow: 0 4px 16px rgba(119,51,68,0.07);
+    transition: all 0.28s ease;
+    position: relative;
+    overflow: hidden;
+}}
+.ds-loader-card::after {{
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 80px; height: 80px;
+    background: radial-gradient(circle at top right, rgba(212,77,92,0.08) 0%, transparent 70%);
+    pointer-events: none;
+}}
+.ds-loader-card:hover {{
+    box-shadow: 0 8px 22px rgba(119,51,68,0.11);
+    border-left-width: 5px;
+    transform: translateY(-1px);
+}}
+.ds-loader-top {{
+    display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 0.8rem;
+    margin-bottom: 0.55rem;
+}}
+.ds-loader-kicker {{
+    font-size: 0.6rem; font-weight: 800; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #c94a5c; margin-bottom: 0.2rem;
+    display: flex; align-items: center; gap: 0.35rem;
+}}
+.ds-loader-title {{
+    font-family: 'Inter Tight', 'Inter', sans-serif;
+    font-size: 0.88rem; font-weight: 800; color: #1e1020; line-height: 1.2;
+}}
+.ds-loader-badge {{
+    display: inline-flex; align-items: center;
+    padding: 0.22rem 0.65rem; border-radius: 999px;
+    background: rgba(201,74,92,0.08); border: 1px solid rgba(201,74,92,0.22);
+    color: #a83250; font-size: 0.62rem; font-weight: 800;
+    white-space: nowrap; letter-spacing: 0.04em;
+    flex-shrink: 0;
+}}
+.ds-loader-copy {{
+    font-size: 0.72rem; color: #7a6874; line-height: 1.55; margin-bottom: 0.65rem;
+}}
+.ds-loader-controls {{
+    display: grid; grid-template-columns: 1fr 1fr auto;
+    gap: 0.6rem; align-items: end;
+}}
+.ds-loader-col-label {{
+    font-size: 0.58rem; font-weight: 800; letter-spacing: 0.09em;
+    text-transform: uppercase; color: #9b7a89;
+    margin-bottom: 0.22rem; display: flex; align-items: center; gap: 0.25rem;
+}}
+.ds-loader-divider {{
+    height: 1px; background: linear-gradient(90deg, #e8d4de 0%, transparent 100%);
+    margin: 0.65rem 0 0 0;
+}}
+
+/* Slim loader (kept for backward compat) */
 .slim-loader-kicker {{
     font-size: 0.62rem; font-weight: 800; letter-spacing: 0.12em;
     text-transform: uppercase; color: #a0205a; margin-bottom: 0.18rem;
@@ -2235,28 +2287,44 @@ def render_hero_banner(
 def render_dashboard_header(
     title="AI Fatwa Alignment Dashboard",
     subtitle="How closely do AI Responses align with Malaysian ART rulings?",
-    kicker="⚖️  Fatwa Alignment Reviewer · Assisted Reproductive Technology (ART)",
+    kicker="\u2696\ufe0f  Fatwa Alignment Reviewer \xb7 Assisted Reproductive Technology (ART)",
 ):
-    """Render the sleek compact dashboard header (replaces the old image banner)."""
+    """Render the sleek compact dashboard header with optional background image."""
     safe_title = html.escape(title)
     safe_subtitle = html.escape(subtitle)
     safe_kicker = html.escape(kicker)
 
+    # Try to find a background image file from the project folder
+    bg_candidates = [
+        "fyp_dashboard.png", "fyp_dashboard.jpg", "fyp_dashboard.jpeg", "fyp_dashboard.webp",
+        "dashboard_background.png", "dashboard_background.jpg",
+        "dashboard_background 3.png", "dashboard_background 3.jpg",
+        "hero_banner.jpg", "hero_banner.png",
+    ]
+    bg_uri = None
+    for c in bg_candidates:
+        uri = _image_to_data_uri(c)
+        if uri:
+            bg_uri = uri
+            break
+
+    if bg_uri:
+        bg_style = (
+            f"background-image: url('{bg_uri}'); "
+            "background-size: cover; background-position: center top; "
+        )
+        overlay_class = "dash-header-overlay-img"
+    else:
+        bg_style = ""
+        overlay_class = "dash-header-overlay-plain"
+
     html_block = f"""
-    <div class="dash-header-wrap">
-        <div class="dash-header-left">
-            <div class="dash-header-kicker">{safe_kicker}</div>
-            <div class="dash-header-title">{safe_title}</div>
-            <div class="dash-header-subtitle">{safe_subtitle}</div>
-        </div>
-        <div class="dash-header-right">
-            <div class="dash-header-badge">
-                <div class="dash-header-badge-label">System</div>
-                <div class="dash-header-badge-value">Fatwa Alignment</div>
-            </div>
-            <div class="dash-header-badge">
-                <div class="dash-header-badge-label">Domain</div>
-                <div class="dash-header-badge-value">ART · Malaysian Fatwas</div>
+    <div class="dash-header-wrap" style="{bg_style}">
+        <div class="{overlay_class}">
+            <div class="dash-header-left">
+                <div class="dash-header-kicker">{safe_kicker}</div>
+                <div class="dash-header-title">{safe_title}</div>
+                <div class="dash-header-subtitle">{safe_subtitle}</div>
             </div>
         </div>
     </div>

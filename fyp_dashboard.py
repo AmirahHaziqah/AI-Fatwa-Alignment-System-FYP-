@@ -1935,24 +1935,28 @@ with tab1:
             if not selected_model or not available_models or selected_model not in available_models:
                 selected_model = available_models[0] if available_models else ""
 
-            # Loader header
+            # Loader header — redesigned beautiful card
             st.markdown(_html("""
-            <div class='dataset-loader-header' style='margin-bottom: 0.5rem;'>
-                <div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;'>
+            <div class='ds-loader-card'>
+                <div class='ds-loader-top'>
                     <div>
-                        <div class='slim-loader-kicker' style='color: #a0205a;'>📂 LOAD A SAVED ANSWER</div>
-                        <div class='slim-loader-title' style='font-size: 0.85rem; font-weight: 700;'>Quick load from dataset</div>
+                        <div class='ds-loader-kicker'>📂 Load a Saved Answer</div>
+                        <div class='ds-loader-title'>Quick load from dataset</div>
                     </div>
-                    <div class='slim-loader-side' style='font-size: 0.65rem; color: #8b6771;'>⬇️ Select & load</div>
+                    <div class='ds-loader-badge'>⬇ Select &amp; Load</div>
                 </div>
-                <div class='slim-loader-copy' style='font-size: 0.72rem; color: #6d5a68;'>Pick a question and AI model to instantly load a saved response into the review area below.</div>
+                <div class='ds-loader-copy'>Pick a question and AI model to instantly load a saved response into the review area below.</div>
+                <div style='display:grid; grid-template-columns: 1fr 1fr auto; gap:0.6rem; align-items:end;'>
+                    <div><div class='ds-loader-col-label'>📋 Question</div></div>
+                    <div><div class='ds-loader-col-label'>🤖 AI Model</div></div>
+                    <div><div class='ds-loader-col-label'>⚡ Action</div></div>
+                </div>
             </div>
             """), unsafe_allow_html=True)
 
-            # Three columns for compact layout
+            # Three columns for compact layout — flush under the card labels
             ctrl1, ctrl2, ctrl3 = st.columns([0.48, 0.32, 0.20], gap="small")
             with ctrl1:
-                st.markdown("<div class='dataset-control-caption' style='font-size: 0.6rem;'>📋 QUESTION</div>", unsafe_allow_html=True)
                 selected_question_text = st.selectbox(
                     "Question",
                     options=list(question_options.keys()),
@@ -1961,7 +1965,6 @@ with tab1:
                     label_visibility="collapsed"
                 )
             with ctrl2:
-                st.markdown("<div class='dataset-control-caption' style='font-size: 0.6rem;'>🤖 AI MODEL</div>", unsafe_allow_html=True)
                 selected_model = st.selectbox(
                     "AI Model",
                     options=available_models,
@@ -1970,10 +1973,9 @@ with tab1:
                     label_visibility="collapsed"
                 )
             with ctrl3:
-                st.markdown("<div class='dataset-control-caption' style='font-size: 0.6rem;'>⚡ ACTION</div>", unsafe_allow_html=True)
                 load_btn = st.button(
-                    "Load", 
-                    use_container_width=True, 
+                    "Load",
+                    use_container_width=True,
                     key="ds_load_btn_primary",
                     help="Load the selected response"
                 )
@@ -2188,18 +2190,6 @@ with tab2:
     )
 
     responses_to_run = []
-
-    st.markdown(_html("""
-    <div class='batch-shell compact'>
-        <div class='batch-shell-head'>
-            <div>
-                <div class='batch-kicker'>Review builder</div>
-                <div class='batch-title'>Batch comparison</div>
-                <div class='batch-copy'>Compare several saved or manual answers in one view.</div>
-            </div>
-        </div>
-    </div>
-    """), unsafe_allow_html=True)
 
     if batch_mode == "Load from dataset" and AI_DATASET_AVAILABLE:
         available_models_b = sorted(ai_answer_df["model"].unique().tolist())
