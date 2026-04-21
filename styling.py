@@ -887,6 +887,12 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
     background: linear-gradient(135deg, #d44d5c 0%, #b8405a 100%) !important;
     color: white !important;
 }}
+
+div[data-testid="stHorizontalBlock"] .stButton > button {{
+    font-size: 0.8rem !important;
+    padding: 0.3rem 0.8rem !important;
+}}
+
 .stButton > button:active,
 .stDownloadButton > button:active {{
     transform: translateY(0px) !important;
