@@ -451,57 +451,95 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
 }}
 
 /* ══════════════════════════════════════════════════════════
-   HERO BANNER
+   HERO BANNER — UPDATED (BIGGER + BETTER TEXT)
 ══════════════════════════════════════════════════════════ */
 .hero-image-wrap {{
-    position: relative; height: 128px !important;
-    border-radius: 18px !important; overflow: hidden;
-    margin-bottom: 0.8rem;
+    position: relative;
+    height: 200px !important; /* increased from 128px */
+    border-radius: 20px !important;
+    overflow: hidden;
+    margin-bottom: 1rem;
     border: 1px solid rgba(158,179,194,0.18);
-    box-shadow: 0 10px 28px rgba(22,0,41,0.14);
+    box-shadow: 0 14px 36px rgba(22,0,41,0.18);
     background: linear-gradient(110deg, #0a2246 0%, #3e1840 55%, #5c0c3c 100%);
     animation: fadeInUp 0.55s ease-out;
 }}
+
 .hero-single-image {{
-    position: absolute; inset: 0; width: 100%; height: 100%;
-    object-fit: cover; object-position: center; display: block;
-    opacity: 0.58; filter: saturate(0.88) contrast(1.04) brightness(0.78);
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0.65;
+    filter: saturate(0.9) contrast(1.05) brightness(0.8);
     transition: transform 0.6s ease;
 }}
-.hero-image-wrap:hover .hero-single-image {{ transform: scale(1.04); }}
+
+.hero-image-wrap:hover .hero-single-image {{
+    transform: scale(1.05);
+}}
+
 .hero-image-overlay {{
-    position: absolute; inset: 0; z-index: 3;
+    position: absolute;
+    inset: 0;
+    z-index: 3;
     background: linear-gradient(
         90deg,
-        rgba(8,30,60,0.94) 0%,
-        rgba(22,28,68,0.80) 28%,
-        rgba(58,22,68,0.42) 56%,
-        rgba(80,12,60,0.18) 100%
-    ) !important;
-    display: flex; align-items: center; justify-content: flex-start !important;
-    text-align: left !important; padding: 1.4rem 1.8rem;
+        rgba(8,30,60,0.95) 0%,
+        rgba(22,28,68,0.85) 30%,
+        rgba(58,22,68,0.45) 60%,
+        rgba(80,12,60,0.20) 100%
+    );
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 2rem 2.4rem; /* more breathing space */
 }}
-.hero-image-content {{ width: 100%; max-width: 68% !important; }}
+
+.hero-image-content {{
+    width: 100%;
+    max-width: 60%;
+}}
+
+/* Kicker */
 .hero-kicker {{
-    display: inline-flex; align-items: center;
-    padding: 0.25rem 0.75rem; border-radius: 999px;
-    background: rgba(255,255,255,0.10);
-    border: 1px solid rgba(255,255,255,0.22);
-    color: #ffffff; font-size: 0.63rem !important; font-weight: 800;
-    letter-spacing: 0.06em; text-transform: uppercase;
-    margin-bottom: 0.45rem; backdrop-filter: blur(4px);
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #ffffff;
+    font-size: 0.75rem !important; /* bigger */
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
 }}
+
+/* Title */
 .hero-image-title {{
     font-family: 'Inter Tight', 'Inter', sans-serif;
-    font-size: 1.25rem !important; font-weight: 900;
-    line-height: 1.08; letter-spacing: -0.03em;
-    color: #ffffff !important; margin: 0 0 0.35rem 0;
-    text-shadow: 0 3px 10px rgba(0,0,0,0.22) !important;
+    font-size: 1.9rem !important; /* BIG increase */
+    font-weight: 900;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: #ffffff !important;
+    margin: 0 0 0.5rem 0;
+    text-shadow: 0 4px 14px rgba(0,0,0,0.35);
 }}
+
+/* Subtitle */
 .hero-image-subtitle {{
-    font-size: 0.68rem !important; font-weight: 500;
-    line-height: 1.55; color: rgba(255,255,255,0.90) !important;
-    margin: 0; max-width: 94%; text-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    font-size: 0.95rem !important; /* readable */
+    font-weight: 500;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.92) !important;
+    margin: 0;
+    max-width: 95%;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25);
 }}
 
 /* ══════════════════════════════════════════════════════════
