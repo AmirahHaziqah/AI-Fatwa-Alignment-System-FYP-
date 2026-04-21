@@ -582,18 +582,7 @@ def apply_dashboard_polish():
     .stSelectbox select, .stMultiSelect select {
         color: #2a1421 !important;
     }
-
-     /* MAKE STREAMLIT TABS BOLD */
-button[data-baseweb="tab"] {
-    font-weight: 800 !important;
-    font-size: 0.95rem !important;
-}
-
-/* ACTIVE TAB EVEN STRONGER */
-button[data-baseweb="tab"][aria-selected="true"] {
-    font-weight: 900 !important;
-}
-                           
+           
     </style>
     """, unsafe_allow_html=True)
 
@@ -1507,6 +1496,7 @@ def render_batch_score_chart(num_df: pd.DataFrame):
     if chart_df.empty:
         return
 
+    # Inner function for leaderboard cards
     def _render_leaderboard_cards(rank_df, title, subtitle, entity_col='model'):
         st.markdown(_html(f"""
         <div class='chart-panel'>
@@ -1514,15 +1504,18 @@ def render_batch_score_chart(num_df: pd.DataFrame):
             <div class='chart-panel-copy'>{html.escape(subtitle)}</div>
         </div>
         """), unsafe_allow_html=True)
+        
         medal_map = {0: '🥇', 1: '🥈', 2: '🥉'}
+        
         for idx, (_, row) in enumerate(rank_df.iterrows()):
             medal = medal_map.get(idx, f"#{idx+1}")
             score = safe_float(row['score'])
             metric_line = f"Meaning {safe_float(row.get('semantic',0)):.0f}% · Text {safe_float(row.get('lexical',0)):.0f}% · Key points {safe_float(row.get('coverage',0)):.0f}%"
             count_text = f"{int(row['responses'])} responses reviewed" if 'responses' in row.index else 'overall fit'
             card_class = "leaderboard-card leaderboard-card-top" if idx == 0 else "leaderboard-card"
+            
             st.markdown(_html(f"""
-            <div class='{card_class}'>
+            <div class='{card_class}' style='margin-bottom: 0.8rem;'>
                 <div class='leaderboard-rank'>{medal}</div>
                 <div class='leaderboard-main'>
                     <div class='leaderboard-title'>{html.escape(str(row[entity_col]))}</div>
@@ -1536,6 +1529,7 @@ def render_batch_score_chart(num_df: pd.DataFrame):
             </div>
             """), unsafe_allow_html=True)
 
+    # Inner function for grouped bars
     def _render_grouped_bars(metric_df, entity_col, title, subtitle):
         chart_src = metric_df[[entity_col, 'semantic', 'lexical', 'coverage']].copy()
         chart_src = chart_src.rename(columns={entity_col: 'Entity', 'semantic': 'Meaning match', 'lexical': 'Text match', 'coverage': 'Key points'})
@@ -1552,7 +1546,12 @@ def render_batch_score_chart(num_df: pd.DataFrame):
             tooltip=[alt.Tooltip('Entity:N', title='Item'), alt.Tooltip('Metric:N'), alt.Tooltip('Score:Q', format='.1f')]
         )
         bars = base.mark_bar(size=34, cornerRadiusTopLeft=10, cornerRadiusTopRight=10)
-        text_marks = alt.Chart(chart_long).mark_text(dy=-10, color='#5d3945', fontSize=11, fontWeight='bold').encode(x=alt.X('Metric:N', sort=metric_order), xOffset=alt.XOffset('Entity:N', sort=entity_order), y=alt.Y('Score:Q', scale=alt.Scale(domain=[0,100])), text=alt.Text('Score:Q', format='.0f'))
+        text_marks = alt.Chart(chart_long).mark_text(dy=-10, color='#5d3945', fontSize=11, fontWeight='bold').encode(
+            x=alt.X('Metric:N', sort=metric_order), 
+            xOffset=alt.XOffset('Entity:N', sort=entity_order), 
+            y=alt.Y('Score:Q', scale=alt.Scale(domain=[0,100])), 
+            text=alt.Text('Score:Q', format='.0f')
+        )
         final_chart = (
             alt.layer(bars, text_marks)
             .properties(height=320, background='#fbf5f1')
@@ -1575,6 +1574,7 @@ def render_batch_score_chart(num_df: pd.DataFrame):
         top_entity = metric_df.sort_values('score', ascending=False).iloc[0][entity_col]
         st.markdown(f"<div class='chart-conclusion'><strong>Conclusion:</strong> <strong>{html.escape(str(top_entity))}</strong> stays strongest overall, and <strong>{html.escape(str(strongest_metric))}</strong> is the clearest place to see the biggest gap.</div>", unsafe_allow_html=True)
 
+    # Main logic
     multi_model = chart_df["model"].nunique() > 1 and not set(chart_df["model"].unique()).issubset({"Manual"})
     c1, c2 = st.columns(2, gap="medium")
 
@@ -1586,14 +1586,14 @@ def render_batch_score_chart(num_df: pd.DataFrame):
             .reset_index(drop=True)
         )
         with c1:
-            _render_leaderboard_cards(summary_df, 'Model leaderboard', 'This ranking shows which AI model gave the strongest overall average fit. Read the small metric line under each model to see why it placed there.', entity_col='model')
+            _render_leaderboard_cards(summary_df, '🏆 Model Leaderboard', 'This ranking shows which AI model gave the strongest overall average fit.', entity_col='model')
             best = summary_df.iloc[0]
             second = summary_df.iloc[1] if len(summary_df) > 1 else None
             margin = f" by {best['score'] - second['score']:.1f} points" if second is not None else ''
-            st.markdown(f"<div class='chart-conclusion'><strong>Conclusion:</strong> <strong>{html.escape(str(best['model']))}</strong> is the most reliable overall performer{margin}.</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='chart-conclusion' style='margin-top:0.5rem;'><strong>Conclusion:</strong> <strong>{html.escape(str(best['model']))}</strong> is the most reliable overall performer{margin}.</div>", unsafe_allow_html=True)
         with c2:
             st.markdown("<div style='height:4.2rem;'></div>", unsafe_allow_html=True)
-            _render_grouped_bars(summary_df, 'model', 'Metric comparison by model', 'Each metric group shows the models side by side so users can quickly see who was stronger in meaning, wording, and key fatwa coverage.')
+            _render_grouped_bars(summary_df, 'model', 'Metric comparison by model', 'Each metric group shows the models side by side.')
     else:
         summary_df = (
             chart_df.groupby('label', as_index=False)
@@ -1602,14 +1602,13 @@ def render_batch_score_chart(num_df: pd.DataFrame):
             .reset_index(drop=True)
         )
         with c1:
-            _render_leaderboard_cards(summary_df, 'Response leaderboard', 'A simple ranking of which response matched the fatwa reference best overall.', entity_col='label')
+            _render_leaderboard_cards(summary_df, '🏆 Response Leaderboard', 'A simple ranking of which response matched the fatwa reference best overall.', entity_col='label')
             best = summary_df.iloc[0]
-            st.markdown(f"<div class='chart-conclusion'><strong>Conclusion:</strong> <strong>{html.escape(str(best['label']))}</strong> gives the strongest overall fit at {best['score']:.1f}%.</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='chart-conclusion' style='margin-top:0.5rem;'><strong>Conclusion:</strong> <strong>{html.escape(str(best['label']))}</strong> gives the strongest overall fit at {best['score']:.1f}%.</div>", unsafe_allow_html=True)
         with c2:
             st.markdown("<div style='height:4.2rem;'></div>", unsafe_allow_html=True)
-            _render_grouped_bars(summary_df, 'label', 'Metric comparison by response', 'Side-by-side bars make it easier to compare meaning match, text match, and key fatwa points for each response.')
-
-
+            _render_grouped_bars(summary_df, 'label', 'Metric comparison by response', 'Side-by-side bars make it easier to compare meaning match, text match, and key fatwa points.')
+            
 def render_similarity_breakdown(bundle: dict):
     """Render the similarity breakdown with beautiful metric cards."""
     final_match_score = safe_float(bundle.get("final_match_score"))
@@ -1907,6 +1906,9 @@ with tab1:
     review_left, review_right = st.columns([0.58, 0.42], gap="small")
 
     with review_left:
+        # =========================================================
+        # DATASET LOAD SECTION
+        # =========================================================
         if AI_DATASET_AVAILABLE:
             question_map = (
                 fatwa_df[["question_id", "question_text"]]
@@ -1927,21 +1929,24 @@ with tab1:
             if not selected_model or not available_models or selected_model not in available_models:
                 selected_model = available_models[0] if available_models else ""
 
+            # Loader header
             st.markdown(_html("""
-            <div class='slim-loader-head'>
-                <div>
-                    <div class='slim-loader-kicker'>Load a saved answer</div>
-                    <div class='slim-loader-title'>Input source</div>
-                    <div class='slim-loader-copy'>Pick a saved question and AI model to place an existing response into the review area instantly.</div>
+            <div class='dataset-loader-header' style='margin-bottom: 0.5rem;'>
+                <div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;'>
+                    <div>
+                        <div class='slim-loader-kicker' style='color: #a0205a;'>📂 LOAD A SAVED ANSWER</div>
+                        <div class='slim-loader-title' style='font-size: 0.85rem; font-weight: 700;'>Quick load from dataset</div>
+                    </div>
+                    <div class='slim-loader-side' style='font-size: 0.65rem; color: #8b6771;'>⬇️ Select & load</div>
                 </div>
-                <div class='slim-loader-side'>Dataset quick load</div>
+                <div class='slim-loader-copy' style='font-size: 0.72rem; color: #6d5a68;'>Pick a question and AI model to instantly load a saved response into the review area below.</div>
             </div>
             """), unsafe_allow_html=True)
-            st.markdown("<div class='dataset-loader-minimal'>", unsafe_allow_html=True)
 
-            ctrl1, ctrl2, ctrl3 = st.columns([0.5, 0.23, 0.27], gap="small")
+            # Three columns for compact layout
+            ctrl1, ctrl2, ctrl3 = st.columns([0.48, 0.32, 0.20], gap="small")
             with ctrl1:
-                st.markdown("<div class='dataset-control-caption'>Question</div>", unsafe_allow_html=True)
+                st.markdown("<div class='dataset-control-caption' style='font-size: 0.6rem;'>📋 QUESTION</div>", unsafe_allow_html=True)
                 selected_question_text = st.selectbox(
                     "Question",
                     options=list(question_options.keys()),
@@ -1950,7 +1955,7 @@ with tab1:
                     label_visibility="collapsed"
                 )
             with ctrl2:
-                st.markdown("<div class='dataset-control-caption'>AI model</div>", unsafe_allow_html=True)
+                st.markdown("<div class='dataset-control-caption' style='font-size: 0.6rem;'>🤖 AI MODEL</div>", unsafe_allow_html=True)
                 selected_model = st.selectbox(
                     "AI Model",
                     options=available_models,
@@ -1959,10 +1964,13 @@ with tab1:
                     label_visibility="collapsed"
                 )
             with ctrl3:
-                st.markdown("<div class='dataset-control-caption'>Action</div>", unsafe_allow_html=True)
-                load_btn = st.button("Load Selected Response", use_container_width=True, key="ds_load_btn_primary")
-
-            st.markdown("</div>", unsafe_allow_html=True)
+                st.markdown("<div class='dataset-control-caption' style='font-size: 0.6rem;'>⚡ ACTION</div>", unsafe_allow_html=True)
+                load_btn = st.button(
+                    "Load", 
+                    use_container_width=True, 
+                    key="ds_load_btn_primary",
+                    help="Load the selected response"
+                )
 
             selected_qid = question_options[selected_question_text]
             question_subset = ai_answer_df[ai_answer_df["question_id"] == selected_qid].copy()
@@ -1974,31 +1982,40 @@ with tab1:
                     st.session_state["load_success_toast"] = True
                     st.rerun()
                 else:
-                    st.warning(f"⚠️ No saved response found for model '{selected_model}' on this question. Try another model.")
-
+                    st.warning(f"⚠️ No saved response found for model '{selected_model}'")
+            
+            st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
+        
+        # =========================================================
+        # RESPONSE WORKSPACE - USER FRIENDLY MESSAGE
+        # =========================================================
         st.markdown(_html("""
             <div class='input-editor-shell'>
                 <div class='input-editor-head'>
                     <div>
-                        <div class='input-editor-kicker'>Response workspace</div>
-                        <div class='input-editor-title'>Paste the answer you want to review</div>
+                        <div class='input-editor-kicker'>✍️ YOUR RESPONSE</div>
+                        <div class='input-editor-title'>Paste the AI answer you want to check</div>
+                        <div class='input-editor-copy' style='font-size: 0.7rem; color: #7a6874; margin-top: 0.2rem;'>
+                            💡 Copy and paste any AI-generated answer here — longer, detailed answers give more accurate scores.
+                        </div>
                     </div>
-                    <div class='input-editor-chip'>Single answer</div>
+                    <div class='input-editor-chip'>Single review</div>
                 </div>
             </div>
         """), unsafe_allow_html=True)
+        
         ai_response = st.text_area(
             "AI Response Input",
             height=120,
-            placeholder="Paste the full AI-generated answer here. Longer and more specific answers produce better alignment scores...",
+            placeholder="Example: \"In Islam, surrogacy is generally not permitted because it can mix lineages...\"\n\nPaste your full AI-generated answer here. The more complete your answer, the better the alignment score.",
             key="ai_input",
             label_visibility="collapsed"
         )
 
-        # Show beautiful centered popup toast when response is loaded successfully
+        # Show success toast when response loaded
         if st.session_state.pop('load_success_toast', False):
             show_success_toast_center(
-                "✓ Saved response loaded successfully!",
+                "✓ Response loaded successfully!",
                 ["Ready for review", "Click Analyze to see results"]
             )
 
@@ -2033,11 +2050,12 @@ with tab1:
             """), unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
+    # Buttons row
     b1, b2 = st.columns([0.62, 0.38], gap="small")
     with b1:
-        analyze_btn = st.button("🔍  Analyze This Response", use_container_width=True, key="analyze_single")
+        analyze_btn = st.button("🔍 Analyze This Response", use_container_width=True, key="analyze_single")
     with b2:
-        clear_btn = st.button("🗑️  Clear History", use_container_width=True, key="clear_all_single")
+        clear_btn = st.button("🗑️ Clear History", use_container_width=True, key="clear_all_single")
 
     if clear_btn:
         clear_history()
@@ -2145,8 +2163,7 @@ with tab1:
             st.markdown("<div style='height:0.5rem;'></div>", unsafe_allow_html=True)
             st.markdown("<div class='tech-review-title'>How the system chose the best fatwa source</div>", unsafe_allow_html=True)
             st.markdown(build_light_table_html(state_debug_df), unsafe_allow_html=True)
-
-
+            
 # =========================================================
 # TAB 2 - Batch Review
 # =========================================================

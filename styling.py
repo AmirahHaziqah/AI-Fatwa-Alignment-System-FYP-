@@ -873,8 +873,8 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
     border-radius: 8px !important;
     font-weight: 700 !important;
     font-family: 'Inter', sans-serif !important;
-    padding: 0.3rem 0.8rem !important;
-    font-size: 0.8rem !important;
+    padding: 0.25rem 0.6rem !important;
+    font-size: 0.7rem !important;
     box-shadow: 0 4px 14px rgba(119,51,68,0.20) !important;
     transition: all 0.25s ease !important;
     letter-spacing: 0.01em !important;
@@ -898,6 +898,12 @@ div[data-testid="stHorizontalBlock"] .stButton > button {{
     transform: translateY(0px) !important;
     box-shadow: 0 2px 8px rgba(119,51,68,0.18) !important;
 }}
+
+button[key="ds_load_btn_primary"] {{
+        font-size: 0.65rem !important;
+        padding: 0.2rem 0.5rem !important;
+        min-height: 30px !important;
+    }}
 
 /* ══════════════════════════════════════════════════════════
    INPUT LABELS
@@ -1021,7 +1027,7 @@ div[data-testid="stHorizontalBlock"] .stButton > button {{
 .stTextArea textarea:focus {{ border: none !important; box-shadow: none !important; outline: none !important; }}
 .stTextArea textarea::placeholder,
 .stTextInput input::placeholder {{
-    color: #9a7b87 !important; opacity: 1 !important; font-size: 0.84rem !important;
+    color: #b8a5af !important; opacity: 1 !important; font-size: 0.75rem !important;
 }}
 
 /* ══════════════════════════════════════════════════════════
@@ -1531,6 +1537,7 @@ div[data-testid="stHorizontalBlock"] .stButton > button {{
     background: linear-gradient(180deg, #fff 0%, #faf3f6 100%);
     border: 1px solid #dfd7e4; border-radius: 14px;
     padding: 0.75rem 0.95rem;
+    margin-bottom: 0.8rem !important;
     box-shadow: 0 2px 8px rgba(25,14,36,0.04); transition: all 0.28s ease;
 }}
 .leaderboard-card:hover {{
@@ -1583,6 +1590,11 @@ div[data-testid="stHorizontalBlock"] .stButton > button {{
 .empty-review-stat:hover {{ transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }}
 .empty-review-stat-label {{ font-size: 0.62rem; font-weight: 800; color: #8b6771; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.12rem; }}
 .empty-review-stat-value {{ font-family: 'Inter Tight', 'Inter', sans-serif; font-size: 0.98rem; color: #160029; font-weight: 800; }}
+
+/* ===== FIX: Remove empty boxes ===== */
+    .element-container:empty {{
+        display: none;
+    }}
 
 /* ══════════════════════════════════════════════════════════
    RESULT CARDS GRID
@@ -1748,6 +1760,10 @@ div[data-testid="stHorizontalBlock"] .stButton > button {{
     display: flex; justify-content: space-between;
     align-items: flex-start; gap: 0.6rem;
 }}
+.input-editor-copy {{
+        line-height: 1.4;
+    }}
+    
 
 /* ══════════════════════════════════════════════════════════
    DIVIDER
