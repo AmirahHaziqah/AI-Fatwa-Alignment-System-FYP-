@@ -537,7 +537,7 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
     border: 1px solid rgba(255,255,255,0.07);
     overflow: hidden;
     animation: fadeInUp 0.45s ease-out;
-    min-height: 160px;
+    min-height: 180px;
     background: linear-gradient(135deg, #100022 0%, #2e0d22 45%, #5c1235 100%);
 }}
 .dash-header-wrap::before {{
@@ -554,19 +554,19 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
 .dash-header-overlay-img {{
     position: absolute; inset: 0;
     background: linear-gradient(90deg,
-        rgba(10,5,25,0.92) 0%,
-        rgba(28,8,32,0.82) 40%,
-        rgba(60,10,40,0.50) 70%,
-        rgba(80,10,45,0.20) 100%);
+        rgba(10,5,25,0.95) 0%,
+        rgba(28,8,32,0.88) 40%,
+        rgba(60,10,40,0.65) 70%,
+        rgba(80,10,45,0.35) 100%);
     display: flex; align-items: center;
-    padding: 1.8rem 1.8rem;
+    padding: 2rem 1.8rem;
     z-index: 2;
 }}
 /* Overlay when no image */
 .dash-header-overlay-plain {{
     position: absolute; inset: 0;
     display: flex; align-items: center;
-    padding: 1.8rem 1.8rem;
+    padding: 2rem 1.8rem;
     z-index: 2;
 }}
 .dash-header-left {{ flex: 1; min-width: 0; }}
@@ -1931,6 +1931,28 @@ div[data-testid="column"] .stButton > button,
     .hero-image-title {{ font-size: 0.8rem !important; }}
 }}
 
+@media (max-width: 1200px) {{
+    .dash-header-wrap {{
+        min-height: 160px;
+    }}
+}}
+
+@media (max-width: 768px) {{
+    .dash-header-wrap {{
+        min-height: 140px;
+    }}
+    .dash-header-overlay-img,
+    .dash-header-overlay-plain {{
+        padding: 1.2rem 1.2rem;
+    }}
+    .dash-header-title {{
+        font-size: 1.2rem !important;
+    }}
+    .dash-header-subtitle {{
+        font-size: 0.75rem !important;
+    }}
+}}
+
 /* FORCE BOLD TEXT */
 strong {{
     font-weight: 800 !important;
@@ -2308,7 +2330,9 @@ def render_dashboard_header(
     if bg_uri:
         bg_style = (
             f"background-image: url('{bg_uri}'); "
-            "background-size: cover; background-position: center top; "
+            "background-size: contain; "
+            "background-position: center ; "
+            "background-repeat: no-repeat;"
         )
         overlay_class = "dash-header-overlay-img"
     else:
