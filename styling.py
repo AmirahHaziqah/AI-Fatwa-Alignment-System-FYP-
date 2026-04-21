@@ -537,7 +537,7 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
     border: 1px solid rgba(255,255,255,0.07);
     overflow: hidden;
     animation: fadeInUp 0.45s ease-out;
-    min-height: 110px;
+    min-height: 160px;
     background: linear-gradient(135deg, #100022 0%, #2e0d22 45%, #5c1235 100%);
 }}
 .dash-header-wrap::before {{
@@ -559,14 +559,14 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
         rgba(60,10,40,0.50) 70%,
         rgba(80,10,45,0.20) 100%);
     display: flex; align-items: center;
-    padding: 1.4rem 1.8rem;
+    padding: 1.8rem 1.8rem;
     z-index: 2;
 }}
 /* Overlay when no image */
 .dash-header-overlay-plain {{
     position: absolute; inset: 0;
     display: flex; align-items: center;
-    padding: 1.4rem 1.8rem;
+    padding: 1.8rem 1.8rem;
     z-index: 2;
 }}
 .dash-header-left {{ flex: 1; min-width: 0; }}
@@ -2296,10 +2296,7 @@ def render_dashboard_header(
 
     # Try to find a background image file from the project folder
     bg_candidates = [
-        "fyp_dashboard.png", "fyp_dashboard.jpg", "fyp_dashboard.jpeg", "fyp_dashboard.webp",
-        "dashboard_background.png", "dashboard_background.jpg",
-        "dashboard_background 3.png", "dashboard_background 3.jpg",
-        "hero_banner.jpg", "hero_banner.png",
+        "dashboard_background.jpg","hero_banner.jpg", "hero_banner.png",
     ]
     bg_uri = None
     for c in bg_candidates:
