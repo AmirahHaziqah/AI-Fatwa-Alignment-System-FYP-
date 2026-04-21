@@ -2194,9 +2194,9 @@ def render_footer():
     html_block = textwrap.dedent("""
         <div class="footer-wrap">
             <p>
-                ⚖️ <strong>AI Fatwa Alignment Dashboard</strong><br>
-                Amirah Alyahaziqah Bt Mohd Jeffry
-                &nbsp;·&nbsp; Bachelor of Computer Science (Hons.) in Data Science<br>
+                <strong>AI Fatwa Alignment Dashboard</strong><br>
+                ✦Amirah Alyahaziqah Bt Mohd Jeffry✦ <br>
+                &nbsp;·&nbsp; Bachelor of Computer Science (Hons.) <br>
                 <span style="font-size:0.74rem; color:#a08b97;">
                     2026 &nbsp;·&nbsp; Universiti Teknologi MARA (UiTM)
                 </span>

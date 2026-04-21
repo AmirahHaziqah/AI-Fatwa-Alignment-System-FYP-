@@ -1874,11 +1874,11 @@ render_dashboard_shell_header(
 )
 
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "🔍 Single Review",
-    "📊 Batch Review",
-    "🕑 History & Export",
-    "📚 Fatwa Explorer",
-    "🗂️ Topic Explorer",
+    " Single Review",
+    " Batch Review",
+    " History & Export",
+    " Fatwa Explorer",
+    " Topic Explorer",
 ])
 
 # =========================================================
@@ -1948,7 +1948,7 @@ with tab1:
                 )
             with ctrl3:
                 st.markdown("<div class='dataset-control-caption'>Action</div>", unsafe_allow_html=True)
-                load_btn = st.button("📂  Load Selected Response", use_container_width=True, key="ds_load_btn_primary")
+                load_btn = st.button("Load Selected Response", use_container_width=True, key="ds_load_btn_primary")
 
             st.markdown("</div>", unsafe_allow_html=True)
 
@@ -2631,7 +2631,7 @@ with tab4:
 
 
 # =========================================================
-# TAB 5 - Topic Explorer (Rest of the code remains the same as original)
+# TAB 5 - Topic Explorer 
 # =========================================================
 with tab5:
     html_escape_mod = html  # use top-level html import already available
