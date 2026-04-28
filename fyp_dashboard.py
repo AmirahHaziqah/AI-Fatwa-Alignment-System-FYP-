@@ -1700,6 +1700,44 @@ def render_single_review_result_dashboard(bundle: dict):
     </div>
     """), unsafe_allow_html=True)
 
+    st.markdown(_html(f"""
+    <div style='margin:0.85rem 0 0.7rem 0;background:linear-gradient(135deg,#fff 0%,#fff7f3 100%);border:1px solid #ead1c8;border-left:6px solid {tone};border-radius:24px;padding:1rem 1.15rem;box-shadow:0 10px 24px rgba(25,14,36,0.05);'>
+        <div style='display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;'>
+            <div style='min-width:240px;flex:1;'>
+                <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.11em;text-transform:uppercase;color:#a3195b;margin-bottom:0.35rem;'>Result first</div>
+                <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.35rem;font-weight:850;letter-spacing:-0.03em;color:#241226;line-height:1.1;margin-bottom:0.25rem;'>{html.escape(result_title)}</div>
+                <div style='font-size:0.92rem;line-height:1.65;color:#6d5a68;'>{html.escape(result_summary)}</div>
+            </div>
+            <div style='display:grid;grid-template-columns:repeat(4,minmax(90px,1fr));gap:0.55rem;min-width:min(100%,520px);'>
+                <div style='background:#fff;border:1px solid #ead1c8;border-radius:16px;padding:0.7rem 0.8rem;'><div style='font-size:0.65rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;'>Final</div><div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.25rem;font-weight:850;color:{tone};'>{format_percent(final_match_score,1)}</div></div>
+                <div style='background:#fff;border:1px solid #ead1c8;border-radius:16px;padding:0.7rem 0.8rem;'><div style='font-size:0.65rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;'>Meaning</div><div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.25rem;font-weight:850;color:#241226;'>{format_percent(semantic_score,1)}</div></div>
+                <div style='background:#fff;border:1px solid #ead1c8;border-radius:16px;padding:0.7rem 0.8rem;'><div style='font-size:0.65rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;'>Text</div><div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.25rem;font-weight:850;color:#241226;'>{format_percent(lexical_score,1)}</div></div>
+                <div style='background:#fff;border:1px solid #ead1c8;border-radius:16px;padding:0.7rem 0.8rem;'><div style='font-size:0.65rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;'>Key points</div><div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.25rem;font-weight:850;color:#241226;'>{format_percent(coverage_score,1)}</div></div>
+            </div>
+        </div>
+    </div>
+    """), unsafe_allow_html=True)
+
+    detail_toggle_key = "single_review_show_full_detail_cards"
+    if detail_toggle_key not in st.session_state:
+        st.session_state[detail_toggle_key] = False
+
+    button_label = "Hide full detailed review" if st.session_state[detail_toggle_key] else "View full detailed review"
+    if st.button(button_label, use_container_width=True, key="toggle_full_single_review_details"):
+        st.session_state[detail_toggle_key] = not st.session_state[detail_toggle_key]
+
+    if not st.session_state[detail_toggle_key]:
+        st.markdown(_html("""
+        <div style='margin:0.15rem 0 0.9rem 0;text-align:center;font-size:0.84rem;color:#7a6874;'>Detailed cards, fatwa preview, score guide, and keyword evidence are hidden until the user opens them.</div>
+        """), unsafe_allow_html=True)
+        return
+
+    st.markdown(_html("""
+    <div style='margin:0.4rem 0 0.75rem 0;padding:0.72rem 0.95rem;border-radius:18px;background:#fff8f4;border:1px solid #ead1c8;color:#6d5a68;font-size:0.86rem;line-height:1.6;'>
+        Full detailed review is open. The original card design is kept below, only moved behind the button.
+    </div>
+    """), unsafe_allow_html=True)
+
     # Use a properly formatted f-string without syntax errors
     result_html = f"""
     <div class="result-cards-grid">
