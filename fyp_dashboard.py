@@ -1645,48 +1645,15 @@ def render_similarity_breakdown(bundle: dict):
                 <div class='sim-lite-summary-copy alt'>{html.escape(conclusion_copy)}</div>
             </div>
         </div>
-    </div>
-    """), unsafe_allow_html=True)
-
-    # Collapsible detail section — metric breakdown + how to read note
-    st.markdown("""
-    <style>
-    /* Style the expander to match the dashboard theme */
-    [data-testid="stExpander"] {
-        border: 1px solid rgba(227, 181, 164, 0.45) !important;
-        border-radius: 16px !important;
-        background: linear-gradient(135deg, #ffffff 0%, #fef8f5 100%) !important;
-        box-shadow: 0 4px 12px rgba(119, 51, 68, 0.07) !important;
-        overflow: hidden !important;
-        margin-top: 0.5rem !important;
-    }
-    [data-testid="stExpander"] summary,
-    [data-testid="stExpander"] > div:first-child {
-        background: transparent !important;
-        border-radius: 16px !important;
-    }
-    [data-testid="stExpander"] summary:hover {
-        background: rgba(227, 181, 164, 0.12) !important;
-    }
-    [data-testid="stExpander"] details > summary p,
-    [data-testid="stExpander"] summary p,
-    [data-testid="stExpander"] [data-testid="stExpanderToggleIcon"] {
-        color: #773344 !important;
-        font-weight: 700 !important;
-        font-size: 0.82rem !important;
-        letter-spacing: 0.04em !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-    with st.expander("📊 View Score Breakdown — Text Match · Meaning Match · Key Points · Overall Fit"):
-        st.markdown(_html(f"""
-        <div class='sim-lite-top-note' style='margin-bottom:0.7rem;'>
+        <div class='sim-lite-top-note'>
             <span class='sim-lite-top-note-title'>How to read this section</span>
             <span class='sim-lite-top-note-copy'>Read each box separately: text = wording overlap, meaning = closest meaning, key points = important fatwa conditions found, overall fit = strength across the matched state rulings.</span>
         </div>
-        """), unsafe_allow_html=True)
-        render_beautiful_metric_grid(lexical_score, semantic_score, coverage_score, mean_alignment)
+    </div>
+    """), unsafe_allow_html=True)
+
+    # Use the beautiful metric grid
+    render_beautiful_metric_grid(lexical_score, semantic_score, coverage_score, mean_alignment)
 
 
 def render_single_review_result_dashboard(bundle: dict):
