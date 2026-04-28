@@ -1612,17 +1612,21 @@ def render_batch_score_chart(num_df: pd.DataFrame):
             _render_grouped_bars(summary_df, 'label', 'Metric comparison by response', 'Side-by-side bars make it easier to compare meaning match, text match, and key fatwa points.')
             
 def render_similarity_breakdown(bundle: dict):
-    """Render the similarity breakdown with beautiful metric cards."""
+    """Render the similarity breakdown — original design: sim-lite shell + note + 4 metric cards."""
     final_match_score = safe_float(bundle.get("final_match_score"))
-    lexical_score = safe_float(bundle.get("lexical_score"))
-    semantic_score = safe_float(bundle.get("semantic_score"))
-    coverage_score = safe_float(bundle.get("coverage_score"))
-    mean_alignment = safe_float(bundle.get("mean_alignment"))
+    lexical_score     = safe_float(bundle.get("lexical_score"))
+    semantic_score    = safe_float(bundle.get("semantic_score"))
+    coverage_score    = safe_float(bundle.get("coverage_score"))
+    mean_alignment    = safe_float(bundle.get("mean_alignment"))
 
-    score_color = score_status_color(final_match_score)
+    score_color  = score_status_color(final_match_score)
     ring_degrees = max(0.0, min(360.0, final_match_score * 3.6))
-    conclusion_copy = "This final score means the answer is close to the fatwa and gets most important points right." if final_match_score >= 70 else "This final score means the answer is partly correct, but some important points still need checking." if final_match_score >= 50 else "This final score means the answer is not close enough to the fatwa yet and needs careful review."
     conclusion_label = "Strong Alignment" if final_match_score >= 70 else "Moderate Alignment" if final_match_score >= 50 else "Low Alignment"
+    conclusion_copy  = ("This final score means the answer is close to the fatwa and gets most important points right."
+                        if final_match_score >= 70 else
+                        "This final score means the answer is partly correct, but some important points still need checking."
+                        if final_match_score >= 50 else
+                        "This final score means the answer is not close enough to the fatwa yet and needs careful review.")
 
     st.markdown(_html(f"""
     <div class='sim-lite-shell'>
@@ -1645,15 +1649,13 @@ def render_similarity_breakdown(bundle: dict):
                 <div class='sim-lite-summary-copy alt'>{html.escape(conclusion_copy)}</div>
             </div>
         </div>
+        <div class='sim-lite-top-note'>
+            <span class='sim-lite-top-note-title'>How to read this section</span>
+            <span class='sim-lite-top-note-copy'>Read each box separately: text = wording overlap, meaning = closest meaning, key points = important fatwa conditions found, overall fit = strength across the matched state rulings.</span>
+        </div>
     </div>
     """), unsafe_allow_html=True)
 
-    st.markdown(_html(f"""
-    <div class='sim-lite-top-note' style='margin-top:0.6rem;margin-bottom:0.7rem;'>
-        <span class='sim-lite-top-note-title'>How to read this section</span>
-        <span class='sim-lite-top-note-copy'>Read each box separately: text = wording overlap, meaning = closest meaning, key points = important fatwa conditions found, overall fit = strength across the matched state rulings.</span>
-    </div>
-    """), unsafe_allow_html=True)
     render_beautiful_metric_grid(lexical_score, semantic_score, coverage_score, mean_alignment)
 
 
@@ -1910,12 +1912,59 @@ with tab1:
         extra_class="single-review-hero"
     )
 
-    review_left, review_right = st.columns([0.58, 0.42], gap="small")
+    # ── Shared section header style ───────────────────────────────────────────
+    st.markdown("""
+    <style>
+    .tab1-section {
+        margin: 0 0 0.5rem 0;
+    }
+    .tab1-section-header {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-bottom: 0.55rem;
+    }
+    .tab1-section-step {
+        width: 22px; height: 22px; border-radius: 6px;
+        background: linear-gradient(135deg, #773344, #a3195b);
+        color: #fff; font-size: 0.65rem; font-weight: 900;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+    }
+    .tab1-section-title {
+        font-size: 0.72rem; font-weight: 800; text-transform: uppercase;
+        letter-spacing: 0.1em; color: #5a3d4a;
+    }
+    .tab1-section-rule {
+        flex: 1; height: 1px;
+        background: linear-gradient(90deg, #e2ccd4, transparent);
+    }
+    .tab1-two-col {
+        display: grid;
+        grid-template-columns: 0.58fr 0.42fr;
+        gap: 1rem;
+        align-items: start;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # ══════════════════════════════════════════════════════
+    # SECTION 1 — Input
+    # ══════════════════════════════════════════════════════
+    st.markdown("""
+    <div class="tab1-section">
+        <div class="tab1-section-header">
+            <div class="tab1-section-step">1</div>
+            <div class="tab1-section-title">Load or paste an AI answer</div>
+            <div class="tab1-section-rule"></div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    review_left, review_right = st.columns([0.58, 0.42], gap="medium")
 
     with review_left:
-        # =========================================================
-        # DATASET LOAD SECTION
-        # =========================================================
+        # ── Dataset loader ────────────────────────────────────────────────────
         if AI_DATASET_AVAILABLE:
             question_map = (
                 fatwa_df[["question_id", "question_text"]]
@@ -1955,7 +2004,6 @@ with tab1:
             </div>
             """), unsafe_allow_html=True)
 
-            # Three columns for compact layout — flush under the card labels
             ctrl1, ctrl2, ctrl3 = st.columns([0.48, 0.32, 0.20], gap="small")
             with ctrl1:
                 selected_question_text = st.selectbox(
@@ -1992,12 +2040,10 @@ with tab1:
                     st.rerun()
                 else:
                     st.warning(f"⚠️ No saved response found for model '{selected_model}'")
-            
-            st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
-        
-        # =========================================================
-        # RESPONSE WORKSPACE - USER FRIENDLY MESSAGE
-        # =========================================================
+
+            st.markdown("<div style='height:0.4rem;'></div>", unsafe_allow_html=True)
+
+        # ── Text area ─────────────────────────────────────────────────────────
         st.markdown(_html("""
             <div class='input-editor-shell'>
                 <div class='input-editor-head'>
@@ -2005,30 +2051,39 @@ with tab1:
                         <div class='input-editor-kicker'>✍️ YOUR RESPONSE</div>
                         <div class='input-editor-title'>Paste the AI answer you want to check</div>
                         <div class='input-editor-copy' style='font-size: 0.7rem; color: #7a6874; margin-top: 0.2rem;'>
-                            💡 Copy and paste any AI-generated answer here — longer, detailed answers give more accurate scores.
+                            💡 Longer, detailed answers give more accurate scores.
                         </div>
                     </div>
                     <div class='input-editor-chip'>Single review</div>
                 </div>
             </div>
         """), unsafe_allow_html=True)
-        
+
         ai_response = st.text_area(
             "AI Response Input",
             height=120,
-            placeholder="Example: \"In Islam, surrogacy is generally not permitted because it can mix lineages...\"\n\nPaste your full AI-generated answer here. The more complete your answer, the better the alignment score.",
+            placeholder="Example: \"In Islam, surrogacy is generally not permitted because it can mix lineages...\"\n\nPaste your full AI-generated answer here.",
             key="ai_input",
             label_visibility="collapsed"
         )
 
-        # Show success toast when response loaded
         if st.session_state.pop('load_success_toast', False):
             show_success_toast_center(
                 "✓ Response loaded successfully!",
                 ["Ready for review", "Click Analyze to see results"]
             )
 
+    # ── Right column: score summary ───────────────────────────────────────────
     with review_right:
+        st.markdown("""
+        <div class="tab1-section">
+            <div class="tab1-section-header">
+                <div class="tab1-section-step">2</div>
+                <div class="tab1-section-title">Score summary</div>
+                <div class="tab1-section-rule"></div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
         st.markdown("<div class='single-review-right-col'>", unsafe_allow_html=True)
         if st.session_state.get("current_analysis"):
             render_similarity_breakdown(st.session_state["current_analysis"])
@@ -2059,8 +2114,11 @@ with tab1:
             """), unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # Buttons row
-    b1, b2 = st.columns([0.62, 0.38], gap="small")
+    # ══════════════════════════════════════════════════════
+    # ACTION ROW — Analyze + Clear, always under both columns
+    # ══════════════════════════════════════════════════════
+    st.markdown("<div style='height:0.6rem;'></div>", unsafe_allow_html=True)
+    b1, b2, _spacer = st.columns([0.38, 0.20, 0.42], gap="small")
     with b1:
         analyze_btn = st.button("🔍 Analyze This Response", use_container_width=True, key="analyze_single")
     with b2:
@@ -2171,7 +2229,7 @@ with tab1:
             else "Low Alignment"
         )
 
-        # ── Score-aware color for button ─────────────────────────────────────
+        # ── Score-aware colors ────────────────────────────────────────────────
         _btn_score_color = score_status_color(final_match_score_preview)
         _btn_score_rgb = (
             "6,167,125" if final_match_score_preview >= 70
@@ -2179,45 +2237,106 @@ with tab1:
             else "163,25,33"
         )
         _is_open = st.session_state["show_detail_cards"]
+        _chevron = "▲" if _is_open else "▼"
+        _action_text = "Hide Details" if _is_open else "View Full Results"
 
+        # ── Styled action card that acts as the toggle ────────────────────────
         st.markdown(f"""
         <style>
-        /* ── Detail toggle button — refined pill ── */
-        div[data-testid="stButton"]:has(button[key="detail_toggle_btn"]) > button,
-        button[data-testid="baseButton-secondary"][key="detail_toggle_btn"],
-        [data-testid="stButton"] button#detail_toggle_btn {{
-            background: {"rgba("+_btn_score_rgb+",0.08)" if _is_open else "linear-gradient(135deg, "+_btn_score_color+" 0%, "+_btn_score_color+"cc 100%)"} !important;
-            color: {""+_btn_score_color if _is_open else "#ffffff"} !important;
-            -webkit-text-fill-color: {""+_btn_score_color if _is_open else "#ffffff"} !important;
-            border: {"2px solid "+_btn_score_color if _is_open else "none"} !important;
-            border-radius: 999px !important;
-            font-size: 0.78rem !important;
-            font-weight: 750 !important;
-            letter-spacing: 0.06em !important;
-            text-transform: uppercase !important;
-            padding: 0.5rem 1.6rem !important;
-            min-height: 38px !important;
-            box-shadow: {"none" if _is_open else "0 6px 20px rgba("+_btn_score_rgb+",0.30), 0 2px 6px rgba("+_btn_score_rgb+",0.18)"} !important;
-            transition: all 0.2s ease !important;
+        /* Remove default button appearance entirely for the toggle */
+        div[data-testid="stButton"]:has(> button[key="detail_toggle_btn"]) {{
+            margin: 0 !important;
         }}
-        div[data-testid="stButton"]:has(button[key="detail_toggle_btn"]) > button:hover,
-        [data-testid="stButton"] button#detail_toggle_btn:hover {{
+        div[data-testid="stButton"]:has(> button[key="detail_toggle_btn"]) > button {{
+            all: unset !important;
+            display: block !important;
+            width: 100% !important;
+            cursor: pointer !important;
+            background: {"#fdfafb" if _is_open else "#ffffff"} !important;
+            border: 1.5px solid {"#e2ccd4" if _is_open else "#e2ccd4"} !important;
+            border-left: 4px solid {_btn_score_color} !important;
+            border-radius: 14px !important;
+            padding: 0.75rem 1rem !important;
+            box-shadow: 0 2px 10px rgba(25,14,36,0.05) !important;
+            transition: box-shadow 0.18s ease, transform 0.15s ease !important;
+            font-family: inherit !important;
+            text-align: left !important;
+        }}
+        div[data-testid="stButton"]:has(> button[key="detail_toggle_btn"]) > button:hover {{
+            box-shadow: 0 6px 18px rgba({_btn_score_rgb},0.18) !important;
             transform: translateY(-1px) !important;
-            box-shadow: 0 10px 28px rgba({_btn_score_rgb},0.38) !important;
-            filter: brightness(1.06) !important;
+        }}
+        div[data-testid="stButton"]:has(> button[key="detail_toggle_btn"]) > button p {{
+            margin: 0 !important;
+            color: #2a1421 !important;
+            -webkit-text-fill-color: #2a1421 !important;
+            font-size: 0 !important; /* hide the raw text — we show it via the HTML below */
         }}
         </style>
-        <div style="margin: 0.8rem 0 0.4rem 0;"></div>
         """, unsafe_allow_html=True)
 
-        btn_icon = "▴" if _is_open else "▾"
-        btn_label = (
-            f"{btn_icon}  Hide Details"
-            if _is_open
-            else f"{btn_icon}  View Full Results  ·  {result_label_preview}  ·  {final_match_score_preview:.1f}%"
-        )
+        # ── Section 3 header ──────────────────────────────────────────────────
+        st.markdown("""
+        <div class="tab1-section" style="margin-top:1rem;">
+            <div class="tab1-section-header">
+                <div class="tab1-section-step">3</div>
+                <div class="tab1-section-title">Full results</div>
+                <div class="tab1-section-rule"></div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
-        if st.button(btn_label, key="detail_toggle_btn"):
+        # Visible card HTML rendered just above the invisible button
+        st.markdown(f"""
+        <div style='
+            background: {"#fdfafb" if _is_open else "#ffffff"};
+            border: 1.5px solid #e2ccd4;
+            border-left: 4px solid {_btn_score_color};
+            border-radius: 14px;
+            padding: 0.75rem 1rem;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: -3.2rem;
+            position: relative;
+            z-index: 0;
+            pointer-events: none;
+        '>
+            <div style='
+                width: 36px; height: 36px; border-radius: 10px;
+                background: {_btn_score_color}18;
+                display: flex; align-items: center; justify-content: center;
+                font-size: 1.1rem;
+            '>📋</div>
+            <div>
+                <div style='font-size: 0.62rem; font-weight: 800; text-transform: uppercase;
+                            letter-spacing: 0.1em; color: #9a7d88; margin-bottom: 0.12rem;'>Full Results</div>
+                <div style='font-size: 0.82rem; font-weight: 700; color: #1e1020;'>
+                    {_action_text}
+                    <span style='
+                        display: inline-block;
+                        margin-left: 0.5rem;
+                        padding: 0.18rem 0.6rem;
+                        border-radius: 999px;
+                        background: {_btn_score_color}18;
+                        color: {_btn_score_color};
+                        font-size: 0.72rem;
+                        font-weight: 800;
+                    '>{result_label_preview} · {final_match_score_preview:.1f}%</span>
+                </div>
+            </div>
+            <div style='
+                width: 28px; height: 28px; border-radius: 8px;
+                background: {_btn_score_color}12;
+                color: {_btn_score_color};
+                display: flex; align-items: center; justify-content: center;
+                font-size: 0.75rem; font-weight: 900;
+            '>{_chevron}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        if st.button("_toggle_", key="detail_toggle_btn", use_container_width=True):
             st.session_state["show_detail_cards"] = not st.session_state["show_detail_cards"]
             st.rerun()
 
