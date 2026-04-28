@@ -231,19 +231,113 @@ def apply_dashboard_polish():
         }
     }
     
-    /* FIX: Result cards spacing - add gap between cards */
-    .result-cards-grid {
+    /* ===== USER-FIRST RESULT LAYOUT ===== */
+    .result-priority-card {
+        background: linear-gradient(180deg,#fff8f4 0%,#fff2ef 100%);
+        border: 1px solid #ead1c8;
+        border-radius: 28px;
+        padding: 1.25rem;
+        box-shadow: 0 14px 28px rgba(25,14,36,0.05);
+        margin: 0.9rem 0;
+    }
+
+    .result-main-grid {
         display: grid;
-        grid-template-columns: 1.05fr 1.35fr 1fr;
-        gap: 1.2rem;
-        margin: 0.8rem 0;
+        grid-template-columns: 1.25fr 0.75fr;
+        gap: 1rem;
+        align-items: stretch;
     }
-    
-    /* FIX: Single review right column spacing */
-    .single-review-right-col {
-        padding-left: 0.5rem;
+
+    .result-big-title {
+        font-family: 'Inter Tight','Inter',sans-serif;
+        font-size: 1.8rem;
+        font-weight: 850;
+        letter-spacing: -0.03em;
+        color: #241226;
+        margin-bottom: 0.35rem;
     }
-    
+
+    .result-big-copy {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        color: #6d5a68;
+        max-width: 900px;
+    }
+
+    .result-score-box {
+        border-radius: 24px;
+        background: #ffffff;
+        border: 1px solid #ead1c8;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 150px;
+    }
+
+    .result-score-number {
+        font-family: 'Inter Tight','Inter',sans-serif;
+        font-size: 3rem;
+        font-weight: 900;
+        line-height: 1;
+    }
+
+    .result-score-label {
+        font-size: 0.78rem;
+        font-weight: 800;
+        color: #8b6771;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-top: 0.3rem;
+    }
+
+    .result-mini-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.7rem;
+        margin-top: 1rem;
+    }
+
+    .result-mini-card {
+        background: #ffffff;
+        border: 1px solid #ead1c8;
+        border-radius: 18px;
+        padding: 0.8rem 0.9rem;
+    }
+
+    .result-mini-label {
+        font-size: 0.68rem;
+        font-weight: 850;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #8b6771;
+        margin-bottom: 0.25rem;
+    }
+
+    .result-mini-value {
+        font-family: 'Inter Tight','Inter',sans-serif;
+        font-size: 1.25rem;
+        font-weight: 850;
+        color: #241226;
+    }
+
+    .detail-card {
+        background: #ffffff;
+        border: 1px solid #ead1c8;
+        border-radius: 20px;
+        padding: 1rem;
+        margin-bottom: 0.8rem;
+    }
+
+    @media (max-width: 900px) {
+        .result-main-grid { grid-template-columns: 1fr; }
+        .result-mini-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 520px) {
+        .result-mini-grid { grid-template-columns: 1fr; }
+    }
+
     /* Sidebar - make it slightly narrower */
     [data-testid="stSidebar"] {
         min-width: 260px !important;
@@ -1657,33 +1751,64 @@ def render_similarity_breakdown(bundle: dict):
 
 
 def render_single_review_result_dashboard(bundle: dict):
+    """Render the single-review output in a user-first layout.
+
+    Main result is shown immediately. Supporting evidence is kept inside
+    expanders so the dashboard does not feel cramped.
+    """
     final_match_score = safe_float(bundle.get("final_match_score"))
     semantic_score = safe_float(bundle.get("semantic_score"))
     lexical_score = safe_float(bundle.get("lexical_score"))
     coverage_score = safe_float(bundle.get("coverage_score"))
     mean_alignment = safe_float(bundle.get("mean_alignment"))
+
     topic_label = str(bundle.get("topic_label", "-"))
     specific_issue = str(bundle.get("specific_issue", "-"))
     best_state = str(bundle.get("best_state_name", "-"))
-    recommendation_label = str(bundle.get("recommendation_label", "Moderate Alignment"))
     recommendation_reason = str(bundle.get("recommendation_reason", ""))
     compliance_level = str(bundle.get("compliance_level", "Unclear"))
     confidence = str(bundle.get("confidence", "Unknown"))
+
     fatwa_text = str(bundle.get("fatwa_text", "")).strip()
     issue_name = str(bundle.get("issue_name", "")).strip() or topic_label or "N/A"
-    matched_list = bundle.get("matched_list", [])
-    missing_list = bundle.get("missing_list", [])
+    matched_list = bundle.get("matched_list", []) or []
+    missing_list = bundle.get("missing_list", []) or []
+
     tone = score_status_color(final_match_score)
 
-    preview_reference = html.escape((fatwa_text[:180] + "...") if fatwa_text and len(fatwa_text) > 180 else (fatwa_text or "No text available"))
-    result_title = "Strong Alignment" if final_match_score >= 70 else "Moderate Alignment" if final_match_score >= 50 else "Low Alignment"
-    result_summary = "This answer is generally close to the matched fatwa and covers the main ruling points." if final_match_score >= 70 else "This answer is partly correct, but some important ruling details still need human review." if final_match_score >= 50 else "This answer is still too far from the fatwa, so it needs careful checking before anyone relies on it."
-    action_label = "Good to Use" if final_match_score >= 70 else "Needs Review" if final_match_score >= 50 else "Not Reliable"
-    action_note = "Use as a strong draft, then do a quick final check." if final_match_score >= 70 else "Check the fatwa text before accepting this answer." if final_match_score >= 50 else "Rewrite or review this answer manually first."
-    confidence_copy = "The topic match looks clear." if confidence == "High" else "The topic match looks fairly clear." if confidence == "Medium" else "The topic match is less certain."
-    compliance_copy = "It follows the ruling well." if compliance_level == "Fully Compliant" else "Some parts fit, but it still needs review." if compliance_level == "Partially Compliant" else "It does not fit the ruling closely." if compliance_level == "Non-Compliant" else "The status is not clear yet and needs manual review."
-    recommendation_copy = html.escape(recommendation_reason) if recommendation_reason else html.escape(result_summary)
-    review_status_copy = html.escape("This final score means the answer is close to the fatwa and gets most important points right." if final_match_score >= 70 else "This final score means the answer is partly correct, but some important points still need checking." if final_match_score >= 50 else "This final score means the answer is not close enough to the fatwa yet and needs careful review.")
+    if final_match_score >= 70:
+        result_title = "Strong Alignment"
+        result_summary = "This answer is close to the matched fatwa and covers most important ruling points."
+    elif final_match_score >= 50:
+        result_title = "Moderate Alignment"
+        result_summary = "This answer is partly aligned, but important ruling details still need checking."
+    else:
+        result_title = "Low Alignment"
+        result_summary = "This answer is not close enough to the fatwa yet and should not be relied on without manual review."
+
+    recommendation_copy = recommendation_reason if recommendation_reason else result_summary
+
+    if confidence == "High":
+        confidence_copy = "The topic match looks clear."
+    elif confidence == "Medium":
+        confidence_copy = "The topic match looks fairly clear."
+    else:
+        confidence_copy = "The topic match is less certain."
+
+    if compliance_level == "Fully Compliant":
+        compliance_copy = "It follows the ruling well."
+    elif compliance_level == "Partially Compliant":
+        compliance_copy = "Some parts fit, but it still needs review."
+    elif compliance_level == "Non-Compliant":
+        compliance_copy = "It does not fit the ruling closely."
+    else:
+        compliance_copy = "The status is not clear yet and needs manual review."
+
+    preview_reference = (
+        fatwa_text[:320] + "..."
+        if fatwa_text and len(fatwa_text) > 320
+        else fatwa_text or "No reference text available."
+    )
 
     st.markdown(_html(f"""
     <div class='result-hero-card'>
@@ -1700,96 +1825,113 @@ def render_single_review_result_dashboard(bundle: dict):
     </div>
     """), unsafe_allow_html=True)
 
-    # Use a properly formatted f-string without syntax errors
-    result_html = f"""
-    <div class="result-cards-grid">
-        <div style='background:linear-gradient(180deg,#fff8f4 0%,#fff2ef 100%);border:1px solid #ead1c8;border-top:5px solid {tone};border-radius:28px;padding:1.2rem 1.2rem 1.1rem 1.2rem;box-shadow:0 14px 28px rgba(25,14,36,0.05);min-width:0;'>
-            <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.11em;text-transform:uppercase;color:#a3195b;margin-bottom:0.65rem;'>Result summary</div>
-            <div style='display:flex;align-items:flex-start;justify-content:space-between;gap:0.8rem;margin-bottom:0.8rem;'>
-                <div>
-                    <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.55rem;font-weight:850;letter-spacing:-0.03em;line-height:1.04;color:#241226;margin-bottom:0.2rem;'>{html.escape(result_title)}</div>
-                    <div style='font-size:0.96rem;line-height:1.72;color:#6d5a68;max-width:95%;'>{html.escape(recommendation_copy)}</div>
-                </div>
-                <div style='min-width:88px;height:88px;border-radius:22px;background:linear-gradient(135deg,{tone} 0%,#ffffff 145%);padding:1px;box-shadow:0 10px 22px rgba(25,14,36,0.10);'>
-                    <div style='height:100%;border-radius:21px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;'>
-                        <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.7rem;font-weight:800;color:{tone};line-height:1;'>{int(round(final_match_score))}</div>
-                        <div style='font-size:0.72rem;color:#8b6771;margin-top:0.18rem;'>score</div>
-                    </div>
-                </div>
+    st.markdown(_html(f"""
+    <div class='result-priority-card'>
+        <div class='result-main-grid'>
+            <div>
+                <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.11em;text-transform:uppercase;color:#a3195b;margin-bottom:0.65rem;'>Main result</div>
+                <div class='result-big-title'>{html.escape(result_title)}</div>
+                <div class='result-big-copy'>{html.escape(recommendation_copy)}</div>
             </div>
-            <div style='margin:0.15rem 0 0.75rem 0;padding:0.95rem 1rem;border-radius:20px;background:linear-gradient(135deg,#fff 0%,#fff6f2 100%);border:1px solid #ead1c8;box-shadow:0 8px 18px rgba(25,14,36,0.04);'>
-                <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.18rem;'>Review status</div>
-                <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.2rem;font-weight:800;line-height:1.15;color:{tone};margin-bottom:0.22rem;'>{html.escape(action_label)}</div>
-                <div style='font-size:0.9rem;line-height:1.7;color:#6d5a68;'>{review_status_copy}</div>
-            </div>
-            <div style='display:grid;gap:0.55rem;'>
-                <div style='padding:0.82rem 0.9rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;display:flex;gap:0.65rem;align-items:flex-start;'><div style='width:28px;height:28px;border-radius:10px;background:{tone}14;color:{tone};display:flex;align-items:center;justify-content:center;font-weight:900;'>1</div><div style='font-size:0.88rem;line-height:1.6;color:#6d5a68;'><strong style='color:#241226;'>What this means:</strong> {html.escape(result_summary)}</div></div>
-                <div style='padding:0.82rem 0.9rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;display:flex;gap:0.65rem;align-items:flex-start;'><div style='width:28px;height:28px;border-radius:10px;background:#f7ece7;color:#b24758;display:flex;align-items:center;justify-content:center;font-weight:900;'>2</div><div style='font-size:0.88rem;line-height:1.6;color:#6d5a68;'><strong style='color:#241226;'>What to do:</strong> {html.escape(action_note)}</div></div>
-                <div style='padding:0.82rem 0.9rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;display:flex;gap:0.65rem;align-items:flex-start;'><div style='width:28px;height:28px;border-radius:10px;background:#f7ece7;color:#b24758;display:flex;align-items:center;justify-content:center;font-weight:900;'>3</div><div style='font-size:0.88rem;line-height:1.6;color:#6d5a68;'><strong style='color:#241226;'>History label:</strong> {html.escape(recommendation_label)}</div></div>
+
+            <div class='result-score-box'>
+                <div class='result-score-number' style='color:{tone};'>{format_percent(final_match_score,1)}</div>
+                <div class='result-score-label'>Final score</div>
             </div>
         </div>
-        <div style='background:linear-gradient(180deg,#fffdfb 0%,#faf3f7 100%);border:1px solid #ead1c8;border-top:5px solid #773344;border-radius:28px;padding:1.2rem 1.2rem 1.1rem 1.2rem;box-shadow:0 14px 28px rgba(25,14,36,0.05);min-width:0;'>
-            <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.11em;text-transform:uppercase;color:#a3195b;margin-bottom:0.65rem;'>Closest fatwa source</div>
-            <div style='display:flex;align-items:flex-start;justify-content:space-between;gap:0.75rem;margin-bottom:0.8rem;'>
-                <div style='min-width:0;'>
-                    <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.5rem;font-weight:800;letter-spacing:-0.03em;line-height:1.08;color:#241226;overflow-wrap:anywhere;'>{html.escape(best_state)}</div>
-                    <div style='margin-top:0.22rem;font-size:0.92rem;line-height:1.65;color:#6d5a68;'>This is the state fatwa source that matched the answer most closely.</div>
-                </div>
-                <div style='padding:0.42rem 0.8rem;border-radius:999px;background:#fff;border:1px solid #ead1c8;color:#773344;font-size:0.76rem;font-weight:800;white-space:nowrap;'>Best source</div>
+
+        <div class='result-mini-grid'>
+            <div class='result-mini-card'>
+                <div class='result-mini-label'>Meaning</div>
+                <div class='result-mini-value'>{format_percent(semantic_score,1)}</div>
             </div>
-            <div style='display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;margin-bottom:0.7rem;'>
-                <div style='padding:0.9rem 0.95rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;'>
-                    <div style='font-size:0.7rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.22rem;'>Issue matched</div>
-                    <div style='font-size:0.98rem;line-height:1.58;color:#241226;font-weight:700;overflow-wrap:anywhere;'>{html.escape(issue_name)}</div>
-                </div>
-                <div style='padding:0.9rem 0.95rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;'>
-                    <div style='font-size:0.7rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.22rem;'>Why it matters</div>
-                    <div style='font-size:0.88rem;line-height:1.6;color:#6d5a68;'>Read this fatwa first when you want to confirm whether the AI answer can be accepted.</div>
-                </div>
+            <div class='result-mini-card'>
+                <div class='result-mini-label'>Text</div>
+                <div class='result-mini-value'>{format_percent(lexical_score,1)}</div>
             </div>
-            <div style='padding:0.95rem 1rem;border-radius:20px;background:linear-gradient(135deg,#fff 0%,#fff8f4 100%);border:1px solid #ead1c8;'>
-                <div style='font-size:0.7rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.28rem;'>Reference preview</div>
-                <div style='font-size:0.92rem;line-height:1.72;color:#6d5a68;overflow-wrap:anywhere;'>{preview_reference}</div>
+            <div class='result-mini-card'>
+                <div class='result-mini-label'>Key points</div>
+                <div class='result-mini-value'>{format_percent(coverage_score,1)}</div>
             </div>
-        </div>
-        <div style='background:linear-gradient(180deg,#fffdf8 0%,#f9f1ec 100%);border:1px solid #ead1c8;border-top:5px solid #d98c3f;border-radius:28px;padding:1.2rem 1.2rem 1.1rem 1.2rem;box-shadow:0 14px 28px rgba(25,14,36,0.05);min-width:0;'>
-            <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.11em;text-transform:uppercase;color:#a3195b;margin-bottom:0.65rem;'>Easy score guide</div>
-            <div style='display:grid;gap:0.7rem;'>
-                <div style='padding:0.9rem 0.95rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;'><div style='display:flex;align-items:center;justify-content:space-between;gap:0.6rem;'><div><div style='font-size:0.82rem;font-weight:800;color:#8b6771;text-transform:uppercase;letter-spacing:0.06em;'>Meaning</div><div style='font-size:0.8rem;color:#6d5a68;margin-top:0.12rem;'>Same ruling idea</div></div><div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.4rem;font-weight:800;color:#241226;'>{format_percent(semantic_score,1)}</div></div><div style='height:8px;border-radius:999px;background:#f1e2da;overflow:hidden;margin-top:0.55rem;'><div style='height:100%;width:{max(0,min(100,safe_float(semantic_score)))}%;background:linear-gradient(90deg,#773344 0%,#b24758 100%);border-radius:999px;'></div></div></div>
-                <div style='padding:0.9rem 0.95rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;'><div style='display:flex;align-items:center;justify-content:space-between;gap:0.6rem;'><div><div style='font-size:0.82rem;font-weight:800;color:#8b6771;text-transform:uppercase;letter-spacing:0.06em;'>Text</div><div style='font-size:0.8rem;color:#6d5a68;margin-top:0.12rem;'>Similar wording</div></div><div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.4rem;font-weight:800;color:#241226;'>{format_percent(lexical_score,1)}</div></div><div style='height:8px;border-radius:999px;background:#f1e2da;overflow:hidden;margin-top:0.55rem;'><div style='height:100%;width:{max(0,min(100,safe_float(lexical_score)))}%;background:linear-gradient(90deg,#d98c3f 0%,#f1a208 100%);border-radius:999px;'></div></div></div>
-                <div style='padding:0.9rem 0.95rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;'><div style='display:flex;align-items:center;justify-content:space-between;gap:0.6rem;'><div><div style='font-size:0.82rem;font-weight:800;color:#8b6771;text-transform:uppercase;letter-spacing:0.06em;'>Key points</div><div style='font-size:0.8rem;color:#6d5a68;margin-top:0.12rem;'>Important conditions found</div></div><div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.4rem;font-weight:800;color:#241226;'>{format_percent(coverage_score,1)}</div></div><div style='height:8px;border-radius:999px;background:#f1e2da;overflow:hidden;margin-top:0.55rem;'><div style='height:100%;width:{max(0,min(100,safe_float(coverage_score)))}%;background:linear-gradient(90deg,#3a7f56 0%,#06A77D 100%);border-radius:999px;'></div></div></div>
-            </div>
-            <div style='margin-top:0.78rem;padding:0.95rem 1rem;border-radius:20px;background:linear-gradient(135deg,#fff 0%,#fff7f1 100%);border:1px solid #ead1c8;'>
-                <div style='display:flex;align-items:flex-end;justify-content:space-between;gap:0.6rem;'>
-                    <div>
-                        <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.22rem;'>Overall fit</div>
-                        <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:2rem;font-weight:800;line-height:1;color:#241226;'>{format_percent(mean_alignment,1)}</div>
-                    </div>
-                    <div style='padding:0.38rem 0.7rem;border-radius:999px;background:#fff;border:1px solid #ead1c8;color:#773344;font-size:0.76rem;font-weight:800;'>State average</div>
-                </div>
+            <div class='result-mini-card'>
+                <div class='result-mini-label'>Overall fit</div>
+                <div class='result-mini-value'>{format_percent(mean_alignment,1)}</div>
             </div>
         </div>
     </div>
-    """
-    st.markdown(result_html, unsafe_allow_html=True)
+    """), unsafe_allow_html=True)
 
-    k1, k2 = st.columns(2, gap="medium")
-    with k1:
-        matched_html = "".join(f"<span class='keyword-match'>{html.escape(kw)}</span>" for kw in matched_list) if matched_list else "<div class='small-note'>No important fatwa points were clearly identified here.</div>"
+    with st.expander("View matched fatwa source and reference text", expanded=False):
         st.markdown(_html(f"""
-        <div class='points-card coverage-card'>
-            <div class='points-card-header'>Mentioned by the AI</div>
-            <div class='keyword-container'>{matched_html}</div>
+        <div class='detail-card'>
+            <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.25rem;'>Closest fatwa source</div>
+            <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.35rem;font-weight:850;color:#241226;margin-bottom:0.35rem;'>{html.escape(best_state)}</div>
+            <div style='font-size:0.9rem;line-height:1.7;color:#6d5a68;'>This is the fatwa source that matched the answer most closely.</div>
+        </div>
+
+        <div class='detail-card'>
+            <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.25rem;'>Issue matched</div>
+            <div style='font-size:1rem;line-height:1.6;color:#241226;font-weight:750;margin-bottom:0.75rem;'>{html.escape(issue_name)}</div>
+
+            <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.25rem;'>Reference preview</div>
+            <div style='font-size:0.92rem;line-height:1.75;color:#6d5a68;overflow-wrap:anywhere;'>{html.escape(preview_reference)}</div>
         </div>
         """), unsafe_allow_html=True)
-    with k2:
-        missing_html = "".join(f"<span class='keyword-miss'>{html.escape(kw)}</span>" for kw in missing_list) if missing_list else "<div class='small-note'>No major missing points were detected.</div>"
-        st.markdown(_html(f"""
-        <div class='points-card coverage-card'>
-            <div class='points-card-header'>Still missing</div>
-            <div class='keyword-container'>{missing_html}</div>
-        </div>
-        """), unsafe_allow_html=True)
+
+    with st.expander("View detailed score guide", expanded=False):
+        score_rows = [
+            ("Meaning", semantic_score, "Same ruling idea"),
+            ("Text", lexical_score, "Similar wording"),
+            ("Key points", coverage_score, "Important fatwa conditions found"),
+            ("Overall fit", mean_alignment, "Average across matched state rulings"),
+        ]
+
+        for label, value, note in score_rows:
+            bar_width = max(0, min(100, safe_float(value)))
+            st.markdown(_html(f"""
+            <div class='detail-card'>
+                <div style='display:flex;align-items:center;justify-content:space-between;gap:0.8rem;'>
+                    <div>
+                        <div style='font-size:0.78rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;'>{html.escape(label)}</div>
+                        <div style='font-size:0.86rem;color:#6d5a68;margin-top:0.15rem;'>{html.escape(note)}</div>
+                    </div>
+                    <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.45rem;font-weight:850;color:#241226;'>{format_percent(value,1)}</div>
+                </div>
+                <div style='height:8px;border-radius:999px;background:#f1e2da;overflow:hidden;margin-top:0.7rem;'>
+                    <div style='height:100%;width:{bar_width}%;background:{tone};border-radius:999px;'></div>
+                </div>
+            </div>
+            """), unsafe_allow_html=True)
+
+    with st.expander("View mentioned and missing key points", expanded=False):
+        k1, k2 = st.columns(2, gap="medium")
+
+        with k1:
+            matched_html = (
+                "".join(f"<span class='keyword-match'>{html.escape(str(kw))}</span>" for kw in matched_list)
+                if matched_list
+                else "<div class='small-note'>No important fatwa points were clearly identified here.</div>"
+            )
+            st.markdown(_html(f"""
+            <div class='points-card coverage-card'>
+                <div class='points-card-header'>Mentioned by the AI</div>
+                <div class='keyword-container'>{matched_html}</div>
+            </div>
+            """), unsafe_allow_html=True)
+
+        with k2:
+            missing_html = (
+                "".join(f"<span class='keyword-miss'>{html.escape(str(kw))}</span>" for kw in missing_list)
+                if missing_list
+                else "<div class='small-note'>No major missing points were detected.</div>"
+            )
+            st.markdown(_html(f"""
+            <div class='points-card coverage-card'>
+                <div class='points-card-header'>Still missing</div>
+                <div class='keyword-container'>{missing_html}</div>
+            </div>
+            """), unsafe_allow_html=True)
+
 
 # =========================================================
 # COMPACT HEADER
