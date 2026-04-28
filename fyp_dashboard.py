@@ -1648,45 +1648,13 @@ def render_similarity_breakdown(bundle: dict):
     </div>
     """), unsafe_allow_html=True)
 
-    # Collapsible detail section — metric breakdown + how to read note
-    st.markdown("""
-    <style>
-    /* Style the expander to match the dashboard theme */
-    [data-testid="stExpander"] {
-        border: 1px solid rgba(227, 181, 164, 0.45) !important;
-        border-radius: 16px !important;
-        background: linear-gradient(135deg, #ffffff 0%, #fef8f5 100%) !important;
-        box-shadow: 0 4px 12px rgba(119, 51, 68, 0.07) !important;
-        overflow: hidden !important;
-        margin-top: 0.5rem !important;
-    }
-    [data-testid="stExpander"] summary,
-    [data-testid="stExpander"] > div:first-child {
-        background: transparent !important;
-        border-radius: 16px !important;
-    }
-    [data-testid="stExpander"] summary:hover {
-        background: rgba(227, 181, 164, 0.12) !important;
-    }
-    [data-testid="stExpander"] details > summary p,
-    [data-testid="stExpander"] summary p,
-    [data-testid="stExpander"] [data-testid="stExpanderToggleIcon"] {
-        color: #773344 !important;
-        font-weight: 700 !important;
-        font-size: 0.82rem !important;
-        letter-spacing: 0.04em !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-    with st.expander("📊 View Score Breakdown — Text Match · Meaning Match · Key Points · Overall Fit"):
-        st.markdown(_html(f"""
-        <div class='sim-lite-top-note' style='margin-bottom:0.7rem;'>
-            <span class='sim-lite-top-note-title'>How to read this section</span>
-            <span class='sim-lite-top-note-copy'>Read each box separately: text = wording overlap, meaning = closest meaning, key points = important fatwa conditions found, overall fit = strength across the matched state rulings.</span>
-        </div>
-        """), unsafe_allow_html=True)
-        render_beautiful_metric_grid(lexical_score, semantic_score, coverage_score, mean_alignment)
+    st.markdown(_html(f"""
+    <div class='sim-lite-top-note' style='margin-top:0.6rem;margin-bottom:0.7rem;'>
+        <span class='sim-lite-top-note-title'>How to read this section</span>
+        <span class='sim-lite-top-note-copy'>Read each box separately: text = wording overlap, meaning = closest meaning, key points = important fatwa conditions found, overall fit = strength across the matched state rulings.</span>
+    </div>
+    """), unsafe_allow_html=True)
+    render_beautiful_metric_grid(lexical_score, semantic_score, coverage_score, mean_alignment)
 
 
 def render_single_review_result_dashboard(bundle: dict):
@@ -2203,29 +2171,50 @@ with tab1:
             else "Low Alignment"
         )
 
-        # ── Themed reveal button ─────────────────────────────────────────────
-        st.markdown("""
+        # ── Score-aware color for button ─────────────────────────────────────
+        _btn_score_color = score_status_color(final_match_score_preview)
+        _btn_score_rgb = (
+            "6,167,125" if final_match_score_preview >= 70
+            else "193,127,10" if final_match_score_preview >= 50
+            else "163,25,33"
+        )
+        _is_open = st.session_state["show_detail_cards"]
+
+        st.markdown(f"""
         <style>
-        div[data-testid="stButton"]:has(button[data-testid="baseButton-secondary"]) .detail-reveal-wrap > button,
-        .detail-reveal-wrap .stButton > button {
-            background: linear-gradient(135deg, #773344 0%, #a3195b 100%) !important;
-            color: #ffffff !important;
-            -webkit-text-fill-color: #ffffff !important;
-            border: none !important;
-            border-radius: 14px !important;
-            font-size: 0.82rem !important;
-            font-weight: 700 !important;
-            padding: 0.55rem 1.4rem !important;
-            letter-spacing: 0.04em !important;
-            box-shadow: 0 4px 14px rgba(119,51,68,0.22) !important;
-        }
+        /* ── Detail toggle button — refined pill ── */
+        div[data-testid="stButton"]:has(button[key="detail_toggle_btn"]) > button,
+        button[data-testid="baseButton-secondary"][key="detail_toggle_btn"],
+        [data-testid="stButton"] button#detail_toggle_btn {{
+            background: {"rgba("+_btn_score_rgb+",0.08)" if _is_open else "linear-gradient(135deg, "+_btn_score_color+" 0%, "+_btn_score_color+"cc 100%)"} !important;
+            color: {""+_btn_score_color if _is_open else "#ffffff"} !important;
+            -webkit-text-fill-color: {""+_btn_score_color if _is_open else "#ffffff"} !important;
+            border: {"2px solid "+_btn_score_color if _is_open else "none"} !important;
+            border-radius: 999px !important;
+            font-size: 0.78rem !important;
+            font-weight: 750 !important;
+            letter-spacing: 0.06em !important;
+            text-transform: uppercase !important;
+            padding: 0.5rem 1.6rem !important;
+            min-height: 38px !important;
+            box-shadow: {"none" if _is_open else "0 6px 20px rgba("+_btn_score_rgb+",0.30), 0 2px 6px rgba("+_btn_score_rgb+",0.18)"} !important;
+            transition: all 0.2s ease !important;
+        }}
+        div[data-testid="stButton"]:has(button[key="detail_toggle_btn"]) > button:hover,
+        [data-testid="stButton"] button#detail_toggle_btn:hover {{
+            transform: translateY(-1px) !important;
+            box-shadow: 0 10px 28px rgba({_btn_score_rgb},0.38) !important;
+            filter: brightness(1.06) !important;
+        }}
         </style>
+        <div style="margin: 0.8rem 0 0.4rem 0;"></div>
         """, unsafe_allow_html=True)
 
+        btn_icon = "▴" if _is_open else "▾"
         btn_label = (
-            "▾  Hide Detailed Results"
-            if st.session_state["show_detail_cards"]
-            else f"▸  View Detailed Results — {result_label_preview} ({final_match_score_preview:.1f}%)"
+            f"{btn_icon}  Hide Details"
+            if _is_open
+            else f"{btn_icon}  View Full Results  ·  {result_label_preview}  ·  {final_match_score_preview:.1f}%"
         )
 
         if st.button(btn_label, key="detail_toggle_btn"):
