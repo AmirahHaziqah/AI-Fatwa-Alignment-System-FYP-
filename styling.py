@@ -911,59 +911,62 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
     box-shadow: 0 6px 18px rgba(22,32,51,0.09) !important;
 }}
 
-/* ══════════════════════════════════════════════════════════
-   BUTTONS
-══════════════════════════════════════════════════════════ */
+/* BUTTONS - POLISHED SYSTEM STYLE */
 .stButton > button,
 .stDownloadButton > button {{
-    background: linear-gradient(135deg, #c44460 0%, #a83250 100%) !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 8px !important;
-    font-weight: 700 !important;
+    background: linear-gradient(135deg, #773344 0%, #B24758 56%, #D44D5C 100%) !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    border: 1px solid rgba(119,51,68,0.18) !important;
+    border-radius: 12px !important;
+    font-weight: 800 !important;
     font-family: 'Inter', sans-serif !important;
-    padding: 0.25rem 0.6rem !important;
-    font-size: 0.7rem !important;
-    box-shadow: 0 4px 14px rgba(119,51,68,0.20) !important;
-    transition: all 0.25s ease !important;
+    padding: 0.38rem 0.85rem !important;
+    font-size: 0.78rem !important;
+    box-shadow: 0 8px 18px rgba(119,51,68,0.18) !important;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease !important;
     letter-spacing: 0.01em !important;
-    min-height: 40px !important;
+    min-height: 38px !important;
 }}
 .stButton > button:hover,
 .stDownloadButton > button:hover {{
-    transform: translateY(-2px) !important;
-    box-shadow: 0 8px 20px rgba(119,51,68,0.28) !important;
-    background: linear-gradient(135deg, #d44d5c 0%, #b8405a 100%) !important;
-    color: white !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 12px 24px rgba(119,51,68,0.24) !important;
+    background: linear-gradient(135deg, #8A3B50 0%, #C24A60 56%, #D95A68 100%) !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
 }}
 
 div[data-testid="stHorizontalBlock"] .stButton > button {{
-    font-size: 0.8rem !important;
-    padding: 0.3rem 0.8rem !important;
+    font-size: 0.82rem !important;
+    padding: 0.42rem 0.9rem !important;
 }}
 
 .stButton > button:active,
 .stDownloadButton > button:active {{
     transform: translateY(0px) !important;
-    box-shadow: 0 2px 8px rgba(119,51,68,0.18) !important;
+    box-shadow: 0 4px 10px rgba(119,51,68,0.18) !important;
 }}
 
-/* ── Load button explicit override ──────────────────────── */
+.stButton > button p,
+.stDownloadButton > button p,
+.stButton > button span,
+.stDownloadButton > button span {{
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    font-weight: 800 !important;
+}}
+
+/* Keep primary and secondary Streamlit buttons visually consistent */
 div[data-testid="stButton"] button[kind="secondary"],
-div[data-testid="stButton"] button {{
-    background: linear-gradient(135deg, #c44460 0%, #a83250 100%) !important;
-    color: white !important;
-    -webkit-text-fill-color: white !important;
-}}
-
-/* Dataset load button override — keep same red style */
+div[data-testid="stButton"] button,
 div[data-testid="column"] .stButton > button,
 .stButton > button[kind="primary"],
 .stButton > button[kind="secondary"] {{
-    background: linear-gradient(135deg, #c44460 0%, #a83250 100%) !important;
-    color: white !important;
-    -webkit-text-fill-color: white !important;
-    border: none !important;
+    background: linear-gradient(135deg, #773344 0%, #B24758 56%, #D44D5C 100%) !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    border: 1px solid rgba(119,51,68,0.18) !important;
 }}
 
 /* ══════════════════════════════════════════════════════════

@@ -2216,131 +2216,61 @@ with tab1:
                 st.rerun()
 
     if st.session_state.get("current_analysis"):
-        # ── Initialise toggle state ──────────────────────────────────────────
         if "show_detail_cards" not in st.session_state:
             st.session_state["show_detail_cards"] = False
 
-        final_match_score_preview = safe_float(
-            st.session_state["current_analysis"].get("final_match_score")
-        )
+        current_preview = st.session_state["current_analysis"]
+        final_match_score_preview = safe_float(current_preview.get("final_match_score"))
         result_label_preview = (
             "Strong Alignment" if final_match_score_preview >= 70
             else "Moderate Alignment" if final_match_score_preview >= 50
             else "Low Alignment"
         )
-
-        # ── Score-aware colors ────────────────────────────────────────────────
-        _btn_score_color = score_status_color(final_match_score_preview)
-        _btn_score_rgb = (
-            "6,167,125" if final_match_score_preview >= 70
-            else "193,127,10" if final_match_score_preview >= 50
-            else "163,25,33"
+        detail_state_preview = "Expanded" if st.session_state["show_detail_cards"] else "Collapsed"
+        detail_button_label = "Hide full result details" if st.session_state["show_detail_cards"] else "Show full result details"
+        detail_button_help = (
+            "Collapse the detailed result cards."
+            if st.session_state["show_detail_cards"]
+            else "Open the detailed result cards, including source, score guide, and key points."
         )
-        _is_open = st.session_state["show_detail_cards"]
-        _chevron = "▲" if _is_open else "▼"
-        _action_text = "Hide Details" if _is_open else "View Full Results"
+        detail_icon = "^" if st.session_state["show_detail_cards"] else "v"
 
-        # ── Styled action card that acts as the toggle ────────────────────────
-        st.markdown(f"""
-        <style>
-        /* Remove default button appearance entirely for the toggle */
-        div[data-testid="stButton"]:has(> button[key="detail_toggle_btn"]) {{
-            margin: 0 !important;
-        }}
-        div[data-testid="stButton"]:has(> button[key="detail_toggle_btn"]) > button {{
-            all: unset !important;
-            display: block !important;
-            width: 100% !important;
-            cursor: pointer !important;
-            background: {"#fdfafb" if _is_open else "#ffffff"} !important;
-            border: 1.5px solid {"#e2ccd4" if _is_open else "#e2ccd4"} !important;
-            border-left: 4px solid {_btn_score_color} !important;
-            border-radius: 14px !important;
-            padding: 0.75rem 1rem !important;
-            box-shadow: 0 2px 10px rgba(25,14,36,0.05) !important;
-            transition: box-shadow 0.18s ease, transform 0.15s ease !important;
-            font-family: inherit !important;
-            text-align: left !important;
-        }}
-        div[data-testid="stButton"]:has(> button[key="detail_toggle_btn"]) > button:hover {{
-            box-shadow: 0 6px 18px rgba({_btn_score_rgb},0.18) !important;
-            transform: translateY(-1px) !important;
-        }}
-        div[data-testid="stButton"]:has(> button[key="detail_toggle_btn"]) > button p {{
-            margin: 0 !important;
-            color: #2a1421 !important;
-            -webkit-text-fill-color: #2a1421 !important;
-            font-size: 0 !important; /* hide the raw text — we show it via the HTML below */
-        }}
-        </style>
-        """, unsafe_allow_html=True)
-
-        # ── Section 3 header ──────────────────────────────────────────────────
-        st.markdown("""
-        <div class="tab1-section" style="margin-top:1rem;">
-            <div class="tab1-section-header">
-                <div class="tab1-section-step">3</div>
-                <div class="tab1-section-title">Full results</div>
-                <div class="tab1-section-rule"></div>
+        st.markdown(_html(f"""
+        <div class='tab1-section' style='margin-top:1rem;'>
+            <div class='tab1-section-header'>
+                <div class='tab1-section-step'>3</div>
+                <div class='tab1-section-title'>Full result details</div>
+                <div class='tab1-section-rule'></div>
             </div>
         </div>
-        """, unsafe_allow_html=True)
-
-        # Visible card HTML rendered just above the invisible button
-        st.markdown(f"""
-        <div style='
-            background: {"#fdfafb" if _is_open else "#ffffff"};
-            border: 1.5px solid #e2ccd4;
-            border-left: 4px solid {_btn_score_color};
-            border-radius: 14px;
-            padding: 0.75rem 1rem;
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            align-items: center;
-            gap: 0.8rem;
-            margin-bottom: -3.2rem;
-            position: relative;
-            z-index: 0;
-            pointer-events: none;
-        '>
-            <div style='
-                width: 36px; height: 36px; border-radius: 10px;
-                background: {_btn_score_color}18;
-                display: flex; align-items: center; justify-content: center;
-                font-size: 1.1rem;
-            '>📋</div>
-            <div>
-                <div style='font-size: 0.62rem; font-weight: 800; text-transform: uppercase;
-                            letter-spacing: 0.1em; color: #9a7d88; margin-bottom: 0.12rem;'>Full Results</div>
-                <div style='font-size: 0.82rem; font-weight: 700; color: #1e1020;'>
-                    {_action_text}
-                    <span style='
-                        display: inline-block;
-                        margin-left: 0.5rem;
-                        padding: 0.18rem 0.6rem;
-                        border-radius: 999px;
-                        background: {_btn_score_color}18;
-                        color: {_btn_score_color};
-                        font-size: 0.72rem;
-                        font-weight: 800;
-                    '>{result_label_preview} · {final_match_score_preview:.1f}%</span>
+        <div class='result-details-control-shell'>
+            <div class='result-details-control-grid'>
+                <div class='result-details-control-icon'>{detail_icon}</div>
+                <div>
+                    <div class='result-details-control-kicker'>Optional evidence panel</div>
+                    <div class='result-details-control-title'>Open the detailed review only when you need to inspect the evidence.</div>
+                    <div class='result-details-control-copy'>The main score stays visible above. This panel contains the larger result cards, closest fatwa source, easy score guide, and mentioned or missing key points.</div>
+                </div>
+                <div class='result-details-control-meta'>
+                    <span class='result-details-control-pill'>{html.escape(result_label_preview)}</span>
+                    <span class='result-details-control-pill'>{format_percent(final_match_score_preview, 1)} overall</span>
+                    <span class='result-details-control-pill'>{detail_state_preview}</span>
                 </div>
             </div>
-            <div style='
-                width: 28px; height: 28px; border-radius: 8px;
-                background: {_btn_score_color}12;
-                color: {_btn_score_color};
-                display: flex; align-items: center; justify-content: center;
-                font-size: 0.75rem; font-weight: 900;
-            '>{_chevron}</div>
         </div>
-        """, unsafe_allow_html=True)
+        """), unsafe_allow_html=True)
 
-        if st.button("_toggle_", key="detail_toggle_btn", use_container_width=True):
+        st.markdown("<div class='result-details-button-row'>", unsafe_allow_html=True)
+        if st.button(detail_button_label, key="detail_toggle_btn", use_container_width=True, help=detail_button_help):
             st.session_state["show_detail_cards"] = not st.session_state["show_detail_cards"]
             st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
 
         if st.session_state["show_detail_cards"]:
+            st.markdown(
+                "<div class='result-details-open-note'><strong>Details are open.</strong> Review these cards after checking the main score. Do not let the detailed section compete with the first result summary.</div>",
+                unsafe_allow_html=True,
+            )
             render_single_review_result_dashboard(st.session_state["current_analysis"])
 
         with st.expander("📊 View advanced comparison details", expanded=False):
