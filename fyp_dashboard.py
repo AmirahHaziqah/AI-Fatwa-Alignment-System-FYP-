@@ -585,6 +585,127 @@ def apply_dashboard_polish():
         -webkit-text-fill-color: #ffffff !important;
     }
            
+
+
+    /* ===== POLISHED DETAIL DRAWER CONTROL ===== */
+    .detail-toggle-card {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        gap: 0.85rem;
+        align-items: center;
+        background: linear-gradient(135deg, #ffffff 0%, #fff7f4 100%);
+        border: 1px solid #ead1c8;
+        border-left: 5px solid #773344;
+        border-radius: 20px;
+        padding: 0.85rem 1rem;
+        box-shadow: 0 10px 22px rgba(25, 14, 36, 0.055);
+        margin: 0.4rem 0 0.8rem 0;
+    }
+
+    .detail-toggle-card-open {
+        border-left-color: #D44D5C;
+        background: linear-gradient(135deg, #ffffff 0%, #fff2ef 100%);
+    }
+
+    .detail-toggle-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #773344 0%, #D44D5C 100%);
+        color: #ffffff;
+        font-size: 0.9rem;
+        font-weight: 900;
+        box-shadow: 0 8px 16px rgba(119, 51, 68, 0.18);
+    }
+
+    .detail-toggle-kicker {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        padding: 0.18rem 0.55rem;
+        border-radius: 999px;
+        background: #f7ece7;
+        border: 1px solid #ead1c8;
+        color: #8b3b50;
+        font-size: 0.62rem;
+        font-weight: 850;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        margin-bottom: 0.22rem;
+    }
+
+    .detail-toggle-title {
+        font-family: 'Inter Tight', 'Inter', sans-serif;
+        font-size: 1rem;
+        font-weight: 850;
+        color: #241226;
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+    }
+
+    .detail-toggle-sub {
+        color: #6d5a68;
+        font-size: 0.76rem;
+        line-height: 1.5;
+        margin-top: 0.22rem;
+    }
+
+    .detail-toggle-chips {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.42rem;
+        flex-wrap: wrap;
+    }
+
+    .detail-toggle-chips span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.32rem 0.65rem;
+        border-radius: 999px;
+        background: #ffffff;
+        border: 1px solid #ead1c8;
+        color: #773344;
+        font-size: 0.7rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .detail-toggle-button-wrap {
+        margin-top: 0.4rem;
+    }
+
+    .detail-toggle-button-wrap .stButton > button {
+        min-height: 64px !important;
+        border-radius: 18px !important;
+        background: linear-gradient(135deg, #160029 0%, #773344 56%, #D44D5C 100%) !important;
+        box-shadow: 0 10px 22px rgba(119, 51, 68, 0.2) !important;
+        font-size: 0.78rem !important;
+        font-weight: 850 !important;
+    }
+
+    .detail-drawer-body {
+        margin-top: 0.25rem;
+        padding: 0.75rem;
+        border: 1px solid #ead1c8;
+        border-radius: 24px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.74) 0%, rgba(255,248,244,0.92) 100%);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.65);
+    }
+
+    @media (max-width: 900px) {
+        .detail-toggle-card {
+            grid-template-columns: auto 1fr;
+        }
+        .detail-toggle-chips {
+            grid-column: 1 / -1;
+            justify-content: flex-start;
+        }
+    }
+
     </style>
     """, unsafe_allow_html=True)
 
@@ -2226,52 +2347,54 @@ with tab1:
             else "Moderate Alignment" if final_match_score_preview >= 50
             else "Low Alignment"
         )
-        detail_state_preview = "Expanded" if st.session_state["show_detail_cards"] else "Collapsed"
-        detail_button_label = "Hide full result details" if st.session_state["show_detail_cards"] else "Show full result details"
+        detail_state_preview = "Open" if st.session_state["show_detail_cards"] else "Hidden"
+        detail_button_label = "Hide detailed review" if st.session_state["show_detail_cards"] else "View detailed review"
         detail_button_help = (
-            "Collapse the detailed result cards."
+            "Hide the larger evidence cards."
             if st.session_state["show_detail_cards"]
-            else "Open the detailed result cards, including source, score guide, and key points."
+            else "Show the larger evidence cards, source card, score guide, and key points."
         )
-        detail_icon = "^" if st.session_state["show_detail_cards"] else "v"
+        detail_icon = "▲" if st.session_state["show_detail_cards"] else "▼"
+        detail_panel_class = "detail-toggle-card detail-toggle-card-open" if st.session_state["show_detail_cards"] else "detail-toggle-card"
 
         st.markdown(_html(f"""
         <div class='tab1-section' style='margin-top:1rem;'>
             <div class='tab1-section-header'>
                 <div class='tab1-section-step'>3</div>
-                <div class='tab1-section-title'>Full result details</div>
+                <div class='tab1-section-title'>Detailed review</div>
                 <div class='tab1-section-rule'></div>
-            </div>
-        </div>
-        <div class='result-details-control-shell'>
-            <div class='result-details-control-grid'>
-                <div class='result-details-control-icon'>{detail_icon}</div>
-                <div>
-                    <div class='result-details-control-kicker'>Optional evidence panel</div>
-                    <div class='result-details-control-title'>Open the detailed review only when you need to inspect the evidence.</div>
-                    <div class='result-details-control-copy'>The main score stays visible above. This panel contains the larger result cards, closest fatwa source, easy score guide, and mentioned or missing key points.</div>
-                </div>
-                <div class='result-details-control-meta'>
-                    <span class='result-details-control-pill'>{html.escape(result_label_preview)}</span>
-                    <span class='result-details-control-pill'>{format_percent(final_match_score_preview, 1)} overall</span>
-                    <span class='result-details-control-pill'>{detail_state_preview}</span>
-                </div>
             </div>
         </div>
         """), unsafe_allow_html=True)
 
-        st.markdown("<div class='result-details-button-row'>", unsafe_allow_html=True)
-        if st.button(detail_button_label, key="detail_toggle_btn", use_container_width=True, help=detail_button_help):
-            st.session_state["show_detail_cards"] = not st.session_state["show_detail_cards"]
-            st.rerun()
-        st.markdown("</div>", unsafe_allow_html=True)
+        detail_card_col, detail_button_col = st.columns([0.78, 0.22], gap="small")
+        with detail_card_col:
+            st.markdown(_html(f"""
+            <div class='{detail_panel_class}'>
+                <div class='detail-toggle-icon'>{detail_icon}</div>
+                <div class='detail-toggle-main'>
+                    <div class='detail-toggle-kicker'>Evidence drawer</div>
+                    <div class='detail-toggle-title'>Detailed Review &amp; Fatwa Evidence</div>
+                    <div class='detail-toggle-sub'>Source, score guide, and key points are kept behind this drawer so the main score stays clean.</div>
+                </div>
+                <div class='detail-toggle-chips'>
+                    <span>{html.escape(result_label_preview)}</span>
+                    <span>{format_percent(final_match_score_preview, 1)}</span>
+                    <span>{detail_state_preview}</span>
+                </div>
+            </div>
+            """), unsafe_allow_html=True)
+        with detail_button_col:
+            st.markdown("<div class='detail-toggle-button-wrap'>", unsafe_allow_html=True)
+            if st.button(detail_button_label, key="detail_toggle_btn", use_container_width=True, help=detail_button_help):
+                st.session_state["show_detail_cards"] = not st.session_state["show_detail_cards"]
+                st.rerun()
+            st.markdown("</div>", unsafe_allow_html=True)
 
         if st.session_state["show_detail_cards"]:
-            st.markdown(
-                "<div class='result-details-open-note'><strong>Details are open.</strong> Review these cards after checking the main score. Do not let the detailed section compete with the first result summary.</div>",
-                unsafe_allow_html=True,
-            )
+            st.markdown("<div class='detail-drawer-body'>", unsafe_allow_html=True)
             render_single_review_result_dashboard(st.session_state["current_analysis"])
+            st.markdown("</div>", unsafe_allow_html=True)
 
         with st.expander("📊 View advanced comparison details", expanded=False):
             current = st.session_state["current_analysis"]
