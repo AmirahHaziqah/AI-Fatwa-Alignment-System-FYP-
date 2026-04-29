@@ -790,118 +790,35 @@ def apply_dashboard_polish():
         padding-top: 0 !important;
     }
 
-    /* ===== UNIFIED INPUT MASTER CARD ===== */
-    .input-master-card {
-        background: #ffffff;
-        border: 1.5px solid #e2cdd6;
-        border-radius: 18px;
-        padding: 1rem 1rem 0.85rem 1rem;
-        box-shadow: 0 4px 18px rgba(119, 51, 68, 0.07);
-        margin: 0.2rem 0 0.45rem 0;
-        transition: box-shadow 0.25s ease;
-    }
-
-    .input-master-card:focus-within {
-        box-shadow: 0 6px 24px rgba(119, 51, 68, 0.12);
-        border-color: #c9a0b8;
-    }
-
-    .imc-section-a {
-        margin-bottom: 0.55rem;
-    }
-
-    .imc-section-b {
-        margin-bottom: 0.4rem;
-    }
-
-    .imc-section-label {
+    /* ===== IMPROVED DETAIL DRAWER BUTTON ===== */
+    .detail-toggle-button-wrap {
+        height: 100%;
         display: flex;
-        align-items: center;
-        gap: 0.4rem;
-        font-size: 0.68rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: #773344;
-        margin-bottom: 0.22rem;
+        align-items: stretch;
     }
 
-    .imc-section-dot {
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #c94a5c, #773344);
-        flex-shrink: 0;
-        display: inline-block;
+    .detail-toggle-button-wrap .stButton {
+        width: 100%;
+        height: 100%;
     }
 
-    .imc-dot-response {
-        background: linear-gradient(135deg, #773344, #D44D5C);
+    .detail-toggle-button-wrap .stButton > button {
+        height: 100% !important;
+        min-height: 76px !important;
+        border-radius: 18px !important;
+        background: linear-gradient(160deg, #160029 0%, #773344 55%, #D44D5C 100%) !important;
+        box-shadow: 0 8px 20px rgba(119, 51, 68, 0.22) !important;
+        font-size: 0.8rem !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.01em !important;
+        transition: all 0.25s ease !important;
+        white-space: normal !important;
+        line-height: 1.35 !important;
     }
 
-    .imc-section-hint {
-        font-size: 0.7rem;
-        color: #9b7a89;
-        line-height: 1.45;
-        margin-bottom: 0.5rem;
-    }
-
-    .imc-divider {
-        height: 1px;
-        background: linear-gradient(90deg, #e2cdd6, #f0e4ec, transparent);
-        margin: 0.75rem 0;
-    }
-
-    /* Textarea inside master card — clean borderless look */
-    .input-master-card [data-testid="stTextArea"] > div > div,
-    .input-master-card [data-baseweb="textarea"],
-    .input-master-card textarea {
-        border-radius: 12px !important;
-        border: 1.5px solid #e2cdd6 !important;
-        background: #fdf8fb !important;
-        color: #2a1421 !important;
-        -webkit-text-fill-color: #2a1421 !important;
-        font-size: 0.82rem !important;
-        line-height: 1.65 !important;
-        transition: border-color 0.2s ease !important;
-    }
-
-    .input-master-card textarea:focus {
-        border-color: #c94a5c !important;
-        background: #ffffff !important;
-    }
-
-    /* ===== DETAIL DRAWER BUTTON — subtle secondary style ===== */
-    .detail-toggle-card {
-        margin-bottom: 0.4rem !important;
-    }
-
-    .detail-btn-row {
-        margin-top: 0.1rem;
-        margin-bottom: 0.6rem;
-    }
-
-    .detail-btn-wrap .stButton > button {
-        background: #ffffff !important;
-        border: 1.5px solid #c9a0b8 !important;
-        color: #773344 !important;
-        -webkit-text-fill-color: #773344 !important;
-        border-radius: 10px !important;
-        font-size: 0.76rem !important;
-        font-weight: 700 !important;
-        padding: 0.4rem 0.8rem !important;
-        box-shadow: 0 2px 6px rgba(119, 51, 68, 0.08) !important;
-        transition: all 0.2s ease !important;
-        min-height: 34px !important;
-    }
-
-    .detail-btn-wrap .stButton > button:hover {
-        background: #fdf0f4 !important;
-        border-color: #c94a5c !important;
-        color: #c94a5c !important;
-        -webkit-text-fill-color: #c94a5c !important;
-        box-shadow: 0 4px 12px rgba(119, 51, 68, 0.14) !important;
-        transform: translateY(-1px) !important;
+    .detail-toggle-button-wrap .stButton > button:hover {
+        box-shadow: 0 12px 28px rgba(119, 51, 68, 0.32) !important;
+        transform: translateY(-2px) !important;
     }
 
     </style>
@@ -2283,9 +2200,7 @@ with tab1:
     review_left, review_right = st.columns([0.58, 0.42], gap="medium")
 
     with review_left:
-        # ══ UNIFIED INPUT CARD — loader section on top, textarea below ═══════
-        st.markdown('<div class="input-master-card">', unsafe_allow_html=True)
-
+        # ── Dataset loader ────────────────────────────────────────────────────
         if AI_DATASET_AVAILABLE:
             question_map = (
                 fatwa_df[["question_id", "question_text"]]
@@ -2306,14 +2221,22 @@ with tab1:
             if not selected_model or not available_models or selected_model not in available_models:
                 selected_model = available_models[0] if available_models else ""
 
-            # ── Section A: Quick Load ──────────────────────────────────────────
+            # Loader header — redesigned beautiful card
             st.markdown(_html("""
-            <div class='imc-section-a'>
-                <div class='imc-section-label'>
-                    <span class='imc-section-dot'></span>
-                    <span>📂 Quick load from dataset</span>
+            <div class='ds-loader-card'>
+                <div class='ds-loader-top'>
+                    <div>
+                        <div class='ds-loader-kicker'>📂 Load a Saved Answer</div>
+                        <div class='ds-loader-title'>Quick load from dataset</div>
+                    </div>
+                    <div class='ds-loader-badge'>⬇ Select &amp; Load</div>
                 </div>
-                <div class='imc-section-hint'>Pick a saved question and AI model to load instantly.</div>
+                <div class='ds-loader-copy'>Pick a question and AI model to instantly load a saved response into the review area below.</div>
+                <div style='display:grid; grid-template-columns: 1fr 1fr auto; gap:0.6rem; align-items:end;'>
+                    <div><div class='ds-loader-col-label'>📋 Question</div></div>
+                    <div><div class='ds-loader-col-label'>🤖 AI Model</div></div>
+                    <div><div class='ds-loader-col-label'>⚡ Action</div></div>
+                </div>
             </div>
             """), unsafe_allow_html=True)
 
@@ -2354,29 +2277,33 @@ with tab1:
                 else:
                     st.warning(f"⚠️ No saved response found for model '{selected_model}'")
 
-            # ── Divider between loader and textarea ──────────────────────────
-            st.markdown('<div class="imc-divider"></div>', unsafe_allow_html=True)
+            st.markdown("<div style='height:0.4rem;'></div>", unsafe_allow_html=True)
 
-        # ── Section B: Paste Response ──────────────────────────────────────────
+        # ── Text area ─────────────────────────────────────────────────────────
         st.markdown(_html("""
-        <div class='imc-section-b'>
-            <div class='imc-section-label'>
-                <span class='imc-section-dot imc-dot-response'></span>
-                <span>✍️ Your response</span>
+            <div class='input-editor-shell-v2'>
+                <div class='input-editor-v2-head'>
+                    <div>
+                        <div class='input-editor-kicker'>✍️ YOUR RESPONSE</div>
+                        <div class='input-editor-title'>Paste the AI answer you want to check</div>
+                        <div class='input-editor-copy' style='font-size: 0.7rem; color: #7a6874; margin-top: 0.2rem;'>
+                            💡 Longer, detailed answers give more accurate scores.
+                        </div>
+                    </div>
+                    <div class='input-editor-chip'>Single review</div>
+                </div>
             </div>
-            <div class='imc-section-hint'>Paste the full AI-generated answer below. Longer answers give more accurate scores.</div>
-        </div>
         """), unsafe_allow_html=True)
 
+        st.markdown('<div class="input-editor-v2-body">', unsafe_allow_html=True)
         ai_response = st.text_area(
             "AI Response Input",
-            height=150,
-            placeholder="Paste your full AI-generated answer here.\n\nExample: \"In Islam, surrogacy is generally not permitted because it can mix lineages...\"",
+            height=140,
+            placeholder="Example: \"In Islam, surrogacy is generally not permitted because it can mix lineages...\"\n\nPaste your full AI-generated answer here.",
             key="ai_input",
             label_visibility="collapsed"
         )
-
-        st.markdown('</div>', unsafe_allow_html=True)  # close input-master-card
+        st.markdown('</div>', unsafe_allow_html=True)
 
         if st.session_state.pop('load_success_toast', False):
             show_success_toast_center(
@@ -2557,32 +2484,29 @@ with tab1:
         </div>
         """), unsafe_allow_html=True)
 
-        st.markdown(_html(f"""
-        <div class='{detail_panel_class}'>
-            <div class='detail-toggle-icon'>{detail_icon}</div>
-            <div class='detail-toggle-main'>
-                <div class='detail-toggle-kicker'>Evidence drawer</div>
-                <div class='detail-toggle-title'>Detailed Review &amp; Fatwa Evidence</div>
-                <div class='detail-toggle-sub'>Source, score guide, and key points are kept behind this drawer so the main score stays clean.</div>
+        detail_card_col, detail_button_col = st.columns([0.65, 0.35], gap="medium")
+        with detail_card_col:
+            st.markdown(_html(f"""
+            <div class='{detail_panel_class}'>
+                <div class='detail-toggle-icon'>{detail_icon}</div>
+                <div class='detail-toggle-main'>
+                    <div class='detail-toggle-kicker'>Evidence drawer</div>
+                    <div class='detail-toggle-title'>Detailed Review &amp; Fatwa Evidence</div>
+                    <div class='detail-toggle-sub'>Source, score guide, and key points are kept behind this drawer so the main score stays clean.</div>
+                </div>
+                <div class='detail-toggle-chips'>
+                    <span>{html.escape(result_label_preview)}</span>
+                    <span>{format_percent(final_match_score_preview, 1)}</span>
+                    <span>{detail_state_preview}</span>
+                </div>
             </div>
-            <div class='detail-toggle-chips'>
-                <span>{html.escape(result_label_preview)}</span>
-                <span>{format_percent(final_match_score_preview, 1)}</span>
-                <span>{detail_state_preview}</span>
-            </div>
-        </div>
-        """), unsafe_allow_html=True)
-
-        # Button sits cleanly below the card, subtle secondary style
-        st.markdown('<div class="detail-btn-row">', unsafe_allow_html=True)
-        dbtn_l, dbtn_m, dbtn_r = st.columns([0.02, 0.42, 0.56])
-        with dbtn_m:
-            st.markdown('<div class="detail-btn-wrap">', unsafe_allow_html=True)
+            """), unsafe_allow_html=True)
+        with detail_button_col:
+            st.markdown("<div class='detail-toggle-button-wrap'>", unsafe_allow_html=True)
             if st.button(detail_button_label, key="detail_toggle_btn", use_container_width=True, help=detail_button_help):
                 st.session_state["show_detail_cards"] = not st.session_state["show_detail_cards"]
                 st.rerun()
-            st.markdown('</div>', unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
 
         if st.session_state["show_detail_cards"]:
             st.markdown("<div class='detail-drawer-body'>", unsafe_allow_html=True)
