@@ -902,10 +902,11 @@ def apply_dashboard_polish():
     }
     .ds-qa-model-chip {
         display: inline-block;
-        background: #d6f0e4; color: #1d6640;
-        padding: 0.12rem 0.5rem; border-radius: 999px;
-        font-size: 0.6rem; font-weight: 800; margin-left: 0.3rem;
+        background: #fce8ed; color: #a3195b;
+        padding: 0.12rem 0.55rem; border-radius: 999px;
+        font-size: 0.6rem; font-weight: 800; margin-left: 0.35rem;
         text-transform: none; letter-spacing: 0;
+        border: 1px solid #f0c0cf;
     }
 
     /* ===== REDESIGNED AI INPUT CARD ===== */
@@ -2498,22 +2499,16 @@ with tab1:
             question_subset = ai_answer_df[ai_answer_df["question_id"] == selected_qid].copy()
             selected_match = question_subset[question_subset["model"] == selected_model]
 
-            # ── Question + Answer Preview Panel ──────────────────────────────
-            preview_q_text = selected_question_text or "—"
-            preview_a_text = selected_match.iloc[0]["ai_answer_raw"].strip() if not selected_match.empty else "No answer found for this model and question."
-            preview_a_short = (preview_a_text[:320] + "…") if len(preview_a_text) > 320 else preview_a_text
-            preview_q_short = (preview_q_text[:180] + "…") if len(preview_q_text) > 180 else preview_q_text
+            # ── Question Preview Panel (model chip shown inline, no answer block) ──
+            preview_q_text = selected_question_text or "-"
+            preview_q_short = (preview_q_text[:220] + "...") if len(preview_q_text) > 220 else preview_q_text
+            model_chip_html = f"<span class='ds-qa-model-chip'>{html.escape(selected_model)}</span>"
 
             st.markdown(_html(f"""
             <div class='ds-qa-preview'>
                 <div class='ds-qa-row'>
-                    <div class='ds-qa-label ds-qa-q-label'>Question</div>
+                    <div class='ds-qa-label ds-qa-q-label'>Question {model_chip_html}</div>
                     <div class='ds-qa-text ds-qa-q-text'>{html.escape(preview_q_short)}</div>
-                </div>
-                <div class='ds-qa-divider'></div>
-                <div class='ds-qa-row'>
-                    <div class='ds-qa-label ds-qa-a-label'>AI Answer <span class='ds-qa-model-chip'>{html.escape(selected_model)}</span></div>
-                    <div class='ds-qa-text ds-qa-a-text'>{html.escape(preview_a_short)}</div>
                 </div>
             </div>
             """), unsafe_allow_html=True)
