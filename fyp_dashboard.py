@@ -607,78 +607,19 @@ def apply_dashboard_polish():
         background: linear-gradient(135deg, #ffffff 0%, #fff2ef 100%);
     }
 
-    /* ===== REDESIGNED DETAIL DRAWER V2 — FULL WIDTH ===== */
-    .detail-toggle-card-v2 {
-        display: grid;
-        grid-template-columns: 48px 1fr auto;
-        gap: 1rem;
-        align-items: center;
-        background: linear-gradient(135deg, #ffffff 0%, #fff7f4 100%);
-        border: 1px solid #ead1c8;
-        border-left: 5px solid #773344;
-        border-radius: 20px;
-        padding: 1rem 1.2rem;
-        box-shadow: 0 6px 18px rgba(25, 14, 36, 0.06);
-        margin: 0.4rem 0 0.5rem 0;
-        transition: all 0.2s ease;
-    }
-
-    .detail-toggle-card-v2-open {
-        border-left-color: #D44D5C;
-        background: linear-gradient(135deg, #ffffff 0%, #fff2ef 100%);
-        box-shadow: 0 8px 22px rgba(212, 77, 92, 0.1);
-    }
-
-    .detail-toggle-v2-left {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .detail-toggle-v2-body {
-        min-width: 0;
-    }
-
-    .detail-toggle-v2-right {
-        display: flex;
-        align-items: center;
-        flex-shrink: 0;
-    }
-
-    /* Make icon work in both old and new card layouts */
     .detail-toggle-icon {
-        width: 40px;
-        height: 40px;
+        width: 38px;
+        height: 38px;
         border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
         background: linear-gradient(135deg, #773344 0%, #D44D5C 100%);
         color: #ffffff;
-        font-size: 1rem;
+        font-size: 0.9rem;
         font-weight: 900;
         box-shadow: 0 8px 16px rgba(119, 51, 68, 0.18);
-        flex-shrink: 0;
     }
-
-    /* Center the toggle button under the drawer card */
-    .detail-toggle-center-btn {
-        display: flex;
-        justify-content: center;
-        margin: 0 0 0.8rem 0;
-    }
-
-    @media (max-width: 768px) {
-        .detail-toggle-card-v2 {
-            grid-template-columns: 40px 1fr;
-            gap: 0.7rem;
-        }
-        .detail-toggle-v2-right {
-            grid-column: 1 / -1;
-            justify-content: flex-start;
-        }
-    }
-
 
     .detail-toggle-kicker {
         display: inline-flex;
@@ -765,141 +706,119 @@ def apply_dashboard_polish():
         }
     }
 
-    /* ===== UNIFIED SCORE SUMMARY SHELL ===== */
-    .sim-unified-shell {
-        background: linear-gradient(180deg, #ffffff 0%, #fff7f4 100%);
-        border: 1px solid #ead1c8;
-        border-top: 4px solid #773344;
-        border-radius: 20px;
-        padding: 1rem 1rem 0.8rem 1rem;
-        box-shadow: 0 6px 18px rgba(25, 14, 36, 0.06);
-        transition: box-shadow 0.25s ease;
+    /* ===== UNIFIED INPUT EDITOR CARD V2 ===== */
+    /* Header part — top of the card, rounded top only */
+    .input-editor-shell-v2 {
+        background: linear-gradient(180deg, #fefcfe 0%, #f8f0f6 100%);
+        border: 1px solid #dfd7e4;
+        border-bottom: none;
+        border-radius: 16px 16px 0 0;
+        padding: 0.7rem 0.9rem 0.65rem 0.9rem;
+        margin: 0.2rem 0 0 0;
+        box-shadow: 0 4px 14px rgba(25,14,36,0.04);
+        transition: all 0.3s ease;
     }
 
-    .sim-unified-shell:hover {
-        box-shadow: 0 10px 24px rgba(25, 14, 36, 0.09);
-    }
-
-    .sim-unified-head {
+    .input-editor-v2-head {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        gap: 0.65rem;
-        margin-bottom: 0.8rem;
+        gap: 0.7rem;
     }
 
-    .sim-unified-hero {
-        display: grid;
-        grid-template-columns: 88px 1fr;
-        gap: 0.75rem;
-        align-items: center;
-        margin-bottom: 0.75rem;
+    /* Body wrapper — bottom of the card, rounded bottom only */
+    .input-editor-v2-body {
+        margin: 0 0 0.45rem 0;
     }
 
-    .sim-unified-summary {
+    /* Make the textarea connect seamlessly to the header */
+    .input-editor-v2-body [data-testid="stTextArea"] > div > div,
+    .input-editor-v2-body [data-baseweb="textarea"],
+    .input-editor-v2-body textarea {
+        border-radius: 0 0 14px 14px !important;
+        border: 1px solid #dfd7e4 !important;
+        border-top: 1px solid #e8ddf0 !important;
+        margin-top: 0 !important;
+        background: #ffffff !important;
+        color: #2a1421 !important;
+        box-shadow: 0 4px 14px rgba(25,14,36,0.04) !important;
+    }
+
+    .input-editor-v2-body [data-testid="stTextArea"] {
+        margin-top: 0 !important;
+    }
+
+    /* ===== UNIFIED INPUT EDITOR CARD V2 ===== */
+    .input-editor-shell-v2 {
+        background: linear-gradient(180deg, #fefcfe 0%, #f8f0f6 100%);
+        border: 1px solid #dfd7e4;
+        border-bottom: none;
+        border-radius: 16px 16px 0 0;
+        padding: 0.7rem 0.9rem 0.65rem 0.9rem;
+        margin: 0.2rem 0 0 0;
+        box-shadow: 0 4px 14px rgba(25,14,36,0.04);
+        transition: all 0.3s ease;
+    }
+
+    .input-editor-v2-head {
         display: flex;
-        flex-direction: column;
-        justify-content: center;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 0.7rem;
     }
 
-    .sim-unified-summary-label {
-        font-size: 0.88rem;
-        font-weight: 800;
-        color: #1e1020;
-        margin-bottom: 0.2rem;
+    /* Make the textarea flush-connect to the header */
+    .input-editor-v2-body {
+        margin: 0 0 0.45rem 0;
     }
 
-    .sim-unified-summary-copy {
-        font-size: 0.76rem;
-        line-height: 1.55;
-        color: #6d5a68;
+    .input-editor-v2-body [data-testid="stTextArea"] > div > div,
+    .input-editor-v2-body [data-baseweb="textarea"],
+    .input-editor-v2-body textarea {
+        border-radius: 0 0 14px 14px !important;
+        border: 1px solid #dfd7e4 !important;
+        border-top: 1px solid #e8e0ed !important;
+        background: #ffffff !important;
+        color: #2a1421 !important;
+        -webkit-text-fill-color: #2a1421 !important;
+        box-shadow: 0 4px 10px rgba(25,14,36,0.04) !important;
+        margin-top: 0 !important;
     }
 
-    .sim-unified-divider {
-        height: 1px;
-        background: linear-gradient(90deg, #ead1c8, transparent);
-        margin: 0.6rem 0;
+    .input-editor-v2-body [data-testid="stTextArea"] {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
     }
 
-    .sim-unified-note {
-        background: #fdf6f2;
-        border: 1px solid #ead1c8;
-        border-radius: 12px;
-        padding: 0.55rem 0.75rem;
-        margin-bottom: 0.75rem;
-        transition: background 0.2s ease;
+    /* ===== IMPROVED DETAIL DRAWER BUTTON ===== */
+    .detail-toggle-button-wrap {
+        height: 100%;
+        display: flex;
+        align-items: stretch;
     }
 
-    .sim-unified-metrics {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.55rem;
+    .detail-toggle-button-wrap .stButton {
+        width: 100%;
+        height: 100%;
     }
 
-    .sim-metric-card {
-        background: #ffffff;
-        border: 1px solid rgba(227, 181, 164, 0.4);
-        border-radius: 14px;
-        padding: 0.65rem 0.7rem;
-        text-align: center;
-        position: relative;
-        overflow: hidden;
-        transition: all 0.2s ease;
-        box-shadow: 0 2px 6px rgba(119, 51, 68, 0.05);
+    .detail-toggle-button-wrap .stButton > button {
+        height: 100% !important;
+        min-height: 76px !important;
+        border-radius: 18px !important;
+        background: linear-gradient(160deg, #160029 0%, #773344 55%, #D44D5C 100%) !important;
+        box-shadow: 0 8px 20px rgba(119, 51, 68, 0.22) !important;
+        font-size: 0.8rem !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.01em !important;
+        transition: all 0.25s ease !important;
+        white-space: normal !important;
+        line-height: 1.35 !important;
     }
 
-    .sim-metric-card::before {
-        content: '';
-        position: absolute;
-        top: 0; left: 0; right: 0;
-        height: 2px;
-        background: linear-gradient(90deg, #D44D5C, #773344);
-        opacity: 0.4;
-    }
-
-    .sim-metric-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 14px rgba(119, 51, 68, 0.1);
-        border-color: #e3b5a4;
-    }
-
-    .sim-metric-icon {
-        font-size: 1rem;
-        margin-bottom: 0.25rem;
-        display: block;
-    }
-
-    .sim-metric-label {
-        font-size: 0.6rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.07em;
-        color: #8b6771;
-        margin-bottom: 0.18rem;
-    }
-
-    .sim-metric-value {
-        font-family: 'Inter Tight', 'Inter', sans-serif;
-        font-size: 1.35rem;
-        font-weight: 800;
-        line-height: 1;
-        margin-bottom: 0.1rem;
-    }
-
-    .sim-metric-sub {
-        font-size: 0.6rem;
-        color: #a08b97;
-        font-weight: 600;
-        margin-bottom: 0.15rem;
-    }
-
-    .sim-metric-desc {
-        font-size: 0.62rem;
-        color: #7a6874;
-        line-height: 1.3;
-        padding-top: 0.25rem;
-        border-top: 1px solid rgba(227, 181, 164, 0.25);
-        margin-top: 0.3rem;
+    .detail-toggle-button-wrap .stButton > button:hover {
+        box-shadow: 0 12px 28px rgba(119, 51, 68, 0.32) !important;
+        transform: translateY(-2px) !important;
     }
 
     </style>
@@ -1929,7 +1848,7 @@ def render_batch_score_chart(num_df: pd.DataFrame):
             _render_grouped_bars(summary_df, 'label', 'Metric comparison by response', 'Side-by-side bars make it easier to compare meaning match, text match, and key fatwa points.')
             
 def render_similarity_breakdown(bundle: dict):
-    """Render the similarity breakdown — unified panel with ring + 4 metric cards all in one clean container."""
+    """Render the similarity breakdown — original design: sim-lite shell + note + 4 metric cards."""
     final_match_score = safe_float(bundle.get("final_match_score"))
     lexical_score     = safe_float(bundle.get("lexical_score"))
     semantic_score    = safe_float(bundle.get("semantic_score"))
@@ -1939,98 +1858,41 @@ def render_similarity_breakdown(bundle: dict):
     score_color  = score_status_color(final_match_score)
     ring_degrees = max(0.0, min(360.0, final_match_score * 3.6))
     conclusion_label = "Strong Alignment" if final_match_score >= 70 else "Moderate Alignment" if final_match_score >= 50 else "Low Alignment"
-    conclusion_copy  = ("The answer is close to the fatwa and covers most important points."
+    conclusion_copy  = ("This final score means the answer is close to the fatwa and gets most important points right."
                         if final_match_score >= 70 else
-                        "Partly correct, but some fatwa points still need checking."
+                        "This final score means the answer is partly correct, but some important points still need checking."
                         if final_match_score >= 50 else
-                        "Not close enough to the fatwa yet — needs careful review.")
-
-    def _metric_tier(v):
-        return "#06A77D" if v >= 70 else "#D4A04B" if v >= 50 else "#A31621"
-
-    def _metric_bar(v, color):
-        w = max(0, min(100, v))
-        return f"<div style='height:5px;border-radius:999px;background:#f1e2da;overflow:hidden;margin-top:0.4rem;'><div style='height:100%;width:{w:.0f}%;background:{color};border-radius:999px;transition:width 0.5s ease;'></div></div>"
-
-    def _metric_desc(label, v):
-        if "Text" in label:
-            return "Same words used." if v >= 70 else "Some overlap." if v >= 50 else "Different words."
-        elif "Meaning" in label:
-            return "Same meaning." if v >= 70 else "Quite close." if v >= 50 else "Different meaning."
-        elif "Key" in label or "Points" in label:
-            return "Most points found." if v >= 70 else "Some points found." if v >= 50 else "Missing key points."
-        else:
-            return "Average across states." if v >= 70 else "Average fit." if v >= 50 else "Below average."
-
-    lc, sc, cc, mc = _metric_tier(lexical_score), _metric_tier(semantic_score), _metric_tier(coverage_score), _metric_tier(mean_alignment)
+                        "This final score means the answer is not close enough to the fatwa yet and needs careful review.")
 
     st.markdown(_html(f"""
-    <div class='sim-unified-shell'>
-        <!-- Header row -->
-        <div class='sim-unified-head'>
+    <div class='sim-lite-shell'>
+        <div class='sim-lite-head'>
             <div>
                 <div class='sim-lite-kicker'>Similarity breakdown</div>
                 <div class='sim-lite-title'>Final Score</div>
             </div>
             <div class='sim-lite-pill' style='background:{score_color}14;border-color:{score_color};color:{score_color};'>{final_match_score:.1f}%</div>
         </div>
-        <!-- Ring + summary -->
-        <div class='sim-unified-hero'>
+        <div class='sim-lite-hero'>
             <div class='sim-lite-ring' style='background:conic-gradient({score_color} 0deg {ring_degrees:.1f}deg,#ead1c8 {ring_degrees:.1f}deg 360deg);'>
                 <div class='sim-lite-ring-inner'>
                     <strong style='color:{score_color};'>{int(round(final_match_score))}</strong>
                     <span>Final score</span>
                 </div>
             </div>
-            <div class='sim-unified-summary'>
-                <div class='sim-unified-summary-label'>{html.escape(conclusion_label)}</div>
-                <div class='sim-unified-summary-copy'>{html.escape(conclusion_copy)}</div>
+            <div class='sim-lite-summary'>
+                <div class='sim-lite-summary-title'>{html.escape(conclusion_label)}</div>
+                <div class='sim-lite-summary-copy alt'>{html.escape(conclusion_copy)}</div>
             </div>
         </div>
-        <!-- Divider -->
-        <div class='sim-unified-divider'></div>
-        <!-- How-to note -->
-        <div class='sim-unified-note'>
+        <div class='sim-lite-top-note'>
             <span class='sim-lite-top-note-title'>How to read this section</span>
-            <span class='sim-lite-top-note-copy'>Text = wording overlap, Meaning = closest meaning, Key Points = fatwa conditions found, Overall Fit = strength across state rulings.</span>
-        </div>
-        <!-- 4 metric cards inline -->
-        <div class='sim-unified-metrics'>
-            <div class='sim-metric-card'>
-                <div class='sim-metric-icon'>📝</div>
-                <div class='sim-metric-label'>Text Match</div>
-                <div class='sim-metric-value' style='color:{lc};'>{lexical_score:.0f}%</div>
-                <div class='sim-metric-sub'>Words used</div>
-                {_metric_bar(lexical_score, lc)}
-                <div class='sim-metric-desc'>{_metric_desc("Text", lexical_score)}</div>
-            </div>
-            <div class='sim-metric-card'>
-                <div class='sim-metric-icon'>🎯</div>
-                <div class='sim-metric-label'>Meaning Match</div>
-                <div class='sim-metric-value' style='color:{sc};'>{semantic_score:.0f}%</div>
-                <div class='sim-metric-sub'>Same meaning</div>
-                {_metric_bar(semantic_score, sc)}
-                <div class='sim-metric-desc'>{_metric_desc("Meaning", semantic_score)}</div>
-            </div>
-            <div class='sim-metric-card'>
-                <div class='sim-metric-icon'>✓</div>
-                <div class='sim-metric-label'>Key Points</div>
-                <div class='sim-metric-value' style='color:{cc};'>{coverage_score:.0f}%</div>
-                <div class='sim-metric-sub'>Main points</div>
-                {_metric_bar(coverage_score, cc)}
-                <div class='sim-metric-desc'>{_metric_desc("Key Points", coverage_score)}</div>
-            </div>
-            <div class='sim-metric-card'>
-                <div class='sim-metric-icon'>⚖️</div>
-                <div class='sim-metric-label'>Overall Fit</div>
-                <div class='sim-metric-value' style='color:{mc};'>{mean_alignment:.0f}%</div>
-                <div class='sim-metric-sub'>State match</div>
-                {_metric_bar(mean_alignment, mc)}
-                <div class='sim-metric-desc'>{_metric_desc("Overall", mean_alignment)}</div>
-            </div>
+            <span class='sim-lite-top-note-copy'>Read each box separately: text = wording overlap, meaning = closest meaning, key points = important fatwa conditions found, overall fit = strength across the matched state rulings.</span>
         </div>
     </div>
     """), unsafe_allow_html=True)
+
+    render_beautiful_metric_grid(lexical_score, semantic_score, coverage_score, mean_alignment)
 
 
 def render_single_review_result_dashboard(bundle: dict):
@@ -2419,8 +2281,8 @@ with tab1:
 
         # ── Text area ─────────────────────────────────────────────────────────
         st.markdown(_html("""
-            <div class='input-editor-shell'>
-                <div class='input-editor-head'>
+            <div class='input-editor-shell-v2'>
+                <div class='input-editor-v2-head'>
                     <div>
                         <div class='input-editor-kicker'>✍️ YOUR RESPONSE</div>
                         <div class='input-editor-title'>Paste the AI answer you want to check</div>
@@ -2433,13 +2295,15 @@ with tab1:
             </div>
         """), unsafe_allow_html=True)
 
+        st.markdown('<div class="input-editor-v2-body">', unsafe_allow_html=True)
         ai_response = st.text_area(
             "AI Response Input",
-            height=120,
+            height=140,
             placeholder="Example: \"In Islam, surrogacy is generally not permitted because it can mix lineages...\"\n\nPaste your full AI-generated answer here.",
             key="ai_input",
             label_visibility="collapsed"
         )
+        st.markdown('</div>', unsafe_allow_html=True)
 
         if st.session_state.pop('load_success_toast', False):
             show_success_toast_center(
@@ -2457,8 +2321,8 @@ with tab1:
                 <div class="tab1-section-rule"></div>
             </div>
         </div>
-        <div class='single-review-right-col'>
         """, unsafe_allow_html=True)
+        st.markdown("<div class='single-review-right-col'>", unsafe_allow_html=True)
         if st.session_state.get("current_analysis"):
             render_similarity_breakdown(st.session_state["current_analysis"])
         else:
@@ -2620,31 +2484,29 @@ with tab1:
         </div>
         """), unsafe_allow_html=True)
 
-        st.markdown(_html(f"""
-        <div class='detail-toggle-card-v2 {("detail-toggle-card-v2-open" if st.session_state["show_detail_cards"] else "")}'>
-            <div class='detail-toggle-v2-left'>
+        detail_card_col, detail_button_col = st.columns([0.65, 0.35], gap="medium")
+        with detail_card_col:
+            st.markdown(_html(f"""
+            <div class='{detail_panel_class}'>
                 <div class='detail-toggle-icon'>{detail_icon}</div>
-            </div>
-            <div class='detail-toggle-v2-body'>
-                <div class='detail-toggle-kicker'>Evidence drawer</div>
-                <div class='detail-toggle-title'>Detailed Review &amp; Fatwa Evidence</div>
-                <div class='detail-toggle-sub'>Source, score guide, and key points are kept behind this drawer so the main score stays clean.</div>
-            </div>
-            <div class='detail-toggle-v2-right'>
+                <div class='detail-toggle-main'>
+                    <div class='detail-toggle-kicker'>Evidence drawer</div>
+                    <div class='detail-toggle-title'>Detailed Review &amp; Fatwa Evidence</div>
+                    <div class='detail-toggle-sub'>Source, score guide, and key points are kept behind this drawer so the main score stays clean.</div>
+                </div>
                 <div class='detail-toggle-chips'>
                     <span>{html.escape(result_label_preview)}</span>
                     <span>{format_percent(final_match_score_preview, 1)}</span>
                     <span>{detail_state_preview}</span>
                 </div>
             </div>
-        </div>
-        """), unsafe_allow_html=True)
-
-        btn_col1, btn_col2, btn_col3 = st.columns([0.3, 0.4, 0.3])
-        with btn_col2:
+            """), unsafe_allow_html=True)
+        with detail_button_col:
+            st.markdown("<div class='detail-toggle-button-wrap'>", unsafe_allow_html=True)
             if st.button(detail_button_label, key="detail_toggle_btn", use_container_width=True, help=detail_button_help):
                 st.session_state["show_detail_cards"] = not st.session_state["show_detail_cards"]
                 st.rerun()
+            st.markdown("</div>", unsafe_allow_html=True)
 
         if st.session_state["show_detail_cards"]:
             st.markdown("<div class='detail-drawer-body'>", unsafe_allow_html=True)
