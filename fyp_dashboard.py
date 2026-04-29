@@ -2143,14 +2143,17 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
 with tab1:
     render_minimal_tab_intro(
         "Single review",
-        "Review workspace",
-        "Load a saved dataset answer or paste a new AI answer, then inspect the score and evidence in a cleaner workflow.",
+        "Closest fatwa alignment",
+        "Check one answer and see how closely it matches the most relevant fatwa.",
         extra_class="single-review-hero"
     )
 
+    # ── Shared section header style ───────────────────────────────────────────
     st.markdown("""
     <style>
-    .tab1-section { margin: 0 0 0.55rem 0; }
+    .tab1-section {
+        margin: 0 0 0.5rem 0;
+    }
     .tab1-section-header {
         display: flex;
         align-items: center;
@@ -2158,534 +2161,167 @@ with tab1:
         margin-bottom: 0.55rem;
     }
     .tab1-section-step {
-        width: 24px;
-        height: 24px;
-        border-radius: 8px;
-        background: linear-gradient(135deg, #160029 0%, #773344 55%, #D44D5C 100%);
-        color: #ffffff;
-        font-size: 0.68rem;
-        font-weight: 900;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        width: 22px; height: 22px; border-radius: 6px;
+        background: linear-gradient(135deg, #773344, #a3195b);
+        color: #fff; font-size: 0.65rem; font-weight: 900;
+        display: flex; align-items: center; justify-content: center;
         flex-shrink: 0;
-        box-shadow: 0 8px 16px rgba(119, 51, 68, 0.16);
     }
     .tab1-section-title {
-        font-size: 0.74rem;
-        font-weight: 850;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        color: #5a3d4a;
+        font-size: 0.72rem; font-weight: 800; text-transform: uppercase;
+        letter-spacing: 0.1em; color: #5a3d4a;
     }
     .tab1-section-rule {
-        flex: 1;
-        height: 1px;
+        flex: 1; height: 1px;
         background: linear-gradient(90deg, #e2ccd4, transparent);
     }
-    .workspace-grid-v3 {
+    .tab1-two-col {
         display: grid;
-        grid-template-columns: minmax(0, 0.58fr) minmax(0, 0.42fr);
+        grid-template-columns: 0.58fr 0.42fr;
         gap: 1rem;
         align-items: start;
-    }
-    @media (max-width: 980px) {
-        .workspace-grid-v3 { grid-template-columns: 1fr; }
-    }
-    .review-panel-v3 {
-        background: linear-gradient(180deg, #ffffff 0%, #fff8f4 100%);
-        border: 1px solid #ead1c8;
-        border-radius: 24px;
-        padding: 1rem;
-        box-shadow: 0 12px 26px rgba(25, 14, 36, 0.055);
-        margin-bottom: 0.85rem;
-    }
-    .review-panel-head-v3 {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 0.9rem;
-        margin-bottom: 0.85rem;
-    }
-    .review-kicker-v3 {
-        display: inline-flex;
-        align-items: center;
-        width: fit-content;
-        padding: 0.22rem 0.62rem;
-        border-radius: 999px;
-        background: #f7ece7;
-        border: 1px solid #ead1c8;
-        color: #8b3b50;
-        font-size: 0.62rem;
-        font-weight: 850;
-        letter-spacing: 0.09em;
-        text-transform: uppercase;
-        margin-bottom: 0.32rem;
-    }
-    .review-title-v3 {
-        font-family: 'Inter Tight', 'Inter', sans-serif;
-        font-size: 1.08rem;
-        font-weight: 900;
-        letter-spacing: -0.025em;
-        color: #241226;
-        line-height: 1.15;
-    }
-    .review-copy-v3 {
-        margin-top: 0.28rem;
-        color: #6d5a68;
-        font-size: 0.8rem;
-        line-height: 1.55;
-    }
-    .review-chip-v3 {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        white-space: nowrap;
-        padding: 0.34rem 0.7rem;
-        border-radius: 999px;
-        background: #ffffff;
-        border: 1px solid #ead1c8;
-        color: #773344;
-        font-size: 0.7rem;
-        font-weight: 850;
-    }
-    .dataset-preview-card-v3 {
-        background: #ffffff;
-        border: 1px solid #ead1c8;
-        border-radius: 20px;
-        padding: 0.9rem;
-        margin-top: 0.75rem;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.75);
-    }
-    .dataset-preview-grid-v3 {
-        display: grid;
-        grid-template-columns: 0.42fr 0.58fr;
-        gap: 0.75rem;
-        align-items: stretch;
-    }
-    @media (max-width: 760px) {
-        .dataset-preview-grid-v3 { grid-template-columns: 1fr; }
-    }
-    .preview-mini-card-v3 {
-        background: linear-gradient(180deg, #fffdfc 0%, #fbf4f1 100%);
-        border: 1px solid #ead1c8;
-        border-radius: 16px;
-        padding: 0.78rem;
-        min-height: 142px;
-    }
-    .preview-label-v3 {
-        font-size: 0.63rem;
-        font-weight: 850;
-        color: #8b6771;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        margin-bottom: 0.35rem;
-    }
-    .preview-text-v3 {
-        color: #2a1421;
-        font-size: 0.82rem;
-        line-height: 1.58;
-        white-space: pre-wrap;
-        overflow-wrap: anywhere;
-    }
-    .manual-preview-card-v3 {
-        margin-top: 0.75rem;
-        background: linear-gradient(180deg, #ffffff 0%, #fff8f4 100%);
-        border: 1px solid #ead1c8;
-        border-radius: 20px;
-        padding: 0.9rem;
-        box-shadow: 0 8px 18px rgba(25,14,36,0.045);
-    }
-    .manual-preview-meta-v3 {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.42rem;
-        margin-bottom: 0.55rem;
-    }
-    .manual-preview-meta-v3 span {
-        display: inline-flex;
-        padding: 0.24rem 0.58rem;
-        border-radius: 999px;
-        background: #ffffff;
-        border: 1px solid #ead1c8;
-        color: #773344;
-        font-size: 0.68rem;
-        font-weight: 800;
-    }
-    .input-mode-card-v3 {
-        background: #ffffff;
-        border: 1px solid #ead1c8;
-        border-radius: 20px;
-        padding: 0.75rem;
-        margin-bottom: 0.8rem;
-    }
-    .input-mode-note-v3 {
-        font-size: 0.74rem;
-        color: #6d5a68;
-        line-height: 1.55;
-        margin-top: 0.35rem;
-    }
-    .answer-editor-card-v3 {
-        background: linear-gradient(180deg, #ffffff 0%, #fff8f4 100%);
-        border: 1px solid #ead1c8;
-        border-radius: 24px;
-        padding: 0.9rem;
-        box-shadow: 0 12px 26px rgba(25,14,36,0.055);
-    }
-    .answer-editor-body-v3 [data-testid="stTextArea"] > div > div,
-    .answer-editor-body-v3 [data-baseweb="textarea"],
-    .answer-editor-body-v3 textarea {
-        border-radius: 18px !important;
-        border: 1.5px solid #ead1c8 !important;
-        background: #ffffff !important;
-        color: #2a1421 !important;
-        -webkit-text-fill-color: #2a1421 !important;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.75), 0 8px 18px rgba(25,14,36,0.04) !important;
-    }
-    .action-strip-v3 {
-        background: #ffffff;
-        border: 1px solid #ead1c8;
-        border-radius: 20px;
-        padding: 0.75rem;
-        margin-top: 0.85rem;
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(140px, 0.3fr);
-        gap: 0.7rem;
-        align-items: stretch;
-    }
-    @media (max-width: 760px) {
-        .action-strip-v3 { grid-template-columns: 1fr; }
-    }
-    .result-control-row-v3 {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) 190px;
-        gap: 0.75rem;
-        align-items: stretch;
-        margin: 1rem 0 0.6rem 0;
-    }
-    @media (max-width: 760px) {
-        .result-control-row-v3 { grid-template-columns: 1fr; }
-    }
-    .evidence-summary-v3 {
-        display: grid;
-        grid-template-columns: auto minmax(0, 1fr) auto;
-        gap: 0.75rem;
-        align-items: center;
-        background: linear-gradient(135deg, #ffffff 0%, #fff3ef 100%);
-        border: 1px solid #ead1c8;
-        border-left: 5px solid #773344;
-        border-radius: 20px;
-        padding: 0.85rem 1rem;
-        box-shadow: 0 10px 22px rgba(25,14,36,0.055);
-    }
-    .evidence-summary-v3.open { border-left-color: #D44D5C; }
-    .evidence-icon-v3 {
-        width: 40px;
-        height: 40px;
-        border-radius: 14px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: linear-gradient(135deg, #160029 0%, #773344 55%, #D44D5C 100%);
-        color: #ffffff;
-        font-weight: 900;
-        box-shadow: 0 8px 16px rgba(119,51,68,0.18);
-    }
-    .evidence-title-v3 {
-        font-family: 'Inter Tight', 'Inter', sans-serif;
-        color: #241226;
-        font-size: 1rem;
-        font-weight: 900;
-        letter-spacing: -0.02em;
-        line-height: 1.15;
-    }
-    .evidence-sub-v3 {
-        color: #6d5a68;
-        font-size: 0.76rem;
-        line-height: 1.5;
-        margin-top: 0.24rem;
-    }
-    .evidence-chips-v3 {
-        display: flex;
-        justify-content: flex-end;
-        gap: 0.4rem;
-        flex-wrap: wrap;
-    }
-    .evidence-chips-v3 span {
-        display: inline-flex;
-        padding: 0.3rem 0.62rem;
-        border-radius: 999px;
-        background: #ffffff;
-        border: 1px solid #ead1c8;
-        color: #773344;
-        font-size: 0.68rem;
-        font-weight: 850;
-        white-space: nowrap;
-    }
-    .evidence-button-v3 .stButton > button {
-        min-height: 78px !important;
-        border-radius: 20px !important;
-        background: linear-gradient(160deg, #160029 0%, #773344 55%, #D44D5C 100%) !important;
-        box-shadow: 0 10px 22px rgba(119,51,68,0.22) !important;
-        white-space: normal !important;
-        line-height: 1.35 !important;
-        font-size: 0.78rem !important;
-        font-weight: 850 !important;
-    }
-    .detail-drawer-body-v3 {
-        margin-top: 0.45rem;
-        padding: 0.8rem;
-        border: 1px solid #ead1c8;
-        border-radius: 24px;
-        background: linear-gradient(180deg, rgba(255,255,255,0.78) 0%, rgba(255,248,244,0.95) 100%);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
     }
     </style>
     """, unsafe_allow_html=True)
 
-    def _section_header(step, title):
-        st.markdown(_html(f"""
-        <div class="tab1-section">
-            <div class="tab1-section-header">
-                <div class="tab1-section-step">{step}</div>
-                <div class="tab1-section-title">{html.escape(title)}</div>
-                <div class="tab1-section-rule"></div>
-            </div>
-        </div>
-        """), unsafe_allow_html=True)
-
-    def _dataset_question_text(qid, fallback="-"):
-        subset = fatwa_df[fatwa_df["question_id"].astype(str) == str(qid)]
-        if subset.empty:
-            return fallback or "-"
-        for col in ["question_text", "issue", "fatwa_text"]:
-            if col in subset.columns:
-                val = str(subset.iloc[0].get(col, "")).strip()
-                if val:
-                    return val
-        return fallback or "-"
-
-    def _full_text_card(label, text, empty_text="No text available."):
-        clean = str(text or "").strip() or empty_text
-        return f"""
-        <div class="preview-mini-card-v3">
-            <div class="preview-label-v3">{html.escape(label)}</div>
-            <div class="preview-text-v3">{html.escape(clean)}</div>
-        </div>
-        """
-
-    input_mode = st.radio(
-        "Choose input source",
-        options=["Load from dataset", "Manual input"],
-        horizontal=True,
-        key="single_input_mode_radio",
-        label_visibility="collapsed",
-    )
-
-    _section_header("1", "Prepare the answer")
-
-    st.markdown(_html(f"""
-    <div class="input-mode-card-v3">
-        <div class="review-panel-head-v3" style="margin-bottom:0;">
-            <div>
-                <div class="review-kicker-v3">Input source</div>
-                <div class="review-title-v3">{html.escape(input_mode)}</div>
-                <div class="input-mode-note-v3">
-                    {"Select a saved dataset response and preview the question and answer before loading it." if input_mode == "Load from dataset" else "Paste a new AI-generated answer and preview exactly what will be analyzed before running the score."}
-                </div>
-            </div>
-            <div class="review-chip-v3">Single review</div>
+    # ══════════════════════════════════════════════════════
+    # SECTION 1 — Input
+    # ══════════════════════════════════════════════════════
+    st.markdown("""
+    <div class="tab1-section">
+        <div class="tab1-section-header">
+            <div class="tab1-section-step">1</div>
+            <div class="tab1-section-title">Load or paste an AI answer</div>
+            <div class="tab1-section-rule"></div>
         </div>
     </div>
-    """), unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
-    workspace_left, workspace_right = st.columns([0.58, 0.42], gap="medium")
+    review_left, review_right = st.columns([0.58, 0.42], gap="medium")
 
-    with workspace_left:
-        selected_dataset_answer = ""
-        selected_dataset_question = ""
-        selected_model = ""
-        selected_qid = ""
+    with review_left:
+        # ── Dataset loader ────────────────────────────────────────────────────
+        if AI_DATASET_AVAILABLE:
+            question_map = (
+                fatwa_df[["question_id", "question_text"]]
+                .drop_duplicates("question_id")
+                .sort_values("question_id")
+            )
+            question_options = {
+                row["question_text"] if row["question_text"] else row["question_id"]: row["question_id"]
+                for _, row in question_map.iterrows()
+            }
+            available_models = sorted(ai_answer_df["model"].unique().tolist())
 
-        if input_mode == "Load from dataset":
-            if AI_DATASET_AVAILABLE:
-                question_ids = sorted(ai_answer_df["question_id"].dropna().astype(str).unique().tolist())
-                question_options = []
-                question_lookup = {}
-                for qid in question_ids:
-                    q_text = _dataset_question_text(qid, qid)
-                    label = f"{qid} - {short_text(q_text, 86)}"
-                    question_options.append(label)
-                    question_lookup[label] = qid
+            selected_question_text = st.session_state.get("ds_question_select")
+            if not selected_question_text or selected_question_text not in question_options:
+                selected_question_text = next(iter(question_options.keys()))
 
-                available_models = sorted(ai_answer_df["model"].dropna().astype(str).unique().tolist())
+            selected_model = st.session_state.get("ds_model_select")
+            if not selected_model or not available_models or selected_model not in available_models:
+                selected_model = available_models[0] if available_models else ""
 
-                st.markdown(_html("""
-                <div class="review-panel-v3">
-                    <div class="review-panel-head-v3">
-                        <div>
-                            <div class="review-kicker-v3">Dataset loader</div>
-                            <div class="review-title-v3">Choose a saved response</div>
-                            <div class="review-copy-v3">The selected question and answer are shown below before you load anything into the editor.</div>
-                        </div>
-                        <div class="review-chip-v3">Preview first</div>
-                    </div>
-                </div>
-                """), unsafe_allow_html=True)
-
-                c1, c2 = st.columns([0.62, 0.38], gap="small")
-                with c1:
-                    selected_question_label = st.selectbox(
-                        "Dataset question",
-                        options=question_options,
-                        key="ds_question_select_v3",
-                    )
-                with c2:
-                    selected_model = st.selectbox(
-                        "AI model",
-                        options=available_models,
-                        key="ds_model_select_v3",
-                    )
-
-                selected_qid = question_lookup.get(selected_question_label, question_ids[0] if question_ids else "")
-                selected_dataset_question = _dataset_question_text(selected_qid, selected_question_label)
-                question_subset = ai_answer_df[ai_answer_df["question_id"].astype(str) == str(selected_qid)].copy()
-                selected_match = question_subset[question_subset["model"].astype(str) == str(selected_model)]
-                if not selected_match.empty:
-                    selected_dataset_answer = str(selected_match.iloc[0].get("ai_answer_raw", "")).strip()
-                else:
-                    selected_dataset_answer = ""
-
-                st.markdown(_html(f"""
-                <div class="dataset-preview-card-v3">
-                    <div class="review-panel-head-v3" style="margin-bottom:0.65rem;">
-                        <div>
-                            <div class="review-kicker-v3">Dataset preview</div>
-                            <div class="review-title-v3">Question and stored answer</div>
-                            <div class="review-copy-v3">Check both sides before loading. This prevents you from analyzing the wrong dataset row.</div>
-                        </div>
-                        <div class="review-chip-v3">{html.escape(str(selected_model) or "Model")}</div>
-                    </div>
-                    <div class="dataset-preview-grid-v3">
-                        {_full_text_card("Stored question", selected_dataset_question)}
-                        {_full_text_card("Stored AI answer", selected_dataset_answer)}
-                    </div>
-                </div>
-                """), unsafe_allow_html=True)
-
-                load_col, keep_col = st.columns([0.38, 0.62], gap="small")
-                with load_col:
-                    load_btn = st.button("Load selected answer", use_container_width=True, key="ds_load_btn_v3")
-                with keep_col:
-                    st.markdown(_html("""
-                    <div class="small-note" style="padding:0.45rem 0.2rem;">
-                        Loading copies the stored answer into the editor below. You can still edit it before analysis.
-                    </div>
-                    """), unsafe_allow_html=True)
-
-                if load_btn:
-                    if selected_dataset_answer:
-                        st.session_state["ai_input"] = selected_dataset_answer
-                        st.session_state["loaded_dataset_question"] = selected_dataset_question
-                        st.session_state["loaded_dataset_model"] = selected_model
-                        st.session_state["loaded_dataset_qid"] = selected_qid
-                        st.session_state["load_success_toast"] = True
-                        st.rerun()
-                    else:
-                        st.warning(f"No saved response found for model '{selected_model}'.")
-            else:
-                st.markdown("<div class='msg-box msg-warning'><strong>Dataset not found.</strong><br>Place ai_answer.csv, fyp dataset_ai answer.csv, or fyp_dataset_ai_answer.csv in the project folder.</div>", unsafe_allow_html=True)
-        else:
+            # Loader header — redesigned beautiful card
             st.markdown(_html("""
-            <div class="review-panel-v3">
-                <div class="review-panel-head-v3" style="margin-bottom:0;">
+            <div class='ds-loader-card'>
+                <div class='ds-loader-top'>
                     <div>
-                        <div class="review-kicker-v3">Manual answer</div>
-                        <div class="review-title-v3">Paste a fresh AI-generated response</div>
-                        <div class="review-copy-v3">The preview below mirrors your editor so you can confirm the exact answer before analysis.</div>
+                        <div class='ds-loader-kicker'>📂 Load a Saved Answer</div>
+                        <div class='ds-loader-title'>Quick load from dataset</div>
                     </div>
-                    <div class="review-chip-v3">Live preview</div>
+                    <div class='ds-loader-badge'>⬇ Select &amp; Load</div>
+                </div>
+                <div class='ds-loader-copy'>Pick a question and AI model to instantly load a saved response into the review area below.</div>
+                <div style='display:grid; grid-template-columns: 1fr 1fr auto; gap:0.6rem; align-items:end;'>
+                    <div><div class='ds-loader-col-label'>📋 Question</div></div>
+                    <div><div class='ds-loader-col-label'>🤖 AI Model</div></div>
+                    <div><div class='ds-loader-col-label'>⚡ Action</div></div>
                 </div>
             </div>
             """), unsafe_allow_html=True)
 
+            ctrl1, ctrl2, ctrl3 = st.columns([0.48, 0.32, 0.20], gap="small")
+            with ctrl1:
+                selected_question_text = st.selectbox(
+                    "Question",
+                    options=list(question_options.keys()),
+                    index=list(question_options.keys()).index(selected_question_text),
+                    key="ds_question_select",
+                    label_visibility="collapsed"
+                )
+            with ctrl2:
+                selected_model = st.selectbox(
+                    "AI Model",
+                    options=available_models,
+                    index=available_models.index(selected_model) if selected_model in available_models else 0,
+                    key="ds_model_select",
+                    label_visibility="collapsed"
+                )
+            with ctrl3:
+                load_btn = st.button(
+                    "Load",
+                    use_container_width=True,
+                    key="ds_load_btn_primary",
+                    help="Load the selected response"
+                )
+
+            selected_qid = question_options[selected_question_text]
+            question_subset = ai_answer_df[ai_answer_df["question_id"] == selected_qid].copy()
+            selected_match = question_subset[question_subset["model"] == selected_model]
+
+            if load_btn:
+                if not selected_match.empty:
+                    st.session_state["ai_input"] = selected_match.iloc[0]["ai_answer_raw"]
+                    st.session_state["load_success_toast"] = True
+                    st.rerun()
+                else:
+                    st.warning(f"⚠️ No saved response found for model '{selected_model}'")
+
+            st.markdown("<div style='height:0.4rem;'></div>", unsafe_allow_html=True)
+
+        # ── Text area ─────────────────────────────────────────────────────────
         st.markdown(_html("""
-        <div class="answer-editor-card-v3">
-            <div class="review-panel-head-v3">
-                <div>
-                    <div class="review-kicker-v3">Answer editor</div>
-                    <div class="review-title-v3">AI answer to analyze</div>
-                    <div class="review-copy-v3">You can edit loaded dataset answers here, or type a completely new response.</div>
+            <div class='input-editor-shell-v2'>
+                <div class='input-editor-v2-head'>
+                    <div>
+                        <div class='input-editor-kicker'>✍️ YOUR RESPONSE</div>
+                        <div class='input-editor-title'>Paste the AI answer you want to check</div>
+                        <div class='input-editor-copy' style='font-size: 0.7rem; color: #7a6874; margin-top: 0.2rem;'>
+                            💡 Longer, detailed answers give more accurate scores.
+                        </div>
+                    </div>
+                    <div class='input-editor-chip'>Single review</div>
                 </div>
-                <div class="review-chip-v3">Editable</div>
             </div>
-        </div>
         """), unsafe_allow_html=True)
 
-        st.markdown('<div class="answer-editor-body-v3">', unsafe_allow_html=True)
+        st.markdown('<div class="input-editor-v2-body">', unsafe_allow_html=True)
         ai_response = st.text_area(
             "AI Response Input",
-            height=210,
-            placeholder="Paste the full AI-generated answer here. Longer, clearer answers usually produce more reliable semantic and keyword coverage scoring.",
+            height=140,
+            placeholder="Example: \"In Islam, surrogacy is generally not permitted because it can mix lineages...\"\n\nPaste your full AI-generated answer here.",
             key="ai_input",
             label_visibility="collapsed"
         )
         st.markdown('</div>', unsafe_allow_html=True)
 
-        clean_ai_response = str(ai_response or "").strip()
-        word_count = len(clean_ai_response.split()) if clean_ai_response else 0
-        char_count = len(clean_ai_response)
-        loaded_question = st.session_state.get("loaded_dataset_question", "") if input_mode == "Load from dataset" else ""
-        loaded_model = st.session_state.get("loaded_dataset_model", "") if input_mode == "Load from dataset" else ""
-
-        preview_header = "Loaded answer preview" if input_mode == "Load from dataset" else "Manual input preview"
-        preview_note = "This is the exact text currently in the editor and ready for analysis."
-        if clean_ai_response:
-            st.markdown(_html(f"""
-            <div class="manual-preview-card-v3">
-                <div class="review-panel-head-v3" style="margin-bottom:0.55rem;">
-                    <div>
-                        <div class="review-kicker-v3">Current input</div>
-                        <div class="review-title-v3">{html.escape(preview_header)}</div>
-                        <div class="review-copy-v3">{html.escape(preview_note)}</div>
-                    </div>
-                    <div class="review-chip-v3">Ready</div>
-                </div>
-                <div class="manual-preview-meta-v3">
-                    <span>{word_count} words</span>
-                    <span>{char_count} characters</span>
-                    <span>{html.escape(loaded_model or 'Manual')}</span>
-                </div>
-                {(_full_text_card('Loaded dataset question', loaded_question) if loaded_question else '')}
-                <div style="height:0.55rem;"></div>
-                {_full_text_card('Answer currently in editor', clean_ai_response)}
-            </div>
-            """), unsafe_allow_html=True)
-        else:
-            st.markdown(_html("""
-            <div class="manual-preview-card-v3">
-                <div class="review-kicker-v3">Current input</div>
-                <div class="review-title-v3">No answer entered yet</div>
-                <div class="review-copy-v3">Load a dataset answer or paste a manual answer. The exact text will appear here before analysis.</div>
-            </div>
-            """), unsafe_allow_html=True)
-
         if st.session_state.pop('load_success_toast', False):
             show_success_toast_center(
-                "Response loaded successfully.",
-                ["Question and answer preview available", "Ready for analysis"]
+                "✓ Response loaded successfully!",
+                ["Ready for review", "Click Analyze to see results"]
             )
 
-        st.markdown('<div class="action-strip-v3">', unsafe_allow_html=True)
-        action_left, action_right = st.columns([0.72, 0.28], gap="small")
-        with action_left:
-            analyze_btn = st.button("Analyze this answer", use_container_width=True, key="analyze_single")
-        with action_right:
-            clear_btn = st.button("Clear history", use_container_width=True, key="clear_all_single")
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    with workspace_right:
-        _section_header("2", "Score summary")
+    # ── Right column: score summary ───────────────────────────────────────────
+    with review_right:
+        st.markdown("""
+        <div class="tab1-section">
+            <div class="tab1-section-header">
+                <div class="tab1-section-step">2</div>
+                <div class="tab1-section-title">Score summary</div>
+                <div class="tab1-section-rule"></div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
         st.markdown("<div class='single-review-right-col'>", unsafe_allow_html=True)
         if st.session_state.get("current_analysis"):
             render_similarity_breakdown(st.session_state["current_analysis"])
@@ -2699,12 +2335,12 @@ with tab1:
                             <h3 class='empty-review-title'>Your result summary will appear here</h3>
                             <div class='empty-review-copy'>Run a single review to see the final score, meaning match, keyword coverage, and the closest state fatwa in one place.</div>
                         </div>
-                        <div class='empty-review-pill'>Ready</div>
+                        <div class='empty-review-pill'>Ready to analyze</div>
                     </div>
                     <div class='empty-review-list'>
-                        <div class='empty-review-item'><div class='empty-review-icon'>1</div><div><strong>Choose the input source</strong><span>Load a stored answer or paste a new response manually.</span></div></div>
-                        <div class='empty-review-item'><div class='empty-review-icon'>2</div><div><strong>Check the preview</strong><span>Confirm the question and answer before scoring.</span></div></div>
-                        <div class='empty-review-item'><div class='empty-review-icon'>3</div><div><strong>Analyze and inspect evidence</strong><span>The detailed fatwa evidence stays hidden until you need it.</span></div></div>
+                        <div class='empty-review-item'><div class='empty-review-icon'>1</div><div><strong>Paste a complete answer</strong><span>Longer and more specific AI answers usually produce more reliable similarity and coverage scoring.</span></div></div>
+                        <div class='empty-review-item'><div class='empty-review-icon'>2</div><div><strong>Review the matched fatwa</strong><span>The system compares the answer with the closest question, then checks which state fatwa aligns best.</span></div></div>
+                        <div class='empty-review-item'><div class='empty-review-icon'>3</div><div><strong>Use the score carefully</strong><span>The final score supports review, but the fatwa text and missing points still matter for interpretation.</span></div></div>
                     </div>
                 </div>
                 <div class='empty-review-footer'>
@@ -2716,24 +2352,34 @@ with tab1:
             """), unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
+    # ══════════════════════════════════════════════════════
+    # ACTION ROW — Analyze + Clear, always under both columns
+    # ══════════════════════════════════════════════════════
+    st.markdown("<div style='height:0.6rem;'></div>", unsafe_allow_html=True)
+    b1, b2, _spacer = st.columns([0.38, 0.20, 0.42], gap="small")
+    with b1:
+        analyze_btn = st.button("🔍 Analyze This Response", use_container_width=True, key="analyze_single")
+    with b2:
+        clear_btn = st.button("🗑️ Clear History", use_container_width=True, key="clear_all_single")
+
     if clear_btn:
         clear_history()
-        show_success_toast_center("History cleared successfully.", ["All saved analyses have been removed"])
+        show_success_toast_center("✓ History cleared successfully!", ["All saved analyses have been removed"])
         st.rerun()
 
     if analyze_btn:
         if not ai_response.strip():
-            st.warning("Please paste or load an AI response before running the analysis.")
+            st.warning("⚠️ Please paste or load an AI response before running the analysis.")
         elif not ensure_analysis_dependencies():
             st.stop()
         else:
-            with st.spinner("Analyzing response. This may take a few seconds..."):
+            with st.spinner("🔍 Analyzing response — this may take a few seconds..."):
                 ensure_similarity_engine_loaded()
                 best_question, question_scores = detect_best_question(ai_response, fatwa_df)
                 detected_subset = fatwa_df[fatwa_df["question_id"] == best_question["question_id"]].copy()
                 best_state, state_results = unpack_state_comparison(compare_states_within_question(ai_response, detected_subset))
                 if not best_state or state_results.empty:
-                    st.warning("No state-level fatwa comparison could be generated. Try a longer or more specific answer.")
+                    st.warning("⚠️ No state-level fatwa comparison could be generated. Try a longer or more specific answer.")
                     st.stop()
 
                 topic_label = infer_topic_label(best_question, detected_subset)
@@ -2803,8 +2449,8 @@ with tab1:
                     "question_scores": question_scores.to_dict("records") if isinstance(question_scores, pd.DataFrame) else [],
                     "state_results": state_results.to_dict("records") if isinstance(state_results, pd.DataFrame) else [],
                 }
-
-                st.session_state["show_detail_cards"] = False
+                
+                st.session_state["show_detail_cards"] = False  # collapse on new analysis
                 st.rerun()
 
     if st.session_state.get("current_analysis"):
@@ -2819,43 +2465,55 @@ with tab1:
             else "Low Alignment"
         )
         detail_state_preview = "Open" if st.session_state["show_detail_cards"] else "Hidden"
-        detail_button_label = "Hide evidence drawer" if st.session_state["show_detail_cards"] else "Open evidence drawer"
-        detail_icon = "UP" if st.session_state["show_detail_cards"] else "DN"
-        evidence_open_class = "open" if st.session_state["show_detail_cards"] else ""
+        detail_button_label = "Hide detailed review" if st.session_state["show_detail_cards"] else "View detailed review"
+        detail_button_help = (
+            "Hide the larger evidence cards."
+            if st.session_state["show_detail_cards"]
+            else "Show the larger evidence cards, source card, score guide, and key points."
+        )
+        detail_icon = "▲" if st.session_state["show_detail_cards"] else "▼"
+        detail_panel_class = "detail-toggle-card detail-toggle-card-open" if st.session_state["show_detail_cards"] else "detail-toggle-card"
 
-        _section_header("3", "Detailed evidence")
-        st.markdown('<div class="result-control-row-v3">', unsafe_allow_html=True)
-        evidence_left, evidence_right = st.columns([0.76, 0.24], gap="medium")
-        with evidence_left:
+        st.markdown(_html(f"""
+        <div class='tab1-section' style='margin-top:1rem;'>
+            <div class='tab1-section-header'>
+                <div class='tab1-section-step'>3</div>
+                <div class='tab1-section-title'>Detailed review</div>
+                <div class='tab1-section-rule'></div>
+            </div>
+        </div>
+        """), unsafe_allow_html=True)
+
+        detail_card_col, detail_button_col = st.columns([0.65, 0.35], gap="medium")
+        with detail_card_col:
             st.markdown(_html(f"""
-            <div class="evidence-summary-v3 {evidence_open_class}">
-                <div class="evidence-icon-v3">{html.escape(detail_icon)}</div>
-                <div>
-                    <div class="review-kicker-v3">Evidence drawer</div>
-                    <div class="evidence-title-v3">Detailed Review &amp; Fatwa Evidence</div>
-                    <div class="evidence-sub-v3">The main score stays visible above. Open this only when you want the source, score guide, and missing points.</div>
+            <div class='{detail_panel_class}'>
+                <div class='detail-toggle-icon'>{detail_icon}</div>
+                <div class='detail-toggle-main'>
+                    <div class='detail-toggle-kicker'>Evidence drawer</div>
+                    <div class='detail-toggle-title'>Detailed Review &amp; Fatwa Evidence</div>
+                    <div class='detail-toggle-sub'>Source, score guide, and key points are kept behind this drawer so the main score stays clean.</div>
                 </div>
-                <div class="evidence-chips-v3">
+                <div class='detail-toggle-chips'>
                     <span>{html.escape(result_label_preview)}</span>
                     <span>{format_percent(final_match_score_preview, 1)}</span>
                     <span>{detail_state_preview}</span>
                 </div>
             </div>
             """), unsafe_allow_html=True)
-        with evidence_right:
-            st.markdown('<div class="evidence-button-v3">', unsafe_allow_html=True)
-            if st.button(detail_button_label, key="detail_toggle_btn", use_container_width=True):
+        with detail_button_col:
+            st.markdown("<div class='detail-toggle-button-wrap'>", unsafe_allow_html=True)
+            if st.button(detail_button_label, key="detail_toggle_btn", use_container_width=True, help=detail_button_help):
                 st.session_state["show_detail_cards"] = not st.session_state["show_detail_cards"]
                 st.rerun()
-            st.markdown('</div>', unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
 
         if st.session_state["show_detail_cards"]:
-            st.markdown("<div class='detail-drawer-body-v3'>", unsafe_allow_html=True)
+            st.markdown("<div class='detail-drawer-body'>", unsafe_allow_html=True)
             render_single_review_result_dashboard(st.session_state["current_analysis"])
             st.markdown("</div>", unsafe_allow_html=True)
 
-        with st.expander("View advanced comparison details", expanded=False):
+        with st.expander("📊 View advanced comparison details", expanded=False):
             current = st.session_state["current_analysis"]
             question_scores_df = pd.DataFrame(current.get("question_scores", []))
             state_results_df = pd.DataFrame(current.get("state_results", []))
@@ -2868,7 +2526,7 @@ with tab1:
             st.markdown("<div style='height:0.5rem;'></div>", unsafe_allow_html=True)
             st.markdown("<div class='tech-review-title'>How the system chose the best fatwa source</div>", unsafe_allow_html=True)
             st.markdown(build_light_table_html(state_debug_df), unsafe_allow_html=True)
-
+            
 # =========================================================
 # TAB 2 - Batch Review
 # =========================================================
