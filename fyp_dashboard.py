@@ -587,165 +587,14 @@ def apply_dashboard_polish():
            
 
 
-    /* ===== POLISHED DETAIL DRAWER CONTROL ===== */
-    .detail-toggle-card {
-        display: grid;
-        grid-template-columns: auto minmax(0, 1fr) auto;
-        gap: 0.85rem;
-        align-items: center;
-        background: linear-gradient(135deg, #ffffff 0%, #fff7f4 100%);
-        border: 1px solid #ead1c8;
-        border-left: 5px solid #773344;
-        border-radius: 20px;
-        padding: 0.85rem 1rem;
-        box-shadow: 0 10px 22px rgba(25, 14, 36, 0.055);
-        margin: 0.4rem 0 0.8rem 0;
-    }
-
-    .detail-toggle-card-open {
-        border-left-color: #D44D5C;
-        background: linear-gradient(135deg, #ffffff 0%, #fff2ef 100%);
-    }
-
-    .detail-toggle-icon {
-        width: 38px;
-        height: 38px;
-        border-radius: 14px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: linear-gradient(135deg, #773344 0%, #D44D5C 100%);
-        color: #ffffff;
-        font-size: 0.9rem;
-        font-weight: 900;
-        box-shadow: 0 8px 16px rgba(119, 51, 68, 0.18);
-    }
-
-    .detail-toggle-kicker {
-        display: inline-flex;
-        align-items: center;
-        width: fit-content;
-        padding: 0.18rem 0.55rem;
-        border-radius: 999px;
-        background: #f7ece7;
-        border: 1px solid #ead1c8;
-        color: #8b3b50;
-        font-size: 0.62rem;
-        font-weight: 850;
-        letter-spacing: 0.09em;
-        text-transform: uppercase;
-        margin-bottom: 0.22rem;
-    }
-
-    .detail-toggle-title {
-        font-family: 'Inter Tight', 'Inter', sans-serif;
-        font-size: 1rem;
-        font-weight: 850;
-        color: #241226;
-        letter-spacing: -0.02em;
-        line-height: 1.15;
-    }
-
-    .detail-toggle-sub {
-        color: #6d5a68;
-        font-size: 0.76rem;
-        line-height: 1.5;
-        margin-top: 0.22rem;
-    }
-
-    .detail-toggle-chips {
-        display: flex;
-        justify-content: flex-end;
-        gap: 0.42rem;
-        flex-wrap: wrap;
-    }
-
-    .detail-toggle-chips span {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0.32rem 0.65rem;
-        border-radius: 999px;
-        background: #ffffff;
-        border: 1px solid #ead1c8;
-        color: #773344;
-        font-size: 0.7rem;
-        font-weight: 800;
-        white-space: nowrap;
-    }
-
-    .detail-toggle-button-wrap {
-        margin-top: 0.4rem;
-    }
-
-    .detail-toggle-button-wrap .stButton > button {
-        min-height: 64px !important;
-        border-radius: 18px !important;
-        background: linear-gradient(135deg, #160029 0%, #773344 56%, #D44D5C 100%) !important;
-        box-shadow: 0 10px 22px rgba(119, 51, 68, 0.2) !important;
-        font-size: 0.78rem !important;
-        font-weight: 850 !important;
-    }
-
+    /* ===== CLEAN DETAIL DRAWER CONTROL ===== */
     .detail-drawer-body {
-        margin-top: 0.25rem;
+        margin-top: 0.35rem;
         padding: 0.75rem;
         border: 1px solid #ead1c8;
-        border-radius: 24px;
-        background: linear-gradient(180deg, rgba(255,255,255,0.74) 0%, rgba(255,248,244,0.92) 100%);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.65);
-    }
-
-    @media (max-width: 900px) {
-        .detail-toggle-card {
-            grid-template-columns: auto 1fr;
-        }
-        .detail-toggle-chips {
-            grid-column: 1 / -1;
-            justify-content: flex-start;
-        }
-    }
-
-    /* ===== UNIFIED INPUT EDITOR CARD V2 ===== */
-    /* Header part — top of the card, rounded top only */
-    .input-editor-shell-v2 {
-        background: linear-gradient(180deg, #fefcfe 0%, #f8f0f6 100%);
-        border: 1px solid #dfd7e4;
-        border-bottom: none;
-        border-radius: 16px 16px 0 0;
-        padding: 0.7rem 0.9rem 0.65rem 0.9rem;
-        margin: 0.2rem 0 0 0;
-        box-shadow: 0 4px 14px rgba(25,14,36,0.04);
-        transition: all 0.3s ease;
-    }
-
-    .input-editor-v2-head {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 0.7rem;
-    }
-
-    /* Body wrapper — bottom of the card, rounded bottom only */
-    .input-editor-v2-body {
-        margin: 0 0 0.45rem 0;
-    }
-
-    /* Make the textarea connect seamlessly to the header */
-    .input-editor-v2-body [data-testid="stTextArea"] > div > div,
-    .input-editor-v2-body [data-baseweb="textarea"],
-    .input-editor-v2-body textarea {
-        border-radius: 0 0 14px 14px !important;
-        border: 1px solid #dfd7e4 !important;
-        border-top: 1px solid #e8ddf0 !important;
-        margin-top: 0 !important;
-        background: #ffffff !important;
-        color: #2a1421 !important;
-        box-shadow: 0 4px 14px rgba(25,14,36,0.04) !important;
-    }
-
-    .input-editor-v2-body [data-testid="stTextArea"] {
-        margin-top: 0 !important;
+        border-radius: 22px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.78) 0%, rgba(255,248,244,0.92) 100%);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.65), 0 8px 20px rgba(25,14,36,0.045);
     }
 
     /* ===== UNIFIED INPUT EDITOR CARD V2 ===== */
@@ -757,7 +606,6 @@ def apply_dashboard_polish():
         padding: 0.7rem 0.9rem 0.65rem 0.9rem;
         margin: 0.2rem 0 0 0;
         box-shadow: 0 4px 14px rgba(25,14,36,0.04);
-        transition: all 0.3s ease;
     }
 
     .input-editor-v2-head {
@@ -767,10 +615,7 @@ def apply_dashboard_polish():
         gap: 0.7rem;
     }
 
-    /* Make the textarea flush-connect to the header */
-    .input-editor-v2-body {
-        margin: 0 0 0.45rem 0;
-    }
+    .input-editor-v2-body { margin: 0 0 0.45rem 0; }
 
     .input-editor-v2-body [data-testid="stTextArea"] > div > div,
     .input-editor-v2-body [data-baseweb="textarea"],
@@ -790,38 +635,27 @@ def apply_dashboard_polish():
         padding-top: 0 !important;
     }
 
-    /* ===== IMPROVED DETAIL DRAWER BUTTON ===== */
-    .detail-toggle-button-wrap {
-        height: 100%;
-        display: flex;
-        align-items: stretch;
-    }
-
-    .detail-toggle-button-wrap .stButton {
-        width: 100%;
-        height: 100%;
-    }
+    /* ===== DETAIL BUTTON V3: compact professional drawer trigger ===== */
+    .detail-toggle-button-wrap { margin: 0.15rem 0 0.85rem 0; }
 
     .detail-toggle-button-wrap .stButton > button {
-        height: 100% !important;
-        min-height: 76px !important;
-        border-radius: 18px !important;
-        background: linear-gradient(160deg, #160029 0%, #773344 55%, #D44D5C 100%) !important;
-        box-shadow: 0 8px 20px rgba(119, 51, 68, 0.22) !important;
-        font-size: 0.8rem !important;
-        font-weight: 800 !important;
+        min-height: 42px !important;
+        border-radius: 14px !important;
+        background: linear-gradient(135deg, #160029 0%, #773344 68%, #B24758 100%) !important;
+        box-shadow: 0 8px 18px rgba(119, 51, 68, 0.18) !important;
+        font-size: 0.78rem !important;
+        font-weight: 850 !important;
         letter-spacing: 0.01em !important;
-        transition: all 0.25s ease !important;
         white-space: normal !important;
-        line-height: 1.35 !important;
+        line-height: 1.25 !important;
+        border: 1px solid rgba(255,255,255,0.10) !important;
     }
 
     .detail-toggle-button-wrap .stButton > button:hover {
-        box-shadow: 0 12px 28px rgba(119, 51, 68, 0.32) !important;
-        transform: translateY(-2px) !important;
+        box-shadow: 0 12px 24px rgba(119, 51, 68, 0.26) !important;
+        transform: translateY(-1px) !important;
+        background: linear-gradient(135deg, #24103a 0%, #8a3b50 68%, #D44D5C 100%) !important;
     }
-
-
 
     /* ===== FYP REDESIGN: compact dataset and input preview cards ===== */
     .fyp-compact-preview {
@@ -969,31 +803,56 @@ def apply_dashboard_polish():
     }
     .fyp-detail-action-row {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-columns: auto minmax(0, 1fr) auto;
         gap: 0.75rem;
         align-items: center;
-        background: #ffffff;
+        background: linear-gradient(135deg, #ffffff 0%, #fff8f5 100%);
         border: 1px solid #ead1c8;
-        border-radius: 20px;
-        padding: 0.75rem 0.85rem;
-        box-shadow: 0 8px 20px rgba(25,14,36,0.055);
-        margin: 0.85rem 0;
+        border-radius: 18px;
+        padding: 0.72rem 0.82rem;
+        box-shadow: 0 8px 20px rgba(25,14,36,0.05);
+        margin: 0.85rem 0 0.45rem 0;
+        position: relative;
+        overflow: hidden;
+    }
+    .fyp-detail-action-row::before {
+        content: '';
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 4px;
+        background: linear-gradient(180deg, #160029 0%, #773344 52%, #D44D5C 100%);
+    }
+    .fyp-detail-action-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #160029 0%, #773344 100%);
+        color: #ffffff;
+        font-weight: 900;
+        box-shadow: 0 8px 16px rgba(119,51,68,0.18);
+        margin-left: 0.25rem;
     }
     .fyp-detail-action-title {
         font-family: 'Inter Tight', 'Inter', sans-serif;
-        font-size: 0.98rem;
+        font-size: 0.96rem;
         font-weight: 850;
         color: #241226;
-        margin-bottom: 0.15rem;
+        margin-bottom: 0.12rem;
+        letter-spacing: -0.015em;
     }
     .fyp-detail-action-copy {
-        font-size: 0.76rem;
-        line-height: 1.5;
+        font-size: 0.74rem;
+        line-height: 1.48;
         color: #6d5a68;
+        max-width: 760px;
     }
     @media (max-width: 900px) {
         .fyp-preview-grid { grid-template-columns: 1fr; }
-        .fyp-detail-action-row { grid-template-columns: 1fr; }
+        .fyp-detail-action-row { grid-template-columns: auto 1fr; }
+        .fyp-detail-action-row .detail-toggle-chips { grid-column: 1 / -1; justify-content: flex-start; }
     }
     </style>
     """, unsafe_allow_html=True)
@@ -2710,10 +2569,11 @@ with tab1:
 
         st.markdown(_html(f"""
         <div class='fyp-detail-action-row'>
+            <div class='fyp-detail-action-icon'>{detail_icon}</div>
             <div>
                 <div class='detail-toggle-kicker'>Evidence drawer</div>
                 <div class='fyp-detail-action-title'>Detailed review and fatwa evidence</div>
-                <div class='fyp-detail-action-copy'>Main screen stays clean: user input and similarity breakdown are shown first. Open this only when you need source text, score guide, and keyword evidence.</div>
+                <div class='fyp-detail-action-copy'>Keeps the main result clean. Open only when you need the fatwa source, matched and missing keywords, score guide, and technical evidence.</div>
             </div>
             <div class='detail-toggle-chips'>
                 <span>{html.escape(result_label_preview)}</span>
@@ -2723,11 +2583,13 @@ with tab1:
         </div>
         """), unsafe_allow_html=True)
 
-        detail_btn_col, detail_space_col = st.columns([0.28, 0.72], gap="small")
+        detail_btn_col, detail_space_col = st.columns([0.24, 0.76], gap="small")
         with detail_btn_col:
-            if st.button(detail_button_label, key="detail_toggle_btn", use_container_width=True, help=detail_button_help):
+            st.markdown("<div class='detail-toggle-button-wrap'>", unsafe_allow_html=True)
+            if st.button(f"{detail_icon} {detail_button_label}", key="detail_toggle_btn", use_container_width=True, help=detail_button_help):
                 st.session_state["show_detail_cards"] = not st.session_state["show_detail_cards"]
                 st.rerun()
+            st.markdown("</div>", unsafe_allow_html=True)
 
         if st.session_state["show_detail_cards"]:
             st.markdown("<div class='detail-drawer-body'>", unsafe_allow_html=True)
