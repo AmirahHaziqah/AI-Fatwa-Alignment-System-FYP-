@@ -1053,6 +1053,63 @@ def apply_dashboard_polish():
         margin-bottom: 0.5rem !important;
     }
 
+    /* ===== COMPACT SIMILARITY BREAKDOWN CARD (sbd) ===== */
+    .sbd-card {
+        background: linear-gradient(180deg, #ffffff 0%, #fff8f4 100%);
+        border: 1px solid #ead1c8;
+        border-radius: 20px;
+        padding: 0.9rem 1rem 0.85rem 1rem;
+        box-shadow: 0 6px 18px rgba(25,14,36,0.06);
+    }
+    .sbd-header {
+        display: flex; justify-content: space-between;
+        align-items: flex-start; margin-bottom: 0.7rem;
+    }
+    .sbd-kicker {
+        font-size: 0.6rem; font-weight: 800; text-transform: uppercase;
+        letter-spacing: 0.12em; color: #8b6771; margin-bottom: 0.15rem;
+    }
+    .sbd-title {
+        font-family: "Inter Tight","Inter",sans-serif;
+        font-size: 1.25rem; font-weight: 800; color: #1e1020; letter-spacing: -0.02em;
+    }
+    .sbd-pill {
+        padding: 0.3rem 0.75rem; border-radius: 999px;
+        border: 1.5px solid; font-weight: 800; font-size: 0.82rem; white-space: nowrap;
+    }
+    .sbd-hero {
+        display: grid; grid-template-columns: 80px 1fr;
+        gap: 0.75rem; align-items: center; margin-bottom: 0.7rem;
+    }
+    .sbd-ring {
+        width: 78px; height: 78px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 4px 12px rgba(25,14,36,0.1); flex-shrink: 0;
+    }
+    .sbd-ring-inner {
+        width: 56px; height: 56px; border-radius: 50%; background: #fff;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        box-shadow: inset 0 0 0 1px rgba(220,170,190,0.4);
+    }
+    .sbd-ring-inner strong {
+        font-family: "Inter Tight","Inter",sans-serif;
+        font-size: 1.15rem; font-weight: 800; line-height: 1;
+    }
+    .sbd-ring-inner span { font-size: 0.56rem; color: #8b6771; margin-top: 0.1rem; font-weight: 600; }
+    .sbd-verdict-label {
+        font-family: "Inter Tight","Inter",sans-serif;
+        font-size: 0.95rem; font-weight: 800; margin-bottom: 0.2rem;
+    }
+    .sbd-verdict-copy { font-size: 0.75rem; color: #6d5a68; line-height: 1.5; }
+    .sbd-divider { height: 1px; background: linear-gradient(90deg,#ead1c8,transparent); margin: 0 0 0.65rem 0; }
+    .sbd-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 0.45rem 0.85rem; }
+    .sbd-metric-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.2rem; }
+    .sbd-metric-label { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em; color: #7a6874; }
+    .sbd-metric-value { font-family: "Inter Tight","Inter",sans-serif; font-size: 0.95rem; font-weight: 800; line-height: 1; }
+    .sbd-bar-bg { height: 5px; border-radius: 999px; background: #f1e2da; overflow: hidden; margin-bottom: 0.15rem; }
+    .sbd-bar-fill { height: 100%; border-radius: 999px; }
+    .sbd-metric-sub { font-size: 0.6rem; color: #a08b97; font-weight: 500; }
+
     </style>
     """, unsafe_allow_html=True)
 
@@ -2080,7 +2137,7 @@ def render_batch_score_chart(num_df: pd.DataFrame):
             _render_grouped_bars(summary_df, 'label', 'Metric comparison by response', 'Side-by-side bars make it easier to compare meaning match, text match, and key fatwa points.')
             
 def render_similarity_breakdown(bundle: dict):
-    """Render the similarity breakdown — original design: sim-lite shell + note + 4 metric cards."""
+    """Compact unified card: ring + verdict + 4 inline metric bars."""
     final_match_score = safe_float(bundle.get("final_match_score"))
     lexical_score     = safe_float(bundle.get("lexical_score"))
     semantic_score    = safe_float(bundle.get("semantic_score"))
@@ -2090,41 +2147,60 @@ def render_similarity_breakdown(bundle: dict):
     score_color  = score_status_color(final_match_score)
     ring_degrees = max(0.0, min(360.0, final_match_score * 3.6))
     conclusion_label = "Strong Alignment" if final_match_score >= 70 else "Moderate Alignment" if final_match_score >= 50 else "Low Alignment"
-    conclusion_copy  = ("This final score means the answer is close to the fatwa and gets most important points right."
+    conclusion_copy  = ("Close to the fatwa — covers most key points."
                         if final_match_score >= 70 else
-                        "This final score means the answer is partly correct, but some important points still need checking."
+                        "Partly correct — some ruling details need checking."
                         if final_match_score >= 50 else
-                        "This final score means the answer is not close enough to the fatwa yet and needs careful review.")
+                        "Not close enough — needs careful review.")
+
+    def bar_color(v):
+        return "#06A77D" if v >= 70 else "#D4A04B" if v >= 50 else "#A31621"
+
+    def metric_row(label, value, sublabel):
+        bc = bar_color(value)
+        w  = max(0, min(100, int(value)))
+        return f"""
+        <div class='sbd-metric-row'>
+            <div class='sbd-metric-top'>
+                <span class='sbd-metric-label'>{label}</span>
+                <span class='sbd-metric-value' style='color:{bc};'>{value:.0f}%</span>
+            </div>
+            <div class='sbd-bar-bg'><div class='sbd-bar-fill' style='width:{w}%;background:{bc};'></div></div>
+            <div class='sbd-metric-sub'>{sublabel}</div>
+        </div>"""
+
+    metrics_html = (
+        metric_row("Text Match",    lexical_score,   "Word overlap") +
+        metric_row("Meaning Match", semantic_score,  "Semantic similarity") +
+        metric_row("Key Points",    coverage_score,  "Important conditions") +
+        metric_row("Overall Fit",   mean_alignment,  "State average")
+    )
 
     st.markdown(_html(f"""
-    <div class='sim-lite-shell'>
-        <div class='sim-lite-head'>
+    <div class='sbd-card'>
+        <div class='sbd-header'>
             <div>
-                <div class='sim-lite-kicker'>Similarity breakdown</div>
-                <div class='sim-lite-title'>Final Score</div>
+                <div class='sbd-kicker'>Similarity breakdown</div>
+                <div class='sbd-title'>Final Score</div>
             </div>
-            <div class='sim-lite-pill' style='background:{score_color}14;border-color:{score_color};color:{score_color};'>{final_match_score:.1f}%</div>
+            <div class='sbd-pill' style='background:{score_color}18;border-color:{score_color};color:{score_color};'>{final_match_score:.1f}%</div>
         </div>
-        <div class='sim-lite-hero'>
-            <div class='sim-lite-ring' style='background:conic-gradient({score_color} 0deg {ring_degrees:.1f}deg,#ead1c8 {ring_degrees:.1f}deg 360deg);'>
-                <div class='sim-lite-ring-inner'>
+        <div class='sbd-hero'>
+            <div class='sbd-ring' style='background:conic-gradient({score_color} 0deg {ring_degrees:.1f}deg,#ead1c8 {ring_degrees:.1f}deg 360deg);'>
+                <div class='sbd-ring-inner'>
                     <strong style='color:{score_color};'>{int(round(final_match_score))}</strong>
-                    <span>Final score</span>
+                    <span>score</span>
                 </div>
             </div>
-            <div class='sim-lite-summary'>
-                <div class='sim-lite-summary-title'>{html.escape(conclusion_label)}</div>
-                <div class='sim-lite-summary-copy alt'>{html.escape(conclusion_copy)}</div>
+            <div class='sbd-verdict'>
+                <div class='sbd-verdict-label' style='color:{score_color};'>{html.escape(conclusion_label)}</div>
+                <div class='sbd-verdict-copy'>{html.escape(conclusion_copy)}</div>
             </div>
         </div>
-        <div class='sim-lite-top-note'>
-            <span class='sim-lite-top-note-title'>How to read this section</span>
-            <span class='sim-lite-top-note-copy'>Read each box separately: text = wording overlap, meaning = closest meaning, key points = important fatwa conditions found, overall fit = strength across the matched state rulings.</span>
-        </div>
+        <div class='sbd-divider'></div>
+        <div class='sbd-metrics'>{metrics_html}</div>
     </div>
     """), unsafe_allow_html=True)
-
-    render_beautiful_metric_grid(lexical_score, semantic_score, coverage_score, mean_alignment)
 
 
 def render_single_review_result_dashboard(bundle: dict):
