@@ -587,14 +587,165 @@ def apply_dashboard_polish():
            
 
 
-    /* ===== CLEAN DETAIL DRAWER CONTROL ===== */
+    /* ===== POLISHED DETAIL DRAWER CONTROL ===== */
+    .detail-toggle-card {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        gap: 0.85rem;
+        align-items: center;
+        background: linear-gradient(135deg, #ffffff 0%, #fff7f4 100%);
+        border: 1px solid #ead1c8;
+        border-left: 5px solid #773344;
+        border-radius: 20px;
+        padding: 0.85rem 1rem;
+        box-shadow: 0 10px 22px rgba(25, 14, 36, 0.055);
+        margin: 0.4rem 0 0.8rem 0;
+    }
+
+    .detail-toggle-card-open {
+        border-left-color: #D44D5C;
+        background: linear-gradient(135deg, #ffffff 0%, #fff2ef 100%);
+    }
+
+    .detail-toggle-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #773344 0%, #D44D5C 100%);
+        color: #ffffff;
+        font-size: 0.9rem;
+        font-weight: 900;
+        box-shadow: 0 8px 16px rgba(119, 51, 68, 0.18);
+    }
+
+    .detail-toggle-kicker {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        padding: 0.18rem 0.55rem;
+        border-radius: 999px;
+        background: #f7ece7;
+        border: 1px solid #ead1c8;
+        color: #8b3b50;
+        font-size: 0.62rem;
+        font-weight: 850;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        margin-bottom: 0.22rem;
+    }
+
+    .detail-toggle-title {
+        font-family: 'Inter Tight', 'Inter', sans-serif;
+        font-size: 1rem;
+        font-weight: 850;
+        color: #241226;
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+    }
+
+    .detail-toggle-sub {
+        color: #6d5a68;
+        font-size: 0.76rem;
+        line-height: 1.5;
+        margin-top: 0.22rem;
+    }
+
+    .detail-toggle-chips {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.42rem;
+        flex-wrap: wrap;
+    }
+
+    .detail-toggle-chips span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.32rem 0.65rem;
+        border-radius: 999px;
+        background: #ffffff;
+        border: 1px solid #ead1c8;
+        color: #773344;
+        font-size: 0.7rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .detail-toggle-button-wrap {
+        margin-top: 0.4rem;
+    }
+
+    .detail-toggle-button-wrap .stButton > button {
+        min-height: 64px !important;
+        border-radius: 18px !important;
+        background: linear-gradient(135deg, #160029 0%, #773344 56%, #D44D5C 100%) !important;
+        box-shadow: 0 10px 22px rgba(119, 51, 68, 0.2) !important;
+        font-size: 0.78rem !important;
+        font-weight: 850 !important;
+    }
+
     .detail-drawer-body {
-        margin-top: 0.35rem;
+        margin-top: 0.25rem;
         padding: 0.75rem;
         border: 1px solid #ead1c8;
-        border-radius: 22px;
-        background: linear-gradient(180deg, rgba(255,255,255,0.78) 0%, rgba(255,248,244,0.92) 100%);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.65), 0 8px 20px rgba(25,14,36,0.045);
+        border-radius: 24px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.74) 0%, rgba(255,248,244,0.92) 100%);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.65);
+    }
+
+    @media (max-width: 900px) {
+        .detail-toggle-card {
+            grid-template-columns: auto 1fr;
+        }
+        .detail-toggle-chips {
+            grid-column: 1 / -1;
+            justify-content: flex-start;
+        }
+    }
+
+    /* ===== UNIFIED INPUT EDITOR CARD V2 ===== */
+    /* Header part — top of the card, rounded top only */
+    .input-editor-shell-v2 {
+        background: linear-gradient(180deg, #fefcfe 0%, #f8f0f6 100%);
+        border: 1px solid #dfd7e4;
+        border-bottom: none;
+        border-radius: 16px 16px 0 0;
+        padding: 0.7rem 0.9rem 0.65rem 0.9rem;
+        margin: 0.2rem 0 0 0;
+        box-shadow: 0 4px 14px rgba(25,14,36,0.04);
+        transition: all 0.3s ease;
+    }
+
+    .input-editor-v2-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 0.7rem;
+    }
+
+    /* Body wrapper — bottom of the card, rounded bottom only */
+    .input-editor-v2-body {
+        margin: 0 0 0.45rem 0;
+    }
+
+    /* Make the textarea connect seamlessly to the header */
+    .input-editor-v2-body [data-testid="stTextArea"] > div > div,
+    .input-editor-v2-body [data-baseweb="textarea"],
+    .input-editor-v2-body textarea {
+        border-radius: 0 0 14px 14px !important;
+        border: 1px solid #dfd7e4 !important;
+        border-top: 1px solid #e8ddf0 !important;
+        margin-top: 0 !important;
+        background: #ffffff !important;
+        color: #2a1421 !important;
+        box-shadow: 0 4px 14px rgba(25,14,36,0.04) !important;
+    }
+
+    .input-editor-v2-body [data-testid="stTextArea"] {
+        margin-top: 0 !important;
     }
 
     /* ===== UNIFIED INPUT EDITOR CARD V2 ===== */
@@ -606,6 +757,7 @@ def apply_dashboard_polish():
         padding: 0.7rem 0.9rem 0.65rem 0.9rem;
         margin: 0.2rem 0 0 0;
         box-shadow: 0 4px 14px rgba(25,14,36,0.04);
+        transition: all 0.3s ease;
     }
 
     .input-editor-v2-head {
@@ -615,7 +767,10 @@ def apply_dashboard_polish():
         gap: 0.7rem;
     }
 
-    .input-editor-v2-body { margin: 0 0 0.45rem 0; }
+    /* Make the textarea flush-connect to the header */
+    .input-editor-v2-body {
+        margin: 0 0 0.45rem 0;
+    }
 
     .input-editor-v2-body [data-testid="stTextArea"] > div > div,
     .input-editor-v2-body [data-baseweb="textarea"],
@@ -635,258 +790,499 @@ def apply_dashboard_polish():
         padding-top: 0 !important;
     }
 
-    /* ===== DETAIL BUTTON V3: compact professional drawer trigger ===== */
-    .detail-toggle-button-wrap { margin: 0.15rem 0 0.85rem 0; }
+    /* ===== IMPROVED DETAIL DRAWER BUTTON ===== */
+    .detail-toggle-button-wrap {
+        height: 100%;
+        display: flex;
+        align-items: stretch;
+    }
+
+    .detail-toggle-button-wrap .stButton {
+        width: 100%;
+        height: 100%;
+    }
 
     .detail-toggle-button-wrap .stButton > button {
-        min-height: 42px !important;
-        border-radius: 14px !important;
-        background: linear-gradient(135deg, #160029 0%, #773344 68%, #B24758 100%) !important;
-        box-shadow: 0 8px 18px rgba(119, 51, 68, 0.18) !important;
-        font-size: 0.78rem !important;
-        font-weight: 850 !important;
+        height: 100% !important;
+        min-height: 76px !important;
+        border-radius: 18px !important;
+        background: linear-gradient(160deg, #160029 0%, #773344 55%, #D44D5C 100%) !important;
+        box-shadow: 0 8px 20px rgba(119, 51, 68, 0.22) !important;
+        font-size: 0.8rem !important;
+        font-weight: 800 !important;
         letter-spacing: 0.01em !important;
+        transition: all 0.25s ease !important;
         white-space: normal !important;
-        line-height: 1.25 !important;
-        border: 1px solid rgba(255,255,255,0.10) !important;
+        line-height: 1.35 !important;
     }
 
     .detail-toggle-button-wrap .stButton > button:hover {
-        box-shadow: 0 12px 24px rgba(119, 51, 68, 0.26) !important;
-        transform: translateY(-1px) !important;
-        background: linear-gradient(135deg, #24103a 0%, #8a3b50 68%, #D44D5C 100%) !important;
+        box-shadow: 0 12px 28px rgba(119, 51, 68, 0.32) !important;
+        transform: translateY(-2px) !important;
     }
 
-    /* ===== FYP REDESIGN: compact dataset and input preview cards ===== */
-    .fyp-compact-preview {
+    /* ===== REDESIGNED DATASET LOADER V3 ===== */
+    .ds-loader-card-v3 {
+        background: linear-gradient(135deg, #ffffff 0%, #fdf5f8 100%);
+        border: 1px solid #e2c8d4;
+        border-left: 4px solid #773344;
+        border-radius: 16px;
+        padding: 0.9rem 1rem 0.75rem 1rem;
+        margin-bottom: 0.5rem;
+        box-shadow: 0 4px 14px rgba(119,51,68,0.07);
+    }
+    .ds-loader-v3-head {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        margin-bottom: 0.4rem;
+    }
+    .ds-loader-v3-kicker {
+        font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em;
+        text-transform: uppercase; color: #a3195b; margin-bottom: 0.12rem;
+    }
+    .ds-loader-v3-title {
+        font-family: 'Inter Tight','Inter',sans-serif;
+        font-size: 0.9rem; font-weight: 800; color: #241226; letter-spacing: -0.01em;
+    }
+    .ds-loader-v3-badge {
+        margin-left: auto;
+        padding: 0.25rem 0.7rem;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #773344, #D44D5C);
+        color: #fff; font-size: 0.65rem; font-weight: 800;
+        white-space: nowrap;
+        box-shadow: 0 3px 8px rgba(119,51,68,0.25);
+    }
+    .ds-loader-v3-hint {
+        font-size: 0.72rem; color: #7a6874; line-height: 1.45; margin-top: 0.1rem;
+    }
+    .ds-col-label {
+        font-size: 0.62rem; font-weight: 800; text-transform: uppercase;
+        letter-spacing: 0.09em; color: #8b6771; margin-bottom: 0.22rem;
+    }
+
+    /* ===== Q&A PREVIEW PANEL — larger, more readable ===== */
+    .ds-qa-preview {
+        background: linear-gradient(180deg, #fffcfe 0%, #faf4f8 100%);
+        border: 1px solid #e0ccd8;
+        border-radius: 14px;
+        padding: 0.85rem 1rem;
+        margin: 0.5rem 0 0.2rem 0;
+        box-shadow: 0 3px 10px rgba(119,51,68,0.06);
+    }
+    .ds-qa-row { margin-bottom: 0.15rem; }
+    .ds-qa-divider {
+        height: 1px;
+        background: linear-gradient(90deg, #ddc8d4, transparent);
+        margin: 0.65rem 0;
+    }
+    .ds-qa-label {
+        font-size: 0.62rem; font-weight: 900; text-transform: uppercase;
+        letter-spacing: 0.1em; margin-bottom: 0.3rem;
+        display: flex; align-items: center; gap: 0.4rem;
+    }
+    .ds-qa-q-label { color: #773344; }
+    .ds-qa-a-label { color: #2a6b48; }
+    .ds-qa-text {
+        font-size: 0.84rem; line-height: 1.65; border-radius: 10px;
+        padding: 0.55rem 0.8rem; color: #241226;
+    }
+    .ds-qa-q-text {
+        background: #fdf0f3; color: #2a1421;
+        border-left: 3px solid #D44D5C;
+        font-weight: 500;
+    }
+    .ds-qa-a-text {
+        background: #f0faf5; color: #102a1e;
+        border-left: 3px solid #06A77D;
+        font-weight: 400;
+        max-height: 120px;
+        overflow-y: auto;
+    }
+    .ds-qa-model-chip {
+        display: inline-block;
+        background: #fce8ed; color: #a3195b;
+        padding: 0.12rem 0.55rem; border-radius: 999px;
+        font-size: 0.6rem; font-weight: 800; margin-left: 0.35rem;
+        text-transform: none; letter-spacing: 0;
+        border: 1px solid #f0c0cf;
+    }
+
+    /* ===== REDESIGNED AI INPUT CARD ===== */
+    .ai-input-card {
+        background: linear-gradient(180deg, #fefcfe 0%, #f8f0f6 100%);
+        border: 1.5px solid #dfd7e4;
+        border-bottom: none;
+        border-radius: 16px 16px 0 0;
+        padding: 0.75rem 1rem 0.6rem 1rem;
+        margin-top: 0.7rem;
+        box-shadow: 0 4px 14px rgba(25,14,36,0.04);
+        transition: all 0.2s ease;
+    }
+    .ai-input-card--filled {
+        border-color: #c8a8d4;
+        border-left-color: #773344;
+        border-left-width: 4px;
+        background: linear-gradient(180deg, #fdf9ff 0%, #f5ecf9 100%);
+    }
+    .ai-input-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.7rem;
+    }
+    .ai-input-card-header-left {
+        display: flex; align-items: center; gap: 0.6rem;
+    }
+    .ai-input-card-icon {
+        width: 30px; height: 30px;
+        background: linear-gradient(135deg, #773344, #D44D5C);
+        border-radius: 9px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.8rem; flex-shrink: 0;
+        box-shadow: 0 3px 8px rgba(119,51,68,0.2);
+    }
+    .ai-input-card-kicker {
+        font-size: 0.58rem; font-weight: 900; text-transform: uppercase;
+        letter-spacing: 0.12em; color: #a3195b; margin-bottom: 0.1rem;
+    }
+    .ai-input-card-title {
+        font-family: 'Inter Tight','Inter',sans-serif;
+        font-size: 0.85rem; font-weight: 800; color: #241226; letter-spacing: -0.01em;
+    }
+    .ai-input-card-meta {
+        display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; flex-shrink: 0;
+    }
+    .ai-input-wc {
+        padding: 0.22rem 0.6rem; border-radius: 999px;
+        background: #e8dff0; color: #5a3873;
+        font-size: 0.63rem; font-weight: 800;
+    }
+    .ai-input-hint-chip {
+        padding: 0.22rem 0.6rem; border-radius: 999px;
+        background: #f5ece7; color: #8b6771;
+        font-size: 0.63rem; font-weight: 700; font-style: italic;
+    }
+    .ai-input-badge {
+        padding: 0.22rem 0.6rem; border-radius: 999px;
+        background: linear-gradient(135deg, #773344, #D44D5C);
+        color: #fff; font-size: 0.62rem; font-weight: 800;
+        box-shadow: 0 2px 6px rgba(119,51,68,0.22);
+    }
+    /* Textarea flush-connect to header */
+    .ai-input-textarea-wrap [data-testid="stTextArea"] > div > div,
+    .ai-input-textarea-wrap [data-baseweb="textarea"],
+    .ai-input-textarea-wrap textarea {
+        border-radius: 0 0 14px 14px !important;
+        border: 1.5px solid #dfd7e4 !important;
+        border-top: 1px solid #ede0f5 !important;
+        background: #ffffff !important;
+        color: #2a1421 !important;
+        -webkit-text-fill-color: #2a1421 !important;
+        box-shadow: 0 6px 16px rgba(25,14,36,0.05) !important;
+        margin-top: 0 !important;
+        font-size: 0.85rem !important;
+        line-height: 1.65 !important;
+    }
+    .ai-input-textarea-wrap [data-testid="stTextArea"] {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+
+    /* ===== REDESIGNED INLINE DETAIL TOGGLE ===== */
+    .detail-inline-card {
         background: linear-gradient(135deg, #ffffff 0%, #fff7f4 100%);
         border: 1px solid #ead1c8;
-        border-radius: 20px;
-        padding: 0.85rem 0.95rem;
-        box-shadow: 0 8px 20px rgba(25,14,36,0.055);
-        margin: 0.55rem 0 0.65rem 0;
-        position: relative;
-        overflow: hidden;
-    }
-    .fyp-compact-preview::before {
-        content: '';
-        position: absolute;
-        inset: 0 auto 0 0;
-        width: 5px;
-        background: linear-gradient(180deg, #160029 0%, #773344 45%, #D44D5C 100%);
-    }
-    .fyp-preview-head {
+        border-left: 5px solid #773344;
+        border-radius: 16px;
+        padding: 0.8rem 1rem;
+        margin: 1rem 0 0.3rem 0;
+        box-shadow: 0 6px 18px rgba(25,14,36,0.05);
         display: flex;
-        justify-content: space-between;
-        gap: 0.75rem;
-        align-items: flex-start;
-        margin-bottom: 0.55rem;
-        padding-left: 0.35rem;
-    }
-    .fyp-preview-kicker {
-        display: inline-flex;
         align-items: center;
-        width: fit-content;
-        padding: 0.18rem 0.55rem;
-        border-radius: 999px;
-        background: #f7ece7;
-        border: 1px solid #ead1c8;
-        color: #8b3b50;
-        font-size: 0.62rem;
-        font-weight: 850;
-        letter-spacing: 0.09em;
-        text-transform: uppercase;
-        margin-bottom: 0.24rem;
+        gap: 1rem;
+        transition: all 0.2s ease;
     }
-    .fyp-preview-title {
-        font-family: 'Inter Tight', 'Inter', sans-serif;
-        font-size: 0.98rem;
-        font-weight: 850;
-        color: #241226;
-        letter-spacing: -0.02em;
-        line-height: 1.18;
+    .detail-inline-card--open {
+        border-left-color: #D44D5C;
+        background: linear-gradient(135deg, #ffffff 0%, #fff2ef 100%);
     }
-    .fyp-preview-chip {
-        flex-shrink: 0;
-        padding: 0.32rem 0.65rem;
-        border-radius: 999px;
-        background: #ffffff;
-        border: 1px solid #ead1c8;
-        color: #773344;
-        font-size: 0.68rem;
-        font-weight: 800;
-        white-space: nowrap;
+    .detail-inline-left {
+        display: flex; align-items: center; gap: 0.7rem; flex: 1; min-width: 0;
     }
-    .fyp-preview-grid {
-        display: grid;
-        grid-template-columns: 0.9fr 1.1fr;
-        gap: 0.6rem;
-        padding-left: 0.35rem;
+    .detail-inline-icon {
+        width: 36px; height: 36px; border-radius: 12px; flex-shrink: 0;
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; font-size: 0.9rem; font-weight: 900;
+        box-shadow: 0 6px 14px rgba(119,51,68,0.18);
     }
-    .fyp-preview-panel {
-        background: rgba(255,255,255,0.78);
-        border: 1px solid #efe0da;
-        border-radius: 14px;
-        padding: 0.7rem 0.75rem;
-        min-height: 92px;
+    .detail-inline-kicker {
+        font-size: 0.58rem; font-weight: 900; letter-spacing: 0.1em;
+        text-transform: uppercase; color: #a3195b; margin-bottom: 0.1rem;
     }
-    .fyp-preview-label {
-        color: #8b6771;
-        font-size: 0.63rem;
-        font-weight: 850;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        margin-bottom: 0.35rem;
-    }
-    .fyp-preview-text {
-        color: #2a1421;
-        font-size: 0.78rem;
-        line-height: 1.55;
-        word-break: break-word;
-    }
-    .fyp-input-preview-card {
-        background: linear-gradient(135deg, #160029 0%, #4a1830 58%, #773344 100%);
-        border-radius: 22px;
-        padding: 0.9rem;
-        box-shadow: 0 12px 28px rgba(22,0,41,0.18);
-        border: 1px solid rgba(255,255,255,0.08);
-        margin-bottom: 0.75rem;
-    }
-    .fyp-input-preview-card * { color: #ffffff !important; }
-    .fyp-input-preview-top {
-        display: flex;
-        justify-content: space-between;
-        gap: 0.75rem;
-        align-items: flex-start;
-        margin-bottom: 0.55rem;
-    }
-    .fyp-input-preview-kicker {
-        display: inline-flex;
-        padding: 0.18rem 0.55rem;
-        border-radius: 999px;
-        background: rgba(255,255,255,0.10);
-        border: 1px solid rgba(255,255,255,0.16);
-        color: #ffd2dc !important;
-        font-size: 0.62rem;
-        font-weight: 850;
-        letter-spacing: 0.09em;
-        text-transform: uppercase;
-        margin-bottom: 0.25rem;
-    }
-    .fyp-input-preview-title {
-        font-family: 'Inter Tight', 'Inter', sans-serif;
-        font-size: 1rem;
-        font-weight: 850;
+    .detail-inline-title {
+        font-family: 'Inter Tight','Inter',sans-serif;
+        font-size: 0.92rem; font-weight: 850; color: #241226; letter-spacing: -0.01em;
         line-height: 1.2;
     }
-    .fyp-input-preview-count {
-        padding: 0.3rem 0.6rem;
-        border-radius: 999px;
-        background: rgba(255,255,255,0.10);
-        border: 1px solid rgba(255,255,255,0.16);
-        font-size: 0.68rem;
-        font-weight: 800;
-        white-space: nowrap;
+    .detail-inline-sub {
+        font-size: 0.7rem; color: #7a6874; margin-top: 0.1rem;
     }
-    .fyp-input-preview-body {
-        background: rgba(255,255,255,0.08);
-        border: 1px solid rgba(255,255,255,0.12);
-        border-radius: 16px;
-        padding: 0.75rem 0.85rem;
-        color: rgba(255,255,255,0.86) !important;
-        font-size: 0.78rem;
-        line-height: 1.6;
-        max-height: 150px;
-        overflow: auto;
-        word-break: break-word;
-        white-space: pre-wrap;
+    .detail-inline-chips {
+        display: flex; gap: 0.4rem; flex-wrap: wrap; flex-shrink: 0;
     }
-    .fyp-detail-action-row {
+    .detail-chip {
+        padding: 0.28rem 0.62rem; border-radius: 999px;
+        background: #fff; border: 1px solid #ead1c8;
+        color: #773344; font-size: 0.68rem; font-weight: 800; white-space: nowrap;
+    }
+    .detail-chip--state {
+        background: linear-gradient(135deg, #773344, #D44D5C);
+        color: #fff; border-color: transparent;
+        box-shadow: 0 3px 8px rgba(119,51,68,0.22);
+    }
+    /* Detail toggle button — slim full-width style */
+    .stButton > button[data-testid*="detail_toggle"] {
+        border-radius: 12px !important;
+        min-height: 38px !important;
+        font-size: 0.78rem !important;
+        font-weight: 800 !important;
+        background: linear-gradient(135deg, #160029 0%, #773344 55%, #D44D5C 100%) !important;
+        box-shadow: 0 6px 16px rgba(119,51,68,0.18) !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    /* ===== RIGHT COLUMN SIMILARITY BREAKDOWN - TALLIED WIDTH ===== */
+    .single-review-right-col {
+        padding-left: 0 !important;
+        width: 100% !important;
+    }
+
+    .sbd-stack {
+        width: 100%;
         display: grid;
-        grid-template-columns: auto minmax(0, 1fr) auto;
-        gap: 0.75rem;
-        align-items: center;
-        background: linear-gradient(135deg, #ffffff 0%, #fff8f5 100%);
+        gap: 0.68rem;
+    }
+
+    .sbd-card {
+        width: 100%;
+        box-sizing: border-box;
+        background: linear-gradient(180deg, #ffffff 0%, #fff8f4 100%);
         border: 1px solid #ead1c8;
-        border-radius: 18px;
-        padding: 0.72rem 0.82rem;
-        box-shadow: 0 8px 20px rgba(25,14,36,0.05);
-        margin: 0.85rem 0 0.45rem 0;
-        position: relative;
-        overflow: hidden;
+        border-radius: 20px;
+        padding: 0.86rem 0.92rem 0.84rem 0.92rem;
+        box-shadow: 0 8px 20px rgba(25,14,36,0.055);
     }
-    .fyp-detail-action-row::before {
-        content: '';
-        position: absolute;
-        inset: 0 auto 0 0;
-        width: 4px;
-        background: linear-gradient(180deg, #160029 0%, #773344 52%, #D44D5C 100%);
+
+    .sbd-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 0.8rem;
+        margin-bottom: 0.64rem;
     }
-    .fyp-detail-action-icon {
-        width: 38px;
-        height: 38px;
-        border-radius: 14px;
+
+    .sbd-kicker {
+        font-size: 0.58rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.13em;
+        color: #8b6771;
+        margin-bottom: 0.16rem;
+        line-height: 1.1;
+    }
+
+    .sbd-title {
+        font-family: "Inter Tight","Inter",sans-serif;
+        font-size: clamp(1.05rem, 1.35vw, 1.28rem);
+        font-weight: 900;
+        color: #1e1020;
+        letter-spacing: -0.035em;
+        line-height: 1.05;
+    }
+
+    .sbd-pill {
+        padding: 0.28rem 0.68rem;
+        border-radius: 999px;
+        border: 1.4px solid;
+        font-weight: 900;
+        font-size: 0.76rem;
+        white-space: nowrap;
+        line-height: 1;
+    }
+
+    .sbd-hero {
+        display: grid;
+        grid-template-columns: 82px minmax(0, 1fr);
+        gap: 0.72rem;
+        align-items: center;
+        margin-bottom: 0.64rem;
+    }
+
+    .sbd-ring {
+        width: 78px;
+        height: 78px;
+        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, #160029 0%, #773344 100%);
-        color: #ffffff;
-        font-weight: 900;
-        box-shadow: 0 8px 16px rgba(119,51,68,0.18);
-        margin-left: 0.25rem;
+        box-shadow: 0 4px 12px rgba(25,14,36,0.1);
+        flex-shrink: 0;
     }
-    .fyp-detail-action-title {
-        font-family: 'Inter Tight', 'Inter', sans-serif;
-        font-size: 0.96rem;
-        font-weight: 850;
-        color: #241226;
-        margin-bottom: 0.12rem;
-        letter-spacing: -0.015em;
-    }
-    .fyp-detail-action-copy {
-        font-size: 0.74rem;
-        line-height: 1.48;
-        color: #6d5a68;
-        max-width: 760px;
-    }
-    @media (max-width: 900px) {
-        .fyp-preview-grid { grid-template-columns: 1fr; }
-        .fyp-detail-action-row { grid-template-columns: auto 1fr; }
-        .fyp-detail-action-row .detail-toggle-chips { grid-column: 1 / -1; justify-content: flex-start; }
-    }
-    
 
-    /* ===== FINAL CLEAN PASS: less redundancy, stronger hierarchy ===== */
-    .dataset-loader-clean { display:flex; justify-content:space-between; align-items:center; gap:0.8rem; background:#ffffff; border:1px solid #eadce5; border-radius:18px; padding:0.8rem 0.95rem; box-shadow:0 6px 16px rgba(25,14,36,0.045); margin:0.35rem 0 0.65rem 0; }
-    .dataset-loader-kicker, .input-editor-v3-kicker, .detail-clean-label, .dataset-inline-kicker { color:#9b3e55; font-size:0.64rem; font-weight:850; letter-spacing:0.11em; text-transform:uppercase; }
-    .dataset-loader-title, .input-editor-v3-title, .dataset-inline-title { font-family:'Inter Tight','Inter',sans-serif; color:#241226; font-size:1rem; font-weight:850; letter-spacing:-0.02em; line-height:1.2; margin-top:0.18rem; }
-    .dataset-loader-help { color:#77636f; font-size:0.76rem; line-height:1.45; text-align:right; max-width:330px; }
-    .dataset-inline-preview { background:#fffaf7; border:1px solid #ead1c8; border-radius:16px; padding:0.75rem 0.85rem; margin:0.55rem 0 0.65rem 0; box-shadow:0 6px 16px rgba(25,14,36,0.04); }
-    .dataset-inline-head { display:flex; align-items:flex-start; justify-content:space-between; gap:0.8rem; margin-bottom:0.55rem; }
-    .dataset-inline-status, .input-editor-v3-chip { flex-shrink:0; color:#773344; background:#ffffff; border:1px solid #ead1c8; border-radius:999px; padding:0.28rem 0.62rem; font-size:0.68rem; font-weight:800; white-space:nowrap; }
-    .dataset-inline-row { display:grid; grid-template-columns:78px minmax(0,1fr); gap:0.7rem; align-items:start; padding:0.48rem 0; border-top:1px solid #f0ded7; }
-    .dataset-inline-label { color:#8b6771; font-size:0.64rem; font-weight:850; letter-spacing:0.08em; text-transform:uppercase; }
-    .dataset-inline-text { color:#2a1421; font-size:0.78rem; line-height:1.55; word-break:break-word; }
-    .input-editor-v3-shell { background:#ffffff; border:1px solid #e6dbe4; border-bottom:none; border-radius:18px 18px 0 0; margin:0.35rem 0 0 0; box-shadow:0 6px 16px rgba(25,14,36,0.04); overflow:hidden; }
-    .input-editor-v3-head { display:flex; justify-content:space-between; align-items:center; gap:0.8rem; padding:0.7rem 0.9rem; background:#faf6f9; border-bottom:1px solid #eee3ea; }
-    .input-editor-v3-body { margin:0 0 0.7rem 0; }
-    .input-editor-v3-body [data-testid="stTextArea"] > div > div, .input-editor-v3-body [data-baseweb="textarea"], .input-editor-v3-body textarea { border-radius:0 0 18px 18px !important; border:1px solid #e6dbe4 !important; border-top:none !important; background:#ffffff !important; color:#2a1421 !important; -webkit-text-fill-color:#2a1421 !important; box-shadow:0 6px 16px rgba(25,14,36,0.04) !important; margin-top:0 !important; }
-    .input-editor-v3-body textarea { padding:0.9rem !important; font-size:0.86rem !important; line-height:1.65 !important; min-height:165px !important; }
-    .fyp-input-preview-card { background:#ffffff !important; border:1px solid #eadce5 !important; border-left:5px solid #773344 !important; border-radius:18px !important; box-shadow:0 8px 18px rgba(25,14,36,0.055) !important; padding:0.85rem 0.95rem !important; }
-    .fyp-input-preview-card * { color:inherit !important; }
-    .fyp-input-preview-kicker { color:#9b3e55 !important; background:transparent !important; border:none !important; padding:0 !important; }
-    .fyp-input-preview-title { color:#241226 !important; font-size:0.98rem !important; }
-    .fyp-input-preview-count { color:#773344 !important; background:#fff7f4 !important; border:1px solid #ead1c8 !important; }
-    .fyp-input-preview-body { background:#fbf7fa !important; border:1px solid #eadce5 !important; color:#2a1421 !important; max-height:132px !important; border-radius:14px !important; }
-    .detail-clean-row { display:flex; justify-content:space-between; align-items:center; gap:0.8rem; background:#ffffff; border:1px solid #eadce5; border-radius:16px; padding:0.72rem 0.85rem; margin:0.8rem 0 0.35rem 0; box-shadow:0 6px 16px rgba(25,14,36,0.04); }
-    .detail-clean-copy { color:#77636f; font-size:0.74rem; line-height:1.45; margin-top:0.16rem; }
-    .detail-clean-meta { display:flex; gap:0.35rem; flex-wrap:wrap; justify-content:flex-end; }
-    .detail-clean-meta span { color:#773344; background:#fff7f4; border:1px solid #ead1c8; border-radius:999px; padding:0.28rem 0.62rem; font-size:0.68rem; font-weight:800; white-space:nowrap; }
-    .detail-clean-button-wrap { margin:0.15rem 0 0.75rem 0; }
-    .detail-clean-button-wrap .stButton > button { min-height:38px !important; border-radius:999px !important; background:#773344 !important; box-shadow:0 6px 14px rgba(119,51,68,0.16) !important; font-size:0.76rem !important; font-weight:850 !important; }
-    .detail-clean-button-wrap .stButton > button:hover { background:#D44D5C !important; transform:translateY(-1px) !important; }
-    @media (max-width:900px) { .dataset-loader-clean, .detail-clean-row, .dataset-inline-head { flex-direction:column; align-items:flex-start; } .dataset-loader-help { text-align:left; max-width:none; } .dataset-inline-row { grid-template-columns:1fr; gap:0.2rem; } .detail-clean-meta { justify-content:flex-start; } }
-</style>
+    .sbd-ring-inner {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: inset 0 0 0 1px rgba(220,170,190,0.42);
+    }
+
+    .sbd-ring-inner strong {
+        font-family: "Inter Tight","Inter",sans-serif;
+        font-size: 1.18rem;
+        font-weight: 900;
+        line-height: 1;
+    }
+
+    .sbd-ring-inner span {
+        font-size: 0.55rem;
+        color: #8b6771;
+        margin-top: 0.08rem;
+        font-weight: 700;
+    }
+
+    .sbd-verdict-label {
+        font-family: "Inter Tight","Inter",sans-serif;
+        font-size: 0.94rem;
+        font-weight: 900;
+        margin-bottom: 0.2rem;
+        line-height: 1.15;
+        letter-spacing: -0.01em;
+    }
+
+    .sbd-verdict-copy {
+        font-size: 0.74rem;
+        color: #6d5a68;
+        line-height: 1.55;
+        max-width: 100%;
+    }
+
+    .sbd-read-box {
+        border: 1px solid #ead8dd;
+        border-radius: 15px;
+        padding: 0.64rem 0.75rem;
+        background: rgba(255,255,255,0.72);
+    }
+
+    .sbd-read-title {
+        font-size: 0.58rem;
+        font-weight: 900;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: #8b6771;
+        margin-bottom: 0.24rem;
+        line-height: 1.1;
+    }
+
+    .sbd-read-copy {
+        font-size: 0.72rem;
+        line-height: 1.52;
+        color: #6d5a68;
+    }
+
+    .sbd-metric-grid {
+        width: 100%;
+        box-sizing: border-box;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.62rem;
+    }
+
+    .sbd-mini-card {
+        min-width: 0;
+        background: linear-gradient(180deg, #ffffff 0%, #fffaf6 100%);
+        border: 1px solid #ead1c8;
+        border-top: 4px solid var(--metric-tone);
+        border-radius: 18px;
+        padding: 0.72rem 0.54rem 0.68rem 0.54rem;
+        text-align: center;
+        box-shadow: 0 8px 18px rgba(25,14,36,0.06);
+        overflow: hidden;
+    }
+
+    .sbd-mini-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 13px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0.46rem;
+        background: #f6ded7;
+        color: #5d2436;
+        font-size: 0.92rem;
+        font-weight: 900;
+    }
+
+    .sbd-mini-label {
+        min-height: 1.9rem;
+        font-size: 0.58rem;
+        font-weight: 900;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: #8b6771;
+        line-height: 1.45;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .sbd-mini-value {
+        font-family: "Inter Tight","Inter",sans-serif;
+        font-size: clamp(1.18rem, 2.15vw, 1.52rem);
+        font-weight: 900;
+        line-height: 1;
+        margin: 0.3rem 0 0.18rem 0;
+        color: var(--metric-tone);
+        letter-spacing: -0.04em;
+    }
+
+    .sbd-mini-sub {
+        font-size: 0.58rem;
+        color: #8b6771;
+        font-weight: 700;
+        padding-bottom: 0.32rem;
+        border-bottom: 1px solid #f0e0d9;
+        margin-bottom: 0.36rem;
+        line-height: 1.25;
+    }
+
+    .sbd-mini-desc {
+        font-size: 0.62rem;
+        line-height: 1.38;
+        color: #6d5a68;
+        min-height: 2.1rem;
+    }
+
+    @media (max-width: 1200px) {
+        .sbd-metric-grid { gap: 0.5rem; }
+        .sbd-mini-card { padding-left: 0.44rem; padding-right: 0.44rem; }
+        .sbd-mini-icon { width: 34px; height: 34px; }
+        .sbd-mini-desc { font-size: 0.58rem; }
+    }
+
+    @media (max-width: 900px) {
+        .sbd-metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    .sbd-metric-sub { font-size: 0.6rem; color: #a08b97; font-weight: 500; }
+
+    </style>
     """, unsafe_allow_html=True)
 
 
@@ -1062,48 +1458,23 @@ def render_beautiful_metric_card(label: str, value: float, icon: str, descriptio
 
 
 def render_beautiful_metric_grid(lexical_score, semantic_score, coverage_score, mean_alignment):
-    """Render 4 metric cards as one true HTML grid so the width tallies with the similarity summary card."""
-
-    def _metric_card(label: str, value: float, icon: str, sub_label: str, description: str) -> str:
-        value = safe_float(value)
-        if value >= 70:
-            tier_class = "good"
-            value_class = "good"
-        elif value >= 50:
-            tier_class = "moderate"
-            value_class = "moderate"
-        else:
-            tier_class = "weak"
-            value_class = "weak"
-
-        if "Text" in label:
-            desc_text = "Uses many of the same words." if value >= 70 else "Uses some of the same words." if value >= 50 else "Uses quite different words."
-        elif "Meaning" in label:
-            desc_text = "Very close in meaning." if value >= 70 else "Quite close in meaning." if value >= 50 else "Not very close in meaning."
-        elif "Key" in label or "Points" in label:
-            desc_text = "Most main points are included." if value >= 70 else "Some main points are included." if value >= 50 else "Important points are still missing."
-        else:
-            desc_text = description
-
-        return f"""
-        <div class="metric-beautiful-card {tier_class}">
-            <div class="metric-beautiful-icon">{html.escape(icon)}</div>
-            <div class="metric-beautiful-label">{html.escape(label)}</div>
-            <div class="metric-beautiful-value {value_class}">{value:.0f}%</div>
-            <div class="metric-beautiful-sub">{html.escape(sub_label)}</div>
-            <div class="metric-beautiful-desc">{html.escape(desc_text)}</div>
-        </div>
-        """
-
+    """Render 4 beautiful metric cards in a grid."""
+    
+    st.markdown('<div class="metric-grid-4">', unsafe_allow_html=True)
+    
+    cols = st.columns(4, gap="small")
     metrics = [
         ("Text Match", lexical_score, "📝", "Words used", "Word overlap similarity"),
         ("Meaning Match", semantic_score, "🎯", "Same meaning", "Semantic understanding"),
         ("Key Points", coverage_score, "✓", "Main points", "Important conditions found"),
         ("Overall Fit", mean_alignment, "⚖️", "State match", "Average across state rulings"),
     ]
-
-    cards = "".join(_metric_card(label, score, icon, sub, desc) for label, score, icon, sub, desc in metrics)
-    st.markdown(f'<div class="metric-grid-4">{cards}</div>', unsafe_allow_html=True)
+    
+    for col, (label, score, icon, sub, desc) in zip(cols, metrics):
+        with col:
+            render_beautiful_metric_card(label, score, icon, desc, sub)
+    
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 # =========================================================
@@ -1797,53 +2168,6 @@ def clean_preview_text(text: str, max_len: int = 260) -> str:
     return text if len(text) <= max_len else text[: max_len - 3].rstrip() + "..."
 
 
-def render_dataset_answer_preview(question_text: str, answer_text: str, model_name: str, qid: str):
-    """Lean inline preview for the currently selected dataset item."""
-    question_preview = clean_preview_text(question_text or qid, 150)
-    answer_preview = clean_preview_text(answer_text, 210)
-    model_name = model_name or "Dataset"
-    qid = qid or "-"
-    st.markdown(_html(f"""
-    <div class='dataset-inline-preview'>
-        <div class='dataset-inline-head'>
-            <div>
-                <div class='dataset-inline-kicker'>Selected dataset item</div>
-                <div class='dataset-inline-title'>{html.escape(model_name)} · QID {html.escape(str(qid))}</div>
-            </div>
-            <div class='dataset-inline-status'>Preview only</div>
-        </div>
-        <div class='dataset-inline-row'>
-            <div class='dataset-inline-label'>Question</div>
-            <div class='dataset-inline-text'>{html.escape(question_preview)}</div>
-        </div>
-        <div class='dataset-inline-row dataset-inline-answer'>
-            <div class='dataset-inline-label'>Answer</div>
-            <div class='dataset-inline-text'>{html.escape(answer_preview)}</div>
-        </div>
-    </div>
-    """), unsafe_allow_html=True)
-
-def render_input_preview(input_text: str, source_label: str = "Manual input"):
-    """Show the exact current user input in a compact, professional preview card."""
-    raw_text = "" if input_text is None else str(input_text).strip()
-    preview = raw_text if raw_text else "Your pasted or loaded AI answer will appear here before and after analysis."
-    if len(preview) > 620:
-        preview = preview[:617].rstrip() + "..."
-    word_count = len(re.findall(r"\b\w+\b", raw_text)) if raw_text else 0
-    st.markdown(_html(f"""
-    <div class='fyp-input-preview-card'>
-        <div class='fyp-input-preview-top'>
-            <div>
-                <div class='fyp-input-preview-kicker'>User input</div>
-                <div class='fyp-input-preview-title'>Answer currently being reviewed</div>
-            </div>
-            <div class='fyp-input-preview-count'>{word_count} words</div>
-        </div>
-        <div class='fyp-input-preview-body'>{html.escape(preview)}</div>
-    </div>
-    """), unsafe_allow_html=True)
-
-
 def render_minimal_tab_intro(kicker: str, title: str, sentence: str = "", extra_class: str = ""):
     sentence_html = f"<div class='tab-minimal-copy'>{html.escape(sentence)}</div>" if sentence else ""
     hero_class = f"tab-minimal-hero {extra_class}".strip()
@@ -1985,7 +2309,7 @@ def render_batch_score_chart(num_df: pd.DataFrame):
             _render_grouped_bars(summary_df, 'label', 'Metric comparison by response', 'Side-by-side bars make it easier to compare meaning match, text match, and key fatwa points.')
             
 def render_similarity_breakdown(bundle: dict):
-    """Render the similarity breakdown — original design: sim-lite shell + note + 4 metric cards."""
+    """Balanced right-column card: score summary + 4 compact metric cards with matching width."""
     final_match_score = safe_float(bundle.get("final_match_score"))
     lexical_score     = safe_float(bundle.get("lexical_score"))
     semantic_score    = safe_float(bundle.get("semantic_score"))
@@ -1995,42 +2319,77 @@ def render_similarity_breakdown(bundle: dict):
     score_color  = score_status_color(final_match_score)
     ring_degrees = max(0.0, min(360.0, final_match_score * 3.6))
     conclusion_label = "Strong Alignment" if final_match_score >= 70 else "Moderate Alignment" if final_match_score >= 50 else "Low Alignment"
-    conclusion_copy  = ("This final score means the answer is close to the fatwa and gets most important points right."
-                        if final_match_score >= 70 else
-                        "This final score means the answer is partly correct, but some important points still need checking."
-                        if final_match_score >= 50 else
-                        "This final score means the answer is not close enough to the fatwa yet and needs careful review.")
+    conclusion_copy  = (
+        "Close to the fatwa and covers most key points."
+        if final_match_score >= 70 else
+        "Partly correct, but some ruling details still need checking."
+        if final_match_score >= 50 else
+        "Not close enough yet, so it needs careful review."
+    )
+
+    read_copy = "Text checks wording overlap, meaning checks the closest idea, key points checks important fatwa conditions, and overall fit shows the matched state average."
+
+    def metric_tone(value):
+        return "#06A77D" if value >= 70 else "#D4A04B" if value >= 50 else "#A31621"
+
+    def metric_desc(label, value):
+        if "Text" in label:
+            return "Uses many similar words." if value >= 70 else "Uses some similar words." if value >= 50 else "Uses different words."
+        if "Meaning" in label:
+            return "Very close in meaning." if value >= 70 else "Quite close in meaning." if value >= 50 else "Meaning needs review."
+        if "Key" in label:
+            return "Most points included." if value >= 70 else "Some points included." if value >= 50 else "Key points missing."
+        return "Strong state fit." if value >= 70 else "Partial state fit." if value >= 50 else "Weak state fit."
+
+    def metric_card(label, value, icon, sublabel):
+        tone = metric_tone(value)
+        return f"""
+        <div class='sbd-mini-card' style='--metric-tone:{tone};'>
+            <div class='sbd-mini-icon'>{icon}</div>
+            <div class='sbd-mini-label'>{html.escape(label)}</div>
+            <div class='sbd-mini-value'>{value:.0f}%</div>
+            <div class='sbd-mini-sub'>{html.escape(sublabel)}</div>
+            <div class='sbd-mini-desc'>{html.escape(metric_desc(label, value))}</div>
+        </div>
+        """
+
+    metric_cards = "".join([
+        metric_card("Text Match", lexical_score, "📝", "Words used"),
+        metric_card("Meaning Match", semantic_score, "🎯", "Same meaning"),
+        metric_card("Key Points", coverage_score, "✓", "Main points"),
+        metric_card("Overall Fit", mean_alignment, "⚖️", "State match"),
+    ])
 
     st.markdown(_html(f"""
-    <div class='sim-lite-shell'>
-        <div class='sim-lite-head'>
-            <div>
-                <div class='sim-lite-kicker'>Similarity breakdown</div>
-                <div class='sim-lite-title'>Final Score</div>
+    <div class='sbd-stack'>
+        <div class='sbd-card'>
+            <div class='sbd-header'>
+                <div>
+                    <div class='sbd-kicker'>Similarity breakdown</div>
+                    <div class='sbd-title'>Final Score</div>
+                </div>
+                <div class='sbd-pill' style='background:{score_color}18;border-color:{score_color};color:{score_color};'>{final_match_score:.1f}%</div>
             </div>
-            <div class='sim-lite-pill' style='background:{score_color}14;border-color:{score_color};color:{score_color};'>{final_match_score:.1f}%</div>
-        </div>
-        <div class='sim-lite-hero'>
-            <div class='sim-lite-ring' style='background:conic-gradient({score_color} 0deg {ring_degrees:.1f}deg,#ead1c8 {ring_degrees:.1f}deg 360deg);'>
-                <div class='sim-lite-ring-inner'>
-                    <strong style='color:{score_color};'>{int(round(final_match_score))}</strong>
-                    <span>Final score</span>
+            <div class='sbd-hero'>
+                <div class='sbd-ring' style='background:conic-gradient({score_color} 0deg {ring_degrees:.1f}deg,#ead1c8 {ring_degrees:.1f}deg 360deg);'>
+                    <div class='sbd-ring-inner'>
+                        <strong style='color:{score_color};'>{int(round(final_match_score))}</strong>
+                        <span>Final score</span>
+                    </div>
+                </div>
+                <div class='sbd-verdict'>
+                    <div class='sbd-verdict-label' style='color:{score_color};'>{html.escape(conclusion_label)}</div>
+                    <div class='sbd-verdict-copy'>{html.escape(conclusion_copy)}</div>
                 </div>
             </div>
-            <div class='sim-lite-summary'>
-                <div class='sim-lite-summary-title'>{html.escape(conclusion_label)}</div>
-                <div class='sim-lite-summary-copy alt'>{html.escape(conclusion_copy)}</div>
+            <div class='sbd-read-box'>
+                <div class='sbd-read-title'>How to read this section</div>
+                <div class='sbd-read-copy'>{html.escape(read_copy)}</div>
             </div>
         </div>
-        <div class='sim-lite-top-note'>
-            <span class='sim-lite-top-note-title'>How to read this section</span>
-            <span class='sim-lite-top-note-copy'>Read each box separately: text = wording overlap, meaning = closest meaning, key points = important fatwa conditions found, overall fit = strength across the matched state rulings.</span>
-        </div>
+        <div class='sbd-metric-grid'>{metric_cards}</div>
     </div>
     """), unsafe_allow_html=True)
-
-    render_beautiful_metric_grid(lexical_score, semantic_score, coverage_score, mean_alignment)
-
 
 def render_single_review_result_dashboard(bundle: dict):
     final_match_score = safe_float(bundle.get("final_match_score"))
@@ -2318,51 +2677,6 @@ with tab1:
         gap: 1rem;
         align-items: start;
     }
-
-
-    /* ===== SIMILARITY BREAKDOWN WIDTH + FONT BALANCE PATCH ===== */
-    .sim-lite-shell {
-        width: 100% !important;
-        max-width: 100% !important;
-        box-sizing: border-box !important;
-        margin: 0 0 1rem 0 !important;
-        padding: 0.85rem 0.95rem 0.9rem 0.95rem !important;
-        border-radius: 22px !important;
-    }
-    .sim-lite-head { display:flex !important; justify-content:space-between !important; align-items:flex-start !important; gap:0.8rem !important; }
-    .sim-lite-kicker { font-size:0.68rem !important; letter-spacing:0.12em !important; line-height:1.2 !important; }
-    .sim-lite-title { font-size:1.35rem !important; line-height:1.12 !important; letter-spacing:-0.035em !important; margin-top:0.18rem !important; }
-    .sim-lite-pill { flex:0 0 auto !important; min-width:76px !important; text-align:center !important; font-size:0.82rem !important; padding:0.45rem 0.7rem !important; border-radius:999px !important; }
-    .sim-lite-hero { display:grid !important; grid-template-columns:112px minmax(0,1fr) !important; align-items:center !important; gap:1rem !important; margin-top:0.8rem !important; }
-    .sim-lite-ring { width:94px !important; height:94px !important; margin:0 !important; }
-    .sim-lite-ring-inner { width:68px !important; height:68px !important; }
-    .sim-lite-ring-inner strong { font-size:1.35rem !important; line-height:1 !important; }
-    .sim-lite-ring-inner span { font-size:0.58rem !important; line-height:1.05 !important; }
-    .sim-lite-summary-title { font-size:0.95rem !important; line-height:1.25 !important; margin-bottom:0.35rem !important; }
-    .sim-lite-summary-copy { font-size:0.82rem !important; line-height:1.65 !important; max-width:100% !important; }
-    .sim-lite-top-note { padding:0.65rem 0.8rem !important; border-radius:16px !important; margin-top:0.75rem !important; }
-    .sim-lite-top-note-title { display:block !important; font-size:0.64rem !important; letter-spacing:0.13em !important; line-height:1.2 !important; margin-bottom:0.38rem !important; }
-    .sim-lite-top-note-copy { display:block !important; font-size:0.78rem !important; line-height:1.65 !important; }
-
-    .metric-grid-4 {
-        width: 100% !important;
-        max-width: 100% !important;
-        display: grid !important;
-        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-        gap: 0.85rem !important;
-        margin: 0 0 0.2rem 0 !important;
-        box-sizing: border-box !important;
-    }
-    .metric-beautiful-card { min-width:0 !important; width:100% !important; padding:0.82rem 0.62rem 0.76rem 0.62rem !important; border-radius:19px !important; box-shadow:0 10px 22px rgba(25,14,36,0.07) !important; }
-    .metric-beautiful-icon { width:42px !important; height:42px !important; border-radius:14px !important; margin-bottom:0.52rem !important; font-size:1rem !important; }
-    .metric-beautiful-label { min-height:2.15em !important; display:flex !important; align-items:center !important; justify-content:center !important; text-align:center !important; font-size:0.64rem !important; letter-spacing:0.105em !important; line-height:1.28 !important; margin-bottom:0.38rem !important; }
-    .metric-beautiful-value { font-size:1.65rem !important; line-height:1 !important; margin-bottom:0.28rem !important; }
-    .metric-beautiful-sub { font-size:0.66rem !important; line-height:1.2 !important; margin-bottom:0.38rem !important; }
-    .metric-beautiful-desc { min-height:2.65em !important; display:flex !important; align-items:center !important; justify-content:center !important; font-size:0.68rem !important; line-height:1.35 !important; text-align:center !important; padding-top:0.45rem !important; margin-top:0.45rem !important; }
-    @media (max-width: 1100px) { .metric-grid-4 { gap:0.65rem !important; } .metric-beautiful-card { padding-left:0.45rem !important; padding-right:0.45rem !important; } .metric-beautiful-value { font-size:1.45rem !important; } .metric-beautiful-label { font-size:0.58rem !important; } .metric-beautiful-desc { font-size:0.62rem !important; } }
-    @media (max-width: 900px) { .sim-lite-hero { grid-template-columns:90px minmax(0,1fr) !important; } .sim-lite-ring { width:82px !important; height:82px !important; } .sim-lite-ring-inner { width:60px !important; height:60px !important; } .metric-grid-4 { grid-template-columns:repeat(2,minmax(0,1fr)) !important; } }
-    @media (max-width: 520px) { .sim-lite-hero { grid-template-columns:1fr !important; } .sim-lite-ring { margin:0 auto !important; } .metric-grid-4 { grid-template-columns:1fr !important; } }
-
     </style>
     """, unsafe_allow_html=True)
 
@@ -2403,19 +2717,23 @@ with tab1:
             if not selected_model or not available_models or selected_model not in available_models:
                 selected_model = available_models[0] if available_models else ""
 
-            # Compact dataset loader: one clear job, less repeated explanation
+            # ── Redesigned Dataset Loader Card ───────────────────────────────
             st.markdown(_html("""
-            <div class='dataset-loader-clean'>
-                <div class='dataset-loader-left'>
-                    <div class='dataset-loader-kicker'>Dataset</div>
-                    <div class='dataset-loader-title'>Load a saved answer</div>
+            <div class='ds-loader-card-v3'>
+                <div class='ds-loader-v3-head'>
+                    <div>
+                        <div class='ds-loader-v3-kicker'>Dataset Quick Load</div>
+                        <div class='ds-loader-v3-title'>Load a saved Q&amp;A from dataset</div>
+                    </div>
+                    <div class='ds-loader-v3-badge'>⬇ Quick Load</div>
                 </div>
-                <div class='dataset-loader-help'>Choose a question and model, then load it into the editor.</div>
+                <div class='ds-loader-v3-hint'>Select a question and model below — the question and AI answer will be shown as a preview before you load.</div>
             </div>
             """), unsafe_allow_html=True)
 
             ctrl1, ctrl2, ctrl3 = st.columns([0.48, 0.32, 0.20], gap="small")
             with ctrl1:
+                st.markdown("<div class='ds-col-label'>📋 Question</div>", unsafe_allow_html=True)
                 selected_question_text = st.selectbox(
                     "Question",
                     options=list(question_options.keys()),
@@ -2424,6 +2742,7 @@ with tab1:
                     label_visibility="collapsed"
                 )
             with ctrl2:
+                st.markdown("<div class='ds-col-label'>🤖 AI Model</div>", unsafe_allow_html=True)
                 selected_model = st.selectbox(
                     "AI Model",
                     options=available_models,
@@ -2432,8 +2751,9 @@ with tab1:
                     label_visibility="collapsed"
                 )
             with ctrl3:
+                st.markdown("<div class='ds-col-label'>⚡ Action</div>", unsafe_allow_html=True)
                 load_btn = st.button(
-                    "Load",
+                    "Load →",
                     use_container_width=True,
                     key="ds_load_btn_primary",
                     help="Load the selected response"
@@ -2442,14 +2762,20 @@ with tab1:
             selected_qid = question_options[selected_question_text]
             question_subset = ai_answer_df[ai_answer_df["question_id"] == selected_qid].copy()
             selected_match = question_subset[question_subset["model"] == selected_model]
-            selected_answer_preview = selected_match.iloc[0]["ai_answer_raw"] if not selected_match.empty else "No saved response found for this model."
 
-            render_dataset_answer_preview(
-                question_text=selected_question_text,
-                answer_text=selected_answer_preview,
-                model_name=selected_model,
-                qid=selected_qid,
-            )
+            # ── Question Preview Panel (model chip shown inline, no answer block) ──
+            preview_q_text = selected_question_text or "-"
+            preview_q_short = (preview_q_text[:220] + "...") if len(preview_q_text) > 220 else preview_q_text
+            model_chip_html = f"<span class='ds-qa-model-chip'>{html.escape(selected_model)}</span>"
+
+            st.markdown(_html(f"""
+            <div class='ds-qa-preview'>
+                <div class='ds-qa-row'>
+                    <div class='ds-qa-label ds-qa-q-label'>Question {model_chip_html}</div>
+                    <div class='ds-qa-text ds-qa-q-text'>{html.escape(preview_q_short)}</div>
+                </div>
+            </div>
+            """), unsafe_allow_html=True)
 
             if load_btn:
                 if not selected_match.empty:
@@ -2459,26 +2785,36 @@ with tab1:
                 else:
                     st.warning(f"⚠️ No saved response found for model '{selected_model}'")
 
-            st.markdown("<div style='height:0.4rem;'></div>", unsafe_allow_html=True)
+            st.markdown("<div style='height:0.5rem;'></div>", unsafe_allow_html=True)
 
-        # ── Text area ─────────────────────────────────────────────────────────
-        st.markdown(_html("""
-            <div class='input-editor-v3-shell'>
-                <div class='input-editor-v3-head'>
+        # ── Redesigned User Input Area ────────────────────────────────────────
+        current_ai_input = st.session_state.get("ai_input", "")
+        input_has_content = bool(current_ai_input and current_ai_input.strip())
+        word_count = len(current_ai_input.split()) if input_has_content else 0
+
+        st.markdown(_html(f"""
+        <div class='ai-input-card {"ai-input-card--filled" if input_has_content else ""}'>
+            <div class='ai-input-card-header'>
+                <div class='ai-input-card-header-left'>
+                    <div class='ai-input-card-icon'>✍️</div>
                     <div>
-                        <div class='input-editor-v3-kicker'>Your response</div>
-                        <div class='input-editor-v3-title'>AI answer editor</div>
+                        <div class='ai-input-card-kicker'>AI RESPONSE TO CHECK</div>
+                        <div class='ai-input-card-title'>Paste or load the answer below</div>
                     </div>
-                    <div class='input-editor-v3-chip'>Editable</div>
+                </div>
+                <div class='ai-input-card-meta'>
+                    {"<span class='ai-input-wc'>" + str(word_count) + " words</span>" if input_has_content else "<span class='ai-input-hint-chip'>No input yet</span>"}
+                    <span class='ai-input-badge'>Single review</span>
                 </div>
             </div>
+        </div>
         """), unsafe_allow_html=True)
 
-        st.markdown('<div class="input-editor-v3-body">', unsafe_allow_html=True)
+        st.markdown('<div class="ai-input-textarea-wrap">', unsafe_allow_html=True)
         ai_response = st.text_area(
             "AI Response Input",
-            height=165,
-            placeholder="Paste the AI-generated answer here. You can load one from the dataset, then edit it manually before analysis.",
+            height=130,
+            placeholder='Example: "In Islam, surrogacy is generally not permitted because it can mix lineages..."\n\nPaste your full AI-generated answer here. Longer answers give more accurate scores.',
             key="ai_input",
             label_visibility="collapsed"
         )
@@ -2502,7 +2838,6 @@ with tab1:
         </div>
         """, unsafe_allow_html=True)
         st.markdown("<div class='single-review-right-col'>", unsafe_allow_html=True)
-        render_input_preview(st.session_state.get("ai_input", ""))
         if st.session_state.get("current_analysis"):
             render_similarity_breakdown(st.session_state["current_analysis"])
         else:
@@ -2622,7 +2957,6 @@ with tab1:
                     "recommendation_reason": recommendation_reason,
                     "compliance_level": compliance_level,
                     "compliance_reason": compliance_reason,
-                    "ai_response": ai_response,
                     "fatwa_text": best_state.get("fatwa_text", ""),
                     "issue_name": best_state.get("issue", ""),
                     "matched_list": best_state.get("matched_keywords", "-").split(", ") if best_state.get("matched_keywords", "-") != "-" else [],
@@ -2653,26 +2987,46 @@ with tab1:
             else "Show the larger evidence cards, source card, score guide, and key points."
         )
         detail_icon = "▲" if st.session_state["show_detail_cards"] else "▼"
+        detail_panel_class = "detail-toggle-card detail-toggle-card-open" if st.session_state["show_detail_cards"] else "detail-toggle-card"
+
         st.markdown(_html(f"""
-        <div class='detail-clean-row'>
-            <div class='detail-clean-main'>
-                <div class='detail-clean-label'>Detailed evidence</div>
-                <div class='detail-clean-copy'>Fatwa source, score guide, matched keywords, missing keywords, and technical comparison.</div>
-            </div>
-            <div class='detail-clean-meta'>
-                <span>{html.escape(result_label_preview)}</span>
-                <span>{format_percent(final_match_score_preview, 1)}</span>
+        <div class='tab1-section' style='margin-top:1rem;'>
+            <div class='tab1-section-header'>
+                <div class='tab1-section-step'>3</div>
+                <div class='tab1-section-title'>Detailed review</div>
+                <div class='tab1-section-rule'></div>
             </div>
         </div>
         """), unsafe_allow_html=True)
 
-        detail_btn_col, detail_space_col = st.columns([0.22, 0.78], gap="small")
-        with detail_btn_col:
-            st.markdown("<div class='detail-clean-button-wrap'>", unsafe_allow_html=True)
-            if st.button(f"{detail_icon} {detail_button_label}", key="detail_toggle_btn", use_container_width=True, help=detail_button_help):
-                st.session_state["show_detail_cards"] = not st.session_state["show_detail_cards"]
-                st.rerun()
-            st.markdown("</div>", unsafe_allow_html=True)
+        # ── Inline detail toggle card — full width, button embedded ──────────
+        tone_preview = score_status_color(final_match_score_preview)
+        detail_open = st.session_state["show_detail_cards"]
+        st.markdown(_html(f"""
+        <div class='detail-inline-card {"detail-inline-card--open" if detail_open else ""}'>
+            <div class='detail-inline-left'>
+                <div class='detail-inline-icon' style='background:linear-gradient(135deg,#773344,#D44D5C);'>{detail_icon}</div>
+                <div>
+                    <div class='detail-inline-kicker'>Evidence Drawer</div>
+                    <div class='detail-inline-title'>Detailed Review &amp; Fatwa Evidence</div>
+                    <div class='detail-inline-sub'>Source card, score guide, and key points are nested below.</div>
+                </div>
+            </div>
+            <div class='detail-inline-chips'>
+                <span class='detail-chip' style='color:{tone_preview};border-color:{tone_preview};background:{tone_preview}12;'>{html.escape(result_label_preview)}</span>
+                <span class='detail-chip'>{format_percent(final_match_score_preview, 1)}</span>
+                <span class='detail-chip detail-chip--state'>{"▲ Collapse" if detail_open else "▼ Expand"}</span>
+            </div>
+        </div>
+        """), unsafe_allow_html=True)
+        if st.button(
+            ("▲  Hide detailed review" if detail_open else "▼  View detailed review"),
+            key="detail_toggle_btn",
+            use_container_width=True,
+            help=detail_button_help
+        ):
+            st.session_state["show_detail_cards"] = not st.session_state["show_detail_cards"]
+            st.rerun()
 
         if st.session_state["show_detail_cards"]:
             st.markdown("<div class='detail-drawer-body'>", unsafe_allow_html=True)
