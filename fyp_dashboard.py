@@ -587,14 +587,165 @@ def apply_dashboard_polish():
            
 
 
-    /* ===== CLEAN DETAIL DRAWER CONTROL ===== */
+    /* ===== POLISHED DETAIL DRAWER CONTROL ===== */
+    .detail-toggle-card {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        gap: 0.85rem;
+        align-items: center;
+        background: linear-gradient(135deg, #ffffff 0%, #fff7f4 100%);
+        border: 1px solid #ead1c8;
+        border-left: 5px solid #773344;
+        border-radius: 20px;
+        padding: 0.85rem 1rem;
+        box-shadow: 0 10px 22px rgba(25, 14, 36, 0.055);
+        margin: 0.4rem 0 0.8rem 0;
+    }
+
+    .detail-toggle-card-open {
+        border-left-color: #D44D5C;
+        background: linear-gradient(135deg, #ffffff 0%, #fff2ef 100%);
+    }
+
+    .detail-toggle-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #773344 0%, #D44D5C 100%);
+        color: #ffffff;
+        font-size: 0.9rem;
+        font-weight: 900;
+        box-shadow: 0 8px 16px rgba(119, 51, 68, 0.18);
+    }
+
+    .detail-toggle-kicker {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        padding: 0.18rem 0.55rem;
+        border-radius: 999px;
+        background: #f7ece7;
+        border: 1px solid #ead1c8;
+        color: #8b3b50;
+        font-size: 0.62rem;
+        font-weight: 850;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        margin-bottom: 0.22rem;
+    }
+
+    .detail-toggle-title {
+        font-family: 'Inter Tight', 'Inter', sans-serif;
+        font-size: 1rem;
+        font-weight: 850;
+        color: #241226;
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+    }
+
+    .detail-toggle-sub {
+        color: #6d5a68;
+        font-size: 0.76rem;
+        line-height: 1.5;
+        margin-top: 0.22rem;
+    }
+
+    .detail-toggle-chips {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.42rem;
+        flex-wrap: wrap;
+    }
+
+    .detail-toggle-chips span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.32rem 0.65rem;
+        border-radius: 999px;
+        background: #ffffff;
+        border: 1px solid #ead1c8;
+        color: #773344;
+        font-size: 0.7rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .detail-toggle-button-wrap {
+        margin-top: 0.4rem;
+    }
+
+    .detail-toggle-button-wrap .stButton > button {
+        min-height: 64px !important;
+        border-radius: 18px !important;
+        background: linear-gradient(135deg, #160029 0%, #773344 56%, #D44D5C 100%) !important;
+        box-shadow: 0 10px 22px rgba(119, 51, 68, 0.2) !important;
+        font-size: 0.78rem !important;
+        font-weight: 850 !important;
+    }
+
     .detail-drawer-body {
-        margin-top: 0.35rem;
+        margin-top: 0.25rem;
         padding: 0.75rem;
         border: 1px solid #ead1c8;
-        border-radius: 22px;
-        background: linear-gradient(180deg, rgba(255,255,255,0.78) 0%, rgba(255,248,244,0.92) 100%);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.65), 0 8px 20px rgba(25,14,36,0.045);
+        border-radius: 24px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.74) 0%, rgba(255,248,244,0.92) 100%);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.65);
+    }
+
+    @media (max-width: 900px) {
+        .detail-toggle-card {
+            grid-template-columns: auto 1fr;
+        }
+        .detail-toggle-chips {
+            grid-column: 1 / -1;
+            justify-content: flex-start;
+        }
+    }
+
+    /* ===== UNIFIED INPUT EDITOR CARD V2 ===== */
+    /* Header part — top of the card, rounded top only */
+    .input-editor-shell-v2 {
+        background: linear-gradient(180deg, #fefcfe 0%, #f8f0f6 100%);
+        border: 1px solid #dfd7e4;
+        border-bottom: none;
+        border-radius: 16px 16px 0 0;
+        padding: 0.7rem 0.9rem 0.65rem 0.9rem;
+        margin: 0.2rem 0 0 0;
+        box-shadow: 0 4px 14px rgba(25,14,36,0.04);
+        transition: all 0.3s ease;
+    }
+
+    .input-editor-v2-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 0.7rem;
+    }
+
+    /* Body wrapper — bottom of the card, rounded bottom only */
+    .input-editor-v2-body {
+        margin: 0 0 0.45rem 0;
+    }
+
+    /* Make the textarea connect seamlessly to the header */
+    .input-editor-v2-body [data-testid="stTextArea"] > div > div,
+    .input-editor-v2-body [data-baseweb="textarea"],
+    .input-editor-v2-body textarea {
+        border-radius: 0 0 14px 14px !important;
+        border: 1px solid #dfd7e4 !important;
+        border-top: 1px solid #e8ddf0 !important;
+        margin-top: 0 !important;
+        background: #ffffff !important;
+        color: #2a1421 !important;
+        box-shadow: 0 4px 14px rgba(25,14,36,0.04) !important;
+    }
+
+    .input-editor-v2-body [data-testid="stTextArea"] {
+        margin-top: 0 !important;
     }
 
     /* ===== UNIFIED INPUT EDITOR CARD V2 ===== */
@@ -606,6 +757,7 @@ def apply_dashboard_polish():
         padding: 0.7rem 0.9rem 0.65rem 0.9rem;
         margin: 0.2rem 0 0 0;
         box-shadow: 0 4px 14px rgba(25,14,36,0.04);
+        transition: all 0.3s ease;
     }
 
     .input-editor-v2-head {
@@ -615,7 +767,10 @@ def apply_dashboard_polish():
         gap: 0.7rem;
     }
 
-    .input-editor-v2-body { margin: 0 0 0.45rem 0; }
+    /* Make the textarea flush-connect to the header */
+    .input-editor-v2-body {
+        margin: 0 0 0.45rem 0;
+    }
 
     .input-editor-v2-body [data-testid="stTextArea"] > div > div,
     .input-editor-v2-body [data-baseweb="textarea"],
@@ -635,258 +790,269 @@ def apply_dashboard_polish():
         padding-top: 0 !important;
     }
 
-    /* ===== DETAIL BUTTON V3: compact professional drawer trigger ===== */
-    .detail-toggle-button-wrap { margin: 0.15rem 0 0.85rem 0; }
+    /* ===== IMPROVED DETAIL DRAWER BUTTON ===== */
+    .detail-toggle-button-wrap {
+        height: 100%;
+        display: flex;
+        align-items: stretch;
+    }
+
+    .detail-toggle-button-wrap .stButton {
+        width: 100%;
+        height: 100%;
+    }
 
     .detail-toggle-button-wrap .stButton > button {
-        min-height: 42px !important;
-        border-radius: 14px !important;
-        background: linear-gradient(135deg, #160029 0%, #773344 68%, #B24758 100%) !important;
-        box-shadow: 0 8px 18px rgba(119, 51, 68, 0.18) !important;
-        font-size: 0.78rem !important;
-        font-weight: 850 !important;
+        height: 100% !important;
+        min-height: 76px !important;
+        border-radius: 18px !important;
+        background: linear-gradient(160deg, #160029 0%, #773344 55%, #D44D5C 100%) !important;
+        box-shadow: 0 8px 20px rgba(119, 51, 68, 0.22) !important;
+        font-size: 0.8rem !important;
+        font-weight: 800 !important;
         letter-spacing: 0.01em !important;
+        transition: all 0.25s ease !important;
         white-space: normal !important;
-        line-height: 1.25 !important;
-        border: 1px solid rgba(255,255,255,0.10) !important;
+        line-height: 1.35 !important;
     }
 
     .detail-toggle-button-wrap .stButton > button:hover {
-        box-shadow: 0 12px 24px rgba(119, 51, 68, 0.26) !important;
-        transform: translateY(-1px) !important;
-        background: linear-gradient(135deg, #24103a 0%, #8a3b50 68%, #D44D5C 100%) !important;
+        box-shadow: 0 12px 28px rgba(119, 51, 68, 0.32) !important;
+        transform: translateY(-2px) !important;
     }
 
-    /* ===== FYP REDESIGN: compact dataset and input preview cards ===== */
-    .fyp-compact-preview {
+    /* ===== REDESIGNED DATASET LOADER V3 ===== */
+    .ds-loader-card-v3 {
+        background: linear-gradient(135deg, #ffffff 0%, #fdf5f8 100%);
+        border: 1px solid #e2c8d4;
+        border-left: 4px solid #773344;
+        border-radius: 16px;
+        padding: 0.9rem 1rem 0.75rem 1rem;
+        margin-bottom: 0.5rem;
+        box-shadow: 0 4px 14px rgba(119,51,68,0.07);
+    }
+    .ds-loader-v3-head {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        margin-bottom: 0.4rem;
+    }
+    .ds-loader-v3-kicker {
+        font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em;
+        text-transform: uppercase; color: #a3195b; margin-bottom: 0.12rem;
+    }
+    .ds-loader-v3-title {
+        font-family: 'Inter Tight','Inter',sans-serif;
+        font-size: 0.9rem; font-weight: 800; color: #241226; letter-spacing: -0.01em;
+    }
+    .ds-loader-v3-badge {
+        margin-left: auto;
+        padding: 0.25rem 0.7rem;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #773344, #D44D5C);
+        color: #fff; font-size: 0.65rem; font-weight: 800;
+        white-space: nowrap;
+        box-shadow: 0 3px 8px rgba(119,51,68,0.25);
+    }
+    .ds-loader-v3-hint {
+        font-size: 0.72rem; color: #7a6874; line-height: 1.45; margin-top: 0.1rem;
+    }
+    .ds-col-label {
+        font-size: 0.62rem; font-weight: 800; text-transform: uppercase;
+        letter-spacing: 0.09em; color: #8b6771; margin-bottom: 0.22rem;
+    }
+
+    /* ===== Q&A PREVIEW PANEL — larger, more readable ===== */
+    .ds-qa-preview {
+        background: linear-gradient(180deg, #fffcfe 0%, #faf4f8 100%);
+        border: 1px solid #e0ccd8;
+        border-radius: 14px;
+        padding: 0.85rem 1rem;
+        margin: 0.5rem 0 0.2rem 0;
+        box-shadow: 0 3px 10px rgba(119,51,68,0.06);
+    }
+    .ds-qa-row { margin-bottom: 0.15rem; }
+    .ds-qa-divider {
+        height: 1px;
+        background: linear-gradient(90deg, #ddc8d4, transparent);
+        margin: 0.65rem 0;
+    }
+    .ds-qa-label {
+        font-size: 0.62rem; font-weight: 900; text-transform: uppercase;
+        letter-spacing: 0.1em; margin-bottom: 0.3rem;
+        display: flex; align-items: center; gap: 0.4rem;
+    }
+    .ds-qa-q-label { color: #773344; }
+    .ds-qa-a-label { color: #2a6b48; }
+    .ds-qa-text {
+        font-size: 0.84rem; line-height: 1.65; border-radius: 10px;
+        padding: 0.55rem 0.8rem; color: #241226;
+    }
+    .ds-qa-q-text {
+        background: #fdf0f3; color: #2a1421;
+        border-left: 3px solid #D44D5C;
+        font-weight: 500;
+    }
+    .ds-qa-a-text {
+        background: #f0faf5; color: #102a1e;
+        border-left: 3px solid #06A77D;
+        font-weight: 400;
+        max-height: 120px;
+        overflow-y: auto;
+    }
+    .ds-qa-model-chip {
+        display: inline-block;
+        background: #d6f0e4; color: #1d6640;
+        padding: 0.12rem 0.5rem; border-radius: 999px;
+        font-size: 0.6rem; font-weight: 800; margin-left: 0.3rem;
+        text-transform: none; letter-spacing: 0;
+    }
+
+    /* ===== REDESIGNED AI INPUT CARD ===== */
+    .ai-input-card {
+        background: linear-gradient(180deg, #fefcfe 0%, #f8f0f6 100%);
+        border: 1.5px solid #dfd7e4;
+        border-bottom: none;
+        border-radius: 16px 16px 0 0;
+        padding: 0.75rem 1rem 0.6rem 1rem;
+        margin-top: 0.7rem;
+        box-shadow: 0 4px 14px rgba(25,14,36,0.04);
+        transition: all 0.2s ease;
+    }
+    .ai-input-card--filled {
+        border-color: #c8a8d4;
+        border-left-color: #773344;
+        border-left-width: 4px;
+        background: linear-gradient(180deg, #fdf9ff 0%, #f5ecf9 100%);
+    }
+    .ai-input-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.7rem;
+    }
+    .ai-input-card-header-left {
+        display: flex; align-items: center; gap: 0.6rem;
+    }
+    .ai-input-card-icon {
+        width: 30px; height: 30px;
+        background: linear-gradient(135deg, #773344, #D44D5C);
+        border-radius: 9px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.8rem; flex-shrink: 0;
+        box-shadow: 0 3px 8px rgba(119,51,68,0.2);
+    }
+    .ai-input-card-kicker {
+        font-size: 0.58rem; font-weight: 900; text-transform: uppercase;
+        letter-spacing: 0.12em; color: #a3195b; margin-bottom: 0.1rem;
+    }
+    .ai-input-card-title {
+        font-family: 'Inter Tight','Inter',sans-serif;
+        font-size: 0.85rem; font-weight: 800; color: #241226; letter-spacing: -0.01em;
+    }
+    .ai-input-card-meta {
+        display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; flex-shrink: 0;
+    }
+    .ai-input-wc {
+        padding: 0.22rem 0.6rem; border-radius: 999px;
+        background: #e8dff0; color: #5a3873;
+        font-size: 0.63rem; font-weight: 800;
+    }
+    .ai-input-hint-chip {
+        padding: 0.22rem 0.6rem; border-radius: 999px;
+        background: #f5ece7; color: #8b6771;
+        font-size: 0.63rem; font-weight: 700; font-style: italic;
+    }
+    .ai-input-badge {
+        padding: 0.22rem 0.6rem; border-radius: 999px;
+        background: linear-gradient(135deg, #773344, #D44D5C);
+        color: #fff; font-size: 0.62rem; font-weight: 800;
+        box-shadow: 0 2px 6px rgba(119,51,68,0.22);
+    }
+    /* Textarea flush-connect to header */
+    .ai-input-textarea-wrap [data-testid="stTextArea"] > div > div,
+    .ai-input-textarea-wrap [data-baseweb="textarea"],
+    .ai-input-textarea-wrap textarea {
+        border-radius: 0 0 14px 14px !important;
+        border: 1.5px solid #dfd7e4 !important;
+        border-top: 1px solid #ede0f5 !important;
+        background: #ffffff !important;
+        color: #2a1421 !important;
+        -webkit-text-fill-color: #2a1421 !important;
+        box-shadow: 0 6px 16px rgba(25,14,36,0.05) !important;
+        margin-top: 0 !important;
+        font-size: 0.85rem !important;
+        line-height: 1.65 !important;
+    }
+    .ai-input-textarea-wrap [data-testid="stTextArea"] {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+
+    /* ===== REDESIGNED INLINE DETAIL TOGGLE ===== */
+    .detail-inline-card {
         background: linear-gradient(135deg, #ffffff 0%, #fff7f4 100%);
         border: 1px solid #ead1c8;
-        border-radius: 20px;
-        padding: 0.85rem 0.95rem;
-        box-shadow: 0 8px 20px rgba(25,14,36,0.055);
-        margin: 0.55rem 0 0.65rem 0;
-        position: relative;
-        overflow: hidden;
-    }
-    .fyp-compact-preview::before {
-        content: '';
-        position: absolute;
-        inset: 0 auto 0 0;
-        width: 5px;
-        background: linear-gradient(180deg, #160029 0%, #773344 45%, #D44D5C 100%);
-    }
-    .fyp-preview-head {
+        border-left: 5px solid #773344;
+        border-radius: 16px;
+        padding: 0.8rem 1rem;
+        margin: 1rem 0 0.3rem 0;
+        box-shadow: 0 6px 18px rgba(25,14,36,0.05);
         display: flex;
-        justify-content: space-between;
-        gap: 0.75rem;
-        align-items: flex-start;
-        margin-bottom: 0.55rem;
-        padding-left: 0.35rem;
-    }
-    .fyp-preview-kicker {
-        display: inline-flex;
         align-items: center;
-        width: fit-content;
-        padding: 0.18rem 0.55rem;
-        border-radius: 999px;
-        background: #f7ece7;
-        border: 1px solid #ead1c8;
-        color: #8b3b50;
-        font-size: 0.62rem;
-        font-weight: 850;
-        letter-spacing: 0.09em;
-        text-transform: uppercase;
-        margin-bottom: 0.24rem;
+        gap: 1rem;
+        transition: all 0.2s ease;
     }
-    .fyp-preview-title {
-        font-family: 'Inter Tight', 'Inter', sans-serif;
-        font-size: 0.98rem;
-        font-weight: 850;
-        color: #241226;
-        letter-spacing: -0.02em;
-        line-height: 1.18;
+    .detail-inline-card--open {
+        border-left-color: #D44D5C;
+        background: linear-gradient(135deg, #ffffff 0%, #fff2ef 100%);
     }
-    .fyp-preview-chip {
-        flex-shrink: 0;
-        padding: 0.32rem 0.65rem;
-        border-radius: 999px;
-        background: #ffffff;
-        border: 1px solid #ead1c8;
-        color: #773344;
-        font-size: 0.68rem;
-        font-weight: 800;
-        white-space: nowrap;
+    .detail-inline-left {
+        display: flex; align-items: center; gap: 0.7rem; flex: 1; min-width: 0;
     }
-    .fyp-preview-grid {
-        display: grid;
-        grid-template-columns: 0.9fr 1.1fr;
-        gap: 0.6rem;
-        padding-left: 0.35rem;
+    .detail-inline-icon {
+        width: 36px; height: 36px; border-radius: 12px; flex-shrink: 0;
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; font-size: 0.9rem; font-weight: 900;
+        box-shadow: 0 6px 14px rgba(119,51,68,0.18);
     }
-    .fyp-preview-panel {
-        background: rgba(255,255,255,0.78);
-        border: 1px solid #efe0da;
-        border-radius: 14px;
-        padding: 0.7rem 0.75rem;
-        min-height: 92px;
+    .detail-inline-kicker {
+        font-size: 0.58rem; font-weight: 900; letter-spacing: 0.1em;
+        text-transform: uppercase; color: #a3195b; margin-bottom: 0.1rem;
     }
-    .fyp-preview-label {
-        color: #8b6771;
-        font-size: 0.63rem;
-        font-weight: 850;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        margin-bottom: 0.35rem;
-    }
-    .fyp-preview-text {
-        color: #2a1421;
-        font-size: 0.78rem;
-        line-height: 1.55;
-        word-break: break-word;
-    }
-    .fyp-input-preview-card {
-        background: linear-gradient(135deg, #160029 0%, #4a1830 58%, #773344 100%);
-        border-radius: 22px;
-        padding: 0.9rem;
-        box-shadow: 0 12px 28px rgba(22,0,41,0.18);
-        border: 1px solid rgba(255,255,255,0.08);
-        margin-bottom: 0.75rem;
-    }
-    .fyp-input-preview-card * { color: #ffffff !important; }
-    .fyp-input-preview-top {
-        display: flex;
-        justify-content: space-between;
-        gap: 0.75rem;
-        align-items: flex-start;
-        margin-bottom: 0.55rem;
-    }
-    .fyp-input-preview-kicker {
-        display: inline-flex;
-        padding: 0.18rem 0.55rem;
-        border-radius: 999px;
-        background: rgba(255,255,255,0.10);
-        border: 1px solid rgba(255,255,255,0.16);
-        color: #ffd2dc !important;
-        font-size: 0.62rem;
-        font-weight: 850;
-        letter-spacing: 0.09em;
-        text-transform: uppercase;
-        margin-bottom: 0.25rem;
-    }
-    .fyp-input-preview-title {
-        font-family: 'Inter Tight', 'Inter', sans-serif;
-        font-size: 1rem;
-        font-weight: 850;
+    .detail-inline-title {
+        font-family: 'Inter Tight','Inter',sans-serif;
+        font-size: 0.92rem; font-weight: 850; color: #241226; letter-spacing: -0.01em;
         line-height: 1.2;
     }
-    .fyp-input-preview-count {
-        padding: 0.3rem 0.6rem;
-        border-radius: 999px;
-        background: rgba(255,255,255,0.10);
-        border: 1px solid rgba(255,255,255,0.16);
-        font-size: 0.68rem;
-        font-weight: 800;
-        white-space: nowrap;
+    .detail-inline-sub {
+        font-size: 0.7rem; color: #7a6874; margin-top: 0.1rem;
     }
-    .fyp-input-preview-body {
-        background: rgba(255,255,255,0.08);
-        border: 1px solid rgba(255,255,255,0.12);
-        border-radius: 16px;
-        padding: 0.75rem 0.85rem;
-        color: rgba(255,255,255,0.86) !important;
-        font-size: 0.78rem;
-        line-height: 1.6;
-        max-height: 150px;
-        overflow: auto;
-        word-break: break-word;
-        white-space: pre-wrap;
+    .detail-inline-chips {
+        display: flex; gap: 0.4rem; flex-wrap: wrap; flex-shrink: 0;
     }
-    .fyp-detail-action-row {
-        display: grid;
-        grid-template-columns: auto minmax(0, 1fr) auto;
-        gap: 0.75rem;
-        align-items: center;
-        background: linear-gradient(135deg, #ffffff 0%, #fff8f5 100%);
-        border: 1px solid #ead1c8;
-        border-radius: 18px;
-        padding: 0.72rem 0.82rem;
-        box-shadow: 0 8px 20px rgba(25,14,36,0.05);
-        margin: 0.85rem 0 0.45rem 0;
-        position: relative;
-        overflow: hidden;
+    .detail-chip {
+        padding: 0.28rem 0.62rem; border-radius: 999px;
+        background: #fff; border: 1px solid #ead1c8;
+        color: #773344; font-size: 0.68rem; font-weight: 800; white-space: nowrap;
     }
-    .fyp-detail-action-row::before {
-        content: '';
-        position: absolute;
-        inset: 0 auto 0 0;
-        width: 4px;
-        background: linear-gradient(180deg, #160029 0%, #773344 52%, #D44D5C 100%);
+    .detail-chip--state {
+        background: linear-gradient(135deg, #773344, #D44D5C);
+        color: #fff; border-color: transparent;
+        box-shadow: 0 3px 8px rgba(119,51,68,0.22);
     }
-    .fyp-detail-action-icon {
-        width: 38px;
-        height: 38px;
-        border-radius: 14px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: linear-gradient(135deg, #160029 0%, #773344 100%);
-        color: #ffffff;
-        font-weight: 900;
-        box-shadow: 0 8px 16px rgba(119,51,68,0.18);
-        margin-left: 0.25rem;
+    /* Detail toggle button — slim full-width style */
+    .stButton > button[data-testid*="detail_toggle"] {
+        border-radius: 12px !important;
+        min-height: 38px !important;
+        font-size: 0.78rem !important;
+        font-weight: 800 !important;
+        background: linear-gradient(135deg, #160029 0%, #773344 55%, #D44D5C 100%) !important;
+        box-shadow: 0 6px 16px rgba(119,51,68,0.18) !important;
+        margin-bottom: 0.5rem !important;
     }
-    .fyp-detail-action-title {
-        font-family: 'Inter Tight', 'Inter', sans-serif;
-        font-size: 0.96rem;
-        font-weight: 850;
-        color: #241226;
-        margin-bottom: 0.12rem;
-        letter-spacing: -0.015em;
-    }
-    .fyp-detail-action-copy {
-        font-size: 0.74rem;
-        line-height: 1.48;
-        color: #6d5a68;
-        max-width: 760px;
-    }
-    @media (max-width: 900px) {
-        .fyp-preview-grid { grid-template-columns: 1fr; }
-        .fyp-detail-action-row { grid-template-columns: auto 1fr; }
-        .fyp-detail-action-row .detail-toggle-chips { grid-column: 1 / -1; justify-content: flex-start; }
-    }
-    
 
-    /* ===== FINAL CLEAN PASS: less redundancy, stronger hierarchy ===== */
-    .dataset-loader-clean { display:flex; justify-content:space-between; align-items:center; gap:0.8rem; background:#ffffff; border:1px solid #eadce5; border-radius:18px; padding:0.8rem 0.95rem; box-shadow:0 6px 16px rgba(25,14,36,0.045); margin:0.35rem 0 0.65rem 0; }
-    .dataset-loader-kicker, .input-editor-v3-kicker, .detail-clean-label, .dataset-inline-kicker { color:#9b3e55; font-size:0.64rem; font-weight:850; letter-spacing:0.11em; text-transform:uppercase; }
-    .dataset-loader-title, .input-editor-v3-title, .dataset-inline-title { font-family:'Inter Tight','Inter',sans-serif; color:#241226; font-size:1rem; font-weight:850; letter-spacing:-0.02em; line-height:1.2; margin-top:0.18rem; }
-    .dataset-loader-help { color:#77636f; font-size:0.76rem; line-height:1.45; text-align:right; max-width:330px; }
-    .dataset-inline-preview { background:#fffaf7; border:1px solid #ead1c8; border-radius:16px; padding:0.75rem 0.85rem; margin:0.55rem 0 0.65rem 0; box-shadow:0 6px 16px rgba(25,14,36,0.04); }
-    .dataset-inline-head { display:flex; align-items:flex-start; justify-content:space-between; gap:0.8rem; margin-bottom:0.55rem; }
-    .dataset-inline-status, .input-editor-v3-chip { flex-shrink:0; color:#773344; background:#ffffff; border:1px solid #ead1c8; border-radius:999px; padding:0.28rem 0.62rem; font-size:0.68rem; font-weight:800; white-space:nowrap; }
-    .dataset-inline-row { display:grid; grid-template-columns:78px minmax(0,1fr); gap:0.7rem; align-items:start; padding:0.48rem 0; border-top:1px solid #f0ded7; }
-    .dataset-inline-label { color:#8b6771; font-size:0.64rem; font-weight:850; letter-spacing:0.08em; text-transform:uppercase; }
-    .dataset-inline-text { color:#2a1421; font-size:0.78rem; line-height:1.55; word-break:break-word; }
-    .input-editor-v3-shell { background:#ffffff; border:1px solid #e6dbe4; border-bottom:none; border-radius:18px 18px 0 0; margin:0.35rem 0 0 0; box-shadow:0 6px 16px rgba(25,14,36,0.04); overflow:hidden; }
-    .input-editor-v3-head { display:flex; justify-content:space-between; align-items:center; gap:0.8rem; padding:0.7rem 0.9rem; background:#faf6f9; border-bottom:1px solid #eee3ea; }
-    .input-editor-v3-body { margin:0 0 0.7rem 0; }
-    .input-editor-v3-body [data-testid="stTextArea"] > div > div, .input-editor-v3-body [data-baseweb="textarea"], .input-editor-v3-body textarea { border-radius:0 0 18px 18px !important; border:1px solid #e6dbe4 !important; border-top:none !important; background:#ffffff !important; color:#2a1421 !important; -webkit-text-fill-color:#2a1421 !important; box-shadow:0 6px 16px rgba(25,14,36,0.04) !important; margin-top:0 !important; }
-    .input-editor-v3-body textarea { padding:0.9rem !important; font-size:0.86rem !important; line-height:1.65 !important; min-height:165px !important; }
-    .fyp-input-preview-card { background:#ffffff !important; border:1px solid #eadce5 !important; border-left:5px solid #773344 !important; border-radius:18px !important; box-shadow:0 8px 18px rgba(25,14,36,0.055) !important; padding:0.85rem 0.95rem !important; }
-    .fyp-input-preview-card * { color:inherit !important; }
-    .fyp-input-preview-kicker { color:#9b3e55 !important; background:transparent !important; border:none !important; padding:0 !important; }
-    .fyp-input-preview-title { color:#241226 !important; font-size:0.98rem !important; }
-    .fyp-input-preview-count { color:#773344 !important; background:#fff7f4 !important; border:1px solid #ead1c8 !important; }
-    .fyp-input-preview-body { background:#fbf7fa !important; border:1px solid #eadce5 !important; color:#2a1421 !important; max-height:132px !important; border-radius:14px !important; }
-    .detail-clean-row { display:flex; justify-content:space-between; align-items:center; gap:0.8rem; background:#ffffff; border:1px solid #eadce5; border-radius:16px; padding:0.72rem 0.85rem; margin:0.8rem 0 0.35rem 0; box-shadow:0 6px 16px rgba(25,14,36,0.04); }
-    .detail-clean-copy { color:#77636f; font-size:0.74rem; line-height:1.45; margin-top:0.16rem; }
-    .detail-clean-meta { display:flex; gap:0.35rem; flex-wrap:wrap; justify-content:flex-end; }
-    .detail-clean-meta span { color:#773344; background:#fff7f4; border:1px solid #ead1c8; border-radius:999px; padding:0.28rem 0.62rem; font-size:0.68rem; font-weight:800; white-space:nowrap; }
-    .detail-clean-button-wrap { margin:0.15rem 0 0.75rem 0; }
-    .detail-clean-button-wrap .stButton > button { min-height:38px !important; border-radius:999px !important; background:#773344 !important; box-shadow:0 6px 14px rgba(119,51,68,0.16) !important; font-size:0.76rem !important; font-weight:850 !important; }
-    .detail-clean-button-wrap .stButton > button:hover { background:#D44D5C !important; transform:translateY(-1px) !important; }
-    @media (max-width:900px) { .dataset-loader-clean, .detail-clean-row, .dataset-inline-head { flex-direction:column; align-items:flex-start; } .dataset-loader-help { text-align:left; max-width:none; } .dataset-inline-row { grid-template-columns:1fr; gap:0.2rem; } .detail-clean-meta { justify-content:flex-start; } }
-</style>
+    </style>
     """, unsafe_allow_html=True)
 
 
@@ -1772,53 +1938,6 @@ def clean_preview_text(text: str, max_len: int = 260) -> str:
     return text if len(text) <= max_len else text[: max_len - 3].rstrip() + "..."
 
 
-def render_dataset_answer_preview(question_text: str, answer_text: str, model_name: str, qid: str):
-    """Lean inline preview for the currently selected dataset item."""
-    question_preview = clean_preview_text(question_text or qid, 150)
-    answer_preview = clean_preview_text(answer_text, 210)
-    model_name = model_name or "Dataset"
-    qid = qid or "-"
-    st.markdown(_html(f"""
-    <div class='dataset-inline-preview'>
-        <div class='dataset-inline-head'>
-            <div>
-                <div class='dataset-inline-kicker'>Selected dataset item</div>
-                <div class='dataset-inline-title'>{html.escape(model_name)} · QID {html.escape(str(qid))}</div>
-            </div>
-            <div class='dataset-inline-status'>Preview only</div>
-        </div>
-        <div class='dataset-inline-row'>
-            <div class='dataset-inline-label'>Question</div>
-            <div class='dataset-inline-text'>{html.escape(question_preview)}</div>
-        </div>
-        <div class='dataset-inline-row dataset-inline-answer'>
-            <div class='dataset-inline-label'>Answer</div>
-            <div class='dataset-inline-text'>{html.escape(answer_preview)}</div>
-        </div>
-    </div>
-    """), unsafe_allow_html=True)
-
-def render_input_preview(input_text: str, source_label: str = "Manual input"):
-    """Show the exact current user input in a compact, professional preview card."""
-    raw_text = "" if input_text is None else str(input_text).strip()
-    preview = raw_text if raw_text else "Your pasted or loaded AI answer will appear here before and after analysis."
-    if len(preview) > 620:
-        preview = preview[:617].rstrip() + "..."
-    word_count = len(re.findall(r"\b\w+\b", raw_text)) if raw_text else 0
-    st.markdown(_html(f"""
-    <div class='fyp-input-preview-card'>
-        <div class='fyp-input-preview-top'>
-            <div>
-                <div class='fyp-input-preview-kicker'>User input</div>
-                <div class='fyp-input-preview-title'>Answer currently being reviewed</div>
-            </div>
-            <div class='fyp-input-preview-count'>{word_count} words</div>
-        </div>
-        <div class='fyp-input-preview-body'>{html.escape(preview)}</div>
-    </div>
-    """), unsafe_allow_html=True)
-
-
 def render_minimal_tab_intro(kicker: str, title: str, sentence: str = "", extra_class: str = ""):
     sentence_html = f"<div class='tab-minimal-copy'>{html.escape(sentence)}</div>" if sentence else ""
     hero_class = f"tab-minimal-hero {extra_class}".strip()
@@ -2333,19 +2452,23 @@ with tab1:
             if not selected_model or not available_models or selected_model not in available_models:
                 selected_model = available_models[0] if available_models else ""
 
-            # Compact dataset loader: one clear job, less repeated explanation
+            # ── Redesigned Dataset Loader Card ───────────────────────────────
             st.markdown(_html("""
-            <div class='dataset-loader-clean'>
-                <div class='dataset-loader-left'>
-                    <div class='dataset-loader-kicker'>Dataset</div>
-                    <div class='dataset-loader-title'>Load a saved answer</div>
+            <div class='ds-loader-card-v3'>
+                <div class='ds-loader-v3-head'>
+                    <div>
+                        <div class='ds-loader-v3-kicker'>Dataset Quick Load</div>
+                        <div class='ds-loader-v3-title'>Load a saved Q&amp;A from dataset</div>
+                    </div>
+                    <div class='ds-loader-v3-badge'>⬇ Quick Load</div>
                 </div>
-                <div class='dataset-loader-help'>Choose a question and model, then load it into the editor.</div>
+                <div class='ds-loader-v3-hint'>Select a question and model below — the question and AI answer will be shown as a preview before you load.</div>
             </div>
             """), unsafe_allow_html=True)
 
             ctrl1, ctrl2, ctrl3 = st.columns([0.48, 0.32, 0.20], gap="small")
             with ctrl1:
+                st.markdown("<div class='ds-col-label'>📋 Question</div>", unsafe_allow_html=True)
                 selected_question_text = st.selectbox(
                     "Question",
                     options=list(question_options.keys()),
@@ -2354,6 +2477,7 @@ with tab1:
                     label_visibility="collapsed"
                 )
             with ctrl2:
+                st.markdown("<div class='ds-col-label'>🤖 AI Model</div>", unsafe_allow_html=True)
                 selected_model = st.selectbox(
                     "AI Model",
                     options=available_models,
@@ -2362,8 +2486,9 @@ with tab1:
                     label_visibility="collapsed"
                 )
             with ctrl3:
+                st.markdown("<div class='ds-col-label'>⚡ Action</div>", unsafe_allow_html=True)
                 load_btn = st.button(
-                    "Load",
+                    "Load →",
                     use_container_width=True,
                     key="ds_load_btn_primary",
                     help="Load the selected response"
@@ -2372,14 +2497,26 @@ with tab1:
             selected_qid = question_options[selected_question_text]
             question_subset = ai_answer_df[ai_answer_df["question_id"] == selected_qid].copy()
             selected_match = question_subset[question_subset["model"] == selected_model]
-            selected_answer_preview = selected_match.iloc[0]["ai_answer_raw"] if not selected_match.empty else "No saved response found for this model."
 
-            render_dataset_answer_preview(
-                question_text=selected_question_text,
-                answer_text=selected_answer_preview,
-                model_name=selected_model,
-                qid=selected_qid,
-            )
+            # ── Question + Answer Preview Panel ──────────────────────────────
+            preview_q_text = selected_question_text or "—"
+            preview_a_text = selected_match.iloc[0]["ai_answer_raw"].strip() if not selected_match.empty else "No answer found for this model and question."
+            preview_a_short = (preview_a_text[:320] + "…") if len(preview_a_text) > 320 else preview_a_text
+            preview_q_short = (preview_q_text[:180] + "…") if len(preview_q_text) > 180 else preview_q_text
+
+            st.markdown(_html(f"""
+            <div class='ds-qa-preview'>
+                <div class='ds-qa-row'>
+                    <div class='ds-qa-label ds-qa-q-label'>Question</div>
+                    <div class='ds-qa-text ds-qa-q-text'>{html.escape(preview_q_short)}</div>
+                </div>
+                <div class='ds-qa-divider'></div>
+                <div class='ds-qa-row'>
+                    <div class='ds-qa-label ds-qa-a-label'>AI Answer <span class='ds-qa-model-chip'>{html.escape(selected_model)}</span></div>
+                    <div class='ds-qa-text ds-qa-a-text'>{html.escape(preview_a_short)}</div>
+                </div>
+            </div>
+            """), unsafe_allow_html=True)
 
             if load_btn:
                 if not selected_match.empty:
@@ -2389,26 +2526,36 @@ with tab1:
                 else:
                     st.warning(f"⚠️ No saved response found for model '{selected_model}'")
 
-            st.markdown("<div style='height:0.4rem;'></div>", unsafe_allow_html=True)
+            st.markdown("<div style='height:0.5rem;'></div>", unsafe_allow_html=True)
 
-        # ── Text area ─────────────────────────────────────────────────────────
-        st.markdown(_html("""
-            <div class='input-editor-v3-shell'>
-                <div class='input-editor-v3-head'>
+        # ── Redesigned User Input Area ────────────────────────────────────────
+        current_ai_input = st.session_state.get("ai_input", "")
+        input_has_content = bool(current_ai_input and current_ai_input.strip())
+        word_count = len(current_ai_input.split()) if input_has_content else 0
+
+        st.markdown(_html(f"""
+        <div class='ai-input-card {"ai-input-card--filled" if input_has_content else ""}'>
+            <div class='ai-input-card-header'>
+                <div class='ai-input-card-header-left'>
+                    <div class='ai-input-card-icon'>✍️</div>
                     <div>
-                        <div class='input-editor-v3-kicker'>Your response</div>
-                        <div class='input-editor-v3-title'>AI answer editor</div>
+                        <div class='ai-input-card-kicker'>AI RESPONSE TO CHECK</div>
+                        <div class='ai-input-card-title'>Paste or load the answer below</div>
                     </div>
-                    <div class='input-editor-v3-chip'>Editable</div>
+                </div>
+                <div class='ai-input-card-meta'>
+                    {"<span class='ai-input-wc'>" + str(word_count) + " words</span>" if input_has_content else "<span class='ai-input-hint-chip'>No input yet</span>"}
+                    <span class='ai-input-badge'>Single review</span>
                 </div>
             </div>
+        </div>
         """), unsafe_allow_html=True)
 
-        st.markdown('<div class="input-editor-v3-body">', unsafe_allow_html=True)
+        st.markdown('<div class="ai-input-textarea-wrap">', unsafe_allow_html=True)
         ai_response = st.text_area(
             "AI Response Input",
-            height=165,
-            placeholder="Paste the AI-generated answer here. You can load one from the dataset, then edit it manually before analysis.",
+            height=130,
+            placeholder='Example: "In Islam, surrogacy is generally not permitted because it can mix lineages..."\n\nPaste your full AI-generated answer here. Longer answers give more accurate scores.',
             key="ai_input",
             label_visibility="collapsed"
         )
@@ -2432,7 +2579,6 @@ with tab1:
         </div>
         """, unsafe_allow_html=True)
         st.markdown("<div class='single-review-right-col'>", unsafe_allow_html=True)
-        render_input_preview(st.session_state.get("ai_input", ""))
         if st.session_state.get("current_analysis"):
             render_similarity_breakdown(st.session_state["current_analysis"])
         else:
@@ -2552,7 +2698,6 @@ with tab1:
                     "recommendation_reason": recommendation_reason,
                     "compliance_level": compliance_level,
                     "compliance_reason": compliance_reason,
-                    "ai_response": ai_response,
                     "fatwa_text": best_state.get("fatwa_text", ""),
                     "issue_name": best_state.get("issue", ""),
                     "matched_list": best_state.get("matched_keywords", "-").split(", ") if best_state.get("matched_keywords", "-") != "-" else [],
@@ -2583,26 +2728,46 @@ with tab1:
             else "Show the larger evidence cards, source card, score guide, and key points."
         )
         detail_icon = "▲" if st.session_state["show_detail_cards"] else "▼"
+        detail_panel_class = "detail-toggle-card detail-toggle-card-open" if st.session_state["show_detail_cards"] else "detail-toggle-card"
+
         st.markdown(_html(f"""
-        <div class='detail-clean-row'>
-            <div class='detail-clean-main'>
-                <div class='detail-clean-label'>Detailed evidence</div>
-                <div class='detail-clean-copy'>Fatwa source, score guide, matched keywords, missing keywords, and technical comparison.</div>
-            </div>
-            <div class='detail-clean-meta'>
-                <span>{html.escape(result_label_preview)}</span>
-                <span>{format_percent(final_match_score_preview, 1)}</span>
+        <div class='tab1-section' style='margin-top:1rem;'>
+            <div class='tab1-section-header'>
+                <div class='tab1-section-step'>3</div>
+                <div class='tab1-section-title'>Detailed review</div>
+                <div class='tab1-section-rule'></div>
             </div>
         </div>
         """), unsafe_allow_html=True)
 
-        detail_btn_col, detail_space_col = st.columns([0.22, 0.78], gap="small")
-        with detail_btn_col:
-            st.markdown("<div class='detail-clean-button-wrap'>", unsafe_allow_html=True)
-            if st.button(f"{detail_icon} {detail_button_label}", key="detail_toggle_btn", use_container_width=True, help=detail_button_help):
-                st.session_state["show_detail_cards"] = not st.session_state["show_detail_cards"]
-                st.rerun()
-            st.markdown("</div>", unsafe_allow_html=True)
+        # ── Inline detail toggle card — full width, button embedded ──────────
+        tone_preview = score_status_color(final_match_score_preview)
+        detail_open = st.session_state["show_detail_cards"]
+        st.markdown(_html(f"""
+        <div class='detail-inline-card {"detail-inline-card--open" if detail_open else ""}'>
+            <div class='detail-inline-left'>
+                <div class='detail-inline-icon' style='background:linear-gradient(135deg,#773344,#D44D5C);'>{detail_icon}</div>
+                <div>
+                    <div class='detail-inline-kicker'>Evidence Drawer</div>
+                    <div class='detail-inline-title'>Detailed Review &amp; Fatwa Evidence</div>
+                    <div class='detail-inline-sub'>Source card, score guide, and key points are nested below.</div>
+                </div>
+            </div>
+            <div class='detail-inline-chips'>
+                <span class='detail-chip' style='color:{tone_preview};border-color:{tone_preview};background:{tone_preview}12;'>{html.escape(result_label_preview)}</span>
+                <span class='detail-chip'>{format_percent(final_match_score_preview, 1)}</span>
+                <span class='detail-chip detail-chip--state'>{"▲ Collapse" if detail_open else "▼ Expand"}</span>
+            </div>
+        </div>
+        """), unsafe_allow_html=True)
+        if st.button(
+            ("▲  Hide detailed review" if detail_open else "▼  View detailed review"),
+            key="detail_toggle_btn",
+            use_container_width=True,
+            help=detail_button_help
+        ):
+            st.session_state["show_detail_cards"] = not st.session_state["show_detail_cards"]
+            st.rerun()
 
         if st.session_state["show_detail_cards"]:
             st.markdown("<div class='detail-drawer-body'>", unsafe_allow_html=True)
