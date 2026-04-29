@@ -821,6 +821,180 @@ def apply_dashboard_polish():
         transform: translateY(-2px) !important;
     }
 
+
+
+    /* ===== FYP REDESIGN: compact dataset and input preview cards ===== */
+    .fyp-compact-preview {
+        background: linear-gradient(135deg, #ffffff 0%, #fff7f4 100%);
+        border: 1px solid #ead1c8;
+        border-radius: 20px;
+        padding: 0.85rem 0.95rem;
+        box-shadow: 0 8px 20px rgba(25,14,36,0.055);
+        margin: 0.55rem 0 0.65rem 0;
+        position: relative;
+        overflow: hidden;
+    }
+    .fyp-compact-preview::before {
+        content: '';
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 5px;
+        background: linear-gradient(180deg, #160029 0%, #773344 45%, #D44D5C 100%);
+    }
+    .fyp-preview-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.75rem;
+        align-items: flex-start;
+        margin-bottom: 0.55rem;
+        padding-left: 0.35rem;
+    }
+    .fyp-preview-kicker {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        padding: 0.18rem 0.55rem;
+        border-radius: 999px;
+        background: #f7ece7;
+        border: 1px solid #ead1c8;
+        color: #8b3b50;
+        font-size: 0.62rem;
+        font-weight: 850;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        margin-bottom: 0.24rem;
+    }
+    .fyp-preview-title {
+        font-family: 'Inter Tight', 'Inter', sans-serif;
+        font-size: 0.98rem;
+        font-weight: 850;
+        color: #241226;
+        letter-spacing: -0.02em;
+        line-height: 1.18;
+    }
+    .fyp-preview-chip {
+        flex-shrink: 0;
+        padding: 0.32rem 0.65rem;
+        border-radius: 999px;
+        background: #ffffff;
+        border: 1px solid #ead1c8;
+        color: #773344;
+        font-size: 0.68rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+    .fyp-preview-grid {
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 0.6rem;
+        padding-left: 0.35rem;
+    }
+    .fyp-preview-panel {
+        background: rgba(255,255,255,0.78);
+        border: 1px solid #efe0da;
+        border-radius: 14px;
+        padding: 0.7rem 0.75rem;
+        min-height: 92px;
+    }
+    .fyp-preview-label {
+        color: #8b6771;
+        font-size: 0.63rem;
+        font-weight: 850;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 0.35rem;
+    }
+    .fyp-preview-text {
+        color: #2a1421;
+        font-size: 0.78rem;
+        line-height: 1.55;
+        word-break: break-word;
+    }
+    .fyp-input-preview-card {
+        background: linear-gradient(135deg, #160029 0%, #4a1830 58%, #773344 100%);
+        border-radius: 22px;
+        padding: 0.9rem;
+        box-shadow: 0 12px 28px rgba(22,0,41,0.18);
+        border: 1px solid rgba(255,255,255,0.08);
+        margin-bottom: 0.75rem;
+    }
+    .fyp-input-preview-card * { color: #ffffff !important; }
+    .fyp-input-preview-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.75rem;
+        align-items: flex-start;
+        margin-bottom: 0.55rem;
+    }
+    .fyp-input-preview-kicker {
+        display: inline-flex;
+        padding: 0.18rem 0.55rem;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.10);
+        border: 1px solid rgba(255,255,255,0.16);
+        color: #ffd2dc !important;
+        font-size: 0.62rem;
+        font-weight: 850;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        margin-bottom: 0.25rem;
+    }
+    .fyp-input-preview-title {
+        font-family: 'Inter Tight', 'Inter', sans-serif;
+        font-size: 1rem;
+        font-weight: 850;
+        line-height: 1.2;
+    }
+    .fyp-input-preview-count {
+        padding: 0.3rem 0.6rem;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.10);
+        border: 1px solid rgba(255,255,255,0.16);
+        font-size: 0.68rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+    .fyp-input-preview-body {
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 16px;
+        padding: 0.75rem 0.85rem;
+        color: rgba(255,255,255,0.86) !important;
+        font-size: 0.78rem;
+        line-height: 1.6;
+        max-height: 150px;
+        overflow: auto;
+        word-break: break-word;
+        white-space: pre-wrap;
+    }
+    .fyp-detail-action-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 0.75rem;
+        align-items: center;
+        background: #ffffff;
+        border: 1px solid #ead1c8;
+        border-radius: 20px;
+        padding: 0.75rem 0.85rem;
+        box-shadow: 0 8px 20px rgba(25,14,36,0.055);
+        margin: 0.85rem 0;
+    }
+    .fyp-detail-action-title {
+        font-family: 'Inter Tight', 'Inter', sans-serif;
+        font-size: 0.98rem;
+        font-weight: 850;
+        color: #241226;
+        margin-bottom: 0.15rem;
+    }
+    .fyp-detail-action-copy {
+        font-size: 0.76rem;
+        line-height: 1.5;
+        color: #6d5a68;
+    }
+    @media (max-width: 900px) {
+        .fyp-preview-grid { grid-template-columns: 1fr; }
+        .fyp-detail-action-row { grid-template-columns: 1fr; }
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -1707,6 +1881,56 @@ def clean_preview_text(text: str, max_len: int = 260) -> str:
     return text if len(text) <= max_len else text[: max_len - 3].rstrip() + "..."
 
 
+def render_dataset_answer_preview(question_text: str, answer_text: str, model_name: str, qid: str):
+    """Compact preview so users can see the selected dataset question and stored AI answer before loading."""
+    question_preview = clean_preview_text(question_text or qid, 220)
+    answer_preview = clean_preview_text(answer_text, 320)
+    model_name = model_name or "Dataset"
+    qid = qid or "-"
+    st.markdown(_html(f"""
+    <div class='fyp-compact-preview'>
+        <div class='fyp-preview-head'>
+            <div>
+                <div class='fyp-preview-kicker'>Dataset preview</div>
+                <div class='fyp-preview-title'>Question and stored answer</div>
+            </div>
+            <div class='fyp-preview-chip'>{html.escape(model_name)} · QID {html.escape(str(qid))}</div>
+        </div>
+        <div class='fyp-preview-grid'>
+            <div class='fyp-preview-panel'>
+                <div class='fyp-preview-label'>Question in dataset</div>
+                <div class='fyp-preview-text'>{html.escape(question_preview)}</div>
+            </div>
+            <div class='fyp-preview-panel'>
+                <div class='fyp-preview-label'>Stored AI answer</div>
+                <div class='fyp-preview-text'>{html.escape(answer_preview)}</div>
+            </div>
+        </div>
+    </div>
+    """), unsafe_allow_html=True)
+
+
+def render_input_preview(input_text: str, source_label: str = "Manual input"):
+    """Show the exact current user input in a compact, professional preview card."""
+    raw_text = "" if input_text is None else str(input_text).strip()
+    preview = raw_text if raw_text else "Your pasted or loaded AI answer will appear here before and after analysis."
+    if len(preview) > 620:
+        preview = preview[:617].rstrip() + "..."
+    word_count = len(re.findall(r"\b\w+\b", raw_text)) if raw_text else 0
+    st.markdown(_html(f"""
+    <div class='fyp-input-preview-card'>
+        <div class='fyp-input-preview-top'>
+            <div>
+                <div class='fyp-input-preview-kicker'>User input</div>
+                <div class='fyp-input-preview-title'>Answer currently being reviewed</div>
+            </div>
+            <div class='fyp-input-preview-count'>{word_count} words</div>
+        </div>
+        <div class='fyp-input-preview-body'>{html.escape(preview)}</div>
+    </div>
+    """), unsafe_allow_html=True)
+
+
 def render_minimal_tab_intro(kicker: str, title: str, sentence: str = "", extra_class: str = ""):
     sentence_html = f"<div class='tab-minimal-copy'>{html.escape(sentence)}</div>" if sentence else ""
     hero_class = f"tab-minimal-hero {extra_class}".strip()
@@ -2268,6 +2492,14 @@ with tab1:
             selected_qid = question_options[selected_question_text]
             question_subset = ai_answer_df[ai_answer_df["question_id"] == selected_qid].copy()
             selected_match = question_subset[question_subset["model"] == selected_model]
+            selected_answer_preview = selected_match.iloc[0]["ai_answer_raw"] if not selected_match.empty else "No saved response found for this model."
+
+            render_dataset_answer_preview(
+                question_text=selected_question_text,
+                answer_text=selected_answer_preview,
+                model_name=selected_model,
+                qid=selected_qid,
+            )
 
             if load_btn:
                 if not selected_match.empty:
@@ -2285,9 +2517,9 @@ with tab1:
                 <div class='input-editor-v2-head'>
                     <div>
                         <div class='input-editor-kicker'>✍️ YOUR RESPONSE</div>
-                        <div class='input-editor-title'>Paste the AI answer you want to check</div>
+                        <div class='input-editor-title'>Paste or edit the AI answer</div>
                         <div class='input-editor-copy' style='font-size: 0.7rem; color: #7a6874; margin-top: 0.2rem;'>
-                            💡 Longer, detailed answers give more accurate scores.
+                            Keep the editor compact. The live preview on the right shows exactly what will be reviewed.
                         </div>
                     </div>
                     <div class='input-editor-chip'>Single review</div>
@@ -2298,8 +2530,8 @@ with tab1:
         st.markdown('<div class="input-editor-v2-body">', unsafe_allow_html=True)
         ai_response = st.text_area(
             "AI Response Input",
-            height=140,
-            placeholder="Example: \"In Islam, surrogacy is generally not permitted because it can mix lineages...\"\n\nPaste your full AI-generated answer here.",
+            height=130,
+            placeholder="Paste the AI-generated answer here. You can load one from the dataset, then edit it manually before analysis.",
             key="ai_input",
             label_visibility="collapsed"
         )
@@ -2323,6 +2555,7 @@ with tab1:
         </div>
         """, unsafe_allow_html=True)
         st.markdown("<div class='single-review-right-col'>", unsafe_allow_html=True)
+        render_input_preview(st.session_state.get("ai_input", ""))
         if st.session_state.get("current_analysis"):
             render_similarity_breakdown(st.session_state["current_analysis"])
         else:
@@ -2442,6 +2675,7 @@ with tab1:
                     "recommendation_reason": recommendation_reason,
                     "compliance_level": compliance_level,
                     "compliance_reason": compliance_reason,
+                    "ai_response": ai_response,
                     "fatwa_text": best_state.get("fatwa_text", ""),
                     "issue_name": best_state.get("issue", ""),
                     "matched_list": best_state.get("matched_keywords", "-").split(", ") if best_state.get("matched_keywords", "-") != "-" else [],
@@ -2475,38 +2709,25 @@ with tab1:
         detail_panel_class = "detail-toggle-card detail-toggle-card-open" if st.session_state["show_detail_cards"] else "detail-toggle-card"
 
         st.markdown(_html(f"""
-        <div class='tab1-section' style='margin-top:1rem;'>
-            <div class='tab1-section-header'>
-                <div class='tab1-section-step'>3</div>
-                <div class='tab1-section-title'>Detailed review</div>
-                <div class='tab1-section-rule'></div>
+        <div class='fyp-detail-action-row'>
+            <div>
+                <div class='detail-toggle-kicker'>Evidence drawer</div>
+                <div class='fyp-detail-action-title'>Detailed review and fatwa evidence</div>
+                <div class='fyp-detail-action-copy'>Main screen stays clean: user input and similarity breakdown are shown first. Open this only when you need source text, score guide, and keyword evidence.</div>
+            </div>
+            <div class='detail-toggle-chips'>
+                <span>{html.escape(result_label_preview)}</span>
+                <span>{format_percent(final_match_score_preview, 1)}</span>
+                <span>{detail_state_preview}</span>
             </div>
         </div>
         """), unsafe_allow_html=True)
 
-        detail_card_col, detail_button_col = st.columns([0.65, 0.35], gap="medium")
-        with detail_card_col:
-            st.markdown(_html(f"""
-            <div class='{detail_panel_class}'>
-                <div class='detail-toggle-icon'>{detail_icon}</div>
-                <div class='detail-toggle-main'>
-                    <div class='detail-toggle-kicker'>Evidence drawer</div>
-                    <div class='detail-toggle-title'>Detailed Review &amp; Fatwa Evidence</div>
-                    <div class='detail-toggle-sub'>Source, score guide, and key points are kept behind this drawer so the main score stays clean.</div>
-                </div>
-                <div class='detail-toggle-chips'>
-                    <span>{html.escape(result_label_preview)}</span>
-                    <span>{format_percent(final_match_score_preview, 1)}</span>
-                    <span>{detail_state_preview}</span>
-                </div>
-            </div>
-            """), unsafe_allow_html=True)
-        with detail_button_col:
-            st.markdown("<div class='detail-toggle-button-wrap'>", unsafe_allow_html=True)
+        detail_btn_col, detail_space_col = st.columns([0.28, 0.72], gap="small")
+        with detail_btn_col:
             if st.button(detail_button_label, key="detail_toggle_btn", use_container_width=True, help=detail_button_help):
                 st.session_state["show_detail_cards"] = not st.session_state["show_detail_cards"]
                 st.rerun()
-            st.markdown("</div>", unsafe_allow_html=True)
 
         if st.session_state["show_detail_cards"]:
             st.markdown("<div class='detail-drawer-body'>", unsafe_allow_html=True)
