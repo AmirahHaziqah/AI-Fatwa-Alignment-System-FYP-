@@ -3075,31 +3075,77 @@ with tab1:
 
     st.markdown("""
     <style>
-    /* ===== FINAL CLEAN FLOW FIX ===== */
+    /* ===== FINAL CLEAN FLOW FIX: plain aligned flow, no noisy icons ===== */
     .flow-steps-line {
         display: grid !important;
         grid-template-columns: minmax(0, 0.50fr) minmax(0, 0.28fr) minmax(0, 0.22fr) !important;
-        gap: 1.05rem !important;
-        align-items: center !important;
-        margin: 0 0 0.58rem 0 !important;
+        gap: 1rem !important;
+        align-items: end !important;
+        margin: 0 0 0.42rem 0 !important;
         padding: 0 !important;
         width: 100% !important;
+        border-bottom: 1px solid rgba(119, 51, 68, 0.10) !important;
     }
     .flow-step-mini {
-        justify-content: flex-start !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 0.38rem !important;
         min-width: 0 !important;
+        padding-bottom: 0.42rem !important;
         font-size: 0.68rem !important;
         color: #8d7481 !important;
+        font-weight: 850 !important;
+        letter-spacing: -0.01em !important;
     }
     .flow-step-dot {
-        width: 24px !important;
-        height: 24px !important;
-        font-size: 0.66rem !important;
+        width: 22px !important;
+        height: 22px !important;
+        border-radius: 999px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 0.62rem !important;
+        font-weight: 950 !important;
+        flex-shrink: 0 !important;
+        background: #fbf3f6 !important;
+        border: 1px solid #efd8e1 !important;
+        color: #9f2c52 !important;
+        box-shadow: none !important;
+    }
+    .flow-step-mini.is-active .flow-step-dot {
+        background: linear-gradient(135deg, #8d164f, #ce465f) !important;
+        color: #ffffff !important;
+        border-color: transparent !important;
+    }
+    .flow-step-mini span:last-child {
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+    }
+    .flow-field-label {
+        display: block !important;
+        margin: 0 0 0.22rem 0 !important;
+        color: #8d7481 !important;
+        font-size: 0.58rem !important;
+        font-weight: 900 !important;
+        letter-spacing: 0.10em !important;
+        text-transform: uppercase !important;
+        line-height: 1 !important;
+    }
+    .flow-field-label .bubble { display: none !important; }
+    .flow-action-cell .stButton > button {
+        min-height: 44px !important;
+        border-radius: 12px !important;
+        font-size: 0.78rem !important;
+        font-weight: 900 !important;
+        padding: 0.32rem 0.7rem !important;
+        box-shadow: 0 10px 18px rgba(163,25,91,0.16) !important;
+        background: linear-gradient(135deg,#963454 0%,#c8455c 100%) !important;
     }
     .flow-selected-preview {
-        margin: 0.62rem 0 0.75rem 0 !important;
-        padding: 0.68rem 0.78rem !important;
-        border-radius: 15px !important;
+        margin: 0.58rem 0 0.72rem 0 !important;
+        padding: 0.62rem 0.72rem !important;
+        border-radius: 14px !important;
         border: 1px solid #efd9e1 !important;
         background: linear-gradient(135deg, #fffafa 0%, #ffffff 100%) !important;
         display: grid !important;
@@ -3109,12 +3155,12 @@ with tab1:
         box-shadow: 0 8px 18px rgba(25,14,36,0.035) !important;
     }
     .flow-selected-kicker {
-        font-size: 0.58rem !important;
+        font-size: 0.56rem !important;
         font-weight: 900 !important;
         letter-spacing: 0.10em !important;
         text-transform: uppercase !important;
         color: #a3195b !important;
-        margin-bottom: 0.24rem !important;
+        margin-bottom: 0.22rem !important;
     }
     .flow-selected-question {
         color: #241226 !important;
@@ -3129,8 +3175,7 @@ with tab1:
     .flow-selected-chip {
         display: inline-flex !important;
         align-items: center !important;
-        gap: 0.35rem !important;
-        padding: 0.32rem 0.64rem !important;
+        padding: 0.32rem 0.68rem !important;
         border-radius: 999px !important;
         background: #f4e8f4 !important;
         color: #773344 !important;
@@ -3139,6 +3184,38 @@ with tab1:
         font-weight: 900 !important;
         white-space: nowrap !important;
     }
+    .flow-selected-chip::before { content: 'AI Model'; font-size: 0.54rem; letter-spacing:0.08em; text-transform:uppercase; color:#9b7b8d; margin-right:0.42rem; }
+    .flow-answer-note { display: none !important; height: 0 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; overflow: hidden !important; }
+    .batch_mode_radio, .stRadio { }
+
+    /* ===== BATCH REVIEW CLEANUP ===== */
+    div[data-testid="stRadio"] > label:has(+ div [role="radiogroup"]) { font-weight: 900 !important; color: #241226 !important; }
+    div[data-testid="stRadio"] [role="radiogroup"] {
+        padding: 0.22rem !important;
+        border-radius: 14px !important;
+        background: #ffffff !important;
+        border: 1px solid #eadde5 !important;
+        box-shadow: 0 8px 18px rgba(25,14,36,0.035) !important;
+    }
+    div[data-testid="stRadio"] [role="radiogroup"] > label {
+        min-height: 42px !important;
+        border-radius: 11px !important;
+        padding: 0.35rem 0.7rem !important;
+    }
+    div[data-testid="stRadio"] [role="radiogroup"] > label:has(input:checked) {
+        background: linear-gradient(135deg,#963454 0%,#c8455c 100%) !important;
+        box-shadow: none !important;
+    }
+    .batch-selection-note {
+        margin: 0.65rem 0 !important;
+        padding: 0.55rem 0.7rem !important;
+        border-radius: 12px !important;
+        border: 1px solid #efd9e1 !important;
+        background: #fffafa !important;
+        color: #6d5a68 !important;
+        font-size: 0.74rem !important;
+    }
+
     .action-bar-modern { display: none !important; }
     .batch-filter-grid { display: contents !important; padding: 0 !important; margin: 0 !important; border: 0 !important; background: transparent !important; box-shadow: none !important; }
     </style>
@@ -3208,7 +3285,7 @@ with tab1:
 
             ctrl1, ctrl2, ctrl3 = st.columns([0.50, 0.28, 0.22], gap="small")
             with ctrl1:
-                st.markdown("<div class='flow-field-label'><span class='bubble'>?</span><span>Saved question</span></div>", unsafe_allow_html=True)
+                st.markdown("<div class='flow-field-label'>Saved question</div>", unsafe_allow_html=True)
                 selected_question_text = st.selectbox(
                     "Question",
                     options=list(question_options.keys()),
@@ -3217,7 +3294,7 @@ with tab1:
                     label_visibility="collapsed"
                 )
             with ctrl2:
-                st.markdown("<div class='flow-field-label'><span class='bubble'>🤖</span><span>AI model</span></div>", unsafe_allow_html=True)
+                st.markdown("<div class='flow-field-label'>AI model</div>", unsafe_allow_html=True)
                 selected_model = st.selectbox(
                     "AI Model",
                     options=available_models,
@@ -3226,7 +3303,7 @@ with tab1:
                     label_visibility="collapsed"
                 )
             with ctrl3:
-                st.markdown("<div class='flow-field-label'><span class='bubble'>⚡</span><span>Continue</span></div><div class='flow-action-cell'>", unsafe_allow_html=True)
+                st.markdown("<div class='flow-field-label'>Continue</div><div class='flow-action-cell'>", unsafe_allow_html=True)
                 load_btn = st.button(
                     "Load Answer →",
                     use_container_width=True,
@@ -3255,7 +3332,7 @@ with tab1:
                     <div class='flow-selected-kicker'>Selected question</div>
                     <div class='flow-selected-question'>{html.escape(selected_question_text)}</div>
                 </div>
-                <div class='flow-selected-chip'>🤖 {html.escape(selected_model)}</div>
+                <div class='flow-selected-chip'>{html.escape(selected_model)}</div>
             </div>
             """), unsafe_allow_html=True)
 
