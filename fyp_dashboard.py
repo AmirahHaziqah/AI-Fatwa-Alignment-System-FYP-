@@ -1282,6 +1282,52 @@ def apply_dashboard_polish():
     }
     .sbd-metric-sub { font-size: 0.6rem; color: #a08b97; font-weight: 500; }
 
+
+    /* ===== WIZARD FLOW REDESIGN FOR DATASET LOADER ===== */
+    .review-left-shell {
+        background: rgba(255,255,255,0.94) !important;
+        border: 1px solid #eadde5 !important;
+        border-radius: 20px !important;
+        padding: 0.9rem 1rem 0.95rem 1rem !important;
+        box-shadow: 0 16px 36px rgba(25,14,36,0.06) !important;
+        overflow: hidden !important;
+    }
+    .flow-hero-card {
+        display: grid;
+        grid-template-columns: 48px minmax(0,1fr) auto;
+        gap: 0.75rem;
+        align-items: center;
+        padding: 0.2rem 0 0.7rem 0;
+        border-bottom: 1px solid #eee2e8;
+        margin-bottom: 0.8rem;
+    }
+    .flow-hero-icon {
+        width: 48px; height: 48px; border-radius: 18px;
+        display: flex; align-items: center; justify-content: center;
+        background: linear-gradient(135deg,#fff2f4 0%,#f7dfe5 100%);
+        border: 1px solid #f0d2db; color: #a3195b;
+        font-size: 1.25rem; box-shadow: 0 10px 20px rgba(163,25,91,0.08);
+    }
+    .flow-hero-kicker { font-size:0.62rem; font-weight:900; letter-spacing:0.13em; text-transform:uppercase; color:#b0185b; margin-bottom:0.12rem; }
+    .flow-hero-title { font-family:'Inter Tight','Inter',sans-serif; font-size:1.08rem; font-weight:950; letter-spacing:-0.035em; color:#211020; line-height:1.08; }
+    .flow-hero-copy { font-size:0.72rem; color:#756374; margin-top:0.16rem; line-height:1.35; }
+    .flow-hero-chip { display:inline-flex; align-items:center; gap:0.4rem; padding:0.42rem 0.72rem; border-radius:999px; border:1px solid #d9aabc; color:#9f2c52; background:#fff9fb; font-size:0.68rem; font-weight:900; white-space:nowrap; }
+    .flow-steps-line { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.7rem; margin:0.15rem 0 0.65rem 0; }
+    .flow-step-mini { display:flex; align-items:center; gap:0.48rem; min-width:0; color:#8a7180; font-size:0.69rem; font-weight:850; }
+    .flow-step-dot { width:24px; height:24px; border-radius:999px; display:flex; align-items:center; justify-content:center; background:#f5edf2; border:1px solid #eadde5; color:#9f2c52; font-size:0.68rem; font-weight:950; flex-shrink:0; }
+    .flow-step-mini.is-active .flow-step-dot { background:linear-gradient(135deg,#8d164f,#ce465f); color:#fff; border-color:transparent; box-shadow:0 8px 16px rgba(141,22,79,0.16); }
+    .flow-step-mini span:last-child { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .flow-field-label { display:flex; align-items:center; gap:0.34rem; color:#7d6675; font-size:0.62rem; font-weight:900; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:0.22rem; }
+    .flow-field-label .bubble { width:22px; height:22px; border-radius:9px; display:inline-flex; align-items:center; justify-content:center; background:#fff1f4; color:#a3195b; border:1px solid #f0d4dd; font-size:0.76rem; }
+    .flow-action-cell .stButton > button { min-height:46px !important; border-radius:15px !important; font-size:0.86rem !important; font-weight:900 !important; box-shadow:0 14px 24px rgba(163,25,91,0.18) !important; background:linear-gradient(135deg,#8d164f 0%,#d54b63 100%) !important; }
+    .flow-answer-note { display:grid; grid-template-columns:30px minmax(0,1fr) auto; align-items:center; gap:0.55rem; margin-top:0.75rem; padding:0.55rem 0.65rem; border-radius:14px; background:linear-gradient(135deg,#fff8f4 0%,#fff 100%); border:1px solid #f0dce2; color:#6d5a68; font-size:0.72rem; line-height:1.35; }
+    .flow-answer-note-icon { width:30px; height:30px; border-radius:11px; display:flex; align-items:center; justify-content:center; background:#fff0f3; color:#a3195b; }
+    .flow-answer-status { padding:0.2rem 0.52rem; border-radius:999px; background:#edf8f1; color:#2f8a56; font-size:0.64rem; font-weight:900; white-space:nowrap; border:1px solid #d8efdf; }
+    .flow-answer-status.is-empty { background:#fff7f4; color:#9b5365; border-color:#f0dce2; }
+    .ds-qa-preview { display:none !important; }
+    @media (max-width:1050px) { .flow-action-cell { grid-column:1 / -1; } }
+    @media (max-width:720px) { .flow-hero-card { grid-template-columns:42px 1fr; } .flow-hero-chip { grid-column:1 / -1; width:fit-content; } .flow-steps-line { grid-template-columns:1fr; gap:0.35rem; } }
+
     </style>
     """, unsafe_allow_html=True)
 
@@ -3027,16 +3073,15 @@ with tab1:
     with review_left:
         st.markdown(_html(f"""
         <div class='review-left-shell'>
-            <div class='pane-title-row'>
+            <div class='flow-hero-card'>
+                <div class='flow-hero-icon'>{'🗃️' if research_active else '📋'}</div>
                 <div>
-                    <div class='pane-kicker'>{'Load dataset answer' if research_active else 'Manual answer check'}</div>
-                    <div class='pane-title'>{mode_title}</div>
-                    <div class='pane-copy'>{mode_copy}</div>
+                    <div class='flow-hero-kicker'>{'Review Mode' if research_active else 'Check Mode'}</div>
+                    <div class='flow-hero-title'>{mode_title}</div>
+                    <div class='flow-hero-copy'>{mode_copy}</div>
                 </div>
-                <div class='pane-chip'>{html.escape(review_mode)}</div>
+                <div class='flow-hero-chip'>{'▣ ' if research_active else '□ '}{html.escape(review_mode)}</div>
             </div>
-            <div class='soft-divider'></div>
-        </div>
         """), unsafe_allow_html=True)
         # ── Research Mode: Dataset loader ─────────────────────────────────────
         if research_active and AI_DATASET_AVAILABLE:
@@ -3059,21 +3104,18 @@ with tab1:
             if not selected_model or not available_models or selected_model not in available_models:
                 selected_model = available_models[0] if available_models else ""
 
-            # ── Redesigned Dataset Loader Card ───────────────────────────────
+            # ── Wizard Dataset Loader Flow ─────────────────────────────────
             st.markdown(_html("""
-            <div class='ds-loader-card-v3'>
-                <div class='ds-loader-v3-head'>
-                    <div>
-                        <div class='ds-loader-v3-kicker'>Dataset</div>
-                        <div class='ds-loader-v3-title'>Choose a saved question and model</div>
-                    </div>
-                </div>
+            <div class='flow-steps-line'>
+                <div class='flow-step-mini is-active'><span class='flow-step-dot'>1</span><span>Choose question</span></div>
+                <div class='flow-step-mini'><span class='flow-step-dot'>2</span><span>Select model</span></div>
+                <div class='flow-step-mini'><span class='flow-step-dot'>3</span><span>Load answer</span></div>
             </div>
             """), unsafe_allow_html=True)
 
-            ctrl1, ctrl2, ctrl3 = st.columns([0.48, 0.32, 0.20], gap="small")
+            ctrl1, ctrl2, ctrl3 = st.columns([0.50, 0.28, 0.22], gap="small")
             with ctrl1:
-                st.markdown("<div class='ds-col-label'>📋 Question</div>", unsafe_allow_html=True)
+                st.markdown("<div class='flow-field-label'><span class='bubble'>?</span><span>Saved question</span></div>", unsafe_allow_html=True)
                 selected_question_text = st.selectbox(
                     "Question",
                     options=list(question_options.keys()),
@@ -3082,7 +3124,7 @@ with tab1:
                     label_visibility="collapsed"
                 )
             with ctrl2:
-                st.markdown("<div class='ds-col-label'>🤖 AI Model</div>", unsafe_allow_html=True)
+                st.markdown("<div class='flow-field-label'><span class='bubble'>🤖</span><span>AI model</span></div>", unsafe_allow_html=True)
                 selected_model = st.selectbox(
                     "AI Model",
                     options=available_models,
@@ -3091,13 +3133,14 @@ with tab1:
                     label_visibility="collapsed"
                 )
             with ctrl3:
-                st.markdown("<div class='ds-col-label'>⚡ Action</div>", unsafe_allow_html=True)
+                st.markdown("<div class='flow-field-label'><span class='bubble'>⚡</span><span>Continue</span></div><div class='flow-action-cell'>", unsafe_allow_html=True)
                 load_btn = st.button(
                     "Load Answer →",
                     use_container_width=True,
                     key="ds_load_btn_primary",
                     help="Load the selected response"
                 )
+                st.markdown("</div>", unsafe_allow_html=True)
 
             selected_qid = question_options[selected_question_text]
             question_subset = ai_answer_df[ai_answer_df["question_id"] == selected_qid].copy()
@@ -3125,7 +3168,15 @@ with tab1:
                 else:
                     st.warning(f"⚠️ No saved response found for model '{selected_model}'")
 
-            st.markdown("<div style='height:0.5rem;'></div>", unsafe_allow_html=True)
+            note_status = "Ready to load" if selected_question_text and selected_model else "Select first"
+            note_class = "" if selected_question_text and selected_model else "is-empty"
+            st.markdown(_html(f"""
+            <div class='flow-answer-note'>
+                <div class='flow-answer-note-icon'>💡</div>
+                <div>Load the answer first to see the overall fit, meaning match, key points, and closest state fatwa.</div>
+                <div class='flow-answer-status {note_class}'>{html.escape(note_status)}</div>
+            </div>
+            """), unsafe_allow_html=True)
 
         elif research_active and not AI_DATASET_AVAILABLE:
             st.warning("No saved AI answer dataset was found. Switch to Check AI Answer mode to paste an answer manually.")
@@ -3174,6 +3225,7 @@ with tab1:
                 ["Ready for review", "Click Analyze to see results"]
             )
 
+        st.markdown("</div>", unsafe_allow_html=True)
     # ── Right column: score summary ───────────────────────────────────────────
     with review_right:
         st.markdown("""
