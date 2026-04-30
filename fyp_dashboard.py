@@ -1285,6 +1285,103 @@ def apply_dashboard_polish():
     </style>
     """, unsafe_allow_html=True)
 
+    st.markdown("""
+    <style>
+    /* ===== FINAL LATEST FIX: compact balanced UI based on supervisor feedback ===== */
+    .review-left-shell {
+        padding: 0.62rem 0.72rem !important;
+        border-radius: 18px !important;
+    }
+    .pane-title-row { margin-bottom: 0.22rem !important; align-items: center !important; }
+    .pane-kicker { font-size:0.58rem !important; margin-bottom:0.08rem !important; letter-spacing:0.13em !important; }
+    .pane-title { font-size:0.92rem !important; line-height:1.05 !important; }
+    .pane-copy { font-size:0.68rem !important; line-height:1.28 !important; margin-top:0.12rem !important; }
+    .soft-divider { margin:0.34rem 0 !important; }
+
+    .ds-loader-card-v3 {
+        background: linear-gradient(180deg, #ffffff 0%, #fff9f8 100%) !important;
+        border: 1px solid #eadde5 !important;
+        border-radius: 16px !important;
+        padding: 0.68rem 0.75rem !important;
+        margin: 0.3rem 0 0.48rem 0 !important;
+        box-shadow: 0 8px 20px rgba(25,14,36,0.045) !important;
+    }
+    .ds-loader-v3-head {
+        display:flex !important;
+        align-items:center !important;
+        justify-content:space-between !important;
+        gap:0.7rem !important;
+        padding-bottom:0.46rem !important;
+        margin-bottom:0.45rem !important;
+        border-bottom:1px solid #efe3e8 !important;
+    }
+    .ds-loader-v3-kicker { font-size:0.58rem !important; letter-spacing:0.13em !important; }
+    .ds-loader-v3-title { font-size:0.88rem !important; }
+    .ds-loader-v3-head::after {
+        content:'Load first, then analyze';
+        font-size:0.64rem; color:#8b7280; line-height:1.3;
+        background:#fff3f5; border:1px solid #f0dbe2; border-radius:999px;
+        padding:0.22rem 0.58rem; white-space:nowrap;
+    }
+    .ds-col-label {
+        font-size:0.56rem !important;
+        letter-spacing:0.11em !important;
+        color:#8b6771 !important;
+        margin:0 0 0.22rem 0.12rem !important;
+    }
+    div[data-testid="column"] [data-testid="stSelectbox"] [data-baseweb="select"] > div {
+        min-height:38px !important;
+        border-radius:12px !important;
+        background:#ffffff !important;
+        border:1px solid #e1d2dc !important;
+        box-shadow:none !important;
+    }
+    div[data-testid="column"] .stButton > button {
+        min-height:38px !important;
+        border-radius:12px !important;
+        font-size:0.74rem !important;
+        box-shadow:0 8px 18px rgba(127,36,78,0.16) !important;
+    }
+    .ds-qa-preview { margin-top:0.5rem !important; padding:0.48rem 0.58rem !important; }
+    .ds-qa-text { font-size:0.74rem !important; line-height:1.42 !important; padding:0.42rem 0.58rem !important; }
+
+    .empty-review-card {
+        padding:0.82rem !important;
+        min-height:0 !important;
+        height:auto !important;
+    }
+    .empty-review-top {
+        display:flex; justify-content:space-between; align-items:flex-start; gap:0.8rem;
+        margin-bottom:0.62rem;
+    }
+    .empty-review-title {
+        font-family:'Inter Tight','Inter',sans-serif; font-size:1rem;
+        margin:0.08rem 0 0.24rem 0; color:#241226;
+        letter-spacing:-0.02em;
+    }
+    .empty-review-copy { font-size:0.72rem; line-height:1.35; color:#6d5a68; max-width:440px; }
+    .empty-review-pill {
+        padding:0.28rem 0.66rem; border-radius:999px;
+        border:1px solid #e3bfd1; color:#873553; background:#fff8fb;
+        font-size:0.68rem; font-weight:850; white-space:nowrap;
+    }
+    .empty-review-footer { display:none !important; }
+    .empty-guide { display:grid; gap:0.45rem; margin-top:0.35rem; }
+    .empty-guide-item {
+        display:grid; grid-template-columns:28px minmax(0,1fr); gap:0.52rem; align-items:start;
+        padding:0.52rem 0.58rem;
+        border:1px solid #efe0e7; border-radius:14px;
+        background:linear-gradient(135deg,#fff 0%,#fff8f6 100%);
+    }
+    .empty-guide-num {
+        width:28px; height:28px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+        background:linear-gradient(135deg,#7e1648,#c4475f); color:#fff; font-weight:900; font-size:0.68rem;
+    }
+    .empty-guide-title { font-size:0.74rem; font-weight:900; color:#241226; margin-bottom:0.1rem; }
+    .empty-guide-copy { font-size:0.66rem; color:#7b6874; line-height:1.35; }
+    </style>
+    """, unsafe_allow_html=True)
+
 
 apply_dashboard_polish()
 
@@ -2996,7 +3093,7 @@ with tab1:
             with ctrl3:
                 st.markdown("<div class='ds-col-label'>⚡ Action</div>", unsafe_allow_html=True)
                 load_btn = st.button(
-                    "Load →",
+                    "Load Answer →",
                     use_container_width=True,
                     key="ds_load_btn_primary",
                     help="Load the selected response"
@@ -3098,14 +3195,23 @@ with tab1:
                     <div>
                         <div class='workspace-kicker'>Score summary</div>
                         <h3 class='empty-review-title'>No result yet</h3>
-                        <div class='empty-review-copy'>Run the review to show overall fit, meaning match, key points, and closest state fatwa.</div>
+                        <div class='empty-review-copy'>Follow these steps to use the system correctly.</div>
                     </div>
                     <div class='empty-review-pill'>Waiting</div>
                 </div>
-                <div class='empty-review-footer'>
-                    <div class='empty-review-stat'><div class='empty-review-stat-label'>Saved</div><div class='empty-review-stat-value'>{total_analyses}</div></div>
-                    <div class='empty-review-stat'><div class='empty-review-stat-label'>Average</div><div class='empty-review-stat-value'>{avg_score_sidebar:.1f}%</div></div>
-                    <div class='empty-review-stat'><div class='empty-review-stat-label'>Strong</div><div class='empty-review-stat-value'>70%+</div></div>
+                <div class='empty-guide'>
+                    <div class='empty-guide-item'>
+                        <div class='empty-guide-num'>1</div>
+                        <div><div class='empty-guide-title'>Choose review mode</div><div class='empty-guide-copy'>Use Research Mode for saved dataset answers, or Check AI Answer for pasted answers.</div></div>
+                    </div>
+                    <div class='empty-guide-item'>
+                        <div class='empty-guide-num'>2</div>
+                        <div><div class='empty-guide-title'>Load or paste the answer</div><div class='empty-guide-copy'>Select the question and model, then load the answer. For manual checking, paste the AI answer.</div></div>
+                    </div>
+                    <div class='empty-guide-item'>
+                        <div class='empty-guide-num'>3</div>
+                        <div><div class='empty-guide-title'>Analyze the result</div><div class='empty-guide-copy'>The system shows final score, text match, meaning match, key points, and closest fatwa alignment.</div></div>
+                    </div>
                 </div>
             </div>
             """), unsafe_allow_html=True)
