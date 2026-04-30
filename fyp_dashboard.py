@@ -3072,6 +3072,78 @@ with tab1:
     </style>
     """, unsafe_allow_html=True)
 
+
+    st.markdown("""
+    <style>
+    /* ===== FINAL CLEAN FLOW FIX ===== */
+    .flow-steps-line {
+        display: grid !important;
+        grid-template-columns: minmax(0, 0.50fr) minmax(0, 0.28fr) minmax(0, 0.22fr) !important;
+        gap: 1.05rem !important;
+        align-items: center !important;
+        margin: 0 0 0.58rem 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+    .flow-step-mini {
+        justify-content: flex-start !important;
+        min-width: 0 !important;
+        font-size: 0.68rem !important;
+        color: #8d7481 !important;
+    }
+    .flow-step-dot {
+        width: 24px !important;
+        height: 24px !important;
+        font-size: 0.66rem !important;
+    }
+    .flow-selected-preview {
+        margin: 0.62rem 0 0.75rem 0 !important;
+        padding: 0.68rem 0.78rem !important;
+        border-radius: 15px !important;
+        border: 1px solid #efd9e1 !important;
+        background: linear-gradient(135deg, #fffafa 0%, #ffffff 100%) !important;
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) auto !important;
+        gap: 0.65rem !important;
+        align-items: center !important;
+        box-shadow: 0 8px 18px rgba(25,14,36,0.035) !important;
+    }
+    .flow-selected-kicker {
+        font-size: 0.58rem !important;
+        font-weight: 900 !important;
+        letter-spacing: 0.10em !important;
+        text-transform: uppercase !important;
+        color: #a3195b !important;
+        margin-bottom: 0.24rem !important;
+    }
+    .flow-selected-question {
+        color: #241226 !important;
+        font-size: 0.78rem !important;
+        line-height: 1.42 !important;
+        font-weight: 650 !important;
+        overflow: hidden !important;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2 !important;
+        -webkit-box-orient: vertical !important;
+    }
+    .flow-selected-chip {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 0.35rem !important;
+        padding: 0.32rem 0.64rem !important;
+        border-radius: 999px !important;
+        background: #f4e8f4 !important;
+        color: #773344 !important;
+        border: 1px solid #e6cfdf !important;
+        font-size: 0.66rem !important;
+        font-weight: 900 !important;
+        white-space: nowrap !important;
+    }
+    .action-bar-modern { display: none !important; }
+    .batch-filter-grid { display: contents !important; padding: 0 !important; margin: 0 !important; border: 0 !important; background: transparent !important; box-shadow: none !important; }
+    </style>
+    """, unsafe_allow_html=True)
+
     # ══════════════════════════════════════════════════════
     # SECTION 1 — Input
     # ══════════════════════════════════════════════════════
@@ -3177,13 +3249,13 @@ with tab1:
                 else:
                     st.warning(f"⚠️ No saved response found for model '{selected_model}'")
 
-            note_status = "Ready to load" if selected_question_text and selected_model else "Select first"
-            note_class = "" if selected_question_text and selected_model else "is-empty"
             st.markdown(_html(f"""
-            <div class='flow-answer-note'>
-                <div class='flow-answer-note-icon'>💡</div>
-                <div>Load the answer first to see the overall fit, meaning match, key points, and closest state fatwa.</div>
-                <div class='flow-answer-status {note_class}'>{html.escape(note_status)}</div>
+            <div class='flow-selected-preview'>
+                <div>
+                    <div class='flow-selected-kicker'>Selected question</div>
+                    <div class='flow-selected-question'>{html.escape(selected_question_text)}</div>
+                </div>
+                <div class='flow-selected-chip'>🤖 {html.escape(selected_model)}</div>
             </div>
             """), unsafe_allow_html=True)
 
@@ -3280,12 +3352,6 @@ with tab1:
     # ══════════════════════════════════════════════════════
     # ACTION ROW — Analyze + Clear, always under both columns
     # ══════════════════════════════════════════════════════
-    st.markdown(_html(f"""
-    <div class='action-bar-modern'>
-        <div class='action-hint'><strong>{html.escape(review_mode)} selected.</strong> {'Load a saved answer, then analyze it.' if research_active else 'Paste an answer, then analyze it.'}</div>
-        <div></div>
-    </div>
-    """), unsafe_allow_html=True)
     b1, b2, _spacer = st.columns([0.28, 0.14, 0.58], gap="small")
     with b1:
         analyze_btn = st.button("✨ Analyze Answer", use_container_width=True, key="analyze_single")
@@ -3489,7 +3555,6 @@ with tab2:
             .sort_values("question_id")
         )
 
-        st.markdown("<div class='batch-filter-grid'>", unsafe_allow_html=True)
         bc1, bc2 = st.columns([0.4, 0.6])
         with bc1:
             selected_models_b = st.multiselect(
@@ -3508,7 +3573,6 @@ with tab2:
                 options=list(q_options_b.keys()),
                 key="batch_questions_select"
             )
-        st.markdown("</div>", unsafe_allow_html=True)
 
         filtered_df = ai_answer_df.copy()
         if selected_models_b:
