@@ -1364,7 +1364,7 @@ def show_success_toast_center(message: str, details: list = None):
             .at-check {{
                 width:34px; height:34px; background:rgba(255,255,255,0.22);
                 border-radius:50%; display:flex; align-items:center;
-                justify-content:center; font-size:1.1rem; font-weight:900;
+                justify-content:center; font-size:0.98rem; font-weight:900;
                 color:#fff; flex-shrink:0;
             }}
             .at-ttl {{ flex:1; color:#fff; font-weight:800; font-size:0.92rem; letter-spacing:0.01em; }}
@@ -2364,7 +2364,7 @@ def render_similarity_breakdown(bundle: dict):
     .sbd-ring-inner {{ width:78px; height:78px; border-radius:50%; background:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow:inset 0 0 0 1px rgba(220,170,190,0.42); }}
     .sbd-ring-inner strong {{ font-family:'Inter Tight','Inter',sans-serif; font-size:1.75rem; font-weight:900; line-height:1; }}
     .sbd-ring-inner span {{ font-size:0.64rem; color:#8b6771; margin-top:0.16rem; font-weight:800; }}
-    .sbd-verdict-label {{ font-family:'Inter Tight','Inter',sans-serif; font-size:1.1rem; font-weight:900; margin-bottom:0.24rem; line-height:1.15; }}
+    .sbd-verdict-label {{ font-family:'Inter Tight','Inter',sans-serif; font-size:0.98rem; font-weight:900; margin-bottom:0.24rem; line-height:1.15; }}
     .sbd-verdict-copy {{ font-size:0.82rem; color:#6d5a68; line-height:1.55; max-width:420px; }}
     .sbd-soft-line {{ height:1px; background:linear-gradient(90deg,#eadde5,transparent); margin:0.2rem 0 0.85rem 0; }}
     .sbd-metric-grid {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; border:1px solid #eadde5; border-radius:16px; overflow:hidden; background:#fff; }}
@@ -2701,7 +2701,7 @@ with tab1:
     .tab1-section-rule { flex: 1; height: 1px; background: linear-gradient(90deg, #e5d5dc, transparent); }
 
     /* Make the mode chooser feel like two clean cards instead of a crowded segmented bar */
-    .mode-choice-wrap { margin-bottom: 1rem; }
+    .mode-choice-wrap { margin-bottom: 0.55rem; }
     [data-testid="stRadio"] [role="radiogroup"] {
         display: grid !important;
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -2712,7 +2712,7 @@ with tab1:
         box-shadow: none !important;
     }
     [data-testid="stRadio"] [role="radiogroup"] > label {
-        min-height: 88px !important;
+        min-height: 58px !important;
         border-radius: 14px !important;
         border: 1px solid #eadde5 !important;
         background: rgba(255,255,255,0.82) !important;
@@ -2720,7 +2720,7 @@ with tab1:
         display: flex !important;
         align-items: center !important;
         justify-content: flex-start !important;
-        padding: 1rem 1.35rem !important;
+        padding: 0.55rem 0.9rem !important;
         transition: all 0.22s ease !important;
     }
     [data-testid="stRadio"] [role="radiogroup"] > label:hover {
@@ -2736,12 +2736,12 @@ with tab1:
         position: relative !important;
     }
     [data-testid="stRadio"] [role="radiogroup"] > label:has(input:checked)::after {
-        content: ''; position: absolute; left: 50%; bottom: -8px;
-        width: 16px; height: 16px; transform: translateX(-50%) rotate(45deg);
+        content: ''; position: absolute; left: 50%; bottom: -6px;
+        width: 12px; height: 12px; transform: translateX(-50%) rotate(45deg);
         background: #b93d5b; border-radius: 2px;
     }
     [data-testid="stRadio"] [role="radiogroup"] p {
-        font-size: 0.92rem !important;
+        font-size: 0.82rem !important;
         font-weight: 850 !important;
         color: #4d3340 !important;
     }
@@ -2752,15 +2752,15 @@ with tab1:
     [data-testid="stRadio"] [role="radiogroup"] > label:nth-child(1) p::before {
         content: '🗃️';
         display: inline-flex; align-items: center; justify-content: center;
-        width: 42px; height: 42px; margin-right: 0.9rem;
-        border-radius: 16px; background: rgba(255,255,255,0.18);
+        width: 30px; height: 30px; margin-right: 0.65rem;
+        border-radius: 12px; background: rgba(255,255,255,0.18);
         box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2);
     }
     [data-testid="stRadio"] [role="radiogroup"] > label:nth-child(2) p::before {
         content: '📋';
         display: inline-flex; align-items: center; justify-content: center;
-        width: 42px; height: 42px; margin-right: 0.9rem;
-        border-radius: 16px; background: #f7e8e5;
+        width: 30px; height: 30px; margin-right: 0.65rem;
+        border-radius: 12px; background: #f7e8e5;
         box-shadow: inset 0 0 0 1px rgba(127,36,78,0.09);
     }
     [data-testid="stRadio"] [role="radiogroup"] > label:has(input:checked) p::before { background: rgba(255,255,255,0.20); }
@@ -2768,37 +2768,37 @@ with tab1:
     .review-left-shell, .score-shell {
         background: rgba(255,255,255,0.88);
         border: 1px solid #eadde5;
-        border-radius: 20px;
-        padding: 1rem 1.05rem;
+        border-radius: 18px;
+        padding: 0.68rem 0.82rem;
         box-shadow: 0 14px 32px rgba(25,14,36,0.06);
     }
     .pane-title-row {
         display:flex; align-items:center; justify-content:space-between; gap:0.8rem;
-        margin-bottom: 0.78rem;
+        margin-bottom: 0.45rem;
     }
     .pane-kicker {
         font-size:0.66rem; font-weight:900; letter-spacing:0.12em;
         text-transform:uppercase; color:#a3195b; margin-bottom:0.22rem;
     }
     .pane-title {
-        font-family:'Inter Tight','Inter',sans-serif; font-size:1.1rem;
+        font-family:'Inter Tight','Inter',sans-serif; font-size:0.98rem;
         font-weight:900; letter-spacing:-0.03em; color:#241226; line-height:1.1;
     }
-    .pane-copy { font-size:0.78rem; color:#7b6874; line-height:1.45; margin-top:0.22rem; }
+    .pane-copy { font-size:0.72rem; color:#7b6874; line-height:1.35; margin-top:0.14rem; }
     .pane-chip {
         padding:0.34rem 0.72rem; border-radius:999px;
         background:linear-gradient(135deg,#873553,#c4475f); color:#fff;
         font-size:0.66rem; font-weight:850; white-space:nowrap;
     }
-    .soft-divider { height:1px; background:linear-gradient(90deg,#eadde5,transparent); margin:0.86rem 0; }
+    .soft-divider { height:1px; background:linear-gradient(90deg,#eadde5,transparent); margin:0.48rem 0; }
 
     .ds-loader-card-v3 {
         background: transparent !important; border: none !important; box-shadow: none !important;
-        padding: 0 !important; margin: 0.15rem 0 0.6rem 0 !important;
+        padding: 0 !important; margin: 0.05rem 0 0.38rem 0 !important;
     }
     .ds-loader-v3-head { margin: 0 !important; }
     .ds-loader-v3-kicker { font-size: 0.66rem !important; color:#a3195b !important; }
-    .ds-loader-v3-title { font-size: 0.94rem !important; color:#2a1421 !important; }
+    .ds-loader-v3-title { font-size: 0.84rem !important; color:#2a1421 !important; }
     .ds-col-label {
         font-size:0.62rem !important; color:#8b6771 !important;
         letter-spacing:0.09em !important; margin-bottom:0.25rem !important;
@@ -2808,7 +2808,7 @@ with tab1:
         border: 1px solid #f0dbe2 !important;
         border-radius: 13px !important;
         box-shadow: none !important;
-        padding: 0.72rem 0.82rem !important;
+        padding: 0.55rem 0.65rem !important;
         margin-top: 0.7rem !important;
     }
     .ds-qa-label { font-size:0.6rem !important; }
@@ -2819,15 +2819,15 @@ with tab1:
         background: transparent !important; border: none !important; border-radius: 0 !important;
         padding: 0 !important; margin-top: 0.85rem !important; box-shadow: none !important;
     }
-    .ai-input-card-icon { width: 34px !important; height:34px !important; border-radius:12px !important; }
+    .ai-input-card-icon { width: 28px !important; height:28px !important; border-radius:10px !important; }
     .ai-input-card-kicker { font-size:0.62rem !important; }
-    .ai-input-card-title { font-size:0.98rem !important; }
+    .ai-input-card-title { font-size:0.86rem !important; }
     .ai-input-wc, .ai-input-hint-chip, .ai-input-badge { font-size:0.65rem !important; }
     .ai-input-textarea-wrap textarea {
         border-radius: 14px !important;
         border: 1px solid #eadde5 !important;
         box-shadow: inset 0 1px 2px rgba(25,14,36,0.04) !important;
-        min-height: 170px !important;
+        min-height: 112px !important;
     }
 
     .action-bar-modern {
@@ -2849,6 +2849,48 @@ with tab1:
         .action-bar-modern { grid-template-columns:1fr; }
         .tab1-section-subtitle { display:none; }
     }
+
+    /* ===== FIT SCREEN OVERRIDES: keep the full review above the fold ===== */
+    [data-testid="stAppViewContainer"] .block-container { padding-top:0.25rem !important; padding-bottom:0.45rem !important; }
+    .tab1-section { margin:0.2rem 0 0.35rem 0 !important; }
+    .tab1-section-header { gap:0.55rem !important; min-height:28px !important; }
+    .tab1-section-step { width:24px !important; height:24px !important; border-radius:8px !important; font-size:0.68rem !important; }
+    .tab1-section-title { font-size:0.92rem !important; }
+    .tab1-section-subtitle { font-size:0.78rem !important; }
+    .pane-chip { padding:0.24rem 0.58rem !important; font-size:0.6rem !important; }
+    .ds-col-label { margin-bottom:0.12rem !important; }
+    [data-testid="stSelectbox"] [data-baseweb="select"] > div, [data-testid="stTextInputRootElement"], .stTextInput > div > div { min-height:34px !important; border-radius:11px !important; }
+    .stButton > button, .stDownloadButton > button { min-height:34px !important; padding:0.28rem 0.65rem !important; border-radius:10px !important; }
+    .ai-input-card { margin-top:0.45rem !important; }
+    .ai-input-card-header { gap:0.45rem !important; }
+    .ai-input-card-meta { gap:0.25rem !important; }
+    .ai-input-wc, .ai-input-hint-chip, .ai-input-badge { padding:0.16rem 0.45rem !important; }
+    .stTextArea textarea { min-height:100px !important; padding:0.45rem 0.65rem !important; line-height:1.45 !important; font-size:0.78rem !important; }
+    .action-bar-modern { margin-top:0.5rem !important; padding:0.5rem !important; border-radius:14px !important; grid-template-columns:minmax(0,1fr) 140px !important; }
+    .action-hint { font-size:0.72rem !important; }
+    .sbd-card { padding:0.75rem 0.85rem !important; border-radius:18px !important; }
+    .sbd-header { margin-bottom:0.45rem !important; }
+    .sbd-title { font-size:1rem !important; }
+    .sbd-kicker { font-size:0.58rem !important; margin-bottom:0.1rem !important; }
+    .sbd-pill { padding:0.24rem 0.58rem !important; font-size:0.68rem !important; }
+    .sbd-hero { grid-template-columns:92px minmax(0,1fr) !important; gap:0.65rem !important; padding:0.4rem 0 0.55rem 0 !important; }
+    .sbd-ring { width:84px !important; height:84px !important; box-shadow:0 6px 14px rgba(25,14,36,0.08) !important; }
+    .sbd-ring-inner { width:60px !important; height:60px !important; }
+    .sbd-ring-inner strong { font-size:1.32rem !important; }
+    .sbd-ring-inner span { font-size:0.56rem !important; }
+    .sbd-verdict-label { font-size:0.95rem !important; margin-bottom:0.12rem !important; }
+    .sbd-verdict-copy { font-size:0.72rem !important; line-height:1.35 !important; }
+    .sbd-soft-line { margin:0.08rem 0 0.55rem 0 !important; }
+    .sbd-metric-grid { border-radius:14px !important; }
+    .sbd-metric-inline { padding:0.55rem 0.35rem !important; }
+    .sbd-mini-icon { width:28px !important; height:28px !important; border-radius:10px !important; margin-bottom:0.32rem !important; }
+    .sbd-mini-label { font-size:0.52rem !important; min-height:1.15rem !important; letter-spacing:0.06em !important; }
+    .sbd-mini-value { font-size:1.12rem !important; margin:0.18rem 0 0.08rem 0 !important; }
+    .sbd-mini-sub { font-size:0.52rem !important; }
+    .sbd-read-box { margin-top:0.55rem !important; padding:0.55rem 0.65rem !important; border-radius:12px !important; }
+    .sbd-read-title { font-size:0.68rem !important; }
+    .sbd-read-copy { font-size:0.66rem !important; line-height:1.32 !important; }
+
     </style>
     """, unsafe_allow_html=True)
 
@@ -2883,7 +2925,7 @@ with tab1:
     mode_title = "Load dataset answer" if research_active else "Paste AI answer"
     mode_copy = "Select a saved question and model, then load the answer for review." if research_active else "Paste one AI-generated answer and check its fatwa alignment."
 
-    review_left, review_right = st.columns([0.58, 0.42], gap="medium")
+    review_left, review_right = st.columns([0.56, 0.44], gap="medium")
 
     with review_left:
         st.markdown(_html(f"""
@@ -3022,7 +3064,7 @@ with tab1:
         )
         ai_response = st.text_area(
             "AI Response Input",
-            height=150 if research_active else 160,
+            height=105 if research_active else 120,
             placeholder=placeholder_text,
             key="ai_input",
             label_visibility="collapsed"
@@ -3078,7 +3120,7 @@ with tab1:
         <div></div>
     </div>
     """), unsafe_allow_html=True)
-    b1, b2, _spacer = st.columns([0.34, 0.18, 0.48], gap="small")
+    b1, b2, _spacer = st.columns([0.28, 0.14, 0.58], gap="small")
     with b1:
         analyze_btn = st.button("✨ Analyze Answer", use_container_width=True, key="analyze_single")
     with b2:
@@ -3795,7 +3837,7 @@ with tab5:
         most_covered = topic_counts_full.iloc[0]["issue_display"] if not topic_counts_full.empty else "-"
         st.markdown(
             f"<div class='metric-card'><div class='metric-label'>Most Covered Topic</div>"
-            f"<div class='metric-value' style='font-size:1.1rem; line-height:1.3;'>"
+            f"<div class='metric-value' style='font-size:0.98rem; line-height:1.3;'>"
             f"{short_topic_label(most_covered)}</div></div>",
             unsafe_allow_html=True
         )

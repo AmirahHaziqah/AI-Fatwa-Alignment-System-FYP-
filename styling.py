@@ -155,7 +155,7 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
     color: {COLORS["text_primary"]};
 }}
 .block-container {{
-    padding-top: 0.5rem !important;
+    padding-top: 0.25rem !important;
     padding-left: 1rem !important;
     padding-right: 1rem !important;
     max-width: 1400px !important;
