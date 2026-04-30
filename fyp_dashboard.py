@@ -2309,7 +2309,7 @@ def render_batch_score_chart(num_df: pd.DataFrame):
             _render_grouped_bars(summary_df, 'label', 'Metric comparison by response', 'Side-by-side bars make it easier to compare meaning match, text match, and key fatwa points.')
             
 def render_similarity_breakdown(bundle: dict):
-    """Balanced right-column card: score summary + 4 compact metric cards with matching width."""
+    """Modern score panel: one calm card with the final score and metric row inside it."""
     final_match_score = safe_float(bundle.get("final_match_score"))
     lexical_score     = safe_float(bundle.get("lexical_score"))
     semantic_score    = safe_float(bundle.get("semantic_score"))
@@ -2327,54 +2327,72 @@ def render_similarity_breakdown(bundle: dict):
         "Not close enough yet, so it needs careful review."
     )
 
-    read_copy = "Text checks wording overlap, meaning checks the closest idea, key points checks important fatwa conditions, and overall fit shows the matched state average."
-
-    def metric_tone(value):
-        return "#06A77D" if value >= 70 else "#D4A04B" if value >= 50 else "#A31621"
-
-    def metric_desc(label, value):
-        if "Text" in label:
-            return "Uses many similar words." if value >= 70 else "Uses some similar words." if value >= 50 else "Uses different words."
-        if "Meaning" in label:
-            return "Very close in meaning." if value >= 70 else "Quite close in meaning." if value >= 50 else "Meaning needs review."
-        if "Key" in label:
-            return "Most points included." if value >= 70 else "Some points included." if value >= 50 else "Key points missing."
-        return "Strong state fit." if value >= 70 else "Partial state fit." if value >= 50 else "Weak state fit."
-
     def metric_card(label, value, icon, sublabel):
-        tone = metric_tone(value)
         return f"""
-        <div class='sbd-mini-card' style='--metric-tone:{tone};'>
+        <div class='sbd-metric-inline'>
             <div class='sbd-mini-icon'>{icon}</div>
             <div class='sbd-mini-label'>{html.escape(label)}</div>
             <div class='sbd-mini-value'>{value:.0f}%</div>
             <div class='sbd-mini-sub'>{html.escape(sublabel)}</div>
-            <div class='sbd-mini-desc'>{html.escape(metric_desc(label, value))}</div>
         </div>
         """
 
     metric_cards = "".join([
-        metric_card("Text Match", lexical_score, "📝", "Words used"),
+        metric_card("Text Match", lexical_score, "AA", "Words used"),
         metric_card("Meaning Match", semantic_score, "🎯", "Same meaning"),
         metric_card("Key Points", coverage_score, "✓", "Main points"),
         metric_card("Overall Fit", mean_alignment, "⚖️", "State match"),
     ])
 
     st.markdown(_html(f"""
+    <style>
+    .sbd-stack {{ width:100%; }}
+    .sbd-card {{
+        width:100%; box-sizing:border-box;
+        background:rgba(255,255,255,0.92);
+        border:1px solid #eadde5;
+        border-radius:20px;
+        padding:1.05rem 1.15rem;
+        box-shadow:0 14px 32px rgba(25,14,36,0.06);
+    }}
+    .sbd-header {{ display:flex; justify-content:space-between; align-items:flex-start; gap:0.8rem; margin-bottom:0.88rem; }}
+    .sbd-kicker {{ font-size:0.64rem; font-weight:900; text-transform:uppercase; letter-spacing:0.13em; color:#a3195b; margin-bottom:0.2rem; }}
+    .sbd-title {{ font-family:'Inter Tight','Inter',sans-serif; font-size:1.18rem; font-weight:900; color:#241226; letter-spacing:-0.035em; }}
+    .sbd-pill {{ padding:0.34rem 0.72rem; border-radius:999px; border:1.5px solid; font-weight:900; font-size:0.76rem; white-space:nowrap; }}
+    .sbd-hero {{ display:grid; grid-template-columns:128px minmax(0,1fr); gap:1rem; align-items:center; padding:0.78rem 0 1rem 0; }}
+    .sbd-ring {{ width:112px; height:112px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(25,14,36,0.10); }}
+    .sbd-ring-inner {{ width:78px; height:78px; border-radius:50%; background:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow:inset 0 0 0 1px rgba(220,170,190,0.42); }}
+    .sbd-ring-inner strong {{ font-family:'Inter Tight','Inter',sans-serif; font-size:1.75rem; font-weight:900; line-height:1; }}
+    .sbd-ring-inner span {{ font-size:0.64rem; color:#8b6771; margin-top:0.16rem; font-weight:800; }}
+    .sbd-verdict-label {{ font-family:'Inter Tight','Inter',sans-serif; font-size:1.1rem; font-weight:900; margin-bottom:0.24rem; line-height:1.15; }}
+    .sbd-verdict-copy {{ font-size:0.82rem; color:#6d5a68; line-height:1.55; max-width:420px; }}
+    .sbd-soft-line {{ height:1px; background:linear-gradient(90deg,#eadde5,transparent); margin:0.2rem 0 0.85rem 0; }}
+    .sbd-metric-grid {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; border:1px solid #eadde5; border-radius:16px; overflow:hidden; background:#fff; }}
+    .sbd-metric-inline {{ min-width:0; padding:0.8rem 0.55rem; text-align:center; border-right:1px solid #eadde5; }}
+    .sbd-metric-inline:last-child {{ border-right:none; }}
+    .sbd-mini-icon {{ width:34px; height:34px; border-radius:12px; display:inline-flex; align-items:center; justify-content:center; margin-bottom:0.48rem; background:#f8e5e2; color:#8a2b4d; font-size:0.78rem; font-weight:900; }}
+    .sbd-mini-label {{ font-size:0.6rem; font-weight:900; letter-spacing:0.08em; text-transform:uppercase; color:#7f6572; line-height:1.3; min-height:1.55rem; }}
+    .sbd-mini-value {{ font-family:'Inter Tight','Inter',sans-serif; font-size:1.42rem; font-weight:900; line-height:1; margin:0.28rem 0 0.14rem 0; color:#241226; letter-spacing:-0.04em; }}
+    .sbd-mini-sub {{ font-size:0.6rem; color:#8b6771; font-weight:750; }}
+    .sbd-read-box {{ margin-top:0.85rem; border:1px solid #eadde5; border-radius:14px; padding:0.72rem 0.85rem; background:linear-gradient(135deg,#fff8f4 0%,#fff 100%); }}
+    .sbd-read-title {{ font-size:0.78rem; font-weight:900; color:#5d3945; margin-bottom:0.16rem; }}
+    .sbd-read-copy {{ font-size:0.74rem; color:#7b6874; line-height:1.45; }}
+    @media(max-width:900px) {{ .sbd-hero {{ grid-template-columns:1fr; }} .sbd-metric-grid {{ grid-template-columns:repeat(2,1fr); }} .sbd-metric-inline:nth-child(2) {{ border-right:none; }} .sbd-metric-inline:nth-child(-n+2) {{ border-bottom:1px solid #eadde5; }} }}
+    </style>
     <div class='sbd-stack'>
         <div class='sbd-card'>
             <div class='sbd-header'>
                 <div>
-                    <div class='sbd-kicker'>Similarity breakdown</div>
+                    <div class='sbd-kicker'>Score summary</div>
                     <div class='sbd-title'>Final Score</div>
                 </div>
-                <div class='sbd-pill' style='background:{score_color}18;border-color:{score_color};color:{score_color};'>{final_match_score:.1f}%</div>
+                <div class='sbd-pill' style='background:{score_color}12;border-color:{score_color};color:{score_color};'>{final_match_score:.1f}%</div>
             </div>
             <div class='sbd-hero'>
-                <div class='sbd-ring' style='background:conic-gradient({score_color} 0deg {ring_degrees:.1f}deg,#ead1c8 {ring_degrees:.1f}deg 360deg);'>
+                <div class='sbd-ring' style='background:conic-gradient({score_color} 0deg {ring_degrees:.1f}deg,#f0dfe2 {ring_degrees:.1f}deg 360deg);'>
                     <div class='sbd-ring-inner'>
                         <strong style='color:{score_color};'>{int(round(final_match_score))}</strong>
-                        <span>Final score</span>
+                        <span>/100</span>
                     </div>
                 </div>
                 <div class='sbd-verdict'>
@@ -2382,12 +2400,13 @@ def render_similarity_breakdown(bundle: dict):
                     <div class='sbd-verdict-copy'>{html.escape(conclusion_copy)}</div>
                 </div>
             </div>
+            <div class='sbd-soft-line'></div>
+            <div class='sbd-metric-grid'>{metric_cards}</div>
             <div class='sbd-read-box'>
-                <div class='sbd-read-title'>How to read this section</div>
-                <div class='sbd-read-copy'>{html.escape(read_copy)}</div>
+                <div class='sbd-read-title'>How to read this</div>
+                <div class='sbd-read-copy'>This score checks word use, meaning, key fatwa points, and overall state match.</div>
             </div>
         </div>
-        <div class='sbd-metric-grid'>{metric_cards}</div>
     </div>
     """), unsafe_allow_html=True)
 
@@ -2644,77 +2663,191 @@ with tab1:
         extra_class="single-review-hero"
     )
 
-    # ── Shared section header style ───────────────────────────────────────────
+    # ── Modern Single Review layout style ───────────────────────────────────
     st.markdown("""
     <style>
-    .tab1-section {
-        margin: 0 0 0.5rem 0;
+    .single-review-hero {
+        margin-bottom: 1rem !important;
+        border-radius: 18px !important;
+        background: rgba(255,255,255,0.74) !important;
+        border: 1px solid #eadde5 !important;
+        box-shadow: 0 10px 26px rgba(25,14,36,0.04) !important;
     }
+    .tab1-section { margin: 0 0 0.62rem 0; }
     .tab1-section-header {
-        display: flex;
-        align-items: center;
-        gap: 0.6rem;
-        margin-bottom: 0.55rem;
+        display: flex; align-items: center; gap: 0.68rem;
+        margin: 0.35rem 0 0.72rem 0;
     }
     .tab1-section-step {
-        width: 22px; height: 22px; border-radius: 6px;
-        background: linear-gradient(135deg, #773344, #a3195b);
-        color: #fff; font-size: 0.65rem; font-weight: 900;
+        width: 26px; height: 26px; border-radius: 8px;
+        background: linear-gradient(135deg, #7f244e, #b6465f);
+        color: #fff; font-size: 0.72rem; font-weight: 900;
         display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 8px 18px rgba(127,36,78,0.18);
         flex-shrink: 0;
     }
     .tab1-section-title {
-        font-size: 0.72rem; font-weight: 800; text-transform: uppercase;
-        letter-spacing: 0.1em; color: #5a3d4a;
-    }
-    .tab1-section-rule {
-        flex: 1; height: 1px;
-        background: linear-gradient(90deg, #e2ccd4, transparent);
-    }
-    .tab1-two-col {
-        display: grid;
-        grid-template-columns: 0.58fr 0.42fr;
-        gap: 1rem;
-        align-items: start;
-    }
-    .mode-compact-banner {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 0.75rem;
-        background: linear-gradient(135deg, #ffffff 0%, #fff7f4 100%);
-        border: 1px solid #ead1c8;
-        border-left: 5px solid #D44D5C;
-        border-radius: 16px;
-        padding: 0.72rem 0.9rem;
-        margin: 0.35rem 0 0.75rem 0;
-        box-shadow: 0 5px 14px rgba(25,14,36,0.05);
-    }
-    .mode-compact-title {
-        color: #241226;
         font-family: 'Inter Tight','Inter',sans-serif;
-        font-size: 0.92rem;
-        font-weight: 850;
-        line-height: 1.2;
-    }
-    .mode-compact-copy {
-        color: #6d5a68;
-        font-size: 0.73rem;
-        line-height: 1.45;
-        margin-top: 0.16rem;
-    }
-    .mode-compact-pill {
-        flex-shrink: 0;
-        padding: 0.3rem 0.7rem;
-        border-radius: 999px;
-        background: linear-gradient(135deg, #773344, #D44D5C);
-        color: #ffffff;
-        font-size: 0.66rem;
-        font-weight: 850;
+        font-size: 1rem; font-weight: 900;
+        letter-spacing: -0.01em; color: #241226;
+        text-transform: none;
         white-space: nowrap;
     }
+    .tab1-section-subtitle {
+        font-size: 0.86rem; color: #7b6874; font-weight: 500;
+        padding-left: 0.65rem; border-left: 1px solid #dacbd5;
+        line-height: 1.2;
+    }
+    .tab1-section-rule { flex: 1; height: 1px; background: linear-gradient(90deg, #e5d5dc, transparent); }
+
+    /* Make the mode chooser feel like two clean cards instead of a crowded segmented bar */
+    .mode-choice-wrap { margin-bottom: 1rem; }
+    [data-testid="stRadio"] [role="radiogroup"] {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 0.55rem !important;
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+    }
+    [data-testid="stRadio"] [role="radiogroup"] > label {
+        min-height: 88px !important;
+        border-radius: 14px !important;
+        border: 1px solid #eadde5 !important;
+        background: rgba(255,255,255,0.82) !important;
+        box-shadow: 0 8px 22px rgba(25,14,36,0.045) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        padding: 1rem 1.35rem !important;
+        transition: all 0.22s ease !important;
+    }
+    [data-testid="stRadio"] [role="radiogroup"] > label:hover {
+        transform: translateY(-1px) !important;
+        border-color: #d5bcc9 !important;
+        background: #fff !important;
+    }
+    [data-testid="stRadio"] [role="radiogroup"] > label:has(input:checked) {
+        background: linear-gradient(135deg, #7e1648 0%, #c4475f 100%) !important;
+        border-color: transparent !important;
+        box-shadow: 0 14px 28px rgba(127,36,78,0.22) !important;
+        transform: none !important;
+        position: relative !important;
+    }
+    [data-testid="stRadio"] [role="radiogroup"] > label:has(input:checked)::after {
+        content: ''; position: absolute; left: 50%; bottom: -8px;
+        width: 16px; height: 16px; transform: translateX(-50%) rotate(45deg);
+        background: #b93d5b; border-radius: 2px;
+    }
+    [data-testid="stRadio"] [role="radiogroup"] p {
+        font-size: 0.92rem !important;
+        font-weight: 850 !important;
+        color: #4d3340 !important;
+    }
+    [data-testid="stRadio"] [role="radiogroup"] > label:has(input:checked) p {
+        color: #fff !important;
+        -webkit-text-fill-color: #fff !important;
+    }
+    [data-testid="stRadio"] [role="radiogroup"] > label:nth-child(1) p::before {
+        content: '🗃️';
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 42px; height: 42px; margin-right: 0.9rem;
+        border-radius: 16px; background: rgba(255,255,255,0.18);
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2);
+    }
+    [data-testid="stRadio"] [role="radiogroup"] > label:nth-child(2) p::before {
+        content: '📋';
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 42px; height: 42px; margin-right: 0.9rem;
+        border-radius: 16px; background: #f7e8e5;
+        box-shadow: inset 0 0 0 1px rgba(127,36,78,0.09);
+    }
+    [data-testid="stRadio"] [role="radiogroup"] > label:has(input:checked) p::before { background: rgba(255,255,255,0.20); }
+
+    .review-left-shell, .score-shell {
+        background: rgba(255,255,255,0.88);
+        border: 1px solid #eadde5;
+        border-radius: 20px;
+        padding: 1rem 1.05rem;
+        box-shadow: 0 14px 32px rgba(25,14,36,0.06);
+    }
+    .pane-title-row {
+        display:flex; align-items:center; justify-content:space-between; gap:0.8rem;
+        margin-bottom: 0.78rem;
+    }
+    .pane-kicker {
+        font-size:0.66rem; font-weight:900; letter-spacing:0.12em;
+        text-transform:uppercase; color:#a3195b; margin-bottom:0.22rem;
+    }
+    .pane-title {
+        font-family:'Inter Tight','Inter',sans-serif; font-size:1.1rem;
+        font-weight:900; letter-spacing:-0.03em; color:#241226; line-height:1.1;
+    }
+    .pane-copy { font-size:0.78rem; color:#7b6874; line-height:1.45; margin-top:0.22rem; }
+    .pane-chip {
+        padding:0.34rem 0.72rem; border-radius:999px;
+        background:linear-gradient(135deg,#873553,#c4475f); color:#fff;
+        font-size:0.66rem; font-weight:850; white-space:nowrap;
+    }
+    .soft-divider { height:1px; background:linear-gradient(90deg,#eadde5,transparent); margin:0.86rem 0; }
+
+    .ds-loader-card-v3 {
+        background: transparent !important; border: none !important; box-shadow: none !important;
+        padding: 0 !important; margin: 0.15rem 0 0.6rem 0 !important;
+    }
+    .ds-loader-v3-head { margin: 0 !important; }
+    .ds-loader-v3-kicker { font-size: 0.66rem !important; color:#a3195b !important; }
+    .ds-loader-v3-title { font-size: 0.94rem !important; color:#2a1421 !important; }
+    .ds-col-label {
+        font-size:0.62rem !important; color:#8b6771 !important;
+        letter-spacing:0.09em !important; margin-bottom:0.25rem !important;
+    }
+    .ds-qa-preview {
+        background: #fff6f7 !important;
+        border: 1px solid #f0dbe2 !important;
+        border-radius: 13px !important;
+        box-shadow: none !important;
+        padding: 0.72rem 0.82rem !important;
+        margin-top: 0.7rem !important;
+    }
+    .ds-qa-label { font-size:0.6rem !important; }
+    .ds-qa-text { font-size:0.78rem !important; line-height:1.5 !important; }
+    .ds-qa-q-text { background:#fff !important; border-left:3px solid #D44D5C !important; }
+
+    .ai-input-card {
+        background: transparent !important; border: none !important; border-radius: 0 !important;
+        padding: 0 !important; margin-top: 0.85rem !important; box-shadow: none !important;
+    }
+    .ai-input-card-icon { width: 34px !important; height:34px !important; border-radius:12px !important; }
+    .ai-input-card-kicker { font-size:0.62rem !important; }
+    .ai-input-card-title { font-size:0.98rem !important; }
+    .ai-input-wc, .ai-input-hint-chip, .ai-input-badge { font-size:0.65rem !important; }
+    .ai-input-textarea-wrap textarea {
+        border-radius: 14px !important;
+        border: 1px solid #eadde5 !important;
+        box-shadow: inset 0 1px 2px rgba(25,14,36,0.04) !important;
+        min-height: 170px !important;
+    }
+
+    .action-bar-modern {
+        display:grid; grid-template-columns: minmax(0,1fr) 220px;
+        gap:0.75rem; align-items:center; margin-top:0.9rem;
+        background: linear-gradient(135deg,#fff8f4 0%,#fff 100%);
+        border:1px solid #eadde5; border-radius:18px; padding:0.75rem;
+        box-shadow:0 10px 24px rgba(25,14,36,0.045);
+    }
+    .action-hint { font-size:0.8rem; color:#6d5a68; line-height:1.45; padding-left:0.35rem; }
+    .action-hint strong { color:#241226; }
+
+    .empty-review-card {
+        border:1px solid #eadde5 !important; border-radius:20px !important;
+        background:#fff !important; box-shadow:0 14px 32px rgba(25,14,36,0.05) !important;
+    }
     @media (max-width: 900px) {
-        .mode-compact-banner { align-items: flex-start; flex-direction: column; }
+        [data-testid="stRadio"] [role="radiogroup"] { grid-template-columns:1fr !important; }
+        .action-bar-modern { grid-template-columns:1fr; }
+        .tab1-section-subtitle { display:none; }
     }
     </style>
     """, unsafe_allow_html=True)
@@ -2726,10 +2859,12 @@ with tab1:
     <div class="tab1-section">
         <div class="tab1-section-header">
             <div class="tab1-section-step">1</div>
-            <div class="tab1-section-title">Choose review mode</div>
+            <div class="tab1-section-title">Review Mode</div>
+            <div class="tab1-section-subtitle">Choose how you want to review the AI answer</div>
             <div class="tab1-section-rule"></div>
         </div>
     </div>
+    <div class="mode-choice-wrap">
     """, unsafe_allow_html=True)
 
     mode_options = ["Research Mode", "Check AI Answer"]
@@ -2742,22 +2877,28 @@ with tab1:
         help="Research Mode loads saved AI answers. Check AI Answer is for answers you paste manually."
     )
 
+    st.markdown("</div>", unsafe_allow_html=True)
+
     research_active = review_mode == "Research Mode"
-    mode_title = "Load saved AI answers" if research_active else "Paste and check an AI answer"
-    mode_copy = "Select a question and model from the dataset, then run the same alignment review." if research_active else "Paste the copied AI answer, then run the alignment review."
-    st.markdown(_html(f"""
-    <div class='mode-compact-banner'>
-        <div>
-            <div class='mode-compact-title'>{mode_title}</div>
-            <div class='mode-compact-copy'>{mode_copy}</div>
-        </div>
-        <div class='mode-compact-pill'>{html.escape(review_mode)}</div>
-    </div>
-    """), unsafe_allow_html=True)
+    mode_title = "Load dataset answer" if research_active else "Paste AI answer"
+    mode_copy = "Select a saved question and model, then load the answer for review." if research_active else "Paste one AI-generated answer and check its fatwa alignment."
 
     review_left, review_right = st.columns([0.58, 0.42], gap="medium")
 
     with review_left:
+        st.markdown(_html(f"""
+        <div class='review-left-shell'>
+            <div class='pane-title-row'>
+                <div>
+                    <div class='pane-kicker'>{'Load dataset answer' if research_active else 'Manual answer check'}</div>
+                    <div class='pane-title'>{mode_title}</div>
+                    <div class='pane-copy'>{mode_copy}</div>
+                </div>
+                <div class='pane-chip'>{html.escape(review_mode)}</div>
+            </div>
+            <div class='soft-divider'></div>
+        </div>
+        """), unsafe_allow_html=True)
         # ── Research Mode: Dataset loader ─────────────────────────────────────
         if research_active and AI_DATASET_AVAILABLE:
             question_map = (
@@ -2931,12 +3072,17 @@ with tab1:
     # ══════════════════════════════════════════════════════
     # ACTION ROW — Analyze + Clear, always under both columns
     # ══════════════════════════════════════════════════════
-    st.markdown("<div style='height:0.6rem;'></div>", unsafe_allow_html=True)
-    b1, b2, _spacer = st.columns([0.38, 0.20, 0.42], gap="small")
+    st.markdown(_html(f"""
+    <div class='action-bar-modern'>
+        <div class='action-hint'><strong>{html.escape(review_mode)} selected.</strong> {'Load a saved answer, then analyze it.' if research_active else 'Paste an answer, then analyze it.'}</div>
+        <div></div>
+    </div>
+    """), unsafe_allow_html=True)
+    b1, b2, _spacer = st.columns([0.34, 0.18, 0.48], gap="small")
     with b1:
-        analyze_btn = st.button(f"Analyze · {review_mode}", use_container_width=True, key="analyze_single")
+        analyze_btn = st.button("✨ Analyze Answer", use_container_width=True, key="analyze_single")
     with b2:
-        clear_btn = st.button("Clear history", use_container_width=True, key="clear_all_single")
+        clear_btn = st.button("Clear", use_container_width=True, key="clear_all_single")
 
     if clear_btn:
         clear_history()
