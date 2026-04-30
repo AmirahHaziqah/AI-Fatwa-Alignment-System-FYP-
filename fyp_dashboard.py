@@ -2677,6 +2677,58 @@ with tab1:
         gap: 1rem;
         align-items: start;
     }
+    .mode-guide-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.8rem;
+        margin: 0.35rem 0 0.75rem 0;
+    }
+    .mode-guide-card {
+        background: linear-gradient(135deg, #ffffff 0%, #fff7f4 100%);
+        border: 1px solid #ead1c8;
+        border-radius: 18px;
+        padding: 0.85rem 0.95rem;
+        box-shadow: 0 6px 16px rgba(25,14,36,0.05);
+    }
+    .mode-guide-card.active {
+        border-left: 5px solid #D44D5C;
+        background: linear-gradient(135deg, #ffffff 0%, #fff0f4 100%);
+        box-shadow: 0 8px 22px rgba(119,51,68,0.10);
+    }
+    .mode-guide-kicker {
+        color: #a3195b;
+        font-size: 0.58rem;
+        font-weight: 900;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        margin-bottom: 0.18rem;
+    }
+    .mode-guide-title {
+        color: #241226;
+        font-family: 'Inter Tight','Inter',sans-serif;
+        font-size: 0.92rem;
+        font-weight: 850;
+        line-height: 1.2;
+        margin-bottom: 0.25rem;
+    }
+    .mode-guide-copy {
+        color: #6d5a68;
+        font-size: 0.74rem;
+        line-height: 1.5;
+    }
+    .mode-status-note {
+        border-radius: 14px;
+        border: 1px solid #ead1c8;
+        background: #fffaf7;
+        color: #6d4b58;
+        padding: 0.65rem 0.85rem;
+        font-size: 0.76rem;
+        line-height: 1.55;
+        margin: 0 0 0.55rem 0;
+    }
+    @media (max-width: 900px) {
+        .mode-guide-grid { grid-template-columns: 1fr; }
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -2687,17 +2739,48 @@ with tab1:
     <div class="tab1-section">
         <div class="tab1-section-header">
             <div class="tab1-section-step">1</div>
-            <div class="tab1-section-title">Load or paste an AI answer</div>
+            <div class="tab1-section-title">Choose review mode</div>
             <div class="tab1-section-rule"></div>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
+    mode_options = ["Research Mode", "Check AI Answer"]
+    review_mode = st.radio(
+        "Choose review mode",
+        options=mode_options,
+        horizontal=True,
+        key="single_review_mode",
+        label_visibility="collapsed",
+        help="Research Mode loads saved AI answers. Check AI Answer is for answers you paste manually."
+    )
+
+    research_active = review_mode == "Research Mode"
+    st.markdown(_html(f"""
+    <div class='mode-guide-grid'>
+        <div class='mode-guide-card {'active' if research_active else ''}'>
+            <div class='mode-guide-kicker'>Research Mode</div>
+            <div class='mode-guide-title'>Load saved AI answers</div>
+            <div class='mode-guide-copy'>Use this when you want to study existing dataset answers by question and model.</div>
+        </div>
+        <div class='mode-guide-card {'active' if not research_active else ''}'>
+            <div class='mode-guide-kicker'>Check AI Answer</div>
+            <div class='mode-guide-title'>Paste a new answer</div>
+            <div class='mode-guide-copy'>Use this when you already copied an AI-generated answer and want to verify its fatwa alignment.</div>
+        </div>
+    </div>
+    """), unsafe_allow_html=True)
+
     review_left, review_right = st.columns([0.58, 0.42], gap="medium")
 
     with review_left:
-        # ── Dataset loader ────────────────────────────────────────────────────
-        if AI_DATASET_AVAILABLE:
+        if research_active:
+            st.markdown("<div class='mode-status-note'><strong>Research Mode selected.</strong> Load a saved response from the dataset, then analyze it. This keeps dataset research separate from manual checking.</div>", unsafe_allow_html=True)
+        else:
+            st.markdown("<div class='mode-status-note'><strong>Check AI Answer selected.</strong> Paste the answer you copied from an AI tool. No dataset response will be loaded in this mode.</div>", unsafe_allow_html=True)
+
+        # ── Research Mode: Dataset loader ─────────────────────────────────────
+        if research_active and AI_DATASET_AVAILABLE:
             question_map = (
                 fatwa_df[["question_id", "question_text"]]
                 .drop_duplicates("question_id")
@@ -2787,7 +2870,10 @@ with tab1:
 
             st.markdown("<div style='height:0.5rem;'></div>", unsafe_allow_html=True)
 
-        # ── Redesigned User Input Area ────────────────────────────────────────
+        elif research_active and not AI_DATASET_AVAILABLE:
+            st.warning("No saved AI answer dataset was found. Switch to Check AI Answer mode to paste an answer manually.")
+
+        # ── Response Input Area ───────────────────────────────────────────────
         current_ai_input = st.session_state.get("ai_input", "")
         input_has_content = bool(current_ai_input and current_ai_input.strip())
         word_count = len(current_ai_input.split()) if input_has_content else 0
@@ -2798,23 +2884,28 @@ with tab1:
                 <div class='ai-input-card-header-left'>
                     <div class='ai-input-card-icon'>✍️</div>
                     <div>
-                        <div class='ai-input-card-kicker'>AI RESPONSE TO CHECK</div>
-                        <div class='ai-input-card-title'>Paste or load the answer below</div>
+                        <div class='ai-input-card-kicker'>{'LOADED DATASET ANSWER' if research_active else 'AI RESPONSE TO CHECK'}</div>
+                        <div class='ai-input-card-title'>{'Review the loaded saved answer below' if research_active else 'Paste your copied AI answer below'}</div>
                     </div>
                 </div>
                 <div class='ai-input-card-meta'>
                     {"<span class='ai-input-wc'>" + str(word_count) + " words</span>" if input_has_content else "<span class='ai-input-hint-chip'>No input yet</span>"}
-                    <span class='ai-input-badge'>Single review</span>
+                    <span class='ai-input-badge'>{html.escape(review_mode)}</span>
                 </div>
             </div>
         </div>
         """), unsafe_allow_html=True)
 
         st.markdown('<div class="ai-input-textarea-wrap">', unsafe_allow_html=True)
+        placeholder_text = (
+            'Load a saved dataset answer above, then review it here before analysis.'
+            if research_active
+            else 'Example: "In Islam, surrogacy is generally not permitted because it can mix lineages..."\n\nPaste your full AI-generated answer here. Longer answers give more accurate scores.'
+        )
         ai_response = st.text_area(
             "AI Response Input",
-            height=130,
-            placeholder='Example: "In Islam, surrogacy is generally not permitted because it can mix lineages..."\n\nPaste your full AI-generated answer here. Longer answers give more accurate scores.',
+            height=150 if research_active else 160,
+            placeholder=placeholder_text,
             key="ai_input",
             label_visibility="collapsed"
         )
@@ -2873,7 +2964,7 @@ with tab1:
     st.markdown("<div style='height:0.6rem;'></div>", unsafe_allow_html=True)
     b1, b2, _spacer = st.columns([0.38, 0.20, 0.42], gap="small")
     with b1:
-        analyze_btn = st.button("🔍 Analyze This Response", use_container_width=True, key="analyze_single")
+        analyze_btn = st.button(f"🔍 Analyze in {review_mode}", use_container_width=True, key="analyze_single")
     with b2:
         clear_btn = st.button("🗑️ Clear History", use_container_width=True, key="clear_all_single")
 
@@ -2884,7 +2975,7 @@ with tab1:
 
     if analyze_btn:
         if not ai_response.strip():
-            st.warning("⚠️ Please paste or load an AI response before running the analysis.")
+            st.warning("⚠️ Please load a saved AI response first." if research_active else "⚠️ Please paste an AI response before running the analysis.")
         elif not ensure_analysis_dependencies():
             st.stop()
         else:
