@@ -3065,24 +3065,11 @@ with tab1:
     st.markdown("</div>", unsafe_allow_html=True)
 
     research_active = review_mode == "Research Mode"
-    mode_title = "Load dataset answer" if research_active else "Paste AI answer"
-    mode_copy = "Select a saved question and model, then load the answer for review." if research_active else "Paste one AI-generated answer and check its fatwa alignment."
 
     review_left, review_right = st.columns([0.56, 0.44], gap="medium")
 
     with review_left:
-        st.markdown(_html(f"""
-        <div class='review-left-shell'>
-            <div class='flow-hero-card'>
-                <div class='flow-hero-icon'>{'🗃️' if research_active else '📋'}</div>
-                <div>
-                    <div class='flow-hero-kicker'>{'Review Mode' if research_active else 'Check Mode'}</div>
-                    <div class='flow-hero-title'>{mode_title}</div>
-                    <div class='flow-hero-copy'>{mode_copy}</div>
-                </div>
-                <div class='flow-hero-chip'>{'▣ ' if research_active else '□ '}{html.escape(review_mode)}</div>
-            </div>
-        """), unsafe_allow_html=True)
+        st.markdown("<div class='review-left-shell review-left-shell--no-hero'>", unsafe_allow_html=True)
         # ── Research Mode: Dataset loader ─────────────────────────────────────
         if research_active and AI_DATASET_AVAILABLE:
             question_map = (
