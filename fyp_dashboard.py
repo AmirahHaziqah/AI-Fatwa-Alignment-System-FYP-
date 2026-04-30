@@ -3037,6 +3037,41 @@ with tab1:
     </style>
     """, unsafe_allow_html=True)
 
+
+    st.markdown("""
+    <style>
+    /* ===== GAP FIX: remove empty card effect and tighten guided flow ===== */
+    .review-left-shell, .review-left-shell--no-hero {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        min-height: 0 !important;
+    }
+    .flow-steps-line {
+        margin: 0 0 0.48rem 0 !important;
+        padding: 0 !important;
+        align-items: center !important;
+    }
+    .flow-step-mini { font-size: 0.68rem !important; gap: 0.42rem !important; }
+    .flow-step-dot { width: 22px !important; height: 22px !important; font-size: 0.62rem !important; }
+    .flow-field-label { margin: 0 0 0.18rem 0 !important; font-size: 0.58rem !important; letter-spacing: 0.08em !important; }
+    .flow-field-label .bubble { width: 20px !important; height: 20px !important; border-radius: 8px !important; font-size: 0.68rem !important; }
+    .flow-action-cell .stButton > button { min-height: 40px !important; border-radius: 11px !important; font-size: 0.76rem !important; padding: 0.3rem 0.62rem !important; }
+    .flow-answer-note {
+        margin-top: 0.42rem !important;
+        padding: 0.46rem 0.56rem !important;
+        min-height: 0 !important;
+        grid-template-columns: 26px minmax(0,1fr) auto !important;
+    }
+    .flow-answer-note-icon { width: 26px !important; height: 26px !important; border-radius: 10px !important; font-size: 0.72rem !important; }
+    .flow-answer-status { font-size: 0.6rem !important; padding: 0.17rem 0.46rem !important; }
+    .ds-qa-preview { display: none !important; height: 0 !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; overflow: hidden !important; }
+    div[data-testid="column"] [data-testid="stSelectbox"] { margin-bottom: 0 !important; }
+    </style>
+    """, unsafe_allow_html=True)
+
     # ══════════════════════════════════════════════════════
     # SECTION 1 — Input
     # ══════════════════════════════════════════════════════
@@ -3069,7 +3104,6 @@ with tab1:
     review_left, review_right = st.columns([0.56, 0.44], gap="medium")
 
     with review_left:
-        st.markdown("<div class='review-left-shell review-left-shell--no-hero'>", unsafe_allow_html=True)
         # ── Research Mode: Dataset loader ─────────────────────────────────────
         if research_active and AI_DATASET_AVAILABLE:
             question_map = (
@@ -3133,19 +3167,7 @@ with tab1:
             question_subset = ai_answer_df[ai_answer_df["question_id"] == selected_qid].copy()
             selected_match = question_subset[question_subset["model"] == selected_model]
 
-            # ── Question Preview Panel (model chip shown inline, no answer block) ──
-            preview_q_text = selected_question_text or "-"
-            preview_q_short = (preview_q_text[:220] + "...") if len(preview_q_text) > 220 else preview_q_text
-            model_chip_html = f"<span class='ds-qa-model-chip'>{html.escape(selected_model)}</span>"
 
-            st.markdown(_html(f"""
-            <div class='ds-qa-preview'>
-                <div class='ds-qa-row'>
-                    <div class='ds-qa-label ds-qa-q-label'>Question {model_chip_html}</div>
-                    <div class='ds-qa-text ds-qa-q-text'>{html.escape(preview_q_short)}</div>
-                </div>
-            </div>
-            """), unsafe_allow_html=True)
 
             if load_btn:
                 if not selected_match.empty:
@@ -3212,7 +3234,6 @@ with tab1:
                 ["Ready for review", "Click Analyze to see results"]
             )
 
-        st.markdown("</div>", unsafe_allow_html=True)
     # ── Right column: score summary ───────────────────────────────────────────
     with review_right:
         st.markdown("""
