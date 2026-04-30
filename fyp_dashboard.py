@@ -2677,57 +2677,44 @@ with tab1:
         gap: 1rem;
         align-items: start;
     }
-    .mode-guide-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 0.8rem;
-        margin: 0.35rem 0 0.75rem 0;
-    }
-    .mode-guide-card {
+    .mode-compact-banner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.75rem;
         background: linear-gradient(135deg, #ffffff 0%, #fff7f4 100%);
         border: 1px solid #ead1c8;
-        border-radius: 18px;
-        padding: 0.85rem 0.95rem;
-        box-shadow: 0 6px 16px rgba(25,14,36,0.05);
-    }
-    .mode-guide-card.active {
         border-left: 5px solid #D44D5C;
-        background: linear-gradient(135deg, #ffffff 0%, #fff0f4 100%);
-        box-shadow: 0 8px 22px rgba(119,51,68,0.10);
+        border-radius: 16px;
+        padding: 0.72rem 0.9rem;
+        margin: 0.35rem 0 0.75rem 0;
+        box-shadow: 0 5px 14px rgba(25,14,36,0.05);
     }
-    .mode-guide-kicker {
-        color: #a3195b;
-        font-size: 0.58rem;
-        font-weight: 900;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        margin-bottom: 0.18rem;
-    }
-    .mode-guide-title {
+    .mode-compact-title {
         color: #241226;
         font-family: 'Inter Tight','Inter',sans-serif;
         font-size: 0.92rem;
         font-weight: 850;
         line-height: 1.2;
-        margin-bottom: 0.25rem;
     }
-    .mode-guide-copy {
+    .mode-compact-copy {
         color: #6d5a68;
-        font-size: 0.74rem;
-        line-height: 1.5;
+        font-size: 0.73rem;
+        line-height: 1.45;
+        margin-top: 0.16rem;
     }
-    .mode-status-note {
-        border-radius: 14px;
-        border: 1px solid #ead1c8;
-        background: #fffaf7;
-        color: #6d4b58;
-        padding: 0.65rem 0.85rem;
-        font-size: 0.76rem;
-        line-height: 1.55;
-        margin: 0 0 0.55rem 0;
+    .mode-compact-pill {
+        flex-shrink: 0;
+        padding: 0.3rem 0.7rem;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #773344, #D44D5C);
+        color: #ffffff;
+        font-size: 0.66rem;
+        font-weight: 850;
+        white-space: nowrap;
     }
     @media (max-width: 900px) {
-        .mode-guide-grid { grid-template-columns: 1fr; }
+        .mode-compact-banner { align-items: flex-start; flex-direction: column; }
     }
     </style>
     """, unsafe_allow_html=True)
@@ -2756,29 +2743,21 @@ with tab1:
     )
 
     research_active = review_mode == "Research Mode"
+    mode_title = "Load saved AI answers" if research_active else "Paste and check an AI answer"
+    mode_copy = "Select a question and model from the dataset, then run the same alignment review." if research_active else "Paste the copied AI answer, then run the alignment review."
     st.markdown(_html(f"""
-    <div class='mode-guide-grid'>
-        <div class='mode-guide-card {'active' if research_active else ''}'>
-            <div class='mode-guide-kicker'>Research Mode</div>
-            <div class='mode-guide-title'>Load saved AI answers</div>
-            <div class='mode-guide-copy'>Use this when you want to study existing dataset answers by question and model.</div>
+    <div class='mode-compact-banner'>
+        <div>
+            <div class='mode-compact-title'>{mode_title}</div>
+            <div class='mode-compact-copy'>{mode_copy}</div>
         </div>
-        <div class='mode-guide-card {'active' if not research_active else ''}'>
-            <div class='mode-guide-kicker'>Check AI Answer</div>
-            <div class='mode-guide-title'>Paste a new answer</div>
-            <div class='mode-guide-copy'>Use this when you already copied an AI-generated answer and want to verify its fatwa alignment.</div>
-        </div>
+        <div class='mode-compact-pill'>{html.escape(review_mode)}</div>
     </div>
     """), unsafe_allow_html=True)
 
     review_left, review_right = st.columns([0.58, 0.42], gap="medium")
 
     with review_left:
-        if research_active:
-            st.markdown("<div class='mode-status-note'><strong>Research Mode selected.</strong> Load a saved response from the dataset, then analyze it. This keeps dataset research separate from manual checking.</div>", unsafe_allow_html=True)
-        else:
-            st.markdown("<div class='mode-status-note'><strong>Check AI Answer selected.</strong> Paste the answer you copied from an AI tool. No dataset response will be loaded in this mode.</div>", unsafe_allow_html=True)
-
         # ── Research Mode: Dataset loader ─────────────────────────────────────
         if research_active and AI_DATASET_AVAILABLE:
             question_map = (
@@ -2805,12 +2784,10 @@ with tab1:
             <div class='ds-loader-card-v3'>
                 <div class='ds-loader-v3-head'>
                     <div>
-                        <div class='ds-loader-v3-kicker'>Dataset Quick Load</div>
-                        <div class='ds-loader-v3-title'>Load a saved Q&amp;A from dataset</div>
+                        <div class='ds-loader-v3-kicker'>Dataset</div>
+                        <div class='ds-loader-v3-title'>Choose a saved question and model</div>
                     </div>
-                    <div class='ds-loader-v3-badge'>⬇ Quick Load</div>
                 </div>
-                <div class='ds-loader-v3-hint'>Select a question and model below — the question and AI answer will be shown as a preview before you load.</div>
             </div>
             """), unsafe_allow_html=True)
 
@@ -2885,7 +2862,7 @@ with tab1:
                     <div class='ai-input-card-icon'>✍️</div>
                     <div>
                         <div class='ai-input-card-kicker'>{'LOADED DATASET ANSWER' if research_active else 'AI RESPONSE TO CHECK'}</div>
-                        <div class='ai-input-card-title'>{'Review the loaded saved answer below' if research_active else 'Paste your copied AI answer below'}</div>
+                        <div class='ai-input-card-title'>{'Loaded answer' if research_active else 'Pasted AI answer'}</div>
                     </div>
                 </div>
                 <div class='ai-input-card-meta'>
@@ -2898,7 +2875,7 @@ with tab1:
 
         st.markdown('<div class="ai-input-textarea-wrap">', unsafe_allow_html=True)
         placeholder_text = (
-            'Load a saved dataset answer above, then review it here before analysis.'
+            'Load a saved dataset answer above.'
             if research_active
             else 'Example: "In Islam, surrogacy is generally not permitted because it can mix lineages..."\n\nPaste your full AI-generated answer here. Longer answers give more accurate scores.'
         )
@@ -2934,25 +2911,18 @@ with tab1:
         else:
             st.markdown(_html(f"""
             <div class='empty-review-card'>
-                <div>
-                    <div class='empty-review-top'>
-                        <div>
-                            <div class='workspace-kicker'>Similarity breakdown</div>
-                            <h3 class='empty-review-title'>Your result summary will appear here</h3>
-                            <div class='empty-review-copy'>Run a single review to see the final score, meaning match, keyword coverage, and the closest state fatwa in one place.</div>
-                        </div>
-                        <div class='empty-review-pill'>Ready to analyze</div>
+                <div class='empty-review-top'>
+                    <div>
+                        <div class='workspace-kicker'>Score summary</div>
+                        <h3 class='empty-review-title'>No result yet</h3>
+                        <div class='empty-review-copy'>Run the review to show overall fit, meaning match, key points, and closest state fatwa.</div>
                     </div>
-                    <div class='empty-review-list'>
-                        <div class='empty-review-item'><div class='empty-review-icon'>1</div><div><strong>Paste a complete answer</strong><span>Longer and more specific AI answers usually produce more reliable similarity and coverage scoring.</span></div></div>
-                        <div class='empty-review-item'><div class='empty-review-icon'>2</div><div><strong>Review the matched fatwa</strong><span>The system compares the answer with the closest question, then checks which state fatwa aligns best.</span></div></div>
-                        <div class='empty-review-item'><div class='empty-review-icon'>3</div><div><strong>Use the score carefully</strong><span>The final score supports review, but the fatwa text and missing points still matter for interpretation.</span></div></div>
-                    </div>
+                    <div class='empty-review-pill'>Waiting</div>
                 </div>
                 <div class='empty-review-footer'>
-                    <div class='empty-review-stat'><div class='empty-review-stat-label'>Analyses saved</div><div class='empty-review-stat-value'>{total_analyses}</div></div>
-                    <div class='empty-review-stat'><div class='empty-review-stat-label'>Average score</div><div class='empty-review-stat-value'>{avg_score_sidebar:.1f}%</div></div>
-                    <div class='empty-review-stat'><div class='empty-review-stat-label'>Good threshold</div><div class='empty-review-stat-value'>70%+</div></div>
+                    <div class='empty-review-stat'><div class='empty-review-stat-label'>Saved</div><div class='empty-review-stat-value'>{total_analyses}</div></div>
+                    <div class='empty-review-stat'><div class='empty-review-stat-label'>Average</div><div class='empty-review-stat-value'>{avg_score_sidebar:.1f}%</div></div>
+                    <div class='empty-review-stat'><div class='empty-review-stat-label'>Strong</div><div class='empty-review-stat-value'>70%+</div></div>
                 </div>
             </div>
             """), unsafe_allow_html=True)
@@ -2964,9 +2934,9 @@ with tab1:
     st.markdown("<div style='height:0.6rem;'></div>", unsafe_allow_html=True)
     b1, b2, _spacer = st.columns([0.38, 0.20, 0.42], gap="small")
     with b1:
-        analyze_btn = st.button(f"🔍 Analyze in {review_mode}", use_container_width=True, key="analyze_single")
+        analyze_btn = st.button(f"Analyze · {review_mode}", use_container_width=True, key="analyze_single")
     with b2:
-        clear_btn = st.button("🗑️ Clear History", use_container_width=True, key="clear_all_single")
+        clear_btn = st.button("Clear history", use_container_width=True, key="clear_all_single")
 
     if clear_btn:
         clear_history()
@@ -3075,7 +3045,7 @@ with tab1:
         detail_button_help = (
             "Hide the larger evidence cards."
             if st.session_state["show_detail_cards"]
-            else "Show the larger evidence cards, source card, score guide, and key points."
+            else "Show source text, score guide, and key points."
         )
         detail_icon = "▲" if st.session_state["show_detail_cards"] else "▼"
         detail_panel_class = "detail-toggle-card detail-toggle-card-open" if st.session_state["show_detail_cards"] else "detail-toggle-card"
@@ -3098,9 +3068,9 @@ with tab1:
             <div class='detail-inline-left'>
                 <div class='detail-inline-icon' style='background:linear-gradient(135deg,#773344,#D44D5C);'>{detail_icon}</div>
                 <div>
-                    <div class='detail-inline-kicker'>Evidence Drawer</div>
-                    <div class='detail-inline-title'>Detailed Review &amp; Fatwa Evidence</div>
-                    <div class='detail-inline-sub'>Source card, score guide, and key points are nested below.</div>
+                    <div class='detail-inline-kicker'>Details</div>
+                    <div class='detail-inline-title'>Fatwa evidence and key points</div>
+                    <div class='detail-inline-sub'>Open only when you need the source text and missing keywords.</div>
                 </div>
             </div>
             <div class='detail-inline-chips'>
