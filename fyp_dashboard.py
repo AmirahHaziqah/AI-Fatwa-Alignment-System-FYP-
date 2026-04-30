@@ -1282,6 +1282,44 @@ def apply_dashboard_polish():
     }
     .sbd-metric-sub { font-size: 0.6rem; color: #a08b97; font-weight: 500; }
 
+    /* ===== CLEANER VISUAL SYSTEM: fewer boxes, more spacing discipline ===== */
+    .clean-tab-title {
+        margin: 0.55rem 0 0.75rem 0;
+        padding: 0.35rem 0 0.65rem 0;
+        border-bottom: 1px solid #e6dce4;
+    }
+    .clean-tab-kicker {
+        color: #a3195b;
+        font-size: 0.62rem;
+        font-weight: 900;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        margin-bottom: 0.14rem;
+    }
+    .clean-tab-main {
+        color: #211122;
+        font-family: 'Inter Tight','Inter',sans-serif;
+        font-size: 1.18rem;
+        font-weight: 900;
+        letter-spacing: -0.025em;
+        line-height: 1.1;
+    }
+    .clean-tab-copy {
+        color: #6d5a68;
+        font-size: 0.8rem;
+        line-height: 1.5;
+        margin-top: 0.22rem;
+        max-width: 760px;
+    }
+    .soft-card, .card, .chart-card, .overview-chart-card, .points-card, .comparison-card, .fatwa-box {
+        box-shadow: 0 2px 10px rgba(25,14,36,0.045) !important;
+        border-color: #e7dce4 !important;
+    }
+    .sidebar-section-card, .sidebar-workspace-card, .sidebar-brand-card, .sidebar-legend-card {
+        box-shadow: none !important;
+    }
+    .msg-box { box-shadow: none !important; }
+
     </style>
     """, unsafe_allow_html=True)
 
@@ -2169,12 +2207,13 @@ def clean_preview_text(text: str, max_len: int = 260) -> str:
 
 
 def render_minimal_tab_intro(kicker: str, title: str, sentence: str = "", extra_class: str = ""):
-    sentence_html = f"<div class='tab-minimal-copy'>{html.escape(sentence)}</div>" if sentence else ""
-    hero_class = f"tab-minimal-hero {extra_class}".strip()
+    """Plain tab heading. Uses typography and a divider instead of another card."""
+    sentence_html = f"<div class='clean-tab-copy'>{html.escape(sentence)}</div>" if sentence else ""
+    hero_class = f"clean-tab-title {extra_class}".strip()
     st.markdown(_html(f"""
     <div class='{hero_class}'>
-        <div class='tab-minimal-kicker'>{html.escape(kicker)}</div>
-        <div class='tab-minimal-title'>{html.escape(title)}</div>
+        <div class='clean-tab-kicker'>{html.escape(kicker)}</div>
+        <div class='clean-tab-main'>{html.escape(title)}</div>
         {sentence_html}
     </div>
     """), unsafe_allow_html=True)
@@ -2309,89 +2348,59 @@ def render_batch_score_chart(num_df: pd.DataFrame):
             _render_grouped_bars(summary_df, 'label', 'Metric comparison by response', 'Side-by-side bars make it easier to compare meaning match, text match, and key fatwa points.')
             
 def render_similarity_breakdown(bundle: dict):
-    """Balanced right-column card: score summary + 4 compact metric cards with matching width."""
+    """Clean right-column summary: one panel, one score, simple metric rows."""
     final_match_score = safe_float(bundle.get("final_match_score"))
     lexical_score     = safe_float(bundle.get("lexical_score"))
     semantic_score    = safe_float(bundle.get("semantic_score"))
     coverage_score    = safe_float(bundle.get("coverage_score"))
     mean_alignment    = safe_float(bundle.get("mean_alignment"))
+    best_state        = str(bundle.get("best_state_name", "-"))
 
-    score_color  = score_status_color(final_match_score)
-    ring_degrees = max(0.0, min(360.0, final_match_score * 3.6))
-    conclusion_label = "Strong Alignment" if final_match_score >= 70 else "Moderate Alignment" if final_match_score >= 50 else "Low Alignment"
-    conclusion_copy  = (
-        "Close to the fatwa and covers most key points."
+    score_color = score_status_color(final_match_score)
+    result_label = "Strong" if final_match_score >= 70 else "Moderate" if final_match_score >= 50 else "Low"
+    result_copy = (
+        "Close to the matched fatwa."
         if final_match_score >= 70 else
-        "Partly correct, but some ruling details still need checking."
+        "Partly aligned. Check details."
         if final_match_score >= 50 else
-        "Not close enough yet, so it needs careful review."
+        "Weak match. Review manually."
     )
 
-    read_copy = "Text checks wording overlap, meaning checks the closest idea, key points checks important fatwa conditions, and overall fit shows the matched state average."
+    metrics = [
+        ("Meaning", semantic_score),
+        ("Text", lexical_score),
+        ("Key points", coverage_score),
+        ("State fit", mean_alignment),
+    ]
 
-    def metric_tone(value):
-        return "#06A77D" if value >= 70 else "#D4A04B" if value >= 50 else "#A31621"
-
-    def metric_desc(label, value):
-        if "Text" in label:
-            return "Uses many similar words." if value >= 70 else "Uses some similar words." if value >= 50 else "Uses different words."
-        if "Meaning" in label:
-            return "Very close in meaning." if value >= 70 else "Quite close in meaning." if value >= 50 else "Meaning needs review."
-        if "Key" in label:
-            return "Most points included." if value >= 70 else "Some points included." if value >= 50 else "Key points missing."
-        return "Strong state fit." if value >= 70 else "Partial state fit." if value >= 50 else "Weak state fit."
-
-    def metric_card(label, value, icon, sublabel):
-        tone = metric_tone(value)
-        return f"""
-        <div class='sbd-mini-card' style='--metric-tone:{tone};'>
-            <div class='sbd-mini-icon'>{icon}</div>
-            <div class='sbd-mini-label'>{html.escape(label)}</div>
-            <div class='sbd-mini-value'>{value:.0f}%</div>
-            <div class='sbd-mini-sub'>{html.escape(sublabel)}</div>
-            <div class='sbd-mini-desc'>{html.escape(metric_desc(label, value))}</div>
+    metric_rows = "".join(
+        f"""
+        <div class='compact-metric-row'>
+            <div class='compact-metric-name'>{html.escape(label)}</div>
+            <div class='compact-metric-track'><span style='width:{max(0, min(100, safe_float(value))):.1f}%; background:{score_status_color(value)};'></span></div>
+            <div class='compact-metric-value'>{safe_float(value):.0f}%</div>
         </div>
         """
-
-    metric_cards = "".join([
-        metric_card("Text Match", lexical_score, "📝", "Words used"),
-        metric_card("Meaning Match", semantic_score, "🎯", "Same meaning"),
-        metric_card("Key Points", coverage_score, "✓", "Main points"),
-        metric_card("Overall Fit", mean_alignment, "⚖️", "State match"),
-    ])
+        for label, value in metrics
+    )
 
     st.markdown(_html(f"""
-    <div class='sbd-stack'>
-        <div class='sbd-card'>
-            <div class='sbd-header'>
-                <div>
-                    <div class='sbd-kicker'>Similarity breakdown</div>
-                    <div class='sbd-title'>Final Score</div>
-                </div>
-                <div class='sbd-pill' style='background:{score_color}18;border-color:{score_color};color:{score_color};'>{final_match_score:.1f}%</div>
+    <div class='compact-score-panel'>
+        <div class='compact-score-top'>
+            <div>
+                <div class='compact-eyebrow'>Score summary</div>
+                <div class='compact-score-label' style='color:{score_color};'>{html.escape(result_label)} alignment</div>
+                <div class='compact-score-copy'>{html.escape(result_copy)}</div>
             </div>
-            <div class='sbd-hero'>
-                <div class='sbd-ring' style='background:conic-gradient({score_color} 0deg {ring_degrees:.1f}deg,#ead1c8 {ring_degrees:.1f}deg 360deg);'>
-                    <div class='sbd-ring-inner'>
-                        <strong style='color:{score_color};'>{int(round(final_match_score))}</strong>
-                        <span>Final score</span>
-                    </div>
-                </div>
-                <div class='sbd-verdict'>
-                    <div class='sbd-verdict-label' style='color:{score_color};'>{html.escape(conclusion_label)}</div>
-                    <div class='sbd-verdict-copy'>{html.escape(conclusion_copy)}</div>
-                </div>
-            </div>
-            <div class='sbd-read-box'>
-                <div class='sbd-read-title'>How to read this section</div>
-                <div class='sbd-read-copy'>{html.escape(read_copy)}</div>
-            </div>
+            <div class='compact-score-number' style='color:{score_color};'>{final_match_score:.1f}%</div>
         </div>
-        <div class='sbd-metric-grid'>{metric_cards}</div>
+        <div class='compact-score-source'>Closest source: <strong>{html.escape(best_state)}</strong></div>
+        <div class='compact-metric-list'>{metric_rows}</div>
     </div>
     """), unsafe_allow_html=True)
 
 def render_single_review_result_dashboard(bundle: dict):
+    """Flat detailed evidence view with fewer boxes and shorter copy."""
     final_match_score = safe_float(bundle.get("final_match_score"))
     semantic_score = safe_float(bundle.get("semantic_score"))
     lexical_score = safe_float(bundle.get("lexical_score"))
@@ -2410,121 +2419,66 @@ def render_single_review_result_dashboard(bundle: dict):
     missing_list = bundle.get("missing_list", [])
     tone = score_status_color(final_match_score)
 
-    preview_reference = html.escape((fatwa_text[:180] + "...") if fatwa_text and len(fatwa_text) > 180 else (fatwa_text or "No text available"))
     result_title = "Strong Alignment" if final_match_score >= 70 else "Moderate Alignment" if final_match_score >= 50 else "Low Alignment"
-    result_summary = "This answer is generally close to the matched fatwa and covers the main ruling points." if final_match_score >= 70 else "This answer is partly correct, but some important ruling details still need human review." if final_match_score >= 50 else "This answer is still too far from the fatwa, so it needs careful checking before anyone relies on it."
-    action_label = "Good to Use" if final_match_score >= 70 else "Needs Review" if final_match_score >= 50 else "Not Reliable"
-    action_note = "Use as a strong draft, then do a quick final check." if final_match_score >= 70 else "Check the fatwa text before accepting this answer." if final_match_score >= 50 else "Rewrite or review this answer manually first."
-    confidence_copy = "The topic match looks clear." if confidence == "High" else "The topic match looks fairly clear." if confidence == "Medium" else "The topic match is less certain."
-    compliance_copy = "It follows the ruling well." if compliance_level == "Fully Compliant" else "Some parts fit, but it still needs review." if compliance_level == "Partially Compliant" else "It does not fit the ruling closely." if compliance_level == "Non-Compliant" else "The status is not clear yet and needs manual review."
-    recommendation_copy = html.escape(recommendation_reason) if recommendation_reason else html.escape(result_summary)
-    review_status_copy = html.escape("This final score means the answer is close to the fatwa and gets most important points right." if final_match_score >= 70 else "This final score means the answer is partly correct, but some important points still need checking." if final_match_score >= 50 else "This final score means the answer is not close enough to the fatwa yet and needs careful review.")
+    action_note = "Accept only after a quick human check." if final_match_score >= 70 else "Check missing points before accepting." if final_match_score >= 50 else "Do not rely on this without manual revision."
+    reference_text = html.escape((fatwa_text[:360] + "...") if fatwa_text and len(fatwa_text) > 360 else (fatwa_text or "No reference text available."))
+    reason_text = html.escape(recommendation_reason) if recommendation_reason else html.escape(action_note)
+
+    metric_items = [
+        ("Final", final_match_score),
+        ("Meaning", semantic_score),
+        ("Text", lexical_score),
+        ("Points", coverage_score),
+        ("State avg", mean_alignment),
+    ]
+    metric_html = "".join(
+        f"<div class='flat-metric'><span>{html.escape(label)}</span><strong style='color:{score_status_color(value)};'>{safe_float(value):.0f}%</strong></div>"
+        for label, value in metric_items
+    )
+
+    matched_html = "".join(f"<span class='keyword-match'>{html.escape(str(kw))}</span>" for kw in matched_list[:18]) if matched_list else "<span class='compact-muted'>None detected.</span>"
+    missing_html = "".join(f"<span class='keyword-miss'>{html.escape(str(kw))}</span>" for kw in missing_list[:18]) if missing_list else "<span class='compact-muted'>No major missing points detected.</span>"
 
     st.markdown(_html(f"""
-    <div class='result-hero-card'>
-        <div class='result-hero-main'>
-            <div class='result-hero-kicker'>Review result</div>
-            <div class='result-hero-title'>{html.escape(topic_label)}</div>
-            <div class='result-hero-copy'>{html.escape(specific_issue)}</div>
-            <div style='margin-top:0.9rem;display:flex;flex-wrap:wrap;gap:0.55rem;'>
-                <span style='display:inline-flex;align-items:center;padding:0.42rem 0.82rem;border-radius:999px;background:{tone}12;border:1px solid {tone};color:{tone};font-size:0.8rem;font-weight:800;'>{format_percent(final_match_score,1)} overall</span>
-                <span style='display:inline-flex;align-items:center;padding:0.42rem 0.82rem;border-radius:999px;background:#fff;border:1px solid #ead1c8;color:#6d5a68;font-size:0.8rem;font-weight:700;'>Confidence: {html.escape(confidence_copy)}</span>
-                <span style='display:inline-flex;align-items:center;padding:0.42rem 0.82rem;border-radius:999px;background:#fff;border:1px solid #ead1c8;color:#6d5a68;font-size:0.8rem;font-weight:700;'>Status: {html.escape(compliance_copy)}</span>
+    <div class='flat-detail-panel'>
+        <div class='flat-detail-head'>
+            <div>
+                <div class='compact-eyebrow'>Detailed review</div>
+                <div class='flat-detail-title'>{html.escape(result_title)}</div>
+                <div class='flat-detail-sub'>{reason_text}</div>
+            </div>
+            <div class='flat-detail-score' style='color:{tone};'>{format_percent(final_match_score, 1)}</div>
+        </div>
+
+        <div class='flat-metric-strip'>{metric_html}</div>
+
+        <div class='flat-info-grid'>
+            <div class='flat-info-line'><span>Topic</span><strong>{html.escape(topic_label)}</strong></div>
+            <div class='flat-info-line'><span>Issue</span><strong>{html.escape(specific_issue)}</strong></div>
+            <div class='flat-info-line'><span>Closest source</span><strong>{html.escape(best_state)}</strong></div>
+            <div class='flat-info-line'><span>Confidence</span><strong>{html.escape(confidence)}</strong></div>
+            <div class='flat-info-line'><span>Compliance</span><strong>{html.escape(compliance_level)}</strong></div>
+            <div class='flat-info-line'><span>History label</span><strong>{html.escape(recommendation_label)}</strong></div>
+        </div>
+
+        <div class='flat-reference'>
+            <div class='flat-section-title'>Fatwa reference</div>
+            <div class='flat-reference-meta'>{html.escape(issue_name)}</div>
+            <p>{reference_text}</p>
+        </div>
+
+        <div class='flat-key-grid'>
+            <div>
+                <div class='flat-section-title'>Mentioned</div>
+                <div class='keyword-container compact-keywords'>{matched_html}</div>
+            </div>
+            <div>
+                <div class='flat-section-title'>Missing</div>
+                <div class='keyword-container compact-keywords'>{missing_html}</div>
             </div>
         </div>
     </div>
     """), unsafe_allow_html=True)
-
-    # Use a properly formatted f-string without syntax errors
-    result_html = f"""
-    <div class="result-cards-grid">
-        <div style='background:linear-gradient(180deg,#fff8f4 0%,#fff2ef 100%);border:1px solid #ead1c8;border-top:5px solid {tone};border-radius:28px;padding:1.2rem 1.2rem 1.1rem 1.2rem;box-shadow:0 14px 28px rgba(25,14,36,0.05);min-width:0;'>
-            <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.11em;text-transform:uppercase;color:#a3195b;margin-bottom:0.65rem;'>Result summary</div>
-            <div style='display:flex;align-items:flex-start;justify-content:space-between;gap:0.8rem;margin-bottom:0.8rem;'>
-                <div>
-                    <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.55rem;font-weight:850;letter-spacing:-0.03em;line-height:1.04;color:#241226;margin-bottom:0.2rem;'>{html.escape(result_title)}</div>
-                    <div style='font-size:0.96rem;line-height:1.72;color:#6d5a68;max-width:95%;'>{html.escape(recommendation_copy)}</div>
-                </div>
-                <div style='min-width:88px;height:88px;border-radius:22px;background:linear-gradient(135deg,{tone} 0%,#ffffff 145%);padding:1px;box-shadow:0 10px 22px rgba(25,14,36,0.10);'>
-                    <div style='height:100%;border-radius:21px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;'>
-                        <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.7rem;font-weight:800;color:{tone};line-height:1;'>{int(round(final_match_score))}</div>
-                        <div style='font-size:0.72rem;color:#8b6771;margin-top:0.18rem;'>score</div>
-                    </div>
-                </div>
-            </div>
-            <div style='margin:0.15rem 0 0.75rem 0;padding:0.95rem 1rem;border-radius:20px;background:linear-gradient(135deg,#fff 0%,#fff6f2 100%);border:1px solid #ead1c8;box-shadow:0 8px 18px rgba(25,14,36,0.04);'>
-                <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.18rem;'>Review status</div>
-                <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.2rem;font-weight:800;line-height:1.15;color:{tone};margin-bottom:0.22rem;'>{html.escape(action_label)}</div>
-                <div style='font-size:0.9rem;line-height:1.7;color:#6d5a68;'>{review_status_copy}</div>
-            </div>
-            <div style='display:grid;gap:0.55rem;'>
-                <div style='padding:0.82rem 0.9rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;display:flex;gap:0.65rem;align-items:flex-start;'><div style='width:28px;height:28px;border-radius:10px;background:{tone}14;color:{tone};display:flex;align-items:center;justify-content:center;font-weight:900;'>1</div><div style='font-size:0.88rem;line-height:1.6;color:#6d5a68;'><strong style='color:#241226;'>What this means:</strong> {html.escape(result_summary)}</div></div>
-                <div style='padding:0.82rem 0.9rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;display:flex;gap:0.65rem;align-items:flex-start;'><div style='width:28px;height:28px;border-radius:10px;background:#f7ece7;color:#b24758;display:flex;align-items:center;justify-content:center;font-weight:900;'>2</div><div style='font-size:0.88rem;line-height:1.6;color:#6d5a68;'><strong style='color:#241226;'>What to do:</strong> {html.escape(action_note)}</div></div>
-                <div style='padding:0.82rem 0.9rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;display:flex;gap:0.65rem;align-items:flex-start;'><div style='width:28px;height:28px;border-radius:10px;background:#f7ece7;color:#b24758;display:flex;align-items:center;justify-content:center;font-weight:900;'>3</div><div style='font-size:0.88rem;line-height:1.6;color:#6d5a68;'><strong style='color:#241226;'>History label:</strong> {html.escape(recommendation_label)}</div></div>
-            </div>
-        </div>
-        <div style='background:linear-gradient(180deg,#fffdfb 0%,#faf3f7 100%);border:1px solid #ead1c8;border-top:5px solid #773344;border-radius:28px;padding:1.2rem 1.2rem 1.1rem 1.2rem;box-shadow:0 14px 28px rgba(25,14,36,0.05);min-width:0;'>
-            <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.11em;text-transform:uppercase;color:#a3195b;margin-bottom:0.65rem;'>Closest fatwa source</div>
-            <div style='display:flex;align-items:flex-start;justify-content:space-between;gap:0.75rem;margin-bottom:0.8rem;'>
-                <div style='min-width:0;'>
-                    <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.5rem;font-weight:800;letter-spacing:-0.03em;line-height:1.08;color:#241226;overflow-wrap:anywhere;'>{html.escape(best_state)}</div>
-                    <div style='margin-top:0.22rem;font-size:0.92rem;line-height:1.65;color:#6d5a68;'>This is the state fatwa source that matched the answer most closely.</div>
-                </div>
-                <div style='padding:0.42rem 0.8rem;border-radius:999px;background:#fff;border:1px solid #ead1c8;color:#773344;font-size:0.76rem;font-weight:800;white-space:nowrap;'>Best source</div>
-            </div>
-            <div style='display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;margin-bottom:0.7rem;'>
-                <div style='padding:0.9rem 0.95rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;'>
-                    <div style='font-size:0.7rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.22rem;'>Issue matched</div>
-                    <div style='font-size:0.98rem;line-height:1.58;color:#241226;font-weight:700;overflow-wrap:anywhere;'>{html.escape(issue_name)}</div>
-                </div>
-                <div style='padding:0.9rem 0.95rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;'>
-                    <div style='font-size:0.7rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.22rem;'>Why it matters</div>
-                    <div style='font-size:0.88rem;line-height:1.6;color:#6d5a68;'>Read this fatwa first when you want to confirm whether the AI answer can be accepted.</div>
-                </div>
-            </div>
-            <div style='padding:0.95rem 1rem;border-radius:20px;background:linear-gradient(135deg,#fff 0%,#fff8f4 100%);border:1px solid #ead1c8;'>
-                <div style='font-size:0.7rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.28rem;'>Reference preview</div>
-                <div style='font-size:0.92rem;line-height:1.72;color:#6d5a68;overflow-wrap:anywhere;'>{preview_reference}</div>
-            </div>
-        </div>
-        <div style='background:linear-gradient(180deg,#fffdf8 0%,#f9f1ec 100%);border:1px solid #ead1c8;border-top:5px solid #d98c3f;border-radius:28px;padding:1.2rem 1.2rem 1.1rem 1.2rem;box-shadow:0 14px 28px rgba(25,14,36,0.05);min-width:0;'>
-            <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.11em;text-transform:uppercase;color:#a3195b;margin-bottom:0.65rem;'>Easy score guide</div>
-            <div style='display:grid;gap:0.7rem;'>
-                <div style='padding:0.9rem 0.95rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;'><div style='display:flex;align-items:center;justify-content:space-between;gap:0.6rem;'><div><div style='font-size:0.82rem;font-weight:800;color:#8b6771;text-transform:uppercase;letter-spacing:0.06em;'>Meaning</div><div style='font-size:0.8rem;color:#6d5a68;margin-top:0.12rem;'>Same ruling idea</div></div><div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.4rem;font-weight:800;color:#241226;'>{format_percent(semantic_score,1)}</div></div><div style='height:8px;border-radius:999px;background:#f1e2da;overflow:hidden;margin-top:0.55rem;'><div style='height:100%;width:{max(0,min(100,safe_float(semantic_score)))}%;background:linear-gradient(90deg,#773344 0%,#b24758 100%);border-radius:999px;'></div></div></div>
-                <div style='padding:0.9rem 0.95rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;'><div style='display:flex;align-items:center;justify-content:space-between;gap:0.6rem;'><div><div style='font-size:0.82rem;font-weight:800;color:#8b6771;text-transform:uppercase;letter-spacing:0.06em;'>Text</div><div style='font-size:0.8rem;color:#6d5a68;margin-top:0.12rem;'>Similar wording</div></div><div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.4rem;font-weight:800;color:#241226;'>{format_percent(lexical_score,1)}</div></div><div style='height:8px;border-radius:999px;background:#f1e2da;overflow:hidden;margin-top:0.55rem;'><div style='height:100%;width:{max(0,min(100,safe_float(lexical_score)))}%;background:linear-gradient(90deg,#d98c3f 0%,#f1a208 100%);border-radius:999px;'></div></div></div>
-                <div style='padding:0.9rem 0.95rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;'><div style='display:flex;align-items:center;justify-content:space-between;gap:0.6rem;'><div><div style='font-size:0.82rem;font-weight:800;color:#8b6771;text-transform:uppercase;letter-spacing:0.06em;'>Key points</div><div style='font-size:0.8rem;color:#6d5a68;margin-top:0.12rem;'>Important conditions found</div></div><div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.4rem;font-weight:800;color:#241226;'>{format_percent(coverage_score,1)}</div></div><div style='height:8px;border-radius:999px;background:#f1e2da;overflow:hidden;margin-top:0.55rem;'><div style='height:100%;width:{max(0,min(100,safe_float(coverage_score)))}%;background:linear-gradient(90deg,#3a7f56 0%,#06A77D 100%);border-radius:999px;'></div></div></div>
-            </div>
-            <div style='margin-top:0.78rem;padding:0.95rem 1rem;border-radius:20px;background:linear-gradient(135deg,#fff 0%,#fff7f1 100%);border:1px solid #ead1c8;'>
-                <div style='display:flex;align-items:flex-end;justify-content:space-between;gap:0.6rem;'>
-                    <div>
-                        <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.22rem;'>Overall fit</div>
-                        <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:2rem;font-weight:800;line-height:1;color:#241226;'>{format_percent(mean_alignment,1)}</div>
-                    </div>
-                    <div style='padding:0.38rem 0.7rem;border-radius:999px;background:#fff;border:1px solid #ead1c8;color:#773344;font-size:0.76rem;font-weight:800;'>State average</div>
-                </div>
-            </div>
-        </div>
-    </div>
-    """
-    st.markdown(result_html, unsafe_allow_html=True)
-
-    k1, k2 = st.columns(2, gap="medium")
-    with k1:
-        matched_html = "".join(f"<span class='keyword-match'>{html.escape(kw)}</span>" for kw in matched_list) if matched_list else "<div class='small-note'>No important fatwa points were clearly identified here.</div>"
-        st.markdown(_html(f"""
-        <div class='points-card coverage-card'>
-            <div class='points-card-header'>Mentioned by the AI</div>
-            <div class='keyword-container'>{matched_html}</div>
-        </div>
-        """), unsafe_allow_html=True)
-    with k2:
-        missing_html = "".join(f"<span class='keyword-miss'>{html.escape(kw)}</span>" for kw in missing_list) if missing_list else "<div class='small-note'>No major missing points were detected.</div>"
-        st.markdown(_html(f"""
-        <div class='points-card coverage-card'>
-            <div class='points-card-header'>Still missing</div>
-            <div class='keyword-container'>{missing_html}</div>
-        </div>
-        """), unsafe_allow_html=True)
 
 # =========================================================
 # COMPACT HEADER
@@ -2558,7 +2512,7 @@ with st.sidebar:
         <div class="sidebar-clean-header compact-sidebar-header">
             <div class="sidebar-kicker-line"></div>
             <h1 class="sidebar-title">Fatwa Alignment</h1>
-            <h3 class="sidebar-subtitle">Review, score, and compare how well AI answers align with Malaysian ART fatwa guidance.</h3>
+            <h3 class="sidebar-subtitle">Score AI answers against ART fatwa references.</h3>
         </div>
         """,
         unsafe_allow_html=True
@@ -2586,7 +2540,7 @@ with st.sidebar:
 
     render_sidebar_workspace(
         title="Review workspace",
-        subtitle="Analyze one answer, compare batches, and inspect fatwa evidence.",
+        subtitle="Review single answers, batches, and references.",
         primary_label="Saved runs",
         primary_value=str(total_analyses),
         secondary_label="Average",
@@ -2609,20 +2563,14 @@ with st.sidebar:
         ])
     )
 
-    render_sidebar_section(
-        "How to use this page",
-        "✓",
-        build_sidebar_score_guide_html()
-    )
-
 
 # =========================================================
 # GLOBAL HEADER + TABS
 # =========================================================
 render_dashboard_shell_header(
     title="AI Fatwa Alignment Dashboard",
-    subtitle="How closely do AI Responses align with Malaysian ART rulings?",
-    kicker="⚖️  Fatwa Alignment Reviewer · Assisted Reproductive Technology (ART)",
+    subtitle="Review AI answers against Malaysian ART fatwa references.",
+    kicker="Fatwa Alignment Reviewer · ART",
 )
 
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
@@ -2640,111 +2588,364 @@ with tab1:
     render_minimal_tab_intro(
         "Single review",
         "Closest fatwa alignment",
-        "Check one answer and see how closely it matches the most relevant fatwa.",
+        "Review one AI answer against the closest fatwa.",
         extra_class="single-review-hero"
     )
 
-    # ── Shared section header style ───────────────────────────────────────────
+    # ── Compact Single Review layout ─────────────────────────────────────────
     st.markdown("""
     <style>
-    .tab1-section {
-        margin: 0 0 0.5rem 0;
-    }
-    .tab1-section-header {
-        display: flex;
-        align-items: center;
-        gap: 0.6rem;
-        margin-bottom: 0.55rem;
-    }
-    .tab1-section-step {
-        width: 22px; height: 22px; border-radius: 6px;
-        background: linear-gradient(135deg, #773344, #a3195b);
-        color: #fff; font-size: 0.65rem; font-weight: 900;
-        display: flex; align-items: center; justify-content: center;
-        flex-shrink: 0;
-    }
-    .tab1-section-title {
-        font-size: 0.72rem; font-weight: 800; text-transform: uppercase;
-        letter-spacing: 0.1em; color: #5a3d4a;
-    }
-    .tab1-section-rule {
-        flex: 1; height: 1px;
-        background: linear-gradient(90deg, #e2ccd4, transparent);
-    }
-    .tab1-two-col {
-        display: grid;
-        grid-template-columns: 0.58fr 0.42fr;
-        gap: 1rem;
-        align-items: start;
-    }
-    .mode-guide-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 0.8rem;
-        margin: 0.35rem 0 0.75rem 0;
-    }
-    .mode-guide-card {
-        background: linear-gradient(135deg, #ffffff 0%, #fff7f4 100%);
-        border: 1px solid #ead1c8;
-        border-radius: 18px;
-        padding: 0.85rem 0.95rem;
-        box-shadow: 0 6px 16px rgba(25,14,36,0.05);
-    }
-    .mode-guide-card.active {
-        border-left: 5px solid #D44D5C;
-        background: linear-gradient(135deg, #ffffff 0%, #fff0f4 100%);
-        box-shadow: 0 8px 22px rgba(119,51,68,0.10);
-    }
-    .mode-guide-kicker {
-        color: #a3195b;
-        font-size: 0.58rem;
-        font-weight: 900;
-        letter-spacing: 0.12em;
+    .compact-flow-heading {
+        margin: 0.65rem 0 0.35rem 0;
+        color: #5a3d4a;
+        font-size: 0.72rem;
+        font-weight: 850;
+        letter-spacing: 0.09em;
         text-transform: uppercase;
-        margin-bottom: 0.18rem;
     }
-    .mode-guide-title {
+    .mode-inline-hint {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.75rem;
+        align-items: center;
+        padding: 0.25rem 0 0.45rem 0;
+        border-bottom: 1px solid #e7dce4;
+        color: #6d5a68;
+        font-size: 0.78rem;
+        line-height: 1.45;
+    }
+    .mode-inline-hint strong { color: #241226; }
+    .compact-step-caption {
+        color: #6d5a68;
+        font-size: 0.78rem;
+        line-height: 1.5;
+        margin: 0 0 0.55rem 0;
+    }
+    .compact-loader-title {
+        margin: 0.25rem 0 0.4rem 0;
         color: #241226;
         font-family: 'Inter Tight','Inter',sans-serif;
         font-size: 0.92rem;
         font-weight: 850;
-        line-height: 1.2;
-        margin-bottom: 0.25rem;
     }
-    .mode-guide-copy {
+    .compact-field-label {
+        color: #8b6771;
+        font-size: 0.62rem;
+        font-weight: 850;
+        letter-spacing: 0.08em;
+        margin-bottom: 0.22rem;
+        text-transform: uppercase;
+    }
+    .compact-preview-line {
         color: #6d5a68;
-        font-size: 0.74rem;
+        border-left: 3px solid #d44d5c;
+        padding: 0.35rem 0 0.35rem 0.7rem;
+        margin: 0.45rem 0 0.35rem 0;
+        font-size: 0.78rem;
+        line-height: 1.45;
+    }
+    .compact-input-label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.7rem;
+        margin: 0.7rem 0 0.3rem 0;
+        color: #241226;
+        font-size: 0.86rem;
+        font-weight: 850;
+    }
+    .compact-input-label span {
+        color: #8b6771;
+        font-size: 0.7rem;
+        font-weight: 800;
+    }
+    .empty-review-minimal {
+        border-left: 4px solid #d44d5c;
+        padding: 0.85rem 0 0.85rem 0.9rem;
+        margin-top: 0.1rem;
+        color: #6d5a68;
+    }
+    .empty-review-minimal-title {
+        color: #241226;
+        font-family: 'Inter Tight','Inter',sans-serif;
+        font-size: 1rem;
+        font-weight: 850;
+        margin-bottom: 0.2rem;
+    }
+    .empty-review-minimal-copy {
+        font-size: 0.78rem;
         line-height: 1.5;
     }
-    .mode-status-note {
-        border-radius: 14px;
-        border: 1px solid #ead1c8;
-        background: #fffaf7;
-        color: #6d4b58;
-        padding: 0.65rem 0.85rem;
+    .compact-score-panel,
+    .flat-detail-panel {
+        background: #ffffff;
+        border: 1px solid #e7dce4;
+        border-radius: 16px;
+        padding: 0.9rem;
+        box-shadow: 0 3px 12px rgba(25,14,36,0.045);
+    }
+    .compact-score-top,
+    .flat-detail-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    .compact-eyebrow {
+        color: #8b6771;
+        font-size: 0.58rem;
+        font-weight: 900;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+        margin-bottom: 0.18rem;
+    }
+    .compact-score-label,
+    .flat-detail-title {
+        font-family: 'Inter Tight','Inter',sans-serif;
+        font-size: 1.05rem;
+        font-weight: 900;
+        line-height: 1.15;
+    }
+    .compact-score-copy,
+    .flat-detail-sub,
+    .compact-score-source {
+        color: #6d5a68;
         font-size: 0.76rem;
-        line-height: 1.55;
-        margin: 0 0 0.55rem 0;
+        line-height: 1.45;
+        margin-top: 0.18rem;
+    }
+    .compact-score-number,
+    .flat-detail-score {
+        font-family: 'Inter Tight','Inter',sans-serif;
+        font-size: 1.75rem;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        white-space: nowrap;
+    }
+    .compact-score-source {
+        padding: 0.45rem 0;
+        border-top: 1px solid #f0e7ed;
+        border-bottom: 1px solid #f0e7ed;
+        margin: 0.65rem 0;
+    }
+    .compact-metric-list { display: grid; gap: 0.55rem; }
+    .compact-metric-row {
+        display: grid;
+        grid-template-columns: 5.3rem minmax(0,1fr) 3rem;
+        gap: 0.55rem;
+        align-items: center;
+        color: #6d5a68;
+        font-size: 0.74rem;
+        font-weight: 750;
+    }
+    .compact-metric-track {
+        height: 7px;
+        background: #f1e7ec;
+        border-radius: 999px;
+        overflow: hidden;
+    }
+    .compact-metric-track span {
+        display: block;
+        height: 100%;
+        border-radius: 999px;
+    }
+    .compact-metric-value { text-align: right; color: #241226; font-weight: 850; }
+    .flat-metric-strip {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 0.4rem;
+        border-top: 1px solid #f0e7ed;
+        border-bottom: 1px solid #f0e7ed;
+        padding: 0.65rem 0;
+        margin: 0.8rem 0;
+    }
+    .flat-metric { min-width: 0; }
+    .flat-metric span,
+    .flat-info-line span,
+    .flat-section-title {
+        display: block;
+        color: #8b6771;
+        font-size: 0.58rem;
+        font-weight: 900;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        margin-bottom: 0.16rem;
+    }
+    .flat-metric strong {
+        font-family: 'Inter Tight','Inter',sans-serif;
+        font-size: 1.08rem;
+        font-weight: 900;
+    }
+    .flat-info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.45rem 1rem;
+        margin-bottom: 0.8rem;
+    }
+    .flat-info-line {
+        border-bottom: 1px solid #f2e9ee;
+        padding-bottom: 0.4rem;
+        min-width: 0;
+    }
+    .flat-info-line strong {
+        display: block;
+        color: #241226;
+        font-size: 0.8rem;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
+    }
+    .flat-reference {
+        border-left: 3px solid #773344;
+        padding-left: 0.75rem;
+        margin: 0.75rem 0;
+    }
+    .flat-reference-meta {
+        color: #241226;
+        font-size: 0.8rem;
+        font-weight: 850;
+        margin-bottom: 0.25rem;
+    }
+    .flat-reference p {
+        color: #6d5a68;
+        font-size: 0.8rem;
+        line-height: 1.65;
+        margin: 0;
+        overflow-wrap: anywhere;
+    }
+    .flat-key-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+        border-top: 1px solid #f0e7ed;
+        padding-top: 0.7rem;
+    }
+    .compact-keywords { margin-top: 0.2rem !important; }
+    .compact-muted { color: #8b6771; font-size: 0.78rem; }
+    /* Refined clean layout: fewer boxes, more breathing room */
+    .single-review-hero {
+        margin-bottom: 0.85rem !important;
+    }
+    .compact-flow-heading {
+        margin: 0.95rem 0 0.45rem 0;
+        font-size: 0.76rem;
+        letter-spacing: 0.12em;
+    }
+    .mode-inline-hint {
+        padding: 0.78rem 0.9rem;
+        border: 1px solid #ead8df;
+        border-left: 4px solid #D44D5C;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #ffffff 0%, #fff8f5 100%);
+        margin-bottom: 1.05rem;
+        box-shadow: 0 6px 16px rgba(25,14,36,0.035);
+    }
+    .mode-inline-hint strong {
+        font-family: 'Inter Tight','Inter',sans-serif;
+        font-size: 1rem;
+        letter-spacing: -0.02em;
+    }
+    .mode-inline-hint span:last-child {
+        color: #8b6771;
+        font-size: 0.76rem;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+    .compact-step-caption {
+        display: none;
+    }
+    .compact-loader-title {
+        margin: 0.1rem 0 0.6rem 0;
+        font-size: 1rem;
+    }
+    .compact-preview-line {
+        border-left: 0;
+        border-top: 1px solid #f0e7ed;
+        padding: 0.58rem 0 0.1rem 0;
+        margin: 0.55rem 0 0.35rem 0;
+        font-size: 0.8rem;
+    }
+    .compact-input-label {
+        margin: 0.95rem 0 0.38rem 0;
+        font-size: 0.98rem;
+    }
+    .compact-input-label span {
+        font-size: 0.72rem;
+    }
+    .ai-input-textarea-wrap textarea {
+        min-height: 175px !important;
+        font-size: 0.86rem !important;
+        line-height: 1.7 !important;
+    }
+    .single-review-right-col {
+        padding-left: 0.15rem !important;
+    }
+    .empty-review-minimal {
+        border-left: 0;
+        border: 1px solid #ead8df;
+        border-radius: 18px;
+        padding: 1.4rem 1.2rem;
+        background: linear-gradient(180deg, #ffffff 0%, #fbf6f8 100%);
+        min-height: 190px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .empty-review-minimal-title {
+        font-size: 1.12rem;
+    }
+    .empty-review-minimal-copy {
+        max-width: 330px;
+    }
+    .compact-score-panel {
+        padding: 1.1rem;
+        border-radius: 20px;
+        box-shadow: 0 8px 22px rgba(25,14,36,0.045);
+    }
+    .compact-score-label {
+        font-size: 1.18rem;
+    }
+    .compact-score-number {
+        font-size: 2rem;
+    }
+    .compact-metric-list {
+        gap: 0.72rem;
+    }
+    .compact-metric-row {
+        grid-template-columns: 6rem minmax(0,1fr) 3.4rem;
+        font-size: 0.78rem;
+    }
+    .compact-metric-track {
+        height: 8px;
+    }
+    .flat-detail-panel {
+        padding: 1.15rem;
+        border-radius: 20px;
+        box-shadow: none;
+    }
+    .flat-detail-title {
+        font-size: 1.18rem;
+    }
+    .flat-detail-sub,
+    .flat-info-line strong,
+    .flat-reference p {
+        font-size: 0.84rem;
+    }
+    .flat-metric-strip {
+        padding: 0.8rem 0;
+        margin: 0.95rem 0;
     }
     @media (max-width: 900px) {
-        .mode-guide-grid { grid-template-columns: 1fr; }
+        .mode-inline-hint,
+        .compact-score-top,
+        .flat-detail-head { flex-direction: column; }
+        .flat-metric-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .flat-info-grid,
+        .flat-key-grid { grid-template-columns: 1fr; }
     }
     </style>
     """, unsafe_allow_html=True)
 
-    # ══════════════════════════════════════════════════════
-    # SECTION 1 — Input
-    # ══════════════════════════════════════════════════════
-    st.markdown("""
-    <div class="tab1-section">
-        <div class="tab1-section-header">
-            <div class="tab1-section-step">1</div>
-            <div class="tab1-section-title">Choose review mode</div>
-            <div class="tab1-section-rule"></div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
+    st.markdown("<div class='compact-flow-heading'>Input source</div>", unsafe_allow_html=True)
     mode_options = ["Research Mode", "Check AI Answer"]
     review_mode = st.radio(
         "Choose review mode",
@@ -2752,33 +2953,22 @@ with tab1:
         horizontal=True,
         key="single_review_mode",
         label_visibility="collapsed",
-        help="Research Mode loads saved AI answers. Check AI Answer is for answers you paste manually."
+        help="Research Mode loads saved answers. Check AI Answer is for answers you paste manually."
     )
 
     research_active = review_mode == "Research Mode"
+    mode_hint_main = "Research Mode" if research_active else "Check AI Answer"
+    mode_hint_sub = "Dataset answer" if research_active else "Manual paste"
     st.markdown(_html(f"""
-    <div class='mode-guide-grid'>
-        <div class='mode-guide-card {'active' if research_active else ''}'>
-            <div class='mode-guide-kicker'>Research Mode</div>
-            <div class='mode-guide-title'>Load saved AI answers</div>
-            <div class='mode-guide-copy'>Use this when you want to study existing dataset answers by question and model.</div>
-        </div>
-        <div class='mode-guide-card {'active' if not research_active else ''}'>
-            <div class='mode-guide-kicker'>Check AI Answer</div>
-            <div class='mode-guide-title'>Paste a new answer</div>
-            <div class='mode-guide-copy'>Use this when you already copied an AI-generated answer and want to verify its fatwa alignment.</div>
-        </div>
+    <div class='mode-inline-hint'>
+        <span><strong>{html.escape(mode_hint_main)}</strong></span>
+        <span>{html.escape(mode_hint_sub)}</span>
     </div>
     """), unsafe_allow_html=True)
 
     review_left, review_right = st.columns([0.58, 0.42], gap="medium")
 
     with review_left:
-        if research_active:
-            st.markdown("<div class='mode-status-note'><strong>Research Mode selected.</strong> Load a saved response from the dataset, then analyze it. This keeps dataset research separate from manual checking.</div>", unsafe_allow_html=True)
-        else:
-            st.markdown("<div class='mode-status-note'><strong>Check AI Answer selected.</strong> Paste the answer you copied from an AI tool. No dataset response will be loaded in this mode.</div>", unsafe_allow_html=True)
-
         # ── Research Mode: Dataset loader ─────────────────────────────────────
         if research_active and AI_DATASET_AVAILABLE:
             question_map = (
@@ -2800,23 +2990,11 @@ with tab1:
             if not selected_model or not available_models or selected_model not in available_models:
                 selected_model = available_models[0] if available_models else ""
 
-            # ── Redesigned Dataset Loader Card ───────────────────────────────
-            st.markdown(_html("""
-            <div class='ds-loader-card-v3'>
-                <div class='ds-loader-v3-head'>
-                    <div>
-                        <div class='ds-loader-v3-kicker'>Dataset Quick Load</div>
-                        <div class='ds-loader-v3-title'>Load a saved Q&amp;A from dataset</div>
-                    </div>
-                    <div class='ds-loader-v3-badge'>⬇ Quick Load</div>
-                </div>
-                <div class='ds-loader-v3-hint'>Select a question and model below — the question and AI answer will be shown as a preview before you load.</div>
-            </div>
-            """), unsafe_allow_html=True)
+            st.markdown("<div class='compact-loader-title'>Saved answer</div>", unsafe_allow_html=True)
 
             ctrl1, ctrl2, ctrl3 = st.columns([0.48, 0.32, 0.20], gap="small")
             with ctrl1:
-                st.markdown("<div class='ds-col-label'>📋 Question</div>", unsafe_allow_html=True)
+                st.markdown("<div class='compact-field-label'>Question</div>", unsafe_allow_html=True)
                 selected_question_text = st.selectbox(
                     "Question",
                     options=list(question_options.keys()),
@@ -2825,7 +3003,7 @@ with tab1:
                     label_visibility="collapsed"
                 )
             with ctrl2:
-                st.markdown("<div class='ds-col-label'>🤖 AI Model</div>", unsafe_allow_html=True)
+                st.markdown("<div class='compact-field-label'>Model</div>", unsafe_allow_html=True)
                 selected_model = st.selectbox(
                     "AI Model",
                     options=available_models,
@@ -2834,9 +3012,9 @@ with tab1:
                     label_visibility="collapsed"
                 )
             with ctrl3:
-                st.markdown("<div class='ds-col-label'>⚡ Action</div>", unsafe_allow_html=True)
+                st.markdown("<div class='compact-field-label'>Action</div>", unsafe_allow_html=True)
                 load_btn = st.button(
-                    "Load →",
+                    "Load",
                     use_container_width=True,
                     key="ds_load_btn_primary",
                     help="Load the selected response"
@@ -2846,19 +3024,12 @@ with tab1:
             question_subset = ai_answer_df[ai_answer_df["question_id"] == selected_qid].copy()
             selected_match = question_subset[question_subset["model"] == selected_model]
 
-            # ── Question Preview Panel (model chip shown inline, no answer block) ──
             preview_q_text = selected_question_text or "-"
-            preview_q_short = (preview_q_text[:220] + "...") if len(preview_q_text) > 220 else preview_q_text
-            model_chip_html = f"<span class='ds-qa-model-chip'>{html.escape(selected_model)}</span>"
-
-            st.markdown(_html(f"""
-            <div class='ds-qa-preview'>
-                <div class='ds-qa-row'>
-                    <div class='ds-qa-label ds-qa-q-label'>Question {model_chip_html}</div>
-                    <div class='ds-qa-text ds-qa-q-text'>{html.escape(preview_q_short)}</div>
-                </div>
-            </div>
-            """), unsafe_allow_html=True)
+            preview_q_short = (preview_q_text[:130] + "...") if len(preview_q_text) > 130 else preview_q_text
+            st.markdown(
+                f"<div class='compact-preview-line'><strong>Selected</strong> · {html.escape(selected_model)} · {html.escape(preview_q_short)}</div>",
+                unsafe_allow_html=True,
+            )
 
             if load_btn:
                 if not selected_match.empty:
@@ -2878,29 +3049,18 @@ with tab1:
         input_has_content = bool(current_ai_input and current_ai_input.strip())
         word_count = len(current_ai_input.split()) if input_has_content else 0
 
-        st.markdown(_html(f"""
-        <div class='ai-input-card {"ai-input-card--filled" if input_has_content else ""}'>
-            <div class='ai-input-card-header'>
-                <div class='ai-input-card-header-left'>
-                    <div class='ai-input-card-icon'>✍️</div>
-                    <div>
-                        <div class='ai-input-card-kicker'>{'LOADED DATASET ANSWER' if research_active else 'AI RESPONSE TO CHECK'}</div>
-                        <div class='ai-input-card-title'>{'Review the loaded saved answer below' if research_active else 'Paste your copied AI answer below'}</div>
-                    </div>
-                </div>
-                <div class='ai-input-card-meta'>
-                    {"<span class='ai-input-wc'>" + str(word_count) + " words</span>" if input_has_content else "<span class='ai-input-hint-chip'>No input yet</span>"}
-                    <span class='ai-input-badge'>{html.escape(review_mode)}</span>
-                </div>
-            </div>
-        </div>
-        """), unsafe_allow_html=True)
+        input_label = "Loaded answer" if research_active else "AI answer"
+        word_label = f"{word_count} words" if input_has_content else "empty"
+        st.markdown(
+            f"<div class='compact-input-label'>{html.escape(input_label)} <span>{html.escape(review_mode)} · {html.escape(word_label)}</span></div>",
+            unsafe_allow_html=True,
+        )
 
         st.markdown('<div class="ai-input-textarea-wrap">', unsafe_allow_html=True)
         placeholder_text = (
-            'Load a saved dataset answer above, then review it here before analysis.'
+            'Load a saved answer above.'
             if research_active
-            else 'Example: "In Islam, surrogacy is generally not permitted because it can mix lineages..."\n\nPaste your full AI-generated answer here. Longer answers give more accurate scores.'
+            else 'Paste the AI-generated answer here.'
         )
         ai_response = st.text_area(
             "AI Response Input",
@@ -2919,41 +3079,15 @@ with tab1:
 
     # ── Right column: score summary ───────────────────────────────────────────
     with review_right:
-        st.markdown("""
-        <div class="tab1-section">
-            <div class="tab1-section-header">
-                <div class="tab1-section-step">2</div>
-                <div class="tab1-section-title">Score summary</div>
-                <div class="tab1-section-rule"></div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("<div class='compact-flow-heading'>Score summary</div>", unsafe_allow_html=True)
         st.markdown("<div class='single-review-right-col'>", unsafe_allow_html=True)
         if st.session_state.get("current_analysis"):
             render_similarity_breakdown(st.session_state["current_analysis"])
         else:
-            st.markdown(_html(f"""
-            <div class='empty-review-card'>
-                <div>
-                    <div class='empty-review-top'>
-                        <div>
-                            <div class='workspace-kicker'>Similarity breakdown</div>
-                            <h3 class='empty-review-title'>Your result summary will appear here</h3>
-                            <div class='empty-review-copy'>Run a single review to see the final score, meaning match, keyword coverage, and the closest state fatwa in one place.</div>
-                        </div>
-                        <div class='empty-review-pill'>Ready to analyze</div>
-                    </div>
-                    <div class='empty-review-list'>
-                        <div class='empty-review-item'><div class='empty-review-icon'>1</div><div><strong>Paste a complete answer</strong><span>Longer and more specific AI answers usually produce more reliable similarity and coverage scoring.</span></div></div>
-                        <div class='empty-review-item'><div class='empty-review-icon'>2</div><div><strong>Review the matched fatwa</strong><span>The system compares the answer with the closest question, then checks which state fatwa aligns best.</span></div></div>
-                        <div class='empty-review-item'><div class='empty-review-icon'>3</div><div><strong>Use the score carefully</strong><span>The final score supports review, but the fatwa text and missing points still matter for interpretation.</span></div></div>
-                    </div>
-                </div>
-                <div class='empty-review-footer'>
-                    <div class='empty-review-stat'><div class='empty-review-stat-label'>Analyses saved</div><div class='empty-review-stat-value'>{total_analyses}</div></div>
-                    <div class='empty-review-stat'><div class='empty-review-stat-label'>Average score</div><div class='empty-review-stat-value'>{avg_score_sidebar:.1f}%</div></div>
-                    <div class='empty-review-stat'><div class='empty-review-stat-label'>Good threshold</div><div class='empty-review-stat-value'>70%+</div></div>
-                </div>
+            st.markdown(_html("""
+            <div class='empty-review-minimal'>
+                <div class='empty-review-minimal-title'>No result yet</div>
+                <div class='empty-review-minimal-copy'>Choose a source, add an answer, then run Analyze.</div>
             </div>
             """), unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
@@ -2964,9 +3098,9 @@ with tab1:
     st.markdown("<div style='height:0.6rem;'></div>", unsafe_allow_html=True)
     b1, b2, _spacer = st.columns([0.38, 0.20, 0.42], gap="small")
     with b1:
-        analyze_btn = st.button(f"🔍 Analyze in {review_mode}", use_container_width=True, key="analyze_single")
+        analyze_btn = st.button(f"Analyze", use_container_width=True, key="analyze_single")
     with b2:
-        clear_btn = st.button("🗑️ Clear History", use_container_width=True, key="clear_all_single")
+        clear_btn = st.button("Clear history", use_container_width=True, key="clear_all_single")
 
     if clear_btn:
         clear_history()
@@ -2979,7 +3113,7 @@ with tab1:
         elif not ensure_analysis_dependencies():
             st.stop()
         else:
-            with st.spinner("🔍 Analyzing response — this may take a few seconds..."):
+            with st.spinner("Analyzing response..."):
                 ensure_similarity_engine_loaded()
                 best_question, question_scores = detect_best_question(ai_response, fatwa_df)
                 detected_subset = fatwa_df[fatwa_df["question_id"] == best_question["question_id"]].copy()
@@ -3060,71 +3194,12 @@ with tab1:
                 st.rerun()
 
     if st.session_state.get("current_analysis"):
-        if "show_detail_cards" not in st.session_state:
-            st.session_state["show_detail_cards"] = False
+        st.markdown("<div class='compact-flow-heading'>Evidence</div>", unsafe_allow_html=True)
 
-        current_preview = st.session_state["current_analysis"]
-        final_match_score_preview = safe_float(current_preview.get("final_match_score"))
-        result_label_preview = (
-            "Strong Alignment" if final_match_score_preview >= 70
-            else "Moderate Alignment" if final_match_score_preview >= 50
-            else "Low Alignment"
-        )
-        detail_state_preview = "Open" if st.session_state["show_detail_cards"] else "Hidden"
-        detail_button_label = "Hide detailed review" if st.session_state["show_detail_cards"] else "View detailed review"
-        detail_button_help = (
-            "Hide the larger evidence cards."
-            if st.session_state["show_detail_cards"]
-            else "Show the larger evidence cards, source card, score guide, and key points."
-        )
-        detail_icon = "▲" if st.session_state["show_detail_cards"] else "▼"
-        detail_panel_class = "detail-toggle-card detail-toggle-card-open" if st.session_state["show_detail_cards"] else "detail-toggle-card"
-
-        st.markdown(_html(f"""
-        <div class='tab1-section' style='margin-top:1rem;'>
-            <div class='tab1-section-header'>
-                <div class='tab1-section-step'>3</div>
-                <div class='tab1-section-title'>Detailed review</div>
-                <div class='tab1-section-rule'></div>
-            </div>
-        </div>
-        """), unsafe_allow_html=True)
-
-        # ── Inline detail toggle card — full width, button embedded ──────────
-        tone_preview = score_status_color(final_match_score_preview)
-        detail_open = st.session_state["show_detail_cards"]
-        st.markdown(_html(f"""
-        <div class='detail-inline-card {"detail-inline-card--open" if detail_open else ""}'>
-            <div class='detail-inline-left'>
-                <div class='detail-inline-icon' style='background:linear-gradient(135deg,#773344,#D44D5C);'>{detail_icon}</div>
-                <div>
-                    <div class='detail-inline-kicker'>Evidence Drawer</div>
-                    <div class='detail-inline-title'>Detailed Review &amp; Fatwa Evidence</div>
-                    <div class='detail-inline-sub'>Source card, score guide, and key points are nested below.</div>
-                </div>
-            </div>
-            <div class='detail-inline-chips'>
-                <span class='detail-chip' style='color:{tone_preview};border-color:{tone_preview};background:{tone_preview}12;'>{html.escape(result_label_preview)}</span>
-                <span class='detail-chip'>{format_percent(final_match_score_preview, 1)}</span>
-                <span class='detail-chip detail-chip--state'>{"▲ Collapse" if detail_open else "▼ Expand"}</span>
-            </div>
-        </div>
-        """), unsafe_allow_html=True)
-        if st.button(
-            ("▲  Hide detailed review" if detail_open else "▼  View detailed review"),
-            key="detail_toggle_btn",
-            use_container_width=True,
-            help=detail_button_help
-        ):
-            st.session_state["show_detail_cards"] = not st.session_state["show_detail_cards"]
-            st.rerun()
-
-        if st.session_state["show_detail_cards"]:
-            st.markdown("<div class='detail-drawer-body'>", unsafe_allow_html=True)
+        with st.expander("Fatwa evidence", expanded=False):
             render_single_review_result_dashboard(st.session_state["current_analysis"])
-            st.markdown("</div>", unsafe_allow_html=True)
 
-        with st.expander("📊 View advanced comparison details", expanded=False):
+        with st.expander("Advanced details", expanded=False):
             current = st.session_state["current_analysis"]
             question_scores_df = pd.DataFrame(current.get("question_scores", []))
             state_results_df = pd.DataFrame(current.get("state_results", []))
@@ -3132,10 +3207,10 @@ with tab1:
             state_debug_df = build_advanced_state_display(state_results_df) if not state_results_df.empty else pd.DataFrame()
 
             render_technical_help_box()
-            st.markdown("<div class='tech-review-title'>How the system chose the topic</div>", unsafe_allow_html=True)
+            st.markdown("<div class='tech-review-title'>Topic selection</div>", unsafe_allow_html=True)
             st.markdown(build_light_table_html(topic_debug_df), unsafe_allow_html=True)
             st.markdown("<div style='height:0.5rem;'></div>", unsafe_allow_html=True)
-            st.markdown("<div class='tech-review-title'>How the system chose the best fatwa source</div>", unsafe_allow_html=True)
+            st.markdown("<div class='tech-review-title'>State source comparison</div>", unsafe_allow_html=True)
             st.markdown(build_light_table_html(state_debug_df), unsafe_allow_html=True)
             
 # =========================================================
