@@ -2474,35 +2474,47 @@ def render_similarity_breakdown(bundle: dict):
         value = safe_float(value)
         if label == "Text Match":
             if value >= 70:
-                return "Uses similar wording."
+                return "The answer uses similar terms to the reference fatwa."
             if value >= 50:
-                return "Some words match."
-            return "Uses different words."
+                return "Some wording matches, but the phrasing is not fully close."
+            return "The wording is quite different, so check important terms manually."
         if label == "Meaning Match":
             if value >= 70:
-                return "Meaning is very close."
+                return "The answer carries almost the same meaning as the fatwa."
             if value >= 50:
-                return "Meaning is partly close."
-            return "Meaning is not close."
+                return "The meaning is partly aligned, but some details may differ."
+            return "The meaning is not close enough and needs careful review."
         if label == "Key Points":
             if value >= 70:
-                return "Main points included."
+                return "Most important ruling points are included."
             if value >= 50:
-                return "Some points included."
-            return "Key points missing."
+                return "Some key ruling points are covered, but not all."
+            return "Important ruling points are missing or unclear."
         if value >= 70:
-            return "Strong overall fit."
+            return "Overall, the answer fits the closest state fatwa well."
         if value >= 50:
-            return "Needs checking."
-        return "Weak overall fit."
+            return "Overall fit is acceptable, but it still needs human checking."
+        return "Overall fit is weak, so do not rely on it without revision."
+
+    def metric_tone(value):
+        value = safe_float(value)
+        if value >= 70:
+            return "Good", "#16845b", "#edf8f2"
+        if value >= 50:
+            return "Review", "#c97900", "#fff7e8"
+        return "Weak", "#b5122b", "#fff0f3"
 
     def metric_card(label, value, icon, sublabel):
         desc = explain_metric_short(label, value)
+        status, color, bg = metric_tone(value)
         return f"""
         <div class='sbd-metric-inline'>
-            <div class='sbd-mini-icon'>{icon}</div>
+            <div class='sbd-mini-top'>
+                <div class='sbd-mini-icon'>{icon}</div>
+                <div class='sbd-mini-status' style='background:{bg};color:{color};border-color:{color}26;'>{status}</div>
+            </div>
             <div class='sbd-mini-label'>{html.escape(label)}</div>
-            <div class='sbd-mini-value'>{value:.0f}%</div>
+            <div class='sbd-mini-value' style='color:{color};'>{value:.0f}%</div>
             <div class='sbd-mini-sub'>{html.escape(sublabel)}</div>
             <div class='sbd-mini-desc'>{html.escape(desc)}</div>
         </div>
@@ -2520,36 +2532,39 @@ def render_similarity_breakdown(bundle: dict):
     .sbd-stack {{ width:100%; }}
     .sbd-card {{
         width:100%; box-sizing:border-box;
-        background:rgba(255,255,255,0.92);
+        background:linear-gradient(180deg,rgba(255,255,255,0.98) 0%,rgba(255,250,252,0.96) 100%);
         border:1px solid #eadde5;
-        border-radius:20px;
-        padding:1.05rem 1.15rem;
-        box-shadow:0 14px 32px rgba(25,14,36,0.06);
+        border-radius:22px;
+        padding:1.05rem 1.1rem 1.1rem 1.1rem;
+        box-shadow:0 18px 38px rgba(25,14,36,0.065);
     }}
-    .sbd-header {{ display:flex; justify-content:space-between; align-items:flex-start; gap:0.8rem; margin-bottom:0.88rem; }}
-    .sbd-kicker {{ font-size:0.64rem; font-weight:900; text-transform:uppercase; letter-spacing:0.13em; color:#a3195b; margin-bottom:0.2rem; }}
-    .sbd-title {{ font-family:'Inter Tight','Inter',sans-serif; font-size:1.18rem; font-weight:900; color:#241226; letter-spacing:-0.035em; }}
-    .sbd-pill {{ padding:0.34rem 0.72rem; border-radius:999px; border:1.5px solid; font-weight:900; font-size:0.76rem; white-space:nowrap; }}
-    .sbd-hero {{ display:grid; grid-template-columns:128px minmax(0,1fr); gap:1rem; align-items:center; padding:0.78rem 0 1rem 0; }}
-    .sbd-ring {{ width:112px; height:112px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(25,14,36,0.10); }}
+    .sbd-header {{ display:flex; justify-content:space-between; align-items:flex-start; gap:0.8rem; margin-bottom:0.82rem; }}
+    .sbd-kicker {{ font-size:0.62rem; font-weight:950; text-transform:uppercase; letter-spacing:0.14em; color:#a3195b; margin-bottom:0.18rem; }}
+    .sbd-title {{ font-family:'Inter Tight','Inter',sans-serif; font-size:1.22rem; font-weight:950; color:#1f1020; letter-spacing:-0.04em; line-height:1; }}
+    .sbd-pill {{ padding:0.32rem 0.78rem; border-radius:999px; border:1.5px solid; font-weight:950; font-size:0.78rem; white-space:nowrap; box-shadow:0 6px 14px rgba(25,14,36,0.05); }}
+    .sbd-hero {{ display:grid; grid-template-columns:124px minmax(0,1fr); gap:1.05rem; align-items:center; padding:0.72rem 0 0.95rem 0; }}
+    .sbd-ring {{ width:112px; height:112px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 10px 24px rgba(25,14,36,0.11); }}
     .sbd-ring-inner {{ width:78px; height:78px; border-radius:50%; background:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow:inset 0 0 0 1px rgba(220,170,190,0.42); }}
-    .sbd-ring-inner strong {{ font-family:'Inter Tight','Inter',sans-serif; font-size:1.75rem; font-weight:900; line-height:1; }}
-    .sbd-ring-inner span {{ font-size:0.64rem; color:#8b6771; margin-top:0.16rem; font-weight:800; }}
-    .sbd-verdict-label {{ font-family:'Inter Tight','Inter',sans-serif; font-size:0.98rem; font-weight:900; margin-bottom:0.24rem; line-height:1.15; }}
-    .sbd-verdict-copy {{ font-size:0.82rem; color:#6d5a68; line-height:1.55; max-width:420px; }}
-    .sbd-soft-line {{ height:1px; background:linear-gradient(90deg,#eadde5,transparent); margin:0.2rem 0 0.85rem 0; }}
-    .sbd-metric-grid {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; border:1px solid #eadde5; border-radius:16px; overflow:hidden; background:#fff; }}
-    .sbd-metric-inline {{ min-width:0; padding:0.8rem 0.55rem; text-align:center; border-right:1px solid #eadde5; }}
-    .sbd-metric-inline:last-child {{ border-right:none; }}
-    .sbd-mini-icon {{ width:34px; height:34px; border-radius:12px; display:inline-flex; align-items:center; justify-content:center; margin-bottom:0.48rem; background:#f8e5e2; color:#8a2b4d; font-size:0.78rem; font-weight:900; }}
-    .sbd-mini-label {{ font-size:0.6rem; font-weight:900; letter-spacing:0.08em; text-transform:uppercase; color:#7f6572; line-height:1.3; min-height:1.55rem; }}
-    .sbd-mini-value {{ font-family:'Inter Tight','Inter',sans-serif; font-size:1.42rem; font-weight:900; line-height:1; margin:0.28rem 0 0.14rem 0; color:#241226; letter-spacing:-0.04em; }}
-    .sbd-mini-sub {{ font-size:0.6rem; color:#8b6771; font-weight:750; padding-bottom:0.32rem; margin-bottom:0.34rem; border-bottom:1px solid #f0e0d9; }}
-    .sbd-mini-desc {{ font-size:0.62rem; line-height:1.35; color:#6d5a68; min-height:1.7rem; max-width:120px; margin:0 auto; }}
-    .sbd-read-box {{ margin-top:0.85rem; border:1px solid #eadde5; border-radius:14px; padding:0.72rem 0.85rem; background:linear-gradient(135deg,#fff8f4 0%,#fff 100%); }}
-    .sbd-read-title {{ font-size:0.78rem; font-weight:900; color:#5d3945; margin-bottom:0.16rem; }}
-    .sbd-read-copy {{ font-size:0.74rem; color:#7b6874; line-height:1.45; }}
-    @media(max-width:900px) {{ .sbd-hero {{ grid-template-columns:1fr; }} .sbd-metric-grid {{ grid-template-columns:repeat(2,1fr); }} .sbd-metric-inline:nth-child(2) {{ border-right:none; }} .sbd-metric-inline:nth-child(-n+2) {{ border-bottom:1px solid #eadde5; }} }}
+    .sbd-ring-inner strong {{ font-family:'Inter Tight','Inter',sans-serif; font-size:1.82rem; font-weight:950; line-height:1; letter-spacing:-0.05em; }}
+    .sbd-ring-inner span {{ font-size:0.62rem; color:#8b6771; margin-top:0.16rem; font-weight:850; }}
+    .sbd-verdict-label {{ font-family:'Inter Tight','Inter',sans-serif; font-size:1.05rem; font-weight:950; margin-bottom:0.28rem; line-height:1.12; letter-spacing:-0.02em; }}
+    .sbd-verdict-copy {{ font-size:0.82rem; color:#675261; line-height:1.58; max-width:440px; }}
+    .sbd-soft-line {{ height:1px; background:linear-gradient(90deg,#eadde5,transparent); margin:0.18rem 0 0.8rem 0; }}
+    .sbd-metric-grid {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0.62rem; border:0; border-radius:0; overflow:visible; background:transparent; }}
+    .sbd-metric-inline {{ min-width:0; padding:0.74rem 0.62rem 0.72rem 0.62rem; text-align:left; border:1px solid #eadde5; border-radius:16px; background:#fff; box-shadow:0 8px 18px rgba(25,14,36,0.035); }}
+    .sbd-metric-inline:last-child {{ border-right:1px solid #eadde5; }}
+    .sbd-mini-top {{ display:flex; justify-content:space-between; align-items:center; gap:0.35rem; margin-bottom:0.5rem; }}
+    .sbd-mini-icon {{ width:30px; height:30px; border-radius:11px; display:inline-flex; align-items:center; justify-content:center; background:#f8e5e2; color:#8a2b4d; font-size:0.74rem; font-weight:950; flex-shrink:0; }}
+    .sbd-mini-status {{ display:inline-flex; align-items:center; padding:0.16rem 0.42rem; border-radius:999px; border:1px solid; font-size:0.54rem; font-weight:950; letter-spacing:0.03em; text-transform:uppercase; white-space:nowrap; }}
+    .sbd-mini-label {{ font-size:0.58rem; font-weight:950; letter-spacing:0.09em; text-transform:uppercase; color:#816a77; line-height:1.25; min-height:0; }}
+    .sbd-mini-value {{ font-family:'Inter Tight','Inter',sans-serif; font-size:1.38rem; font-weight:950; line-height:1; margin:0.3rem 0 0.1rem 0; letter-spacing:-0.05em; }}
+    .sbd-mini-sub {{ font-size:0.58rem; color:#8b6771; font-weight:800; padding-bottom:0.34rem; margin-bottom:0.38rem; border-bottom:1px solid #f0e0d9; }}
+    .sbd-mini-desc {{ font-size:0.63rem; line-height:1.42; color:#62515e; min-height:3rem; max-width:none; margin:0; }}
+    .sbd-read-box {{ margin-top:0.78rem; border:1px solid #eadde5; border-radius:16px; padding:0.76rem 0.86rem; background:linear-gradient(135deg,#fff8f4 0%,#fff 100%); display:grid; grid-template-columns:auto 1fr; gap:0.5rem 0.72rem; align-items:start; }}
+    .sbd-read-box::before {{ content:'i'; width:28px; height:28px; border-radius:999px; display:flex; align-items:center; justify-content:center; background:#fff0f3; color:#a3195b; font-weight:950; font-family:'Inter',sans-serif; }}
+    .sbd-read-title {{ font-size:0.76rem; font-weight:950; color:#3b1b2d; margin-bottom:0.14rem; letter-spacing:-0.01em; }}
+    .sbd-read-copy {{ font-size:0.72rem; color:#715f6b; line-height:1.5; }}
+    @media(max-width:900px) {{ .sbd-hero {{ grid-template-columns:1fr; }} .sbd-metric-grid {{ grid-template-columns:repeat(2,1fr); }} .sbd-metric-inline:nth-child(2) {{ border-right:1px solid #eadde5; }} .sbd-metric-inline:nth-child(-n+2) {{ border-bottom:1px solid #eadde5; }} }}
     </style>
     <div class='sbd-stack'>
         <div class='sbd-card'>
@@ -2576,7 +2591,7 @@ def render_similarity_breakdown(bundle: dict):
             <div class='sbd-metric-grid'>{metric_cards}</div>
             <div class='sbd-read-box'>
                 <div class='sbd-read-title'>How to read this</div>
-                <div class='sbd-read-copy'>This score checks word use, meaning, key fatwa points, and overall state match.</div>
+                <div class='sbd-read-copy'>Use the final score first, then check each metric to see whether the answer matches the wording, carries the same meaning, includes key ruling points, and fits the closest state fatwa.</div>
             </div>
         </div>
     </div>
