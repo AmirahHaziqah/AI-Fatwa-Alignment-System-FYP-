@@ -2474,27 +2474,27 @@ def render_similarity_breakdown(bundle: dict):
         value = safe_float(value)
         if label == "Text Match":
             if value >= 70:
-                return "The answer uses similar terms to the reference fatwa."
+                return "Similar wording."
             if value >= 50:
-                return "Some wording matches, but the phrasing is not fully close."
-            return "The wording is quite different, so check important terms manually."
+                return "Partly similar words."
+            return "Different wording."
         if label == "Meaning Match":
             if value >= 70:
-                return "The answer carries almost the same meaning as the fatwa."
+                return "Meaning is close."
             if value >= 50:
-                return "The meaning is partly aligned, but some details may differ."
-            return "The meaning is not close enough and needs careful review."
+                return "Meaning is partly close."
+            return "Meaning differs."
         if label == "Key Points":
             if value >= 70:
-                return "Most important ruling points are included."
+                return "Key points included."
             if value >= 50:
-                return "Some key ruling points are covered, but not all."
-            return "Important ruling points are missing or unclear."
+                return "Some points missing."
+            return "Many points missing."
         if value >= 70:
-            return "Overall, the answer fits the closest state fatwa well."
+            return "Fits the fatwa well."
         if value >= 50:
-            return "Overall fit is acceptable, but it still needs human checking."
-        return "Overall fit is weak, so do not rely on it without revision."
+            return "Needs checking."
+        return "Weak overall fit."
 
     def metric_tone(value):
         value = safe_float(value)
@@ -2551,7 +2551,7 @@ def render_similarity_breakdown(bundle: dict):
     .sbd-verdict-copy {{ font-size:0.82rem; color:#675261; line-height:1.58; max-width:440px; }}
     .sbd-soft-line {{ height:1px; background:linear-gradient(90deg,#eadde5,transparent); margin:0.18rem 0 0.8rem 0; }}
     .sbd-metric-grid {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0.62rem; border:0; border-radius:0; overflow:visible; background:transparent; }}
-    .sbd-metric-inline {{ min-width:0; padding:0.74rem 0.62rem 0.72rem 0.62rem; text-align:left; border:1px solid #eadde5; border-radius:16px; background:#fff; box-shadow:0 8px 18px rgba(25,14,36,0.035); }}
+    .sbd-metric-inline {{ min-width:0; padding:0.72rem 0.7rem; text-align:left; border:1px solid #eadde5; border-radius:16px; background:#fff; box-shadow:0 8px 18px rgba(25,14,36,0.035); }}
     .sbd-metric-inline:last-child {{ border-right:1px solid #eadde5; }}
     .sbd-mini-top {{ display:flex; justify-content:space-between; align-items:center; gap:0.35rem; margin-bottom:0.5rem; }}
     .sbd-mini-icon {{ width:30px; height:30px; border-radius:11px; display:inline-flex; align-items:center; justify-content:center; background:#f8e5e2; color:#8a2b4d; font-size:0.74rem; font-weight:950; flex-shrink:0; }}
@@ -2559,11 +2559,10 @@ def render_similarity_breakdown(bundle: dict):
     .sbd-mini-label {{ font-size:0.58rem; font-weight:950; letter-spacing:0.09em; text-transform:uppercase; color:#816a77; line-height:1.25; min-height:0; }}
     .sbd-mini-value {{ font-family:'Inter Tight','Inter',sans-serif; font-size:1.38rem; font-weight:950; line-height:1; margin:0.3rem 0 0.1rem 0; letter-spacing:-0.05em; }}
     .sbd-mini-sub {{ font-size:0.58rem; color:#8b6771; font-weight:800; padding-bottom:0.34rem; margin-bottom:0.38rem; border-bottom:1px solid #f0e0d9; }}
-    .sbd-mini-desc {{ font-size:0.63rem; line-height:1.42; color:#62515e; min-height:3rem; max-width:none; margin:0; }}
-    .sbd-read-box {{ margin-top:0.78rem; border:1px solid #eadde5; border-radius:16px; padding:0.76rem 0.86rem; background:linear-gradient(135deg,#fff8f4 0%,#fff 100%); display:grid; grid-template-columns:auto 1fr; gap:0.5rem 0.72rem; align-items:start; }}
-    .sbd-read-box::before {{ content:'i'; width:28px; height:28px; border-radius:999px; display:flex; align-items:center; justify-content:center; background:#fff0f3; color:#a3195b; font-weight:950; font-family:'Inter',sans-serif; }}
-    .sbd-read-title {{ font-size:0.76rem; font-weight:950; color:#3b1b2d; margin-bottom:0.14rem; letter-spacing:-0.01em; }}
-    .sbd-read-copy {{ font-size:0.72rem; color:#715f6b; line-height:1.5; }}
+    .sbd-mini-desc {{ font-size:0.68rem; line-height:1.35; color:#62515e; min-height:1.85rem; max-width:none; margin:0; font-weight:650; }}
+    .sbd-read-box {{ margin-top:0.78rem; border:1px solid #eadde5; border-radius:16px; padding:0.72rem 0.86rem; background:linear-gradient(135deg,#fffaf7 0%,#fff 100%); display:flex; align-items:center; gap:0.75rem; }}
+    .sbd-read-label {{ flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:0.26rem 0.68rem; background:#fff0f3; color:#a3195b; font-size:0.62rem; font-weight:950; letter-spacing:0.08em; text-transform:uppercase; }}
+    .sbd-read-copy {{ font-size:0.74rem; color:#715f6b; line-height:1.48; }}
     @media(max-width:900px) {{ .sbd-hero {{ grid-template-columns:1fr; }} .sbd-metric-grid {{ grid-template-columns:repeat(2,1fr); }} .sbd-metric-inline:nth-child(2) {{ border-right:1px solid #eadde5; }} .sbd-metric-inline:nth-child(-n+2) {{ border-bottom:1px solid #eadde5; }} }}
     </style>
     <div class='sbd-stack'>
@@ -2590,8 +2589,8 @@ def render_similarity_breakdown(bundle: dict):
             <div class='sbd-soft-line'></div>
             <div class='sbd-metric-grid'>{metric_cards}</div>
             <div class='sbd-read-box'>
-                <div class='sbd-read-title'>How to read this</div>
-                <div class='sbd-read-copy'>Use the final score first, then check each metric to see whether the answer matches the wording, carries the same meaning, includes key ruling points, and fits the closest state fatwa.</div>
+                <div class='sbd-read-label'>Guide</div>
+                <div class='sbd-read-copy'>Final score gives the overall result. The four metrics show wording, meaning, key points, and state-fatwa fit.</div>
             </div>
         </div>
     </div>
