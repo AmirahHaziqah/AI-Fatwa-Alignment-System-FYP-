@@ -1432,6 +1432,301 @@ def apply_dashboard_polish():
 apply_dashboard_polish()
 
 
+
+def apply_premium_compact_polish():
+    """Final visual polish: larger readable text, stronger hierarchy, calmer colors, compact laptop fit."""
+    st.markdown("""
+    <style>
+    /* ===== PREMIUM COMPACT POLISH V3 ===== */
+    :root {
+        --ink-950: #20101f;
+        --ink-800: #3a2636;
+        --ink-650: #665260;
+        --ink-500: #806b79;
+        --rose-700: #9d1f55;
+        --rose-600: #b33261;
+        --rose-500: #cf4764;
+        --rose-100: #fff1f5;
+        --cream-50: #fffaf8;
+        --line-soft: #ead8e2;
+        --card-shadow: 0 14px 34px rgba(32, 16, 31, 0.065);
+    }
+
+    html { font-size: 15px !important; }
+    body, .stApp, [data-testid="stAppViewContainer"] {
+        color: var(--ink-950) !important;
+        background:
+            radial-gradient(circle at 8% 0%, rgba(207,71,100,0.08) 0, transparent 26%),
+            radial-gradient(circle at 96% 8%, rgba(119,51,68,0.06) 0, transparent 30%),
+            linear-gradient(180deg, #fbfbfd 0%, #f4f6fa 100%) !important;
+    }
+    [data-testid="stAppViewContainer"] .block-container {
+        max-width: 1320px !important;
+        padding: 0.55rem 0.95rem 0.8rem 0.95rem !important;
+    }
+
+    /* Type hierarchy: bigger, but still compact */
+    h1, h2, h3, .section-title, .tab1-section-title, .workspace-title, .empty-review-title,
+    .sbd-title, .result-hero-title, .ai-input-card-title {
+        font-family: 'Inter Tight', 'Inter', sans-serif !important;
+        letter-spacing: -0.035em !important;
+        color: var(--ink-950) !important;
+    }
+    .tab1-section-title { font-size: 1.05rem !important; font-weight: 900 !important; }
+    .tab1-section-subtitle, .workspace-copy, .result-hero-copy, .small-note, .empty-review-copy {
+        font-size: 0.86rem !important;
+        line-height: 1.48 !important;
+        color: var(--ink-650) !important;
+        font-weight: 500 !important;
+    }
+    .workspace-kicker, .sbd-kicker, .flow-field-label, .flow-selected-kicker, .ai-input-card-kicker {
+        color: var(--rose-700) !important;
+        font-size: 0.68rem !important;
+        letter-spacing: 0.13em !important;
+        font-weight: 900 !important;
+    }
+
+    /* Main cards: cleaner premium surfaces */
+    .tab1-section, .empty-review-card, .sbd-card,
+    .flow-selected-preview, .fatwa-box, .points-card, .comparison-card,
+    .chart-card, .overview-chart-card {
+        border-color: var(--line-soft) !important;
+        box-shadow: var(--card-shadow) !important;
+    }
+    .sbd-card, .empty-review-card {
+        background: rgba(255,255,255,0.94) !important;
+        backdrop-filter: blur(10px) !important;
+    }
+
+    /* Review mode cards */
+    [data-testid="stRadio"] [role="radiogroup"] {
+        background: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 0.75rem !important;
+        padding: 0 !important;
+    }
+    [data-testid="stRadio"] [role="radiogroup"] > label {
+        min-height: 74px !important;
+        border-radius: 18px !important;
+        border: 1px solid var(--line-soft) !important;
+        background: rgba(255,255,255,0.92) !important;
+        box-shadow: 0 10px 24px rgba(32,16,31,0.055) !important;
+        justify-content: flex-start !important;
+        padding: 0.75rem 1rem !important;
+    }
+    [data-testid="stRadio"] [role="radiogroup"] > label:has(input:checked) {
+        background: linear-gradient(135deg, #8d164f 0%, #bf3e5d 100%) !important;
+        border-color: transparent !important;
+        box-shadow: 0 16px 30px rgba(157,31,85,0.22) !important;
+    }
+    [data-testid="stRadio"] [role="radiogroup"] p {
+        font-size: 0.9rem !important;
+        font-weight: 850 !important;
+    }
+
+    /* Guided flow: calm, aligned, readable */
+    .flow-steps-line {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 0.74fr) minmax(0, 0.72fr) !important;
+        gap: 1.1rem !important;
+        margin-bottom: 0.65rem !important;
+        border-bottom: none !important;
+        position: relative !important;
+    }
+    .flow-steps-line::before {
+        content: '';
+        position: absolute;
+        left: 1.4rem;
+        right: 1.4rem;
+        top: 15px;
+        height: 1px;
+        background: linear-gradient(90deg, rgba(157,31,85,0.28), rgba(234,216,226,0.95), rgba(234,216,226,0.4));
+        z-index: 0;
+    }
+    .flow-step-mini {
+        position: relative !important;
+        z-index: 1 !important;
+        background: #f8f9fc !important;
+        width: fit-content !important;
+        padding: 0 0.45rem 0.15rem 0 !important;
+        font-size: 0.76rem !important;
+        color: var(--ink-500) !important;
+        font-weight: 850 !important;
+        gap: 0.5rem !important;
+    }
+    .flow-step-dot {
+        width: 30px !important;
+        height: 30px !important;
+        font-size: 0.74rem !important;
+        box-shadow: 0 6px 14px rgba(32,16,31,0.06) !important;
+    }
+    .flow-step-mini.is-active .flow-step-dot {
+        background: linear-gradient(135deg, var(--rose-700), var(--rose-500)) !important;
+        box-shadow: 0 8px 18px rgba(157,31,85,0.22) !important;
+    }
+    .flow-field-label {
+        margin-bottom: 0.36rem !important;
+        font-size: 0.66rem !important;
+        color: #8a6879 !important;
+    }
+    [data-testid="stSelectbox"] [data-baseweb="select"] > div,
+    [data-testid="stTextInputRootElement"],
+    .stTextInput > div > div {
+        min-height: 48px !important;
+        border-radius: 15px !important;
+        border: 1.35px solid #e4d4de !important;
+        background: rgba(255,255,255,0.95) !important;
+        box-shadow: 0 8px 18px rgba(32,16,31,0.035) !important;
+    }
+    [data-testid="stSelectbox"] *, [data-testid="stMultiSelect"] *, .stSelectbox * {
+        font-size: 0.96rem !important;
+        color: var(--ink-950) !important;
+    }
+    .flow-action-cell .stButton > button {
+        min-height: 48px !important;
+        border-radius: 15px !important;
+        font-size: 0.93rem !important;
+        font-weight: 900 !important;
+        background: linear-gradient(135deg, #8d164f 0%, #c64662 100%) !important;
+        box-shadow: 0 12px 22px rgba(157,31,85,0.22) !important;
+    }
+
+    /* Selected question preview: useful, not noisy */
+    .flow-selected-preview {
+        margin: 0.72rem 0 0.85rem 0 !important;
+        padding: 0.75rem 0.9rem !important;
+        border-radius: 16px !important;
+        background: linear-gradient(135deg, rgba(255,246,249,0.92), rgba(255,255,255,0.94)) !important;
+        grid-template-columns: minmax(0, 1fr) auto !important;
+    }
+    .flow-selected-question {
+        font-size: 0.9rem !important;
+        line-height: 1.45 !important;
+        font-weight: 650 !important;
+        color: var(--ink-800) !important;
+    }
+    .flow-selected-chip {
+        font-size: 0.78rem !important;
+        font-weight: 850 !important;
+        background: #f6edf4 !important;
+        border-color: #e2cbda !important;
+        color: var(--rose-700) !important;
+    }
+
+    /* AI answer / loaded answer area */
+    .ai-input-card-title { font-size: 0.98rem !important; }
+    .ai-input-textarea-wrap textarea, .stTextArea textarea {
+        font-size: 0.94rem !important;
+        line-height: 1.55 !important;
+        min-height: 118px !important;
+        border-radius: 16px !important;
+        color: var(--ink-950) !important;
+    }
+    .ai-input-wc, .ai-input-badge, .ai-input-hint-chip {
+        font-size: 0.7rem !important;
+        font-weight: 850 !important;
+    }
+
+    /* Score summary: stronger hierarchy, elegant metric cards */
+    .sbd-card {
+        border-radius: 24px !important;
+        padding: 1.08rem 1.12rem !important;
+    }
+    .sbd-title { font-size: 1.35rem !important; font-weight: 950 !important; }
+    .sbd-kicker { font-size: 0.68rem !important; margin-bottom: 0.22rem !important; }
+    .sbd-pill { font-size: 0.86rem !important; padding: 0.36rem 0.82rem !important; }
+    .sbd-hero {
+        grid-template-columns: 124px minmax(0, 1fr) !important;
+        gap: 1.1rem !important;
+        padding: 0.78rem 0 0.86rem 0 !important;
+    }
+    .sbd-ring { width: 112px !important; height: 112px !important; }
+    .sbd-ring-inner { width: 78px !important; height: 78px !important; }
+    .sbd-ring-inner strong { font-size: 1.86rem !important; }
+    .sbd-verdict-label { font-size: 1.18rem !important; font-weight: 950 !important; }
+    .sbd-verdict-copy { font-size: 0.88rem !important; line-height: 1.5 !important; color: var(--ink-650) !important; }
+    .sbd-metric-grid {
+        gap: 0.72rem !important;
+    }
+    .sbd-metric-inline {
+        border-radius: 18px !important;
+        padding: 0.82rem 0.78rem !important;
+        background: linear-gradient(180deg, #ffffff 0%, #fffdfc 100%) !important;
+        box-shadow: 0 10px 22px rgba(32,16,31,0.045) !important;
+    }
+    .sbd-mini-icon {
+        width: 34px !important;
+        height: 34px !important;
+        border-radius: 13px !important;
+        font-size: 0.82rem !important;
+        background: #fae8e6 !important;
+        color: var(--rose-700) !important;
+    }
+    .sbd-mini-status { font-size: 0.58rem !important; padding: 0.18rem 0.48rem !important; }
+    .sbd-mini-label { font-size: 0.62rem !important; color: #826978 !important; }
+    .sbd-mini-value { font-size: 1.5rem !important; margin-top: 0.34rem !important; }
+    .sbd-mini-sub { font-size: 0.62rem !important; color: #8a6d7b !important; }
+    .sbd-mini-desc {
+        font-size: 0.72rem !important;
+        line-height: 1.34 !important;
+        color: var(--ink-650) !important;
+        font-weight: 600 !important;
+        min-height: 1.5rem !important;
+    }
+    .sbd-read-box {
+        border-radius: 16px !important;
+        background: linear-gradient(135deg, #fff7f2 0%, #fff 100%) !important;
+        padding: 0.76rem 0.9rem !important;
+    }
+    .sbd-read-label { font-size: 0.66rem !important; }
+    .sbd-read-copy { font-size: 0.8rem !important; line-height: 1.45 !important; color: var(--ink-650) !important; }
+
+    /* Empty score guide: bigger and more useful */
+    .empty-review-title { font-size: 1.18rem !important; }
+    .empty-guide { gap: 0.55rem !important; }
+    .empty-guide-item { padding: 0.58rem 0.65rem !important; border-radius: 14px !important; }
+    .empty-guide-title { font-size: 0.83rem !important; }
+    .empty-guide-copy { font-size: 0.76rem !important; }
+
+    /* Compact laptop fit */
+    @media (max-height: 820px) {
+        html { font-size: 14px !important; }
+        [data-testid="stAppViewContainer"] .block-container { padding-top: 0.35rem !important; }
+        [data-testid="stRadio"] [role="radiogroup"] > label { min-height: 62px !important; padding: 0.58rem 0.85rem !important; }
+        .flow-step-dot { width: 26px !important; height: 26px !important; }
+        .flow-steps-line { margin-bottom: 0.48rem !important; }
+        [data-testid="stSelectbox"] [data-baseweb="select"] > div { min-height: 42px !important; }
+        .flow-action-cell .stButton > button { min-height: 42px !important; }
+        .flow-selected-preview { padding: 0.62rem 0.78rem !important; margin: 0.55rem 0 0.65rem 0 !important; }
+        .ai-input-textarea-wrap textarea, .stTextArea textarea { min-height: 96px !important; }
+        .sbd-card { padding: 0.88rem 0.95rem !important; }
+        .sbd-hero { grid-template-columns: 104px minmax(0,1fr) !important; gap: 0.82rem !important; padding: 0.54rem 0 0.62rem 0 !important; }
+        .sbd-ring { width: 96px !important; height: 96px !important; }
+        .sbd-ring-inner { width: 68px !important; height: 68px !important; }
+        .sbd-ring-inner strong { font-size: 1.58rem !important; }
+        .sbd-metric-grid { gap: 0.55rem !important; }
+        .sbd-metric-inline { padding: 0.62rem 0.58rem !important; }
+        .sbd-mini-icon { width: 28px !important; height: 28px !important; }
+        .sbd-mini-value { font-size: 1.25rem !important; }
+        .sbd-mini-desc { font-size: 0.66rem !important; min-height: 1.25rem !important; }
+        .sbd-read-box { margin-top: 0.56rem !important; padding: 0.58rem 0.72rem !important; }
+    }
+
+    @media (max-width: 980px) {
+        [data-testid="stRadio"] [role="radiogroup"] { grid-template-columns: 1fr !important; }
+        .flow-steps-line { grid-template-columns: 1fr !important; gap: 0.4rem !important; }
+        .flow-steps-line::before { display: none !important; }
+        .sbd-metric-grid { grid-template-columns: repeat(2, minmax(0,1fr)) !important; }
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+
+apply_premium_compact_polish()
+
+
 def resolve_header_banner_path():
     candidates = [
         "dashboard_background.png",
@@ -2476,13 +2771,13 @@ def render_similarity_breakdown(bundle: dict):
             if value >= 70:
                 return "Similar wording."
             if value >= 50:
-                return "Partly similar words."
+                return "Some wording matches."
             return "Different wording."
         if label == "Meaning Match":
             if value >= 70:
                 return "Meaning is close."
             if value >= 50:
-                return "Meaning is partly close."
+                return "Some meaning matches."
             return "Meaning differs."
         if label == "Key Points":
             if value >= 70:
@@ -2493,7 +2788,7 @@ def render_similarity_breakdown(bundle: dict):
         if value >= 70:
             return "Fits the fatwa well."
         if value >= 50:
-            return "Needs checking."
+            return "Acceptable, review."
         return "Weak overall fit."
 
     def metric_tone(value):
@@ -2590,7 +2885,7 @@ def render_similarity_breakdown(bundle: dict):
             <div class='sbd-metric-grid'>{metric_cards}</div>
             <div class='sbd-read-box'>
                 <div class='sbd-read-label'>Guide</div>
-                <div class='sbd-read-copy'>Final score gives the overall result. The four metrics show wording, meaning, key points, and state-fatwa fit.</div>
+                <div class='sbd-read-copy'>Read the final score first, then scan each metric to see what needs review.</div>
             </div>
         </div>
     </div>
