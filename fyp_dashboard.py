@@ -2470,13 +2470,41 @@ def render_similarity_breakdown(bundle: dict):
         "Not close enough yet, so it needs careful review."
     )
 
+    def explain_metric_short(label, value):
+        value = safe_float(value)
+        if label == "Text Match":
+            if value >= 70:
+                return "Uses similar wording."
+            if value >= 50:
+                return "Some words match."
+            return "Uses different words."
+        if label == "Meaning Match":
+            if value >= 70:
+                return "Meaning is very close."
+            if value >= 50:
+                return "Meaning is partly close."
+            return "Meaning is not close."
+        if label == "Key Points":
+            if value >= 70:
+                return "Main points included."
+            if value >= 50:
+                return "Some points included."
+            return "Key points missing."
+        if value >= 70:
+            return "Strong overall fit."
+        if value >= 50:
+            return "Needs checking."
+        return "Weak overall fit."
+
     def metric_card(label, value, icon, sublabel):
+        desc = explain_metric_short(label, value)
         return f"""
         <div class='sbd-metric-inline'>
             <div class='sbd-mini-icon'>{icon}</div>
             <div class='sbd-mini-label'>{html.escape(label)}</div>
             <div class='sbd-mini-value'>{value:.0f}%</div>
             <div class='sbd-mini-sub'>{html.escape(sublabel)}</div>
+            <div class='sbd-mini-desc'>{html.escape(desc)}</div>
         </div>
         """
 
@@ -2516,7 +2544,8 @@ def render_similarity_breakdown(bundle: dict):
     .sbd-mini-icon {{ width:34px; height:34px; border-radius:12px; display:inline-flex; align-items:center; justify-content:center; margin-bottom:0.48rem; background:#f8e5e2; color:#8a2b4d; font-size:0.78rem; font-weight:900; }}
     .sbd-mini-label {{ font-size:0.6rem; font-weight:900; letter-spacing:0.08em; text-transform:uppercase; color:#7f6572; line-height:1.3; min-height:1.55rem; }}
     .sbd-mini-value {{ font-family:'Inter Tight','Inter',sans-serif; font-size:1.42rem; font-weight:900; line-height:1; margin:0.28rem 0 0.14rem 0; color:#241226; letter-spacing:-0.04em; }}
-    .sbd-mini-sub {{ font-size:0.6rem; color:#8b6771; font-weight:750; }}
+    .sbd-mini-sub {{ font-size:0.6rem; color:#8b6771; font-weight:750; padding-bottom:0.32rem; margin-bottom:0.34rem; border-bottom:1px solid #f0e0d9; }}
+    .sbd-mini-desc {{ font-size:0.62rem; line-height:1.35; color:#6d5a68; min-height:1.7rem; max-width:120px; margin:0 auto; }}
     .sbd-read-box {{ margin-top:0.85rem; border:1px solid #eadde5; border-radius:14px; padding:0.72rem 0.85rem; background:linear-gradient(135deg,#fff8f4 0%,#fff 100%); }}
     .sbd-read-title {{ font-size:0.78rem; font-weight:900; color:#5d3945; margin-bottom:0.16rem; }}
     .sbd-read-copy {{ font-size:0.74rem; color:#7b6874; line-height:1.45; }}
