@@ -90,11 +90,22 @@ def safe_read_csv(path: str) -> pd.DataFrame:
 # =========================================================
 
 def get_score_tier(score) -> str:
-    """Return 'good', 'moderate', or 'weak' for a numeric score."""
+    """
+    Return 'good', 'moderate', or 'weak' for a numeric score.
+
+    Score is rounded to the nearest integer before comparison so that
+    the displayed circle value (which is already rounded) stays consistent
+    with the tier label — e.g. 69.7 rounds to 70 = High Alignment.
+
+    Thresholds (after rounding):
+        good     (High Alignment)      >= 70
+        moderate (Moderate Alignment)  >= 40
+        weak     (Low Alignment)        < 40
+    """
     try:
-        score = float(score)
+        score = round(float(score))
     except Exception:
-        score = 0.0
+        score = 0
 
     if score >= 70:
         return "good"
