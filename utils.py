@@ -83,10 +83,10 @@ def safe_read_csv(path: str) -> pd.DataFrame:
 # =========================================================
 # SCORE TIER LOGIC
 # =========================================================
-# Thresholds:
-#   Good     ≥ 70 %
-#   Moderate ≥ 50 %  (and < 70 %)
-#   Weak      < 50 %
+# Thresholds (aligned with proposal):
+#   High Alignment     ≥ 70 %   → "good"
+#   Moderate Alignment ≥ 40 %   (and < 70 %) → "moderate"
+#   Low Alignment       < 40 %   → "weak"
 # =========================================================
 
 def get_score_tier(score) -> str:
@@ -98,7 +98,7 @@ def get_score_tier(score) -> str:
 
     if score >= 70:
         return "good"
-    if score >= 50:
+    if score >= 40:
         return "moderate"
     return "weak"
 
@@ -133,9 +133,9 @@ def get_score_color(score) -> str:
 
 
 def get_score_band_label(score) -> str:
-    """Return a human-friendly tier label: 'Good', 'Moderate', or 'Weak'."""
+    """Return a human-friendly tier label: 'High Alignment', 'Moderate Alignment', or 'Low Alignment'."""
     tier = get_score_tier(score)
-    return {"good": "Good", "moderate": "Moderate", "weak": "Weak"}.get(tier, "Weak")
+    return {"good": "High Alignment", "moderate": "Moderate Alignment", "weak": "Low Alignment"}.get(tier, "Low Alignment")
 
 
 # =========================================================

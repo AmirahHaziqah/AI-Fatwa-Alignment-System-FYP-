@@ -2116,10 +2116,10 @@ button[data-baseweb="tab"][aria-selected="true"] {{
 def explain_score_band(score):
     tier = get_score_tier(score)
     if tier == "good":
-        return "✅ The AI answer is close to the fatwa guidance and shows good alignment. The response captures the key meaning and important conditions."
+        return "✅ High Alignment — The AI answer closely matches the fatwa guidance and is considered reliable. The response captures the key ruling and important conditions."
     if tier == "moderate":
-        return "⚠️ The AI answer is moderately aligned. The response captures some key points, but important fatwa conditions still need review or are incomplete."
-    return "❌ The AI answer is weakly aligned. The response does not closely match the fatwa guidance and should not be relied on without significant correction."
+        return "⚠️ Moderate Alignment — The AI answer partially matches the fatwa. Some key rulings or conditions are missing or imprecise. Review before relying on this response."
+    return "❌ Low Alignment — The AI answer does not closely match the fatwa guidance. It is not reliable and should not be used without significant correction."
 
 def explain_metric(label, value):
     try:
@@ -2393,22 +2393,22 @@ def render_sidebar_theme_legend():
             <div class="sidebar-legend-item">
                 <span class="sidebar-legend-dot" style="background:#06A77D;"></span>
                 <div>
-                    <div class="sidebar-legend-name">Good</div>
-                    <div class="sidebar-legend-text">70% and above</div>
+                    <div class="sidebar-legend-name">High Alignment</div>
+                    <div class="sidebar-legend-text">70% – 100% — Reliable ✅</div>
                 </div>
             </div>
             <div class="sidebar-legend-item">
                 <span class="sidebar-legend-dot" style="background:#F1A208;"></span>
                 <div>
-                    <div class="sidebar-legend-name">Moderate</div>
-                    <div class="sidebar-legend-text">50% to 69%</div>
+                    <div class="sidebar-legend-name">Moderate Alignment</div>
+                    <div class="sidebar-legend-text">40% – 69% — Review Recommended ⚠️</div>
                 </div>
             </div>
             <div class="sidebar-legend-item">
                 <span class="sidebar-legend-dot" style="background:#A31621;"></span>
                 <div>
-                    <div class="sidebar-legend-name">Weak</div>
-                    <div class="sidebar-legend-text">Below 50%</div>
+                    <div class="sidebar-legend-name">Low Alignment</div>
+                    <div class="sidebar-legend-text">0% – 39% — Not Reliable ❌</div>
                 </div>
             </div>
         </div>
@@ -2674,8 +2674,8 @@ def render_interactive_gauge(score: float, title: str = "Alignment Score", heigh
             'borderwidth': 1,
             'bordercolor': COLORS["border"],
             'steps': [
-                {'range': [0, 50], 'color': "#FFCDD2"},
-                {'range': [50, 70], 'color': "#FFF9C4"},
+                {'range': [0, 40], 'color': "#FFCDD2"},
+                {'range': [40, 70], 'color': "#FFF9C4"},
                 {'range': [70, 100], 'color': "#C8E6C9"}
             ],
             'threshold': {
@@ -2820,8 +2820,12 @@ def render_donut_chart(values: dict, title: str = "Distribution", height: int = 
     
     color_map = {
         "Good": "#06A77D",
+        "High Alignment": "#06A77D",
         "Moderate": "#F1A208",
-        "Weak": "#A31621"
+        "Moderate Alignment": "#F1A208",
+        "Weak": "#A31621",
+        "Low Alignment": "#A31621",
+        "Low": "#A31621",
     }
     colors = [color_map.get(label, COLORS["lobster_pink"]) for label in labels]
     

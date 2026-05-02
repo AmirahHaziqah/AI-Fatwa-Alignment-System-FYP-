@@ -575,10 +575,10 @@ def interpret(score) -> Tuple[str, str]:
     """
     Convert a numeric score into a (label, explanation) pair.
 
-    Returns:
-        ("Good Match", "…")      — score ≥ 70
-        ("Moderate Match", "…")  — score ≥ 50
-        ("Weak Match", "…")      — score < 50
+    Thresholds (aligned with proposal):
+        High Alignment     >= 70  — green  (Reliable)
+        Moderate Alignment >= 40  — orange (Moderate)
+        Low Alignment       < 40  — red    (Not Reliable)
     """
     try:
         score = float(score)
@@ -587,19 +587,17 @@ def interpret(score) -> Tuple[str, str]:
 
     if score >= 70:
         return (
-            "Good Match",
-            "The AI answer is close to the fatwa guidance and covers the main points well.",
+            "High Alignment",
+            "The AI answer closely matches the fatwa guidance and covers the main ruling points well. This response is considered reliable.",
         )
-    if score >= 50:
+    if score >= 40:
         return (
-            "Moderate Match",
-            "The AI answer is moderately aligned, but some important points "
-            "are still incomplete or slightly inaccurate.",
+            "Moderate Alignment",
+            "The AI answer is partially aligned with the fatwa. Some key rulings or conditions are missing or imprecise — review before relying on this response.",
         )
     return (
-        "Weak Match",
-        "The AI answer is not closely aligned and should not be relied on "
-        "without further review.",
+        "Low Alignment",
+        "The AI answer does not closely match the fatwa guidance. It should not be relied on without significant correction and review.",
     )
 
 
