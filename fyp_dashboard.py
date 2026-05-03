@@ -3690,11 +3690,14 @@ with tab1:
         word_count = len(current_ai_input.split()) if input_has_content else 0
 
         if research_active:
-            # ── RESEARCH MODE: Beautiful read-only display panel ──────────────
+            # ── RESEARCH MODE: read-only display, NO textarea rendered at all ──
+            # ai_response reads directly from session state — no widget needed.
+            ai_response = current_ai_input
+
             st.markdown("""
             <style>
             .loaded-answer-panel {
-                background: linear-gradient(180deg, #ffffff 0%, #fdf8fc 100%);
+                background: linear-gradient(180deg,#ffffff 0%,#fdf8fc 100%);
                 border: 1.5px solid #dfd7e4;
                 border-radius: 16px;
                 margin-top: 0.6rem;
@@ -3706,24 +3709,20 @@ with tab1:
                 border-left: 4px solid #773344;
             }
             .loaded-answer-panel-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
+                display: flex; justify-content: space-between; align-items: center;
                 padding: 0.6rem 0.9rem 0.55rem 0.9rem;
-                background: linear-gradient(180deg, #fefcfe 0%, #f8f0f6 100%);
+                background: linear-gradient(180deg,#fefcfe 0%,#f8f0f6 100%);
                 border-bottom: 1px solid #ede0f5;
-                gap: 0.7rem;
-                flex-wrap: wrap;
+                gap: 0.7rem; flex-wrap: wrap;
             }
             .loaded-answer-panel-header-left {
                 display: flex; align-items: center; gap: 0.55rem;
             }
             .loaded-answer-panel-icon {
                 width: 28px; height: 28px;
-                background: linear-gradient(135deg, #773344, #D44D5C);
-                border-radius: 9px;
-                display: flex; align-items: center; justify-content: center;
-                font-size: 0.75rem; flex-shrink: 0; color: white;
+                background: linear-gradient(135deg,#773344,#D44D5C);
+                border-radius: 9px; display: flex; align-items: center;
+                justify-content: center; font-size: 0.75rem; flex-shrink: 0; color: white;
             }
             .loaded-answer-panel-kicker {
                 font-size: 0.58rem; font-weight: 900; letter-spacing: 0.12em;
@@ -3738,22 +3737,19 @@ with tab1:
             }
             .loaded-answer-panel-body {
                 padding: 0.8rem 0.95rem;
-                min-height: 90px;
-                max-height: 210px;
-                overflow-y: auto;
+                min-height: 90px; max-height: 220px; overflow-y: auto;
             }
             .loaded-answer-panel-body::-webkit-scrollbar { width: 4px; }
             .loaded-answer-panel-body::-webkit-scrollbar-track { background: #f5ecf9; border-radius: 4px; }
             .loaded-answer-panel-body::-webkit-scrollbar-thumb { background: #c8a8d4; border-radius: 4px; }
             .loaded-answer-text {
                 font-size: 0.83rem; line-height: 1.68; color: #241226;
-                white-space: pre-wrap; word-break: break-word;
-                font-family: 'Inter', sans-serif;
+                white-space: pre-wrap; word-break: break-word; font-family: 'Inter',sans-serif;
             }
             .loaded-answer-empty {
                 display: flex; flex-direction: column; align-items: center;
                 justify-content: center; padding: 1.4rem 1rem;
-                text-align: center; color: #9d8aaa; min-height: 90px; gap: 0.3rem;
+                text-align: center; min-height: 90px; gap: 0.3rem;
             }
             .loaded-answer-empty-icon { font-size: 1.5rem; opacity: 0.45; margin-bottom: 0.15rem; }
             .loaded-answer-empty-title { font-size: 0.76rem; font-weight: 700; color: #7a6874; }
@@ -3775,17 +3771,9 @@ with tab1:
             )
 
             if input_has_content:
-                body_html = f"""
-                <div class="loaded-answer-panel-body">
-                    <div class="loaded-answer-text">{html.escape(current_ai_input)}</div>
-                </div>"""
+                body_html = f'<div class="loaded-answer-panel-body"><div class="loaded-answer-text">{html.escape(current_ai_input)}</div></div>'
             else:
-                body_html = """
-                <div class="loaded-answer-empty">
-                    <div class="loaded-answer-empty-icon">📂</div>
-                    <div class="loaded-answer-empty-title">No answer loaded yet</div>
-                    <div class="loaded-answer-empty-hint">Select a question and model above,<br>then click <strong>Load Answer →</strong></div>
-                </div>"""
+                body_html = '<div class="loaded-answer-empty"><div class="loaded-answer-empty-icon">📂</div><div class="loaded-answer-empty-title">No answer loaded yet</div><div class="loaded-answer-empty-hint">Select a question and model above,<br>then click <strong>Load Answer →</strong></div></div>'
 
             st.markdown(_html(f"""
             <div class='{panel_cls}'>
@@ -3806,33 +3794,6 @@ with tab1:
                 {body_html}
             </div>
             """), unsafe_allow_html=True)
-
-            # Invisible value holder — Streamlit needs this widget to exist so
-            # session_state["ai_input"] is readable by the analyze button.
-            # We push it completely off-screen with position:fixed far outside viewport.
-            st.markdown("""
-            <style>
-            /* Target ONLY the next stTextArea sibling — the hidden research holder */
-            .research-mode-textarea-anchor + div [data-testid="stTextArea"],
-            .research-mode-textarea-anchor + div [data-testid="stTextArea"] * {
-                position: fixed !important;
-                left: -9999px !important;
-                top: -9999px !important;
-                width: 1px !important;
-                height: 1px !important;
-                overflow: hidden !important;
-                opacity: 0 !important;
-                pointer-events: none !important;
-            }
-            </style>
-            <div class="research-mode-textarea-anchor"></div>
-            """, unsafe_allow_html=True)
-            ai_response = st.text_area(
-                "AI Response Input",
-                height=10,
-                key="ai_input",
-                label_visibility="collapsed"
-            )
 
         else:
             # ── CHECK AI ANSWER MODE: fully editable textarea ─────────────────
