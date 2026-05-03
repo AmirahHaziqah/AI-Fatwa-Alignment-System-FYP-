@@ -3353,38 +3353,7 @@ with tab1:
     .ai-input-card-header { gap:0.45rem !important; }
     .ai-input-card-meta { gap:0.25rem !important; }
     .ai-input-wc, .ai-input-hint-chip, .ai-input-badge { padding:0.16rem 0.45rem !important; }
-    .stTextArea textarea { min-height:100px !important; padding:0.58rem 0.72rem !important; line-height:1.55 !important; font-size:0.8rem !important; }
-
-    /* Loaded-answer viewer: read-only, readable, and capped so the layout stays balanced */
-    .ai-loaded-answer-wrap [data-testid="stTextArea"] textarea,
-    .ai-loaded-answer-wrap textarea:disabled {
-        min-height: 150px !important;
-        max-height: 280px !important;
-        overflow-y: auto !important;
-        resize: none !important;
-        cursor: default !important;
-        opacity: 1 !important;
-        color: #251220 !important;
-        -webkit-text-fill-color: #251220 !important;
-        background:
-            linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,248,251,0.98) 100%) !important;
-        border: 1.5px solid #e4ccd9 !important;
-        border-radius: 16px !important;
-        box-shadow:
-            inset 0 1px 2px rgba(25,14,36,0.035),
-            0 10px 24px rgba(25,14,36,0.055) !important;
-    }
-    .ai-loaded-answer-wrap [data-testid="stTextArea"] textarea:hover,
-    .ai-loaded-answer-wrap [data-testid="stTextArea"] textarea:focus {
-        border-color: #d1a9bb !important;
-        box-shadow:
-            inset 0 1px 2px rgba(25,14,36,0.035),
-            0 12px 26px rgba(127,36,78,0.08) !important;
-        outline: none !important;
-    }
-    .ai-loaded-answer-wrap [data-testid="stTextArea"] textarea::selection {
-        background: rgba(212,77,92,0.18) !important;
-    }
+    .stTextArea textarea { min-height:100px !important; padding:0.45rem 0.65rem !important; line-height:1.45 !important; font-size:0.78rem !important; }
     .action-bar-modern { margin-top:0.5rem !important; padding:0.5rem !important; border-radius:14px !important; grid-template-columns:minmax(0,1fr) 140px !important; }
     .action-hint { font-size:0.72rem !important; }
     .sbd-card { padding:0.75rem 0.85rem !important; border-radius:18px !important; }
@@ -3720,48 +3689,180 @@ with tab1:
         input_has_content = bool(current_ai_input and current_ai_input.strip())
         word_count = len(current_ai_input.split()) if input_has_content else 0
 
-        st.markdown(_html(f"""
-        <div class='ai-input-card {"ai-input-card--filled" if input_has_content else ""}'>
-            <div class='ai-input-card-header'>
-                <div class='ai-input-card-header-left'>
-                    <div class='ai-input-card-icon'>✍️</div>
-                    <div>
-                        <div class='ai-input-card-kicker'>{'LOADED DATASET ANSWER' if research_active else 'AI RESPONSE TO CHECK'}</div>
-                        <div class='ai-input-card-title'>{'Loaded answer' if research_active else 'Pasted AI answer'}</div>
+        if research_active:
+            # ── RESEARCH MODE: Beautiful read-only display panel ──────────────
+            st.markdown("""
+            <style>
+            .loaded-answer-panel {
+                background: linear-gradient(180deg, #ffffff 0%, #fdf8fc 100%);
+                border: 1.5px solid #dfd7e4;
+                border-radius: 16px;
+                margin-top: 0.6rem;
+                overflow: hidden;
+                box-shadow: 0 6px 20px rgba(25,14,36,0.06);
+            }
+            .loaded-answer-panel.has-content {
+                border-color: #c8a8d4;
+                border-left: 4px solid #773344;
+            }
+            .loaded-answer-panel-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0.6rem 0.9rem 0.55rem 0.9rem;
+                background: linear-gradient(180deg, #fefcfe 0%, #f8f0f6 100%);
+                border-bottom: 1px solid #ede0f5;
+                gap: 0.7rem;
+                flex-wrap: wrap;
+            }
+            .loaded-answer-panel-header-left {
+                display: flex; align-items: center; gap: 0.55rem;
+            }
+            .loaded-answer-panel-icon {
+                width: 28px; height: 28px;
+                background: linear-gradient(135deg, #773344, #D44D5C);
+                border-radius: 9px;
+                display: flex; align-items: center; justify-content: center;
+                font-size: 0.75rem; flex-shrink: 0; color: white;
+            }
+            .loaded-answer-panel-kicker {
+                font-size: 0.58rem; font-weight: 900; letter-spacing: 0.12em;
+                text-transform: uppercase; color: #a3195b; margin-bottom: 0.06rem;
+            }
+            .loaded-answer-panel-title {
+                font-family: 'Inter Tight','Inter',sans-serif;
+                font-size: 0.84rem; font-weight: 850; color: #241226; letter-spacing: -0.01em;
+            }
+            .loaded-answer-panel-meta {
+                display: flex; align-items: center; gap: 0.4rem; flex-shrink: 0; flex-wrap: wrap;
+            }
+            .loaded-answer-panel-body {
+                padding: 0.8rem 0.95rem;
+                min-height: 90px;
+                max-height: 210px;
+                overflow-y: auto;
+            }
+            .loaded-answer-panel-body::-webkit-scrollbar { width: 4px; }
+            .loaded-answer-panel-body::-webkit-scrollbar-track { background: #f5ecf9; border-radius: 4px; }
+            .loaded-answer-panel-body::-webkit-scrollbar-thumb { background: #c8a8d4; border-radius: 4px; }
+            .loaded-answer-text {
+                font-size: 0.83rem; line-height: 1.68; color: #241226;
+                white-space: pre-wrap; word-break: break-word;
+                font-family: 'Inter', sans-serif;
+            }
+            .loaded-answer-empty {
+                display: flex; flex-direction: column; align-items: center;
+                justify-content: center; padding: 1.4rem 1rem;
+                text-align: center; color: #9d8aaa; min-height: 90px; gap: 0.3rem;
+            }
+            .loaded-answer-empty-icon { font-size: 1.5rem; opacity: 0.45; margin-bottom: 0.15rem; }
+            .loaded-answer-empty-title { font-size: 0.76rem; font-weight: 700; color: #7a6874; }
+            .loaded-answer-empty-hint { font-size: 0.68rem; color: #a08b97; line-height: 1.4; }
+            .loaded-answer-readonly-badge {
+                display: inline-flex; align-items: center; gap: 0.28rem;
+                padding: 0.18rem 0.52rem; border-radius: 999px;
+                background: #f0e8f5; border: 1px solid #dfd7e4;
+                color: #773344; font-size: 0.58rem; font-weight: 800; white-space: nowrap;
+            }
+            </style>
+            """, unsafe_allow_html=True)
+
+            panel_cls = "loaded-answer-panel has-content" if input_has_content else "loaded-answer-panel"
+            wc_chip = (
+                f"<span class='ai-input-wc'>{word_count} words</span>"
+                if input_has_content
+                else "<span class='ai-input-hint-chip'>No input yet</span>"
+            )
+
+            if input_has_content:
+                body_html = f"""
+                <div class="loaded-answer-panel-body">
+                    <div class="loaded-answer-text">{html.escape(current_ai_input)}</div>
+                </div>"""
+            else:
+                body_html = """
+                <div class="loaded-answer-empty">
+                    <div class="loaded-answer-empty-icon">📂</div>
+                    <div class="loaded-answer-empty-title">No answer loaded yet</div>
+                    <div class="loaded-answer-empty-hint">Select a question and model above,<br>then click <strong>Load Answer →</strong></div>
+                </div>"""
+
+            st.markdown(_html(f"""
+            <div class='{panel_cls}'>
+                <div class='loaded-answer-panel-header'>
+                    <div class='loaded-answer-panel-header-left'>
+                        <div class='loaded-answer-panel-icon'>📄</div>
+                        <div>
+                            <div class='loaded-answer-panel-kicker'>Loaded Dataset Answer</div>
+                            <div class='loaded-answer-panel-title'>Loaded answer</div>
+                        </div>
+                    </div>
+                    <div class='loaded-answer-panel-meta'>
+                        {wc_chip}
+                        <span class='ai-input-badge'>Research Mode</span>
+                        <span class='loaded-answer-readonly-badge'>🔒 Read-only</span>
                     </div>
                 </div>
-                <div class='ai-input-card-meta'>
-                    {"<span class='ai-input-wc'>" + str(word_count) + " words</span>" if input_has_content else "<span class='ai-input-hint-chip'>No input yet</span>"}
-                    <span class='ai-input-badge'>{html.escape(review_mode)}</span>
+                {body_html}
+            </div>
+            """), unsafe_allow_html=True)
+
+            # Invisible value holder — Streamlit needs this widget to exist so
+            # session_state["ai_input"] is readable by the analyze button.
+            # We push it completely off-screen with position:fixed far outside viewport.
+            st.markdown("""
+            <style>
+            /* Target ONLY the next stTextArea sibling — the hidden research holder */
+            .research-mode-textarea-anchor + div [data-testid="stTextArea"],
+            .research-mode-textarea-anchor + div [data-testid="stTextArea"] * {
+                position: fixed !important;
+                left: -9999px !important;
+                top: -9999px !important;
+                width: 1px !important;
+                height: 1px !important;
+                overflow: hidden !important;
+                opacity: 0 !important;
+                pointer-events: none !important;
+            }
+            </style>
+            <div class="research-mode-textarea-anchor"></div>
+            """, unsafe_allow_html=True)
+            ai_response = st.text_area(
+                "AI Response Input",
+                height=10,
+                key="ai_input",
+                label_visibility="collapsed"
+            )
+
+        else:
+            # ── CHECK AI ANSWER MODE: fully editable textarea ─────────────────
+            st.markdown(_html(f"""
+            <div class='ai-input-card {"ai-input-card--filled" if input_has_content else ""}'>
+                <div class='ai-input-card-header'>
+                    <div class='ai-input-card-header-left'>
+                        <div class='ai-input-card-icon'>✍️</div>
+                        <div>
+                            <div class='ai-input-card-kicker'>AI RESPONSE TO CHECK</div>
+                            <div class='ai-input-card-title'>Pasted AI answer</div>
+                        </div>
+                    </div>
+                    <div class='ai-input-card-meta'>
+                        {"<span class='ai-input-wc'>" + str(word_count) + " words</span>" if input_has_content else "<span class='ai-input-hint-chip'>No input yet</span>"}
+                        <span class='ai-input-badge'>Check AI Answer</span>
+                    </div>
                 </div>
             </div>
-        </div>
-        """), unsafe_allow_html=True)
+            """), unsafe_allow_html=True)
 
-        # In Research Mode the answer must come from the saved dataset only.
-        # The viewer is intentionally disabled so users cannot accidentally edit
-        # the loaded response before scoring. Check AI Answer mode remains editable.
-        answer_lines = current_ai_input.count("\n") + 1 if input_has_content else 1
-        estimated_lines = max(answer_lines, int(len(current_ai_input) / 95) + 1) if input_has_content else 5
-        loaded_answer_height = min(max(150, estimated_lines * 22 + 58), 280)
-        manual_answer_height = 170
-
-        textarea_wrap_class = "ai-input-textarea-wrap ai-loaded-answer-wrap" if research_active else "ai-input-textarea-wrap"
-        st.markdown(f'<div class="{textarea_wrap_class}">', unsafe_allow_html=True)
-        placeholder_text = (
-            'Select a question and model, then click Load Answer. This box is read-only in Research Mode.'
-            if research_active
-            else 'Example: "In Islam, surrogacy is generally not permitted because it can mix lineages..."\n\nPaste your full AI-generated answer here. Longer answers give more accurate scores.'
-        )
-        ai_response = st.text_area(
-            "AI Response Input",
-            height=loaded_answer_height if research_active else manual_answer_height,
-            placeholder=placeholder_text,
-            key="ai_input",
-            label_visibility="collapsed",
-            disabled=research_active,
-        )
-        st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown('<div class="ai-input-textarea-wrap">', unsafe_allow_html=True)
+            ai_response = st.text_area(
+                "AI Response Input",
+                height=120,
+                placeholder='Example: "In Islam, surrogacy is generally not permitted because it can mix lineages..."\n\nPaste your full AI-generated answer here. Longer answers give more accurate scores.',
+                key="ai_input",
+                label_visibility="collapsed"
+            )
+            st.markdown('</div>', unsafe_allow_html=True)
 
         if st.session_state.pop('load_success_toast', False):
             show_success_toast_center(
