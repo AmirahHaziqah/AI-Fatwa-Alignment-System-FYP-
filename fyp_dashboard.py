@@ -3885,6 +3885,8 @@ with tab1:
 
     if clear_btn:
         clear_history()
+        st.session_state.analysis_history = []
+        st.session_state.current_analysis = None
         show_success_toast_center("✓ History cleared successfully!", ["All saved analyses have been removed"])
         st.rerun()
 
@@ -3947,6 +3949,8 @@ with tab1:
                     "recommendation_reason": recommendation_reason,
                 }
                 add_to_history(analysis_record)
+                # Keep session state in sync so sidebar counts update immediately
+                st.session_state.analysis_history.append(analysis_record)
 
                 st.session_state.current_analysis = {
                     "best_state_name": best_state.get("state", "-"),
