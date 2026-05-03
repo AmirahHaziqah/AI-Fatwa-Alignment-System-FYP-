@@ -3689,38 +3689,200 @@ with tab1:
         input_has_content = bool(current_ai_input and current_ai_input.strip())
         word_count = len(current_ai_input.split()) if input_has_content else 0
 
-        st.markdown(_html(f"""
-        <div class='ai-input-card {"ai-input-card--filled" if input_has_content else ""}'>
-            <div class='ai-input-card-header'>
-                <div class='ai-input-card-header-left'>
-                    <div class='ai-input-card-icon'>✍️</div>
-                    <div>
-                        <div class='ai-input-card-kicker'>{'LOADED DATASET ANSWER' if research_active else 'AI RESPONSE TO CHECK'}</div>
-                        <div class='ai-input-card-title'>{'Loaded answer' if research_active else 'Pasted AI answer'}</div>
+        if research_active:
+            # ── RESEARCH MODE: Read-only display panel — no editable textarea ──
+            st.markdown("""
+            <style>
+            .loaded-answer-panel {
+                background: linear-gradient(180deg, #ffffff 0%, #fdf8fc 100%);
+                border: 1.5px solid #dfd7e4;
+                border-radius: 16px;
+                margin-top: 0.6rem;
+                overflow: hidden;
+                box-shadow: 0 6px 20px rgba(25,14,36,0.06);
+            }
+            .loaded-answer-panel.has-content {
+                border-color: #c8a8d4;
+                border-left: 4px solid #773344;
+            }
+            .loaded-answer-panel-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0.65rem 0.9rem 0.55rem 0.9rem;
+                background: linear-gradient(180deg, #fefcfe 0%, #f8f0f6 100%);
+                border-bottom: 1px solid #ede0f5;
+                gap: 0.7rem;
+            }
+            .loaded-answer-panel-header-left {
+                display: flex; align-items: center; gap: 0.55rem;
+            }
+            .loaded-answer-panel-icon {
+                width: 28px; height: 28px;
+                background: linear-gradient(135deg, #773344, #D44D5C);
+                border-radius: 9px;
+                display: flex; align-items: center; justify-content: center;
+                font-size: 0.75rem; flex-shrink: 0;
+                color: white;
+            }
+            .loaded-answer-panel-kicker {
+                font-size: 0.58rem; font-weight: 900; letter-spacing: 0.12em;
+                text-transform: uppercase; color: #a3195b; margin-bottom: 0.08rem;
+            }
+            .loaded-answer-panel-title {
+                font-family: 'Inter Tight','Inter',sans-serif;
+                font-size: 0.84rem; font-weight: 850; color: #241226; letter-spacing: -0.01em;
+            }
+            .loaded-answer-panel-meta {
+                display: flex; align-items: center; gap: 0.4rem; flex-shrink: 0;
+            }
+            .loaded-answer-panel-body {
+                padding: 0.75rem 0.9rem;
+                min-height: 80px;
+                max-height: 200px;
+                overflow-y: auto;
+            }
+            .loaded-answer-panel-body::-webkit-scrollbar {
+                width: 4px;
+            }
+            .loaded-answer-panel-body::-webkit-scrollbar-track {
+                background: #f5ecf9;
+                border-radius: 4px;
+            }
+            .loaded-answer-panel-body::-webkit-scrollbar-thumb {
+                background: #c8a8d4;
+                border-radius: 4px;
+            }
+            .loaded-answer-text {
+                font-size: 0.83rem;
+                line-height: 1.65;
+                color: #241226;
+                white-space: pre-wrap;
+                word-break: break-word;
+                font-family: 'Inter', sans-serif;
+            }
+            .loaded-answer-empty {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 1.2rem 1rem;
+                text-align: center;
+                color: #9d8aaa;
+                min-height: 80px;
+                gap: 0.35rem;
+            }
+            .loaded-answer-empty-icon {
+                font-size: 1.6rem; opacity: 0.5; margin-bottom: 0.2rem;
+            }
+            .loaded-answer-empty-title {
+                font-size: 0.78rem; font-weight: 700; color: #7a6874;
+            }
+            .loaded-answer-empty-hint {
+                font-size: 0.68rem; color: #a08b97; line-height: 1.4;
+            }
+            .loaded-answer-readonly-badge {
+                display: inline-flex; align-items: center; gap: 0.3rem;
+                padding: 0.2rem 0.55rem;
+                border-radius: 999px;
+                background: #f0e8f5;
+                border: 1px solid #dfd7e4;
+                color: #773344;
+                font-size: 0.6rem; font-weight: 800;
+                white-space: nowrap;
+            }
+            .loaded-answer-readonly-badge::before {
+                content: '🔒';
+                font-size: 0.65rem;
+            }
+            /* Hidden textarea — keeps the session state value intact */
+            div[data-testid="stTextArea"].research-hidden-textarea {
+                display: none !important;
+                height: 0 !important;
+                overflow: hidden !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            </style>
+            """, unsafe_allow_html=True)
+
+            panel_class = "loaded-answer-panel has-content" if input_has_content else "loaded-answer-panel"
+            wc_chip = f"<span class='ai-input-wc'>{word_count} words</span>" if input_has_content else "<span class='ai-input-hint-chip'>No input yet</span>"
+
+            if input_has_content:
+                answer_body = f"""
+                <div class="loaded-answer-panel-body">
+                    <div class="loaded-answer-text">{html.escape(current_ai_input)}</div>
+                </div>
+                """
+            else:
+                answer_body = """
+                <div class="loaded-answer-empty">
+                    <div class="loaded-answer-empty-icon">📂</div>
+                    <div class="loaded-answer-empty-title">No answer loaded yet</div>
+                    <div class="loaded-answer-empty-hint">Select a question and model above, then click <strong>Load Answer →</strong></div>
+                </div>
+                """
+
+            st.markdown(_html(f"""
+            <div class='{panel_class}'>
+                <div class='loaded-answer-panel-header'>
+                    <div class='loaded-answer-panel-header-left'>
+                        <div class='loaded-answer-panel-icon'>📄</div>
+                        <div>
+                            <div class='loaded-answer-panel-kicker'>Loaded Dataset Answer</div>
+                            <div class='loaded-answer-panel-title'>Loaded answer</div>
+                        </div>
+                    </div>
+                    <div class='loaded-answer-panel-meta'>
+                        {wc_chip}
+                        <span class='ai-input-badge'>Research Mode</span>
+                        <span class='loaded-answer-readonly-badge'>Read-only</span>
                     </div>
                 </div>
-                <div class='ai-input-card-meta'>
-                    {"<span class='ai-input-wc'>" + str(word_count) + " words</span>" if input_has_content else "<span class='ai-input-hint-chip'>No input yet</span>"}
-                    <span class='ai-input-badge'>{html.escape(review_mode)}</span>
+                {answer_body}
+            </div>
+            """), unsafe_allow_html=True)
+
+            # Hidden textarea — value is preserved in session state for analysis
+            st.markdown('<div style="display:none;">', unsafe_allow_html=True)
+            ai_response = st.text_area(
+                "AI Response Input",
+                height=10,
+                key="ai_input",
+                label_visibility="collapsed"
+            )
+            st.markdown('</div>', unsafe_allow_html=True)
+
+        else:
+            # ── CHECK AI ANSWER MODE: fully editable textarea ──────────────────
+            st.markdown(_html(f"""
+            <div class='ai-input-card {"ai-input-card--filled" if input_has_content else ""}'>
+                <div class='ai-input-card-header'>
+                    <div class='ai-input-card-header-left'>
+                        <div class='ai-input-card-icon'>✍️</div>
+                        <div>
+                            <div class='ai-input-card-kicker'>AI RESPONSE TO CHECK</div>
+                            <div class='ai-input-card-title'>Pasted AI answer</div>
+                        </div>
+                    </div>
+                    <div class='ai-input-card-meta'>
+                        {"<span class='ai-input-wc'>" + str(word_count) + " words</span>" if input_has_content else "<span class='ai-input-hint-chip'>No input yet</span>"}
+                        <span class='ai-input-badge'>Check AI Answer</span>
+                    </div>
                 </div>
             </div>
-        </div>
-        """), unsafe_allow_html=True)
+            """), unsafe_allow_html=True)
 
-        st.markdown('<div class="ai-input-textarea-wrap">', unsafe_allow_html=True)
-        placeholder_text = (
-            'Load a saved dataset answer above.'
-            if research_active
-            else 'Example: "In Islam, surrogacy is generally not permitted because it can mix lineages..."\n\nPaste your full AI-generated answer here. Longer answers give more accurate scores.'
-        )
-        ai_response = st.text_area(
-            "AI Response Input",
-            height=105 if research_active else 120,
-            placeholder=placeholder_text,
-            key="ai_input",
-            label_visibility="collapsed"
-        )
-        st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown('<div class="ai-input-textarea-wrap">', unsafe_allow_html=True)
+            ai_response = st.text_area(
+                "AI Response Input",
+                height=120,
+                placeholder='Example: "In Islam, surrogacy is generally not permitted because it can mix lineages..."\n\nPaste your full AI-generated answer here. Longer answers give more accurate scores.',
+                key="ai_input",
+                label_visibility="collapsed"
+            )
+            st.markdown('</div>', unsafe_allow_html=True)
 
         if st.session_state.pop('load_success_toast', False):
             show_success_toast_center(
