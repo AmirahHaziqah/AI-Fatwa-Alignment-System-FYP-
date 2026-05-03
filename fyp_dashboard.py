@@ -1868,7 +1868,7 @@ def render_beautiful_metric_card(label: str, value: float, icon: str, descriptio
     if rv >= 70:
         tier_class = "good"
         value_class = "good"
-    elif rv >= 40:
+    elif rv >= 50:
         tier_class = "moderate"
         value_class = "moderate"
     else:
@@ -1876,11 +1876,11 @@ def render_beautiful_metric_card(label: str, value: float, icon: str, descriptio
         value_class = "weak"
 
     if "Text" in label:
-        desc_text = "Uses many of the same words." if rv >= 70 else "Uses some of the same words." if rv >= 40 else "Uses quite different words."
+        desc_text = "Uses many of the same words." if rv >= 70 else "Uses some of the same words." if rv >= 50 else "Uses quite different words."
     elif "Meaning" in label:
-        desc_text = "Very close in meaning." if rv >= 70 else "Quite close in meaning." if rv >= 40 else "Not very close in meaning."
+        desc_text = "Very close in meaning." if rv >= 70 else "Quite close in meaning." if rv >= 50 else "Not very close in meaning."
     elif "Key" in label or "Points" in label:
-        desc_text = "Most main points are included." if rv >= 70 else "Some main points are included." if rv >= 40 else "Important points are still missing."
+        desc_text = "Most main points are included." if rv >= 70 else "Some main points are included." if rv >= 50 else "Important points are still missing."
     else:
         desc_text = description
     
@@ -2250,7 +2250,7 @@ def get_recommendation(semantic_similarity, coverage, final_match_score):
             "label": "High Alignment",
             "reason": "The answer is close to the fatwa meaning and covers most of the important points.",
         }
-    elif rfms >= 40:
+    elif rfms >= 50:
         return {
             "label": "Moderate Alignment",
             "reason": "The answer matches in some parts, but a few important fatwa points may still be missing or unclear.",
@@ -2313,7 +2313,7 @@ def classify_shariah_compliance(
             "reason": "The response is generally aligned, but it is still incomplete or not precise enough on some important conditions."
         }
 
-    if final_match_score < 45 or semantic_similarity < 40:
+    if final_match_score < 50 or semantic_similarity < 50:
         return {
             "level": "Non-Compliant",
             "reason": "The response is weakly aligned with the fatwa and may conflict with the expected ruling or omit core legal conditions."
@@ -2760,48 +2760,48 @@ def render_similarity_breakdown(bundle: dict):
     score_color  = score_status_color(final_match_score)
     ring_degrees = max(0.0, min(360.0, final_match_score * 3.6))
     rfms2 = round(final_match_score)  # rounded for tier labels, consistent with display
-    conclusion_label = "High Alignment" if rfms2 >= 70 else "Moderate Alignment" if rfms2 >= 40 else "Low Alignment"
+    conclusion_label = "High Alignment" if rfms2 >= 70 else "Moderate Alignment" if rfms2 >= 50 else "Low Alignment"
     conclusion_copy  = (
         "Close to the fatwa and covers most key points."
         if rfms2 >= 70 else
         "Partly correct, but some ruling details still need checking."
-        if rfms2 >= 40 else
+        if rfms2 >= 50 else
         "Not close enough yet, so it needs careful review."
     )
 
     def explain_metric_short(label, value):
         value = safe_float(value)
-        rv = round(value)   # round so 69.7 → 70 = consistent with display
+        rv = round(value)
         if label == "Text Match":
             if rv >= 70:
                 return "Similar wording."
-            if rv >= 40:
+            if rv >= 50:
                 return "Some wording matches."
             return "Different wording."
         if label == "Meaning Match":
             if rv >= 70:
                 return "Meaning is close."
-            if rv >= 40:
+            if rv >= 50:
                 return "Some meaning matches."
             return "Meaning differs."
         if label == "Key Points":
             if rv >= 70:
                 return "Key points included."
-            if rv >= 40:
+            if rv >= 50:
                 return "Some points missing."
             return "Many points missing."
         if rv >= 70:
             return "Fits the fatwa well."
-        if rv >= 40:
+        if rv >= 50:
             return "Acceptable, review."
         return "Weak overall fit."
 
     def metric_tone(value):
         value = safe_float(value)
-        rv = round(value)   # round so 69.7 → 70 = Good (green), consistent with score circle
+        rv = round(value)
         if rv >= 70:
             return "Good", "#16845b", "#edf8f2"
-        if rv >= 40:
+        if rv >= 50:
             return "Review", "#c97900", "#fff7e8"
         return "Weak", "#b5122b", "#fff0f3"
 
@@ -2918,14 +2918,14 @@ def render_single_review_result_dashboard(bundle: dict):
     rfms3 = round(final_match_score)  # rounded for tier labels, consistent with display
 
     preview_reference = html.escape((fatwa_text[:180] + "...") if fatwa_text and len(fatwa_text) > 180 else (fatwa_text or "No text available"))
-    result_title = "High Alignment" if rfms3 >= 70 else "Moderate Alignment" if rfms3 >= 40 else "Low Alignment"
-    result_summary = "This answer is generally close to the matched fatwa and covers the main ruling points." if rfms3 >= 70 else "This answer is partly correct, but some important ruling details still need human review." if rfms3 >= 40 else "This answer is still too far from the fatwa, so it needs careful checking before anyone relies on it."
-    action_label = "Good to Use" if rfms3 >= 70 else "Needs Review" if rfms3 >= 40 else "Not Reliable"
-    action_note = "Use as a strong draft, then do a quick final check." if rfms3 >= 70 else "Check the fatwa text before accepting this answer." if rfms3 >= 40 else "Rewrite or review this answer manually first."
+    result_title = "High Alignment" if rfms3 >= 70 else "Moderate Alignment" if rfms3 >= 50 else "Low Alignment"
+    result_summary = "This answer is generally close to the matched fatwa and covers the main ruling points." if rfms3 >= 70 else "This answer is partly correct, but some important ruling details still need human review." if rfms3 >= 50 else "This answer is still too far from the fatwa, so it needs careful checking before anyone relies on it."
+    action_label = "Good to Use" if rfms3 >= 70 else "Needs Review" if rfms3 >= 50 else "Not Reliable"
+    action_note = "Use as a strong draft, then do a quick final check." if rfms3 >= 70 else "Check the fatwa text before accepting this answer." if rfms3 >= 50 else "Rewrite or review this answer manually first."
     confidence_copy = "The topic match looks clear." if confidence == "High" else "The topic match looks fairly clear." if confidence == "Medium" else "The topic match is less certain."
     compliance_copy = "It follows the ruling well." if compliance_level == "Fully Compliant" else "Some parts fit, but it still needs review." if compliance_level == "Partially Compliant" else "It does not fit the ruling closely." if compliance_level == "Non-Compliant" else "The status is not clear yet and needs manual review."
     recommendation_copy = html.escape(recommendation_reason) if recommendation_reason else html.escape(result_summary)
-    review_status_copy = html.escape("This final score means the answer is close to the fatwa and gets most important points right." if rfms3 >= 70 else "This final score means the answer is partly correct, but some important points still need checking." if rfms3 >= 40 else "This final score means the answer is not close enough to the fatwa yet and needs careful review.")
+    review_status_copy = html.escape("This final score means the answer is close to the fatwa and gets most important points right." if rfms3 >= 70 else "This final score means the answer is partly correct, but some important points still need checking." if rfms3 >= 50 else "This final score means the answer is not close enough to the fatwa yet and needs careful review.")
 
     st.markdown(_html(f"""
     <div class='result-hero-card'>
@@ -3885,8 +3885,6 @@ with tab1:
 
     if clear_btn:
         clear_history()
-        st.session_state.analysis_history = []
-        st.session_state.current_analysis = None
         show_success_toast_center("✓ History cleared successfully!", ["All saved analyses have been removed"])
         st.rerun()
 
@@ -3949,8 +3947,6 @@ with tab1:
                     "recommendation_reason": recommendation_reason,
                 }
                 add_to_history(analysis_record)
-                # Keep session state in sync so sidebar counts update immediately
-                st.session_state.analysis_history.append(analysis_record)
 
                 st.session_state.current_analysis = {
                     "best_state_name": best_state.get("state", "-"),
@@ -3986,7 +3982,7 @@ with tab1:
         final_match_score_preview = safe_float(current_preview.get("final_match_score"))
         result_label_preview = (
             "High Alignment" if final_match_score_preview >= 70
-            else "Moderate Alignment" if final_match_score_preview >= 40
+            else "Moderate Alignment" if final_match_score_preview >= 50
             else "Low Alignment"
         )
         detail_state_preview = "Open" if st.session_state["show_detail_cards"] else "Hidden"
@@ -4743,7 +4739,7 @@ with tab5:
         def score_band(s):
             if s >= 70:
                 return "Good", "#06A77D", "●"
-            if s >= 40:
+            if s >= 50:
                 return "Moderate", "#C27D06", "●"
             return "Low", "#A31621", "●"
 
