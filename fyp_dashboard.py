@@ -1727,6 +1727,532 @@ def apply_premium_compact_polish():
 apply_premium_compact_polish()
 
 
+
+def apply_9plus_design_system():
+    """9+ visual refinement layer: calmer, cleaner, stronger hierarchy.
+
+    This intentionally overrides earlier decorative styles without changing app logic.
+    Goal: keep the dashboard identity, but reduce visual noise and make one clear hero
+    per screen.
+    """
+    st.markdown("""
+    <style>
+    /* =========================================================
+       9+ DESIGN SYSTEM OVERRIDE
+       Cleaner hierarchy, fewer gradients, calmer cards, better readability
+       ========================================================= */
+    :root {
+        --ui-bg: #f7f8fb;
+        --ui-surface: #ffffff;
+        --ui-surface-soft: #fffafa;
+        --ui-line: #eadde4;
+        --ui-line-strong: #dbc7d2;
+        --ui-ink: #211421;
+        --ui-muted: #6f5d69;
+        --ui-soft: #8b7480;
+        --ui-primary: #9d1f55;
+        --ui-primary-2: #c44761;
+        --ui-primary-soft: #fff1f5;
+        --ui-green: #0f8f68;
+        --ui-amber: #c98200;
+        --ui-red: #b5122b;
+        --ui-shadow-xs: 0 4px 12px rgba(32, 16, 31, 0.035);
+        --ui-shadow-sm: 0 10px 24px rgba(32, 16, 31, 0.055);
+        --ui-shadow-md: 0 16px 38px rgba(32, 16, 31, 0.075);
+        --ui-radius-sm: 12px;
+        --ui-radius-md: 18px;
+        --ui-radius-lg: 24px;
+    }
+
+    html { font-size: 15px !important; }
+
+    .stApp,
+    body,
+    [data-testid="stAppViewContainer"] {
+        background:
+            radial-gradient(circle at 8% -6%, rgba(157,31,85,0.07) 0, transparent 30%),
+            radial-gradient(circle at 100% 8%, rgba(119,51,68,0.045) 0, transparent 28%),
+            linear-gradient(180deg, #fbfcfe 0%, var(--ui-bg) 100%) !important;
+        color: var(--ui-ink) !important;
+    }
+
+    [data-testid="stAppViewContainer"] .block-container {
+        max-width: 1280px !important;
+        padding: 0.55rem 0.95rem 1.15rem 0.95rem !important;
+    }
+
+    /* Typography: stronger hierarchy, less shouting */
+    h1, h2, h3,
+    .section-title, .tab1-section-title, .tab-minimal-title,
+    .workspace-title, .empty-review-title, .sbd-title,
+    .result-hero-title, .ai-input-card-title, .pane-title,
+    .flow-hero-title, .dashboard-title, .sidebar-title {
+        font-family: 'Inter Tight', 'Inter', sans-serif !important;
+        letter-spacing: -0.035em !important;
+        color: var(--ui-ink) !important;
+        text-wrap: balance;
+    }
+
+    .tab1-section-subtitle, .workspace-copy, .result-hero-copy,
+    .small-note, .empty-review-copy, .pane-copy,
+    .flow-hero-copy, .sbd-verdict-copy, .sbd-read-copy,
+    .dashboard-subtitle, .sidebar-subtitle {
+        color: var(--ui-muted) !important;
+        line-height: 1.52 !important;
+        font-weight: 500 !important;
+    }
+
+    .tab-minimal-kicker, .workspace-kicker, .sbd-kicker,
+    .flow-field-label, .flow-selected-kicker,
+    .ai-input-card-kicker, .pane-kicker,
+    .metric-beautiful-label, .points-card-header {
+        color: var(--ui-primary) !important;
+        font-weight: 900 !important;
+        letter-spacing: 0.12em !important;
+    }
+
+    /* Universal surface reset: premium but not overdecorated */
+    .tab1-section, .empty-review-card, .sbd-card,
+    .flow-selected-preview, .fatwa-box, .points-card,
+    .comparison-card, .chart-card, .overview-chart-card,
+    .review-left-shell, .ds-loader-card-v3,
+    .input-editor-shell-v2, .ai-input-card,
+    .metric-beautiful-card, .result-hero-card,
+    .detail-inline-card, .detail-toggle-card,
+    .batch-shell, .sim-lite-shell {
+        background: rgba(255, 255, 255, 0.96) !important;
+        border: 1px solid var(--ui-line) !important;
+        box-shadow: var(--ui-shadow-sm) !important;
+        border-radius: var(--ui-radius-lg) !important;
+    }
+
+    .tab1-section:hover, .empty-review-card:hover, .sbd-card:hover,
+    .metric-beautiful-card:hover, .points-card:hover,
+    .comparison-card:hover, .chart-card:hover {
+        transform: none !important;
+        box-shadow: var(--ui-shadow-sm) !important;
+    }
+
+    /* Stop every card from competing with the hero */
+    .metric-beautiful-card,
+    .sbd-metric-inline,
+    .sbd-mini-card,
+    .empty-guide-item,
+    .flow-selected-preview,
+    .points-card,
+    .comparison-card,
+    .fatwa-box {
+        background: #ffffff !important;
+        box-shadow: var(--ui-shadow-xs) !important;
+    }
+
+    .metric-beautiful-card::before,
+    .sbd-mini-card::before {
+        height: 2px !important;
+        opacity: 0.75 !important;
+    }
+
+    .metric-beautiful-icon,
+    .sbd-mini-icon,
+    .ai-input-card-icon,
+    .detail-inline-icon,
+    .flow-hero-icon,
+    .empty-guide-num {
+        background: var(--ui-primary-soft) !important;
+        color: var(--ui-primary) !important;
+        box-shadow: none !important;
+        border: 1px solid #f0d7e2 !important;
+    }
+
+    .empty-guide-num,
+    .detail-inline-icon {
+        color: #ffffff !important;
+        background: var(--ui-primary) !important;
+        border-color: transparent !important;
+    }
+
+    /* Buttons: one confident primary style */
+    .stButton > button,
+    .stDownloadButton > button,
+    button[data-testid="baseButton-secondary"],
+    button[data-testid="baseButton-primary"] {
+        min-height: 42px !important;
+        border-radius: 14px !important;
+        background: linear-gradient(135deg, var(--ui-primary) 0%, var(--ui-primary-2) 100%) !important;
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        border: 0 !important;
+        box-shadow: 0 10px 20px rgba(157,31,85,0.18) !important;
+        font-weight: 850 !important;
+        letter-spacing: 0.005em !important;
+        transition: transform 0.18s ease, box-shadow 0.18s ease !important;
+    }
+
+    .stButton > button:hover,
+    .stDownloadButton > button:hover {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 14px 26px rgba(157,31,85,0.24) !important;
+        background: linear-gradient(135deg, #8f1a4d 0%, #bf405c 100%) !important;
+    }
+
+    .stButton > button:active,
+    .stDownloadButton > button:active {
+        transform: translateY(0) !important;
+        box-shadow: 0 8px 16px rgba(157,31,85,0.18) !important;
+    }
+
+    /* Inputs: calmer, more readable */
+    [data-testid="stSelectbox"] [data-baseweb="select"] > div,
+    [data-testid="stMultiSelect"] [data-baseweb="select"] > div,
+    [data-testid="stTextInputRootElement"],
+    .stTextInput > div > div,
+    [data-testid="stTextArea"] > div > div,
+    [data-testid="stTextArea"] [data-baseweb="textarea"],
+    .stTextArea textarea {
+        border-radius: 15px !important;
+        border: 1.35px solid var(--ui-line-strong) !important;
+        background: #ffffff !important;
+        box-shadow: 0 6px 16px rgba(32,16,31,0.035) !important;
+        color: var(--ui-ink) !important;
+        -webkit-text-fill-color: var(--ui-ink) !important;
+    }
+
+    .stTextArea textarea {
+        font-size: 0.95rem !important;
+        line-height: 1.58 !important;
+        min-height: 118px !important;
+    }
+
+    .stTextArea textarea::placeholder {
+        color: #9a8792 !important;
+    }
+
+    /* Tabs: quieter navigation */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 0.35rem !important;
+        border-bottom: 1px solid var(--ui-line) !important;
+        padding-bottom: 0.18rem !important;
+    }
+
+    .stTabs [data-baseweb="tab"] {
+        border-radius: 999px !important;
+        padding: 0.48rem 0.9rem !important;
+        color: var(--ui-muted) !important;
+        font-weight: 800 !important;
+        background: transparent !important;
+    }
+
+    .stTabs [aria-selected="true"] {
+        background: var(--ui-primary-soft) !important;
+        color: var(--ui-primary) !important;
+        box-shadow: inset 0 0 0 1px #efd2de !important;
+    }
+
+    /* Radio cards: premium selection without visual noise */
+    [data-testid="stRadio"] [role="radiogroup"] {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 0.75rem !important;
+        padding: 0 !important;
+        background: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
+    }
+
+    [data-testid="stRadio"] [role="radiogroup"] > label {
+        min-height: 68px !important;
+        border-radius: 18px !important;
+        border: 1px solid var(--ui-line) !important;
+        background: #ffffff !important;
+        box-shadow: var(--ui-shadow-xs) !important;
+        padding: 0.72rem 0.95rem !important;
+    }
+
+    [data-testid="stRadio"] [role="radiogroup"] > label:has(input:checked) {
+        border-color: rgba(157,31,85,0.42) !important;
+        background: linear-gradient(135deg, #fff1f5 0%, #ffffff 100%) !important;
+        box-shadow: 0 12px 26px rgba(157,31,85,0.12) !important;
+    }
+
+    [data-testid="stRadio"] [role="radiogroup"] p {
+        color: var(--ui-ink) !important;
+        font-size: 0.92rem !important;
+        font-weight: 850 !important;
+    }
+
+    /* Score panel should be the visual hero */
+    .sbd-card {
+        border-radius: 26px !important;
+        padding: 1.15rem 1.2rem !important;
+        box-shadow: var(--ui-shadow-md) !important;
+        border: 1px solid #ead8e1 !important;
+        background: linear-gradient(180deg, #ffffff 0%, #fffafa 100%) !important;
+    }
+
+    .sbd-title {
+        font-size: clamp(1.35rem, 1.6vw, 1.6rem) !important;
+        font-weight: 950 !important;
+    }
+
+    .sbd-pill {
+        background: #ffffff !important;
+        box-shadow: 0 6px 16px rgba(32,16,31,0.05) !important;
+        border-width: 1.5px !important;
+    }
+
+    .sbd-hero {
+        grid-template-columns: 132px minmax(0, 1fr) !important;
+        gap: 1.1rem !important;
+        padding: 0.9rem 0 1rem 0 !important;
+    }
+
+    .sbd-ring {
+        width: 120px !important;
+        height: 120px !important;
+        box-shadow: 0 12px 28px rgba(32,16,31,0.12) !important;
+    }
+
+    .sbd-ring-inner {
+        width: 82px !important;
+        height: 82px !important;
+    }
+
+    .sbd-ring-inner strong {
+        font-size: 1.95rem !important;
+        font-weight: 950 !important;
+    }
+
+    .sbd-verdict-label {
+        font-size: 1.18rem !important;
+        font-weight: 950 !important;
+        letter-spacing: -0.025em !important;
+    }
+
+    .sbd-metric-grid {
+        gap: 0.7rem !important;
+    }
+
+    .sbd-metric-inline,
+    .sbd-mini-card {
+        border-radius: 18px !important;
+        border: 1px solid var(--ui-line) !important;
+        padding: 0.82rem 0.78rem !important;
+    }
+
+    .sbd-mini-value {
+        font-size: 1.45rem !important;
+        font-weight: 950 !important;
+    }
+
+    .sbd-mini-desc {
+        color: var(--ui-muted) !important;
+        font-size: 0.72rem !important;
+        line-height: 1.38 !important;
+        font-weight: 600 !important;
+    }
+
+    .sbd-read-box {
+        background: #fffafa !important;
+        border: 1px solid var(--ui-line) !important;
+        box-shadow: none !important;
+    }
+
+    /* Metric cards are useful, but not the hero */
+    .metric-beautiful-card {
+        padding: 0.78rem 0.7rem !important;
+        border-radius: 18px !important;
+    }
+
+    .metric-beautiful-value {
+        font-size: 1.42rem !important;
+        font-weight: 950 !important;
+    }
+
+    .metric-beautiful-desc {
+        color: var(--ui-muted) !important;
+        border-top-color: #f0e3e8 !important;
+    }
+
+    /* Data flow: simplify and improve scan path */
+    .flow-steps-line {
+        gap: 0.9rem !important;
+        margin: 0.2rem 0 0.75rem 0 !important;
+    }
+
+    .flow-step-dot {
+        background: #ffffff !important;
+        color: var(--ui-primary) !important;
+        border: 1px solid #efd2de !important;
+        box-shadow: none !important;
+    }
+
+    .flow-step-mini.is-active .flow-step-dot {
+        background: var(--ui-primary) !important;
+        color: #ffffff !important;
+        border-color: transparent !important;
+        box-shadow: 0 8px 18px rgba(157,31,85,0.18) !important;
+    }
+
+    .flow-selected-preview {
+        padding: 0.78rem 0.9rem !important;
+        border-radius: 18px !important;
+    }
+
+    .flow-selected-question {
+        color: var(--ui-ink) !important;
+        font-size: 0.92rem !important;
+        line-height: 1.45 !important;
+        font-weight: 650 !important;
+    }
+
+    .flow-selected-chip,
+    .ai-input-wc,
+    .ai-input-hint-chip,
+    .ai-input-badge,
+    .detail-chip,
+    .empty-review-pill,
+    .ds-loader-v3-badge,
+    .sidebar-chip,
+    .pager-chip {
+        border-radius: 999px !important;
+        background: var(--ui-primary-soft) !important;
+        border: 1px solid #efd2de !important;
+        color: var(--ui-primary) !important;
+        box-shadow: none !important;
+        font-weight: 850 !important;
+    }
+
+    /* Status colors: less neon, more mature */
+    .metric-beautiful-value.good,
+    .sbd-mini-value.good,
+    .good { color: var(--ui-green) !important; }
+    .metric-beautiful-value.moderate,
+    .moderate { color: var(--ui-amber) !important; }
+    .metric-beautiful-value.weak,
+    .weak { color: var(--ui-red) !important; }
+
+    .keyword-match {
+        background: #edf8f2 !important;
+        border: 1px solid #cfeede !important;
+        color: var(--ui-green) !important;
+    }
+
+    .keyword-miss {
+        background: #fff0f3 !important;
+        border: 1px solid #f1c9d2 !important;
+        color: var(--ui-red) !important;
+    }
+
+    /* Tables and charts: less heavy */
+    .light-table {
+        border-radius: 18px !important;
+        overflow: hidden !important;
+        border: 1px solid var(--ui-line) !important;
+        box-shadow: var(--ui-shadow-xs) !important;
+    }
+
+    .light-table thead th {
+        background: #fff1f5 !important;
+        color: var(--ui-primary) !important;
+        border-bottom: 1px solid var(--ui-line) !important;
+    }
+
+    .light-table tbody td {
+        color: var(--ui-ink) !important;
+        border-bottom: 1px solid #f2e8ed !important;
+    }
+
+    iframe, canvas, svg {
+        border-radius: 18px !important;
+    }
+
+    /* Sidebar: cleaner, less cramped */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #ffffff 0%, #fff9fb 100%) !important;
+        border-right: 1px solid var(--ui-line) !important;
+    }
+
+    [data-testid="stSidebar"] > div:first-child {
+        padding-top: 0.7rem !important;
+    }
+
+    .sidebar-clean-header,
+    .sidebar-section,
+    .sidebar-profile-card,
+    .sidebar-workspace,
+    .sidebar-action-list,
+    .sidebar-progress-card {
+        background: #ffffff !important;
+        border: 1px solid var(--ui-line) !important;
+        box-shadow: var(--ui-shadow-xs) !important;
+        border-radius: 18px !important;
+    }
+
+    .sidebar-title {
+        font-size: 1.15rem !important;
+        font-weight: 950 !important;
+    }
+
+    .sidebar-subtitle {
+        font-size: 0.78rem !important;
+    }
+
+    /* Remove accidental visual duplication and harsh decoration */
+    .custom-toast-center,
+    #amirahToast {
+        border-radius: 18px !important;
+        box-shadow: var(--ui-shadow-md) !important;
+    }
+
+    .detail-toggle-button-wrap .stButton > button,
+    .flow-action-cell .stButton > button {
+        min-height: 46px !important;
+        border-radius: 15px !important;
+    }
+
+    .soft-divider {
+        background: linear-gradient(90deg, transparent, var(--ui-line), transparent) !important;
+        opacity: 0.9 !important;
+    }
+
+    /* Responsive polish */
+    @media (max-width: 1100px) {
+        [data-testid="stAppViewContainer"] .block-container {
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+        }
+        .sbd-hero { grid-template-columns: 112px minmax(0, 1fr) !important; }
+        .sbd-ring { width: 104px !important; height: 104px !important; }
+        .sbd-ring-inner { width: 72px !important; height: 72px !important; }
+    }
+
+    @media (max-width: 900px) {
+        [data-testid="stRadio"] [role="radiogroup"],
+        .result-cards-grid,
+        .flow-steps-line {
+            grid-template-columns: 1fr !important;
+        }
+        .sbd-hero { grid-template-columns: 1fr !important; }
+        .sbd-metric-grid, .metric-grid-4 {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        }
+    }
+
+    @media (max-width: 520px) {
+        html { font-size: 14px !important; }
+        .sbd-metric-grid, .metric-grid-4 {
+            grid-template-columns: 1fr !important;
+        }
+        .sbd-card { padding: 0.95rem !important; }
+        .sbd-ring { width: 96px !important; height: 96px !important; }
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+
+apply_9plus_design_system()
+
+
 def resolve_header_banner_path():
     candidates = [
         "dashboard_background.png",
