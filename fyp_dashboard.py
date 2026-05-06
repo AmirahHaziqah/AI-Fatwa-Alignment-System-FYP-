@@ -2383,7 +2383,11 @@ def clean_history_dataframe(history_df: pd.DataFrame) -> pd.DataFrame:
 
 
 def get_history_df() -> pd.DataFrame:
-    raw_df = pd.DataFrame(st.session_state.get("analysis_history", []))
+    # Always read from disk to guarantee the latest records are shown,
+    # then keep session state in sync so sidebar/metrics are also fresh.
+    fresh = load_history_from_file()
+    st.session_state.analysis_history = fresh          # keep in-memory in sync
+    raw_df = pd.DataFrame(fresh)
     if raw_df.empty:
         return pd.DataFrame()
     return clean_history_dataframe(raw_df)
@@ -3077,17 +3081,21 @@ with st.sidebar:
             unsafe_allow_html=True,
         )
 
-    total_analyses = len(st.session_state.analysis_history)
+    # Resync from disk so sidebar counter is always live
+    _sidebar_history = load_history_from_file()
+    st.session_state.analysis_history = _sidebar_history
+
+    total_analyses = len(_sidebar_history)
     score_list = [
         safe_float(r.get("final_match_score", r.get("alignment_score", np.nan)), np.nan)
-        for r in st.session_state.analysis_history
+        for r in _sidebar_history
     ]
     score_list = [s for s in score_list if not pd.isna(s)]
     avg_score_sidebar = np.mean(score_list) if score_list else 0
     high_count = sum(1 for s in score_list if get_score_tier(s) == "good")
     moderate_count = sum(1 for s in score_list if get_score_tier(s) == "moderate")
     weak_count = sum(1 for s in score_list if get_score_tier(s) == "weak")
-    recent_topics = recent_topics_summary(st.session_state.analysis_history, max_items=5)
+    recent_topics = recent_topics_summary(_sidebar_history, max_items=5)
     score_health = (high_count / len(score_list) * 100) if score_list else 0
     current_bundle = build_sidebar_latest_bundle()
 
@@ -3885,6 +3893,9 @@ with tab1:
 
     if clear_btn:
         clear_history()
+        # Reset in-memory history so the counter updates immediately
+        st.session_state.analysis_history = []
+        st.session_state.current_analysis = None
         show_success_toast_center("✓ History cleared successfully!", ["All saved analyses have been removed"])
         st.rerun()
 
@@ -3947,6 +3958,10 @@ with tab1:
                     "recommendation_reason": recommendation_reason,
                 }
                 add_to_history(analysis_record)
+                # ── Immediately resync in-memory history from disk so the
+                #    counter in Tab 3 (and the sidebar) reflects the new record
+                #    without requiring a full page reload.
+                st.session_state.analysis_history = load_history_from_file()
 
                 st.session_state.current_analysis = {
                     "best_state_name": best_state.get("state", "-"),
@@ -4243,7 +4258,10 @@ with tab3:
         "Review past results, spot score trends, and export your analysis records in one place."
     )
 
-    if st.session_state.analysis_history:
+    # Always check disk directly so reopening the page shows existing records
+    _history_live = load_history_from_file()
+    if _history_live:
+        st.session_state.analysis_history = _history_live
         history_df = get_history_df()
 
         st.markdown("<h3 class='section-subtitle'>Performance Dashboard</h3>", unsafe_allow_html=True)
@@ -4432,6 +4450,8 @@ Lowest Score: {history_df['final_match_score'].min():.1f}%
 
         if st.button("🗑️ Clear All History", use_container_width=True, key="clear_history_tab"):
             clear_history()
+            st.session_state.analysis_history = []
+            st.session_state.current_analysis = None
             show_success_toast_center("✓ History cleared successfully!", ["All saved analyses have been removed"])
             st.rerun()
     else:
