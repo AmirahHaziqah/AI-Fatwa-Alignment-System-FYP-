@@ -16,7 +16,12 @@ from typing import Iterable, List, Optional
 import pandas as pd
 
 # ── Where analysis history is persisted on disk ──────────
-HISTORY_FILE = Path("analysis_history.json")
+# IMPORTANT: Use an absolute path anchored to this file's own directory.
+# A bare relative path like Path("analysis_history.json") resolves against
+# whatever the current working directory is at runtime — which can change
+# depending on how/where Streamlit is launched, causing history to silently
+# reset every time the CWD differs.  __file__ is always this module's location.
+HISTORY_FILE = Path(__file__).resolve().parent / "analysis_history.json"
 
 # ── Optional Excel export (needs openpyxl installed) ─────
 try:

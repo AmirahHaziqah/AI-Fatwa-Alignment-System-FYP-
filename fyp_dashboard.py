@@ -2520,7 +2520,14 @@ def render_history_overview(history_df: pd.DataFrame):
     chart_df = chart_df.reset_index(drop=True)
     chart_df["run_no"] = np.arange(1, len(chart_df) + 1)
     chart_df["final_match_score"] = pd.to_numeric(chart_df["final_match_score"], errors="coerce").fillna(0)
-    chart_df["Band"] = chart_df["final_match_score"].apply(get_score_band_label)
+    # get_score_band_label returns "High Alignment" / "Moderate Alignment" / "Low Alignment"
+    # Map those down to the short chart labels used by reindex and the color map.
+    _band_label_map = {
+        "High Alignment":     "Good",
+        "Moderate Alignment": "Moderate",
+        "Low Alignment":      "Weak",
+    }
+    chart_df["Band"] = chart_df["final_match_score"].apply(get_score_band_label).map(_band_label_map)
 
     band_counts = (
         chart_df["Band"]
