@@ -1,12 +1,19 @@
 [
   {
     "timestamp": "2026-03-08 21:41:59",
-    "detected_question_id": "Q01",
+    "topic_label": "Q01",
+    "specific_issue": "",
+    "detection_confidence": "Unknown",
     "best_state": "Muzakarah Majlis Kebangsaan",
-    "alignment_score": 57.720001220703125,
+    "final_match_score": 57.72,
+    "mean_alignment": 57.72,
     "lexical_similarity": 46.59,
-    "semantic_similarity": 72.72000122070312,
-    "coverage": 50.0
+    "semantic_similarity": 72.72,
+    "coverage": 50.0,
+    "compliance_level": "Unknown",
+    "compliance_reason": "Migrated from old schema — compliance not recorded.",
+    "recommendation_label": "",
+    "recommendation_reason": ""
   },
   {
     "timestamp": "2026-04-16 20:10:06",

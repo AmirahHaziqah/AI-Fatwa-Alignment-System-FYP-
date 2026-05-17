@@ -575,10 +575,10 @@ def interpret(score) -> Tuple[str, str]:
     """
     Convert a numeric score into a (label, explanation) pair.
 
-    Thresholds (aligned with proposal):
+    Thresholds — MUST match get_score_tier() in utils.py exactly:
         High Alignment     >= 70  — green  (Reliable)
-        Moderate Alignment >= 40  — orange (Moderate)
-        Low Alignment       < 40  — red    (Not Reliable)
+        Moderate Alignment >= 50  — orange (Needs Review)
+        Low Alignment       < 50  — red    (Not Reliable)
     """
     try:
         score = float(score)
@@ -590,7 +590,7 @@ def interpret(score) -> Tuple[str, str]:
             "High Alignment",
             "The AI answer closely matches the fatwa guidance and covers the main ruling points well. This response is considered reliable.",
         )
-    if score >= 40:
+    if score >= 50:
         return (
             "Moderate Alignment",
             "The AI answer is partially aligned with the fatwa. Some key rulings or conditions are missing or imprecise — review before relying on this response.",

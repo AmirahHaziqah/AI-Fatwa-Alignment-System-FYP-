@@ -88,19 +88,20 @@ def safe_read_csv(path: str) -> pd.DataFrame:
 # =========================================================
 # SCORE TIER LOGIC
 # =========================================================
-# Thresholds:
-#   High Alignment     ≥ 70 %   → "good"   (green)
-#   Moderate Alignment ≥ 50 %   (and < 70 %) → "moderate" (yellow)
-#   Low Alignment       < 50 %   → "weak"   (red)
+# Thresholds (consistent across ALL files):
+#   High Alignment     ≥ 70 %   → "good"     (green)
+#   Moderate Alignment ≥ 50 %   → "moderate" (yellow)
+#   Low Alignment       < 50 %  → "weak"     (red)
+#
+# NOTE: The score is rounded to the nearest integer before
+# comparison so that the displayed circle value (which is
+# already rounded) stays consistent with the tier label —
+# e.g. 69.7 rounds to 70 = High Alignment.
 # =========================================================
 
 def get_score_tier(score) -> str:
     """
     Return 'good', 'moderate', or 'weak' for a numeric score.
-
-    Score is rounded to the nearest integer before comparison so that
-    the displayed circle value (which is already rounded) stays consistent
-    with the tier label — e.g. 69.7 rounds to 70 = High Alignment.
 
     Thresholds (after rounding):
         good     (High Alignment)      >= 70
@@ -191,26 +192,91 @@ def load_history_from_file() -> List[dict]:
 
     Returns an empty list if the file does not exist or is corrupt —
     never raises.
+
+    Schema migration: old records that used 'alignment_score' instead of
+    'final_match_score' are transparently upgraded on read so the rest of
+    the codebase never sees the old key.
     """
     path = _history_path()
     if not path.exists():
         return []
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
-        return data if isinstance(data, list) else []
+        if not isinstance(data, list):
+            return []
+        return [_migrate_history_record(r) for r in data]
     except Exception:
         return []
 
 
-def _save_history(history: Iterable[dict]) -> None:
-    """Persist history to disk.  Silently swallows write errors."""
+def _migrate_history_record(record: dict) -> dict:
+    """
+    Upgrade a single history record from the old schema to the current one.
+
+    Old schema (pre-April 2026) used 'alignment_score' as the primary score
+    key and did not include topic_label, compliance_level, or recommendation.
+    This function normalises those records so the rest of the codebase can
+    treat all history entries identically.
+    """
+    if not isinstance(record, dict):
+        return record
+
+    # Already new schema — nothing to do
+    if "final_match_score" in record:
+        return record
+
+    # Old schema migration
+    raw_score = record.get("alignment_score", 0.0)
     try:
-        _history_path().write_text(
+        score = round(float(raw_score), 2)
+    except Exception:
+        score = 0.0
+
+    return {
+        "timestamp":            record.get("timestamp", ""),
+        "topic_label":          record.get("detected_question_id", "Unknown"),
+        "specific_issue":       "",
+        "detection_confidence": "Unknown",
+        "best_state":           record.get("best_state", ""),
+        "final_match_score":    score,
+        "mean_alignment":       score,   # no multi-state mean was stored; best is the only value
+        "lexical_similarity":   round(float(record.get("lexical_similarity",  0.0)), 2),
+        "semantic_similarity":  round(float(record.get("semantic_similarity", 0.0)), 2),
+        "coverage":             round(float(record.get("coverage",            0.0)), 2),
+        "compliance_level":     "Unknown",
+        "compliance_reason":    "Migrated from old schema — compliance not recorded.",
+        "recommendation_label": "",
+        "recommendation_reason": "",
+    }
+
+
+def _save_history(history: Iterable[dict]) -> None:
+    """
+    Persist history to disk using an atomic write-then-rename pattern.
+
+    Why atomic?  A plain write_text() call can be interrupted mid-write
+    (Streamlit hot-reload, OS flush timing, unexpected crash), leaving a
+    truncated or empty file.  Writing to a .tmp file first and then calling
+    Path.replace() is atomic on all major OSes: the old file is never
+    touched until the new content is fully written and flushed.
+
+    If anything goes wrong the original file is left intact, so history
+    is never silently lost.
+    """
+    path = _history_path()
+    tmp  = path.with_suffix(".tmp")
+    try:
+        tmp.write_text(
             json.dumps(list(history), ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
+        tmp.replace(path)   # atomic rename — safe on Windows and POSIX
     except Exception:
-        pass
+        # Remove the partial temp file so it does not interfere next time
+        try:
+            tmp.unlink(missing_ok=True)
+        except Exception:
+            pass
 
 
 def add_to_history(record: dict) -> None:
