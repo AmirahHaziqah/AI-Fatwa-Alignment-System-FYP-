@@ -2325,6 +2325,149 @@ def classify_shariah_compliance(
     }
 
 
+
+def _list_from_keywords(value) -> list:
+    """Turn a comma-separated keyword string or list into a clean list."""
+    if value is None:
+        return []
+    if isinstance(value, list):
+        raw_items = value
+    else:
+        text = str(value).strip()
+        if not text or text == "-":
+            return []
+        raw_items = text.split(",")
+    return [str(item).strip() for item in raw_items if str(item).strip() and str(item).strip() != "-"]
+
+
+def build_explainability_insights(bundle: dict) -> dict:
+    """
+    Build the human-readable explanation layer used in the detailed review.
+    This makes the system look like an evaluation framework, not an AI chat screen.
+    """
+    final_score = safe_float(bundle.get("final_match_score"))
+    semantic = safe_float(bundle.get("semantic_score"))
+    lexical = safe_float(bundle.get("lexical_score"))
+    coverage = safe_float(bundle.get("coverage_score"))
+    confidence = str(bundle.get("confidence", "Unknown"))
+    compliance = str(bundle.get("compliance_level", "Unclear"))
+    matched = _list_from_keywords(bundle.get("matched_list"))
+    missing = _list_from_keywords(bundle.get("missing_list"))
+
+    if final_score >= 70 and semantic >= 65 and coverage >= 60:
+        risk_level = "Low Risk"
+        verdict = "The answer is mostly aligned with the selected fatwa source."
+        action = "Can be used as a supported answer, but the original fatwa should still be cited."
+        tone = "#16845b"
+    elif final_score >= 50:
+        risk_level = "Review Needed"
+        verdict = "The answer is partly aligned, but it is not complete enough to accept blindly."
+        action = "Review the missing fatwa points before treating the answer as reliable."
+        tone = "#c97900"
+    else:
+        risk_level = "High Risk"
+        verdict = "The answer is weakly aligned with the fatwa source and may mislead users."
+        action = "Do not rely on this answer without manual correction and fatwa verification."
+        tone = "#b5122b"
+
+    if confidence == "Low":
+        action = "The topic detection confidence is low. Recheck the selected issue before judging the answer."
+
+    strongest_signal = "Meaning match" if semantic >= lexical and semantic >= coverage else "Text match" if lexical >= coverage else "Key fatwa points"
+    weakest_signal = "Meaning match" if semantic <= lexical and semantic <= coverage else "Text match" if lexical <= coverage else "Key fatwa points"
+
+    if missing:
+        missing_sentence = ", ".join(missing[:6])
+    else:
+        missing_sentence = "No major missing keyword was detected by the keyword coverage layer."
+
+    if matched:
+        matched_sentence = ", ".join(matched[:6])
+    else:
+        matched_sentence = "The system did not detect strong coverage of required fatwa keywords."
+
+    return {
+        "risk_level": risk_level,
+        "verdict": verdict,
+        "action": action,
+        "tone": tone,
+        "strongest_signal": strongest_signal,
+        "weakest_signal": weakest_signal,
+        "matched_sentence": matched_sentence,
+        "missing_sentence": missing_sentence,
+        "compliance": compliance,
+    }
+
+
+def render_explainability_panel(bundle: dict) -> None:
+    """Render the explainability panel without changing the existing design language."""
+    insight = build_explainability_insights(bundle)
+    source = html.escape(str(bundle.get("ai_model_source", "Manual / External AI")))
+    tone = insight["tone"]
+    st.markdown(_html(f"""
+    <div class='explainability-panel'>
+        <div class='explainability-head'>
+            <div>
+                <div class='explainability-kicker'>Explainability layer</div>
+                <div class='explainability-title'>Why the system gave this result</div>
+                <div class='explainability-copy'>This section turns the raw scores into evidence that can be defended during FYP presentation.</div>
+            </div>
+            <div class='explainability-risk' style='border-color:{tone};color:{tone};background:{tone}12;'>{html.escape(insight['risk_level'])}</div>
+        </div>
+        <div class='explainability-grid'>
+            <div class='explainability-card'>
+                <div class='explainability-card-label'>Evaluated source</div>
+                <div class='explainability-card-main'>{source}</div>
+                <div class='explainability-card-text'>The AI model is treated as the answer source, not as the main system contribution.</div>
+            </div>
+            <div class='explainability-card'>
+                <div class='explainability-card-label'>System verdict</div>
+                <div class='explainability-card-main' style='color:{tone};'>{html.escape(insight['compliance'])}</div>
+                <div class='explainability-card-text'>{html.escape(insight['verdict'])}</div>
+            </div>
+            <div class='explainability-card'>
+                <div class='explainability-card-label'>Strongest evidence</div>
+                <div class='explainability-card-main'>{html.escape(insight['strongest_signal'])}</div>
+                <div class='explainability-card-text'>This metric contributed the clearest support for the final alignment reading.</div>
+            </div>
+            <div class='explainability-card'>
+                <div class='explainability-card-label'>Weakest evidence</div>
+                <div class='explainability-card-main'>{html.escape(insight['weakest_signal'])}</div>
+                <div class='explainability-card-text'>This is the area that should be checked first during manual review.</div>
+            </div>
+        </div>
+        <div class='explainability-bottom'>
+            <div><strong>Matched fatwa points:</strong> {html.escape(insight['matched_sentence'])}</div>
+            <div><strong>Missing or weak points:</strong> {html.escape(insight['missing_sentence'])}</div>
+            <div><strong>Recommended action:</strong> {html.escape(insight['action'])}</div>
+        </div>
+    </div>
+    <style>
+    .explainability-panel {{
+        margin-top:1rem;
+        background:linear-gradient(180deg,#ffffff 0%,#fff8f7 100%);
+        border:1px solid #ead1c8;
+        border-radius:26px;
+        padding:1.05rem 1.08rem;
+        box-shadow:0 14px 30px rgba(25,14,36,0.055);
+    }}
+    .explainability-head {{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;margin-bottom:0.9rem;}}
+    .explainability-kicker {{font-size:0.68rem;font-weight:900;letter-spacing:0.12em;text-transform:uppercase;color:#a3195b;margin-bottom:0.18rem;}}
+    .explainability-title {{font-family:'Inter Tight','Inter',sans-serif;font-size:1.2rem;font-weight:900;letter-spacing:-0.03em;color:#241226;}}
+    .explainability-copy {{font-size:0.86rem;line-height:1.5;color:#6d5a68;margin-top:0.15rem;}}
+    .explainability-risk {{padding:0.38rem 0.8rem;border-radius:999px;border:1.4px solid;font-size:0.76rem;font-weight:900;white-space:nowrap;}}
+    .explainability-grid {{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0.7rem;}}
+    .explainability-card {{background:#fff;border:1px solid #ead1c8;border-radius:18px;padding:0.82rem 0.88rem;min-width:0;}}
+    .explainability-card-label {{font-size:0.62rem;font-weight:900;letter-spacing:0.09em;text-transform:uppercase;color:#8b6771;margin-bottom:0.24rem;}}
+    .explainability-card-main {{font-family:'Inter Tight','Inter',sans-serif;font-size:1rem;font-weight:900;color:#241226;line-height:1.2;overflow-wrap:anywhere;}}
+    .explainability-card-text {{font-size:0.74rem;line-height:1.45;color:#6d5a68;margin-top:0.25rem;}}
+    .explainability-bottom {{margin-top:0.78rem;display:grid;gap:0.45rem;background:#fff;border:1px solid #ead1c8;border-radius:18px;padding:0.82rem 0.9rem;font-size:0.86rem;line-height:1.55;color:#6d5a68;}}
+    .explainability-bottom strong {{color:#241226;}}
+    @media (max-width: 1100px) {{.explainability-grid {{grid-template-columns:repeat(2,minmax(0,1fr));}}}}
+    @media (max-width: 700px) {{.explainability-grid {{grid-template-columns:1fr;}} .explainability-head {{display:block;}} .explainability-risk {{display:inline-flex;margin-top:0.6rem;}}}}
+    </style>
+    """), unsafe_allow_html=True)
+
 def clean_history_dataframe(history_df: pd.DataFrame) -> pd.DataFrame:
     df = history_df.copy()
 
@@ -2409,9 +2552,12 @@ def build_history_display_table(history_df: pd.DataFrame) -> pd.DataFrame:
     display_df["Text"] = display_df["lexical_similarity"].apply(lambda x: format_percent(x, 1))
     display_df["Key Points"] = display_df["coverage"].apply(lambda x: format_percent(x, 1))
     display_df["Review"] = display_df["recommendation_label"].replace("", "Moderate Alignment")
+    if "ai_model_source" not in display_df.columns:
+        display_df["ai_model_source"] = "Manual / External AI"
 
     display_df = display_df.rename(columns={
         "timestamp": "Time",
+        "ai_model_source": "AI Source",
         "topic_label": "Topic",
         "specific_issue": "Issue",
         "best_state": "Best Match"
@@ -2419,10 +2565,11 @@ def build_history_display_table(history_df: pd.DataFrame) -> pd.DataFrame:
 
     display_df["Topic"] = display_df["Topic"].apply(short_topic_label)
     display_df["Issue"] = display_df["Issue"].apply(lambda x: short_text(x, 64))
+    display_df["AI Source"] = display_df["AI Source"].apply(lambda x: short_text(x, 24))
     display_df["Best Match"] = display_df["Best Match"].apply(lambda x: short_text(x, 24))
     display_df["Review"] = display_df["Review"].apply(lambda x: short_text(x, 22))
 
-    display_df = display_df[["Time", "Topic", "Issue", "Best Match", "Review", "Final Score", "Meaning", "Text", "Key Points"]]
+    display_df = display_df[["Time", "AI Source", "Topic", "Issue", "Best Match", "Review", "Final Score", "Meaning", "Text", "Key Points"]]
     return display_df.reset_index(drop=True)
 
 
@@ -3043,6 +3190,8 @@ def render_single_review_result_dashboard(bundle: dict):
             <div class='keyword-container'>{missing_html}</div>
         </div>
         """), unsafe_allow_html=True)
+
+    render_explainability_panel(bundle)
 
 # =========================================================
 # COMPACT HEADER
@@ -3681,6 +3830,7 @@ with tab1:
             if load_btn:
                 if not selected_match.empty:
                     st.session_state["ai_input"] = selected_match.iloc[0]["ai_answer_raw"]
+                    st.session_state["current_model_source"] = selected_model
                     st.session_state["load_success_toast"] = True
                     st.rerun()
                 else:
@@ -3812,6 +3962,25 @@ with tab1:
 
         else:
             # ── CHECK AI ANSWER MODE: fully editable textarea ─────────────────
+            model_options_manual = [
+                "Manual / External AI",
+                "ChatGPT",
+                "Gemini",
+                "Claude",
+                "DeepSeek",
+                "Perplexity",
+                "Other AI Model",
+            ]
+            current_model_source = st.selectbox(
+                "Answer source",
+                options=model_options_manual,
+                index=model_options_manual.index(st.session_state.get("current_model_source", "Manual / External AI"))
+                if st.session_state.get("current_model_source", "Manual / External AI") in model_options_manual else 0,
+                key="manual_model_source",
+                help="This labels where the answer came from. The system still evaluates the answer; it does not need to generate the answer itself."
+            )
+            st.session_state["current_model_source"] = current_model_source
+
             st.markdown(_html(f"""
             <div class='ai-input-card {"ai-input-card--filled" if input_has_content else ""}'>
                 <div class='ai-input-card-header'>
@@ -3948,8 +4117,11 @@ with tab1:
                 compliance_level = compliance_result["level"]
                 compliance_reason = compliance_result["reason"]
 
+                ai_model_source = st.session_state.get("current_model_source", selected_model if research_active else "Manual / External AI")
+
                 analysis_record = {
                     "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "ai_model_source": ai_model_source,
                     "topic_label": topic_label,
                     "specific_issue": specific_issue,
                     "detection_confidence": confidence,
@@ -3972,6 +4144,7 @@ with tab1:
 
                 st.session_state.current_analysis = {
                     "best_state_name": best_state.get("state", "-"),
+                    "ai_model_source": ai_model_source,
                     "topic_label": topic_label,
                     "specific_issue": specific_issue,
                     "confidence": confidence,
@@ -4359,8 +4532,12 @@ with tab3:
         export_df["meaning_match"] = export_df["semantic_similarity"].apply(lambda x: format_percent(x, 1))
         export_df["key_fatwa_points"] = export_df["coverage"].apply(lambda x: format_percent(x, 1))
 
+        if "ai_model_source" not in export_df.columns:
+            export_df["ai_model_source"] = "Manual / External AI"
+
         export_df = export_df.rename(columns={
             "timestamp": "Timestamp",
+            "ai_model_source": "AI Source",
             "topic_label": "Detected Topic",
             "specific_issue": "Specific Issue",
             "detection_confidence": "Topic Detection Confidence",
@@ -4376,6 +4553,7 @@ with tab3:
         export_df = export_df[
             [
                 "Timestamp",
+                "AI Source",
                 "Detected Topic",
                 "Specific Issue",
                 "Topic Detection Confidence",
