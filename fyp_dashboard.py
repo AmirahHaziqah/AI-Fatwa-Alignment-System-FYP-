@@ -2325,248 +2325,724 @@ def classify_shariah_compliance(
     }
 
 
+def clean_history_dataframe(history_df: pd.DataFrame) -> pd.DataFrame:
+    df = history_df.copy()
 
-def _list_from_keywords(value) -> list:
-    """Turn a comma-separated keyword string or list into a clean list."""
-    if value is None:
-        return []
-    if isinstance(value, list):
-        raw_items = value
-    else:
-        text = str(value).strip()
-        if not text or text == "-":
-            return []
-        raw_items = text.split(",")
-    return [str(item).strip() for item in raw_items if str(item).strip() and str(item).strip() != "-"]
+    expected_columns = [
+        "timestamp",
+        "topic_label",
+        "specific_issue",
+        "detection_confidence",
+        "best_state",
+        "final_match_score",
+        "mean_alignment",
+        "lexical_similarity",
+        "semantic_similarity",
+        "coverage",
+        "compliance_level",
+        "compliance_reason",
+        "recommendation_label",
+        "recommendation_reason",
+    ]
+
+    for col in expected_columns:
+        if col not in df.columns:
+            if col == "final_match_score" and "alignment_score" in df.columns:
+                df[col] = df["alignment_score"]
+            else:
+                df[col] = ""
+
+    text_cols = [
+        "timestamp",
+        "topic_label",
+        "specific_issue",
+        "detection_confidence",
+        "best_state",
+        "compliance_level",
+        "compliance_reason",
+        "recommendation_label",
+        "recommendation_reason",
+    ]
+    for col in text_cols:
+        df[col] = df[col].fillna("").astype(str).replace("nan", "").str.strip()
+
+    numeric_cols = ["final_match_score", "mean_alignment", "lexical_similarity", "semantic_similarity", "coverage"]
+    for col in numeric_cols:
+        df[col] = pd.to_numeric(df[col], errors="coerce")
+
+    df["topic_label"] = df["topic_label"].replace("", "Related Fatwa Topic")
+    df["specific_issue"] = df["specific_issue"].replace("", "-")
+    df["best_state"] = df["best_state"].replace("", "-")
+    df["detection_confidence"] = df["detection_confidence"].replace("", "Unknown")
+    df["compliance_level"] = df["compliance_level"].replace("", "Unclear")
+    df["compliance_reason"] = df["compliance_reason"].replace("", "-")
+    df["recommendation_label"] = df["recommendation_label"].replace("", "Moderate Alignment")
+    df["recommendation_reason"] = df["recommendation_reason"].replace("", "-")
+
+    return df
 
 
-def build_explainability_insights(bundle: dict) -> dict:
-    """
-    Build the human-readable explanation layer used in the detailed review.
-    This makes the system look like an evaluation framework, not an AI chat screen.
-    """
-    final_score = safe_float(bundle.get("final_match_score"))
-    semantic = safe_float(bundle.get("semantic_score"))
-    lexical = safe_float(bundle.get("lexical_score"))
-    coverage = safe_float(bundle.get("coverage_score"))
-    confidence = str(bundle.get("confidence", "Unknown"))
-    compliance = str(bundle.get("compliance_level", "Unclear"))
-    matched = _list_from_keywords(bundle.get("matched_list"))
-    missing = _list_from_keywords(bundle.get("missing_list"))
+def get_history_df() -> pd.DataFrame:
+    # Always read from disk to guarantee the latest records are shown,
+    # then keep session state in sync so sidebar/metrics are also fresh.
+    fresh = load_history_from_file()
+    st.session_state.analysis_history = fresh          # keep in-memory in sync
+    raw_df = pd.DataFrame(fresh)
+    if raw_df.empty:
+        return pd.DataFrame()
+    return clean_history_dataframe(raw_df)
 
-    if final_score >= 70 and semantic >= 65 and coverage >= 60:
-        risk_level = "Low Risk"
-        verdict = "The answer is mostly aligned with the selected fatwa source."
-        action = "Can be used as a supported answer, but the original fatwa should still be cited."
-        tone = "#16845b"
-    elif final_score >= 50:
-        risk_level = "Review Needed"
-        verdict = "The answer is partly aligned, but it is not complete enough to accept blindly."
-        action = "Review the missing fatwa points before treating the answer as reliable."
-        tone = "#c97900"
-    else:
-        risk_level = "High Risk"
-        verdict = "The answer is weakly aligned with the fatwa source and may mislead users."
-        action = "Do not rely on this answer without manual correction and fatwa verification."
-        tone = "#b5122b"
 
-    if confidence == "Low":
-        action = "The topic detection confidence is low. Recheck the selected issue before judging the answer."
+def get_score_band(score):
+    return get_score_band_label(score)
 
-    strongest_signal = "Meaning match" if semantic >= lexical and semantic >= coverage else "Text match" if lexical >= coverage else "Key fatwa points"
-    weakest_signal = "Meaning match" if semantic <= lexical and semantic <= coverage else "Text match" if lexical <= coverage else "Key fatwa points"
 
-    if missing:
-        missing_sentence = ", ".join(missing[:6])
-    else:
-        missing_sentence = "No major missing keyword was detected by the keyword coverage layer."
+def build_history_display_table(history_df: pd.DataFrame) -> pd.DataFrame:
+    display_df = history_df.copy()
 
-    if matched:
-        matched_sentence = ", ".join(matched[:6])
-    else:
-        matched_sentence = "The system did not detect strong coverage of required fatwa keywords."
+    if "timestamp" in display_df.columns:
+        display_df["_sort_time"] = pd.to_datetime(display_df["timestamp"], errors="coerce")
+        display_df = display_df.sort_values("_sort_time", ascending=False).drop(columns=["_sort_time"])
 
-    return {
-        "risk_level": risk_level,
-        "verdict": verdict,
-        "action": action,
-        "tone": tone,
-        "strongest_signal": strongest_signal,
-        "weakest_signal": weakest_signal,
-        "matched_sentence": matched_sentence,
-        "missing_sentence": missing_sentence,
-        "compliance": compliance,
+    display_df["Final Score"] = display_df["final_match_score"].apply(lambda x: format_percent(x, 1))
+    display_df["Meaning"] = display_df["semantic_similarity"].apply(lambda x: format_percent(x, 1))
+    display_df["Text"] = display_df["lexical_similarity"].apply(lambda x: format_percent(x, 1))
+    display_df["Key Points"] = display_df["coverage"].apply(lambda x: format_percent(x, 1))
+    display_df["Review"] = display_df["recommendation_label"].replace("", "Moderate Alignment")
+
+    display_df = display_df.rename(columns={
+        "timestamp": "Time",
+        "topic_label": "Topic",
+        "specific_issue": "Issue",
+        "best_state": "Best Match"
+    })
+
+    display_df["Topic"] = display_df["Topic"].apply(short_topic_label)
+    display_df["Issue"] = display_df["Issue"].apply(lambda x: short_text(x, 64))
+    display_df["Best Match"] = display_df["Best Match"].apply(lambda x: short_text(x, 24))
+    display_df["Review"] = display_df["Review"].apply(lambda x: short_text(x, 22))
+
+    display_df = display_df[["Time", "Topic", "Issue", "Best Match", "Review", "Final Score", "Meaning", "Text", "Key Points"]]
+    return display_df.reset_index(drop=True)
+
+
+def build_advanced_topic_display(question_scores: pd.DataFrame) -> pd.DataFrame:
+    cols = [
+        "issue",
+        "question_text",
+        "topic_score",
+        "confidence",
+        "keyword_overlap",
+        "sbert",
+        "issue_sbert",
+        "rule_boost",
+    ]
+    df = question_scores.copy()
+
+    for col in cols:
+        if col not in df.columns:
+            df[col] = ""
+
+    df = df[cols].head(5).copy()
+
+    df["Database Topic"] = df["issue"].astype(str).replace("nan", "").replace("", "-")
+    df["Closest Reference Question"] = df.apply(explain_topic_row, axis=1)
+    df["Topic Match Score"] = df["topic_score"].apply(lambda x: format_numeric_for_table(x, 2))
+    df["System Confidence"] = df["confidence"].astype(str).replace("nan", "").replace("", "Unknown")
+    df["Keyword Clue"] = df["keyword_overlap"].apply(lambda x: format_numeric_for_table(x, 2))
+    df["Meaning Clue"] = df["sbert"].apply(lambda x: format_numeric_for_table(x, 2))
+    df["Issue Focus Clue"] = df["issue_sbert"].apply(lambda x: format_numeric_for_table(x, 2))
+    df["Alias Clue"] = df["rule_boost"].apply(lambda x: format_numeric_for_table(x, 2))
+
+    return df[
+        [
+            "Database Topic",
+            "Closest Reference Question",
+            "Topic Match Score",
+            "System Confidence",
+            "Keyword Clue",
+            "Meaning Clue",
+            "Issue Focus Clue",
+            "Alias Clue",
+        ]
+    ].copy()
+
+
+def build_advanced_state_display(state_results: pd.DataFrame) -> pd.DataFrame:
+    cols = ["state", "issue", "alignment_score", "lexical_similarity", "semantic_similarity", "coverage"]
+    df = state_results.copy()
+
+    for col in cols:
+        if col not in df.columns:
+            df[col] = ""
+
+    df = df[cols].head(5).copy()
+
+    df["Fatwa Source"] = df["state"].astype(str).replace("nan", "").replace("", "-")
+    df["Issue"] = df["issue"].astype(str).replace("nan", "").replace("", "-")
+    df["Final Match Score"] = df["alignment_score"].apply(lambda x: format_numeric_for_table(x, 2))
+    df["Word Match"] = df["lexical_similarity"].apply(lambda x: format_numeric_for_table(x, 2))
+    df["Meaning Match"] = df["semantic_similarity"].apply(lambda x: format_numeric_for_table(x, 2))
+    df["Key Fatwa Points"] = df["coverage"].apply(lambda x: format_numeric_for_table(x, 2))
+
+    return df[
+        [
+            "Fatwa Source",
+            "Issue",
+            "Final Match Score",
+            "Word Match",
+            "Meaning Match",
+            "Key Fatwa Points"
+        ]
+    ].copy()
+
+
+def render_technical_help_box():
+    st.markdown("""
+    <div class="msg-box msg-info">
+        <strong>How to read the technical tables</strong><br>
+        <strong>Database Topic</strong> shows the topic group found in your fatwa database.<br>
+        <strong>Closest Reference Question</strong> shows which fatwa question looked most similar to the AI answer.<br>
+        <strong>Topic Match Score</strong> shows how strongly the system thinks the answer belongs to that topic.<br>
+        <strong>Keyword Clue</strong> shows matching important fatwa terms.<br>
+        <strong>Meaning Clue</strong> shows overall semantic similarity against the full fatwa text.<br>
+        <strong>Issue Focus Clue</strong> shows similarity to the database issue label and question wording only.<br>
+        <strong>Alias Clue</strong> shows how strongly direct topic aliases such as "IVF" or "ibu tumpang" were detected in the answer.
+    </div>
+    """, unsafe_allow_html=True)
+
+
+def render_history_overview(history_df: pd.DataFrame):
+    chart_df = history_df.copy()
+    if chart_df.empty:
+        return
+
+    chart_df = chart_df.reset_index(drop=True)
+    chart_df["run_no"] = np.arange(1, len(chart_df) + 1)
+    chart_df["final_match_score"] = pd.to_numeric(chart_df["final_match_score"], errors="coerce").fillna(0)
+    # get_score_band_label returns "High Alignment" / "Moderate Alignment" / "Low Alignment"
+    # Map those down to the short chart labels used by reindex and the color map.
+    _band_label_map = {
+        "High Alignment":     "Good",
+        "Moderate Alignment": "Moderate",
+        "Low Alignment":      "Weak",
     }
+    chart_df["Band"] = chart_df["final_match_score"].apply(get_score_band_label).map(_band_label_map)
+
+    band_counts = (
+        chart_df["Band"]
+        .value_counts()
+        .reindex(["Weak", "Moderate", "Good"], fill_value=0)
+        .rename_axis("Category")
+        .reset_index(name="Count")
+    )
+    band_counts["Color"] = band_counts["Category"].map({"Weak": "#b51224", "Moderate": "#f0a400", "Good": "#11a579"})
+
+    bar_chart = alt.Chart(band_counts).mark_bar(size=58, cornerRadiusTopLeft=10, cornerRadiusTopRight=10).encode(
+        x=alt.X("Category:N", sort=["Weak", "Moderate", "Good"], title=None, axis=alt.Axis(labelAngle=0, labelPadding=12, labelFontSize=13, labelColor="#314760", labelFontWeight="bold")),
+        y=alt.Y("Count:Q", title="No. of Analyses", axis=alt.Axis(labelColor="#314760", titleColor="#314760", gridColor="#d9e6ef")),
+        color=alt.Color("Color:N", scale=None, legend=None),
+        tooltip=[alt.Tooltip("Category:N"), alt.Tooltip("Count:Q")]
+    ).properties(height=270, background="#fbf5f1").configure_view(stroke="#ead8d0", fill="#fffaf7")
+
+    threshold_df = pd.DataFrame({"y": [70]})
+    line_base = alt.Chart(chart_df).encode(
+        x=alt.X("run_no:Q", title="Analysis No.", axis=alt.Axis(labelColor="#314760", titleColor="#314760", gridColor="#d9e6ef")),
+        y=alt.Y("final_match_score:Q", title="Match Score (%)", scale=alt.Scale(domain=[0, 100]), axis=alt.Axis(labelColor="#314760", titleColor="#314760", gridColor="#d9e6ef")),
+        tooltip=[alt.Tooltip("run_no:Q", title="Analysis"), alt.Tooltip("final_match_score:Q", title="Score", format=".1f")]
+    )
+    trend_chart = (
+        line_base.mark_line(point=alt.OverlayMarkDef(size=55, filled=True), strokeWidth=3, color="#385673")
+        + alt.Chart(threshold_df).mark_rule(strokeDash=[8, 5], color="#d16b77", strokeWidth=2).encode(y="y:Q")
+    ).properties(height=270, background="#fbf5f1").configure_view(stroke="#ead8d0", fill="#fffaf7")
+
+    weak_count = int(band_counts.loc[band_counts["Category"] == "Weak", "Count"].sum()) if not band_counts.empty else 0
+    moderate_count = int(band_counts.loc[band_counts["Category"] == "Moderate", "Count"].sum()) if not band_counts.empty else 0
+    good_count = int(band_counts.loc[band_counts["Category"] == "Good", "Count"].sum()) if not band_counts.empty else 0
+    latest_score = safe_float(chart_df["final_match_score"].iloc[-1]) if not chart_df.empty else 0.0
+    avg_score = safe_float(chart_df["final_match_score"].mean()) if not chart_df.empty else 0.0
+    best_score = safe_float(chart_df["final_match_score"].max()) if not chart_df.empty else 0.0
+    main_pattern = max([(weak_count, 'Weak'), (moderate_count, 'Moderate'), (good_count, 'Good')])[1]
+
+    history_col1, history_col2 = st.columns(2, gap="large")
+
+    with history_col1:
+        st.markdown("""
+        <div style='background:linear-gradient(180deg,#fff7f8 0%,#f9eeef 100%);border:1px solid #e7c3b4;border-left:6px solid #9f3448;border-radius:24px;padding:1.15rem 1.2rem;box-shadow:0 8px 18px rgba(25,14,36,0.04);'>
+            <div style='display:inline-flex;align-items:center;padding:0.3rem 0.78rem;border-radius:999px;background:#fff;border:1px solid #e2c1b6;color:#8f6f7b;font-size:0.72rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.7rem;'>History</div>
+            <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.15rem;font-weight:800;color:#241226;margin-bottom:0.25rem;'>Alignment band distribution</div>
+            <div style='font-size:0.9rem;color:#6d5a68;line-height:1.7;'>How many saved analyses fall into weak, moderate, and good match ranges.</div>
+        </div>
+        """, unsafe_allow_html=True)
+        st.markdown("<div style='height:1.35rem;'></div>", unsafe_allow_html=True)
+        st.altair_chart(bar_chart, use_container_width=True)
+        st.markdown(f"""
+        <div style='display:flex;gap:0.8rem;margin-top:0.75rem;flex-wrap:wrap;'>
+            <div style='font-size:0.88rem;padding:0.5rem 0.8rem;border-radius:12px;background:#fff;border:1px solid #ead1c8;color:#8f4455;'><strong>Weak:</strong> {weak_count}</div>
+            <div style='font-size:0.88rem;padding:0.5rem 0.8rem;border-radius:12px;background:#fff;border:1px solid #ead1c8;color:#8f4455;'><strong>Moderate:</strong> {moderate_count}</div>
+            <div style='font-size:0.88rem;padding:0.5rem 0.8rem;border-radius:12px;background:#fff;border:1px solid #ead1c8;color:#8f4455;'><strong>Good:</strong> {good_count}</div>
+        </div>
+        <div style='margin-top:0.8rem;font-size:0.9rem;color:#6d5a68;line-height:1.7;padding:0.95rem 1rem;border-radius:18px;background:#fff8f4;border:1px solid #ead1c8;'>
+            <strong style='color:#241226;'>Main pattern:</strong> {main_pattern} appears most often in your saved runs.
+        </div>
+        """, unsafe_allow_html=True)
+
+    with history_col2:
+        st.markdown("""
+        <div style='background:linear-gradient(180deg,#fff7f8 0%,#f9eeef 100%);border:1px solid #e7c3b4;border-left:6px solid #9f3448;border-radius:24px;padding:1.15rem 1.2rem;box-shadow:0 8px 18px rgba(25,14,36,0.04);'>
+            <div style='display:inline-flex;align-items:center;padding:0.3rem 0.78rem;border-radius:999px;background:#fff;border:1px solid #e2c1b6;color:#8f6f7b;font-size:0.72rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.7rem;'>Trend</div>
+            <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.15rem;font-weight:800;color:#241226;margin-bottom:0.25rem;'>Match score movement over time</div>
+            <div style='font-size:0.9rem;color:#6d5a68;line-height:1.7;'>Follow the score pattern across saved runs. The dashed line marks the 70% stronger-alignment line.</div>
+        </div>
+        """, unsafe_allow_html=True)
+        st.markdown("<div style='height:1.35rem;'></div>", unsafe_allow_html=True)
+        st.altair_chart(trend_chart, use_container_width=True)
+        st.markdown(f"""
+        <div style='display:flex;gap:0.8rem;margin-top:0.75rem;flex-wrap:wrap;'>
+            <div style='font-size:0.88rem;padding:0.5rem 0.8rem;border-radius:12px;background:#fff;border:1px solid #ead1c8;color:#8f4455;'><strong>Latest:</strong> {latest_score:.1f}%</div>
+            <div style='font-size:0.88rem;padding:0.5rem 0.8rem;border-radius:12px;background:#fff;border:1px solid #ead1c8;color:#8f4455;'><strong>Average:</strong> {avg_score:.1f}%</div>
+            <div style='font-size:0.88rem;padding:0.5rem 0.8rem;border-radius:12px;background:#fff;border:1px solid #ead1c8;color:#8f4455;'><strong>Best:</strong> {best_score:.1f}%</div>
+            <div style='font-size:0.88rem;padding:0.5rem 0.8rem;border-radius:12px;background:#fff;border:1px solid #ead1c8;color:#8f4455;'><strong>70% line</strong></div>
+            <div style='font-size:0.88rem;padding:0.5rem 0.8rem;border-radius:12px;background:#fff;border:1px solid #ead1c8;color:#8f4455;'><strong>{len(chart_df)} saved runs</strong></div>
+        </div>
+        <div style='margin-top:0.8rem;font-size:0.9rem;color:#6d5a68;line-height:1.7;padding:0.95rem 1rem;border-radius:18px;background:#fff8f4;border:1px solid #ead1c8;'>
+            <strong style='color:#241226;'>Quick read:</strong> Use this chart to see whether recent saved analyses are improving and how often results get close to or pass the 70% line.
+        </div>
+        """, unsafe_allow_html=True)
 
 
-def render_explainability_panel(bundle: dict) -> None:
-    """
-    Render a non-redundant decision panel.
+def clean_preview_text(text: str, max_len: int = 260) -> str:
+    text = "" if pd.isna(text) else str(text)
+    text = re.sub(r"<[^>]+>", " ", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    if not text:
+        return "No preview is available for the current selection."
+    return text if len(text) <= max_len else text[: max_len - 3].rstrip() + "..."
 
-    The score summary already explains the metric values, and the detailed review
-    already shows matched and missing keywords. This panel avoids repeating both.
-    Its job is only to convert the evidence into a review decision that a user can act on.
-    """
-    insight = build_explainability_insights(bundle)
-    source = html.escape(str(bundle.get("ai_model_source", "Manual / External AI")))
-    tone = insight["tone"]
+
+def render_minimal_tab_intro(kicker: str, title: str, sentence: str = "", extra_class: str = ""):
+    sentence_html = f"<div class='tab-minimal-copy'>{html.escape(sentence)}</div>" if sentence else ""
+    hero_class = f"tab-minimal-hero {extra_class}".strip()
+    st.markdown(_html(f"""
+    <div class='{hero_class}'>
+        <div class='tab-minimal-kicker'>{html.escape(kicker)}</div>
+        <div class='tab-minimal-title'>{html.escape(title)}</div>
+        {sentence_html}
+    </div>
+    """), unsafe_allow_html=True)
+
+
+def render_batch_score_chart(num_df: pd.DataFrame):
+    if num_df is None or num_df.empty:
+        return
+    required_cols = {"label", "model", "score", "semantic", "lexical", "coverage"}
+    if not required_cols.issubset(num_df.columns):
+        return
+
+    chart_df = num_df.copy()
+    for col in ["score", "semantic", "lexical", "coverage"]:
+        chart_df[col] = pd.to_numeric(chart_df[col], errors="coerce").fillna(0)
+    chart_df["model"] = chart_df["model"].astype(str).fillna("Manual")
+    chart_df["label"] = chart_df["label"].astype(str)
+    if chart_df.empty:
+        return
+
+    # Inner function for leaderboard cards
+    def _render_leaderboard_cards(rank_df, title, subtitle, entity_col='model'):
+        st.markdown(_html(f"""
+        <div class='chart-panel'>
+            <div class='chart-panel-title'>{html.escape(title)}</div>
+            <div class='chart-panel-copy'>{html.escape(subtitle)}</div>
+        </div>
+        """), unsafe_allow_html=True)
+        
+        medal_map = {0: '🥇', 1: '🥈', 2: '🥉'}
+        
+        for idx, (_, row) in enumerate(rank_df.iterrows()):
+            medal = medal_map.get(idx, f"#{idx+1}")
+            score = safe_float(row['score'])
+            metric_line = f"Meaning {safe_float(row.get('semantic',0)):.0f}% · Text {safe_float(row.get('lexical',0)):.0f}% · Key points {safe_float(row.get('coverage',0)):.0f}%"
+            count_text = f"{int(row['responses'])} responses reviewed" if 'responses' in row.index else 'overall fit'
+            card_class = "leaderboard-card leaderboard-card-top" if idx == 0 else "leaderboard-card"
+            
+            st.markdown(_html(f"""
+            <div class='{card_class}' style='margin-bottom: 0.8rem;'>
+                <div class='leaderboard-rank'>{medal}</div>
+                <div class='leaderboard-main'>
+                    <div class='leaderboard-title'>{html.escape(str(row[entity_col]))}</div>
+                    <div class='leaderboard-meta'>{html.escape(metric_line)}</div>
+                    <div class='leaderboard-track'><div class='leaderboard-fill' style='width:{min(score,100):.1f}%;'></div></div>
+                </div>
+                <div class='leaderboard-side'>
+                    <div class='leaderboard-score'>{score:.1f}%</div>
+                    <div class='leaderboard-note'>{html.escape(count_text)}</div>
+                </div>
+            </div>
+            """), unsafe_allow_html=True)
+
+    # Inner function for grouped bars
+    def _render_grouped_bars(metric_df, entity_col, title, subtitle):
+        chart_src = metric_df[[entity_col, 'semantic', 'lexical', 'coverage']].copy()
+        chart_src = chart_src.rename(columns={entity_col: 'Entity', 'semantic': 'Meaning match', 'lexical': 'Text match', 'coverage': 'Key points'})
+        chart_long = chart_src.melt(id_vars='Entity', var_name='Metric', value_name='Score')
+        metric_order = ['Meaning match', 'Text match', 'Key points']
+        entity_order = metric_df[entity_col].astype(str).tolist()
+        color_range = ['#c94f63', '#d9785f', '#c78900', '#8b6771']
+
+        base = alt.Chart(chart_long).encode(
+            x=alt.X('Metric:N', sort=metric_order, title=None, axis=alt.Axis(labelAngle=0, labelPadding=14, labelFontSize=12, labelColor='#5d3945', labelFontWeight='bold')),
+            xOffset=alt.XOffset('Entity:N', sort=entity_order),
+            y=alt.Y('Score:Q', title='Score (%)', scale=alt.Scale(domain=[0,100]), axis=alt.Axis(values=[0,20,40,60,80,100], labelColor='#7a6874', titleColor='#5d3945', gridColor='#ead8d0')),
+            color=alt.Color('Entity:N', sort=entity_order, legend=alt.Legend(title='Model / response', orient='bottom', labelColor='#5d3945', titleColor='#221221'), scale=alt.Scale(range=color_range[:max(1,len(entity_order))])),
+            tooltip=[alt.Tooltip('Entity:N', title='Item'), alt.Tooltip('Metric:N'), alt.Tooltip('Score:Q', format='.1f')]
+        )
+        bars = base.mark_bar(size=34, cornerRadiusTopLeft=10, cornerRadiusTopRight=10)
+        text_marks = alt.Chart(chart_long).mark_text(dy=-10, color='#5d3945', fontSize=11, fontWeight='bold').encode(
+            x=alt.X('Metric:N', sort=metric_order), 
+            xOffset=alt.XOffset('Entity:N', sort=entity_order), 
+            y=alt.Y('Score:Q', scale=alt.Scale(domain=[0,100])), 
+            text=alt.Text('Score:Q', format='.0f')
+        )
+        final_chart = (
+            alt.layer(bars, text_marks)
+            .properties(height=320, background='#fbf5f1')
+            .configure_view(stroke='#ead8d0', fill='#fffaf7')
+            .configure_axis(domainColor='#d9b6a8', tickColor='#d9b6a8')
+            .configure_legend(orient='bottom', labelColor='#5d3945', titleColor='#221221')
+        )
+        st.markdown(_html(f"""
+        <div style='margin-bottom:1rem;'>
+            <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.15rem;font-weight:800;color:#160029;margin-bottom:0.35rem;'>{html.escape(title)}</div>
+        </div>
+        """), unsafe_allow_html=True)
+        st.altair_chart(final_chart, use_container_width=True, theme=None)
+        metric_means = {
+            'Meaning match': safe_float(metric_df['semantic'].mean()),
+            'Text match': safe_float(metric_df['lexical'].mean()),
+            'Key points': safe_float(metric_df['coverage'].mean()),
+        }
+        strongest_metric = max(metric_means, key=metric_means.get)
+        top_entity = metric_df.sort_values('score', ascending=False).iloc[0][entity_col]
+        st.markdown(f"<div class='chart-conclusion'><strong>Conclusion:</strong> <strong>{html.escape(str(top_entity))}</strong> stays strongest overall, and <strong>{html.escape(str(strongest_metric))}</strong> is the clearest place to see the biggest gap.</div>", unsafe_allow_html=True)
+
+    # Main logic
+    multi_model = chart_df["model"].nunique() > 1 and not set(chart_df["model"].unique()).issubset({"Manual"})
+    c1, c2 = st.columns(2, gap="medium")
+
+    if multi_model:
+        summary_df = (
+            chart_df.groupby("model", as_index=False)
+            .agg(score=("score", "mean"), semantic=("semantic", "mean"), lexical=("lexical", "mean"), coverage=("coverage", "mean"), responses=("label", "count"))
+            .sort_values("score", ascending=False)
+            .reset_index(drop=True)
+        )
+        with c1:
+            _render_leaderboard_cards(summary_df, '🏆 Model Leaderboard', 'This ranking shows which AI model gave the strongest overall average fit.', entity_col='model')
+            best = summary_df.iloc[0]
+            second = summary_df.iloc[1] if len(summary_df) > 1 else None
+            margin = f" by {best['score'] - second['score']:.1f} points" if second is not None else ''
+            st.markdown(f"<div class='chart-conclusion' style='margin-top:0.5rem;'><strong>Conclusion:</strong> <strong>{html.escape(str(best['model']))}</strong> is the most reliable overall performer{margin}.</div>", unsafe_allow_html=True)
+        with c2:
+            st.markdown("<div style='height:4.2rem;'></div>", unsafe_allow_html=True)
+            _render_grouped_bars(summary_df, 'model', 'Metric comparison by model', 'Each metric group shows the models side by side.')
+    else:
+        summary_df = (
+            chart_df.groupby('label', as_index=False)
+            .agg(score=('score','mean'), semantic=('semantic','mean'), lexical=('lexical','mean'), coverage=('coverage','mean'))
+            .sort_values('score', ascending=False)
+            .reset_index(drop=True)
+        )
+        with c1:
+            _render_leaderboard_cards(summary_df, '🏆 Response Leaderboard', 'A simple ranking of which response matched the fatwa reference best overall.', entity_col='label')
+            best = summary_df.iloc[0]
+            st.markdown(f"<div class='chart-conclusion' style='margin-top:0.5rem;'><strong>Conclusion:</strong> <strong>{html.escape(str(best['label']))}</strong> gives the strongest overall fit at {best['score']:.1f}%.</div>", unsafe_allow_html=True)
+        with c2:
+            st.markdown("<div style='height:4.2rem;'></div>", unsafe_allow_html=True)
+            _render_grouped_bars(summary_df, 'label', 'Metric comparison by response', 'Side-by-side bars make it easier to compare meaning match, text match, and key fatwa points.')
+            
+def render_similarity_breakdown(bundle: dict):
+    """Modern score panel: one calm card with the final score and metric row inside it."""
+    final_match_score = safe_float(bundle.get("final_match_score"))
+    lexical_score     = safe_float(bundle.get("lexical_score"))
+    semantic_score    = safe_float(bundle.get("semantic_score"))
+    coverage_score    = safe_float(bundle.get("coverage_score"))
+    mean_alignment    = safe_float(bundle.get("mean_alignment"))
+
+    score_color  = score_status_color(final_match_score)
+    ring_degrees = max(0.0, min(360.0, final_match_score * 3.6))
+    rfms2 = round(final_match_score)  # rounded for tier labels, consistent with display
+    conclusion_label = "High Alignment" if rfms2 >= 70 else "Moderate Alignment" if rfms2 >= 50 else "Low Alignment"
+    conclusion_copy  = (
+        "Close to the fatwa and covers most key points."
+        if rfms2 >= 70 else
+        "Partly correct, but some ruling details still need checking."
+        if rfms2 >= 50 else
+        "Not close enough yet, so it needs careful review."
+    )
+
+    def explain_metric_short(label, value):
+        value = safe_float(value)
+        rv = round(value)
+        if label == "Text Match":
+            if rv >= 70:
+                return "Similar wording."
+            if rv >= 50:
+                return "Some wording matches."
+            return "Different wording."
+        if label == "Meaning Match":
+            if rv >= 70:
+                return "Meaning is close."
+            if rv >= 50:
+                return "Some meaning matches."
+            return "Meaning differs."
+        if label == "Key Points":
+            if rv >= 70:
+                return "Key points included."
+            if rv >= 50:
+                return "Some points missing."
+            return "Many points missing."
+        if rv >= 70:
+            return "Fits the fatwa well."
+        if rv >= 50:
+            return "Acceptable, review."
+        return "Weak overall fit."
+
+    def metric_tone(value):
+        value = safe_float(value)
+        rv = round(value)
+        if rv >= 70:
+            return "Good", "#16845b", "#edf8f2"
+        if rv >= 50:
+            return "Review", "#c97900", "#fff7e8"
+        return "Weak", "#b5122b", "#fff0f3"
+
+    def metric_card(label, value, icon, sublabel):
+        desc = explain_metric_short(label, value)
+        status, color, bg = metric_tone(value)
+        return f"""
+        <div class='sbd-metric-inline'>
+            <div class='sbd-mini-top'>
+                <div class='sbd-mini-icon'>{icon}</div>
+                <div class='sbd-mini-status' style='background:{bg};color:{color};border-color:{color}26;'>{status}</div>
+            </div>
+            <div class='sbd-mini-label'>{html.escape(label)}</div>
+            <div class='sbd-mini-value' style='color:{color};'>{value:.0f}%</div>
+            <div class='sbd-mini-sub'>{html.escape(sublabel)}</div>
+            <div class='sbd-mini-desc'>{html.escape(desc)}</div>
+        </div>
+        """
+
+    metric_cards = "".join([
+        metric_card("Text Match", lexical_score, "AA", "Words used"),
+        metric_card("Meaning Match", semantic_score, "🎯", "Same meaning"),
+        metric_card("Key Points", coverage_score, "✓", "Main points"),
+        metric_card("Overall Fit", mean_alignment, "⚖️", "State match"),
+    ])
 
     st.markdown(_html(f"""
-    <div class='decision-panel'>
-        <div class='decision-head'>
-            <div>
-                <div class='decision-kicker'>Review decision</div>
-                <div class='decision-title'>What the score means in practice</div>
-                <div class='decision-copy'>This is the final interpretation layer. It does not repeat the metric cards or keyword lists.</div>
+    <style>
+    .sbd-stack {{ width:100%; }}
+    .sbd-card {{
+        width:100%; box-sizing:border-box;
+        background:linear-gradient(180deg,rgba(255,255,255,0.98) 0%,rgba(255,250,252,0.96) 100%);
+        border:1px solid #eadde5;
+        border-radius:22px;
+        padding:1.05rem 1.1rem 1.1rem 1.1rem;
+        box-shadow:0 18px 38px rgba(25,14,36,0.065);
+    }}
+    .sbd-header {{ display:flex; justify-content:space-between; align-items:flex-start; gap:0.8rem; margin-bottom:0.82rem; }}
+    .sbd-kicker {{ font-size:0.62rem; font-weight:950; text-transform:uppercase; letter-spacing:0.14em; color:#a3195b; margin-bottom:0.18rem; }}
+    .sbd-title {{ font-family:'Inter Tight','Inter',sans-serif; font-size:1.22rem; font-weight:950; color:#1f1020; letter-spacing:-0.04em; line-height:1; }}
+    .sbd-pill {{ padding:0.32rem 0.78rem; border-radius:999px; border:1.5px solid; font-weight:950; font-size:0.78rem; white-space:nowrap; box-shadow:0 6px 14px rgba(25,14,36,0.05); }}
+    .sbd-hero {{ display:grid; grid-template-columns:124px minmax(0,1fr); gap:1.05rem; align-items:center; padding:0.72rem 0 0.95rem 0; }}
+    .sbd-ring {{ width:112px; height:112px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 10px 24px rgba(25,14,36,0.11); }}
+    .sbd-ring-inner {{ width:78px; height:78px; border-radius:50%; background:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow:inset 0 0 0 1px rgba(220,170,190,0.42); }}
+    .sbd-ring-inner strong {{ font-family:'Inter Tight','Inter',sans-serif; font-size:1.82rem; font-weight:950; line-height:1; letter-spacing:-0.05em; }}
+    .sbd-ring-inner span {{ font-size:0.62rem; color:#8b6771; margin-top:0.16rem; font-weight:850; }}
+    .sbd-verdict-label {{ font-family:'Inter Tight','Inter',sans-serif; font-size:1.05rem; font-weight:950; margin-bottom:0.28rem; line-height:1.12; letter-spacing:-0.02em; }}
+    .sbd-verdict-copy {{ font-size:0.82rem; color:#675261; line-height:1.58; max-width:440px; }}
+    .sbd-soft-line {{ height:1px; background:linear-gradient(90deg,#eadde5,transparent); margin:0.18rem 0 0.8rem 0; }}
+    .sbd-metric-grid {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0.62rem; border:0; border-radius:0; overflow:visible; background:transparent; }}
+    .sbd-metric-inline {{ min-width:0; padding:0.72rem 0.7rem; text-align:left; border:1px solid #eadde5; border-radius:16px; background:#fff; box-shadow:0 8px 18px rgba(25,14,36,0.035); }}
+    .sbd-metric-inline:last-child {{ border-right:1px solid #eadde5; }}
+    .sbd-mini-top {{ display:flex; justify-content:space-between; align-items:center; gap:0.35rem; margin-bottom:0.5rem; }}
+    .sbd-mini-icon {{ width:30px; height:30px; border-radius:11px; display:inline-flex; align-items:center; justify-content:center; background:#f8e5e2; color:#8a2b4d; font-size:0.74rem; font-weight:950; flex-shrink:0; }}
+    .sbd-mini-status {{ display:inline-flex; align-items:center; padding:0.16rem 0.42rem; border-radius:999px; border:1px solid; font-size:0.54rem; font-weight:950; letter-spacing:0.03em; text-transform:uppercase; white-space:nowrap; }}
+    .sbd-mini-label {{ font-size:0.58rem; font-weight:950; letter-spacing:0.09em; text-transform:uppercase; color:#816a77; line-height:1.25; min-height:0; }}
+    .sbd-mini-value {{ font-family:'Inter Tight','Inter',sans-serif; font-size:1.38rem; font-weight:950; line-height:1; margin:0.3rem 0 0.1rem 0; letter-spacing:-0.05em; }}
+    .sbd-mini-sub {{ font-size:0.58rem; color:#8b6771; font-weight:800; padding-bottom:0.34rem; margin-bottom:0.38rem; border-bottom:1px solid #f0e0d9; }}
+    .sbd-mini-desc {{ font-size:0.68rem; line-height:1.35; color:#62515e; min-height:1.85rem; max-width:none; margin:0; font-weight:650; }}
+    .sbd-read-box {{ margin-top:0.78rem; border:1px solid #eadde5; border-radius:16px; padding:0.72rem 0.86rem; background:linear-gradient(135deg,#fffaf7 0%,#fff 100%); display:flex; align-items:center; gap:0.75rem; }}
+    .sbd-read-label {{ flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:0.26rem 0.68rem; background:#fff0f3; color:#a3195b; font-size:0.62rem; font-weight:950; letter-spacing:0.08em; text-transform:uppercase; }}
+    .sbd-read-copy {{ font-size:0.74rem; color:#715f6b; line-height:1.48; }}
+    @media(max-width:900px) {{ .sbd-hero {{ grid-template-columns:1fr; }} .sbd-metric-grid {{ grid-template-columns:repeat(2,1fr); }} .sbd-metric-inline:nth-child(2) {{ border-right:1px solid #eadde5; }} .sbd-metric-inline:nth-child(-n+2) {{ border-bottom:1px solid #eadde5; }} }}
+    </style>
+    <div class='sbd-stack'>
+        <div class='sbd-card'>
+            <div class='sbd-header'>
+                <div>
+                    <div class='sbd-kicker'>Score summary</div>
+                    <div class='sbd-title'>Final Score</div>
+                </div>
+                <div class='sbd-pill' style='background:{score_color}12;border-color:{score_color};color:{score_color};'>{final_match_score:.1f}%</div>
             </div>
-            <div class='decision-source-chip'>Source: {source}</div>
-        </div>
-
-        <div class='decision-main-card' style='border-left-color:{tone};'>
-            <div class='decision-risk' style='color:{tone};background:{tone}12;border-color:{tone};'>{html.escape(insight['risk_level'])}</div>
-            <div class='decision-verdict' style='color:{tone};'>{html.escape(insight['compliance'])}</div>
-            <div class='decision-text'>{html.escape(insight['verdict'])}</div>
-        </div>
-
-        <div class='decision-grid'>
-            <div class='decision-mini-card'>
-                <div class='decision-mini-label'>Primary strength</div>
-                <div class='decision-mini-value'>{html.escape(insight['strongest_signal'])}</div>
-                <div class='decision-mini-text'>The strongest signal behind the result.</div>
+            <div class='sbd-hero'>
+                <div class='sbd-ring' style='background:conic-gradient({score_color} 0deg {ring_degrees:.1f}deg,#f0dfe2 {ring_degrees:.1f}deg 360deg);'>
+                    <div class='sbd-ring-inner'>
+                        <strong style='color:{score_color};'>{int(round(final_match_score))}</strong>
+                        <span>/100</span>
+                    </div>
+                </div>
+                <div class='sbd-verdict'>
+                    <div class='sbd-verdict-label' style='color:{score_color};'>{html.escape(conclusion_label)}</div>
+                    <div class='sbd-verdict-copy'>{html.escape(conclusion_copy)}</div>
+                </div>
             </div>
-            <div class='decision-mini-card'>
-                <div class='decision-mini-label'>Review priority</div>
-                <div class='decision-mini-value'>{html.escape(insight['weakest_signal'])}</div>
-                <div class='decision-mini-text'>The first area to inspect before trusting the answer.</div>
-            </div>
-            <div class='decision-mini-card decision-action-card'>
-                <div class='decision-mini-label'>Next action</div>
-                <div class='decision-action-text'>{html.escape(insight['action'])}</div>
+            <div class='sbd-soft-line'></div>
+            <div class='sbd-metric-grid'>{metric_cards}</div>
+            <div class='sbd-read-box'>
+                <div class='sbd-read-label'>Guide</div>
+                <div class='sbd-read-copy'>Read the final score first, then scan each metric to see what needs review.</div>
             </div>
         </div>
     </div>
-    <style>
-    .decision-panel {{
-        margin-top: 0.9rem;
-        padding: 1rem;
-        border-radius: 24px;
-        border: 1px solid #ead1c8;
-        background: linear-gradient(135deg, #ffffff 0%, #fff8f4 100%);
-        box-shadow: 0 14px 28px rgba(25,14,36,0.055);
-    }}
-    .decision-head {{
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 0.9rem;
-        padding-bottom: 0.75rem;
-        margin-bottom: 0.8rem;
-        border-bottom: 1px solid #f0ded7;
-    }}
-    .decision-kicker {{
-        font-size: 0.64rem;
-        font-weight: 900;
-        letter-spacing: 0.13em;
-        text-transform: uppercase;
-        color: #a3195b;
-        margin-bottom: 0.14rem;
-    }}
-    .decision-title {{
-        font-family: 'Inter Tight','Inter',sans-serif;
-        font-size: 1.04rem;
-        font-weight: 900;
-        letter-spacing: -0.03em;
-        color: #241226;
-        line-height: 1.1;
-    }}
-    .decision-copy {{
-        margin-top: 0.18rem;
-        color: #6d5a68;
-        font-size: 0.76rem;
-        line-height: 1.45;
-    }}
-    .decision-source-chip {{
-        flex-shrink: 0;
-        padding: 0.34rem 0.72rem;
-        border-radius: 999px;
-        border: 1px solid #ead1c8;
-        background: #ffffff;
-        color: #773344;
-        font-size: 0.7rem;
-        font-weight: 850;
-        white-space: nowrap;
-    }}
-    .decision-main-card {{
-        padding: 0.95rem 1rem;
-        border-radius: 20px;
-        border: 1px solid #ead1c8;
-        border-left: 5px solid #773344;
-        background: #ffffff;
-        margin-bottom: 0.8rem;
-    }}
-    .decision-risk {{
-        display: inline-flex;
-        width: fit-content;
-        padding: 0.25rem 0.64rem;
-        border-radius: 999px;
-        border: 1.3px solid;
-        font-size: 0.68rem;
-        font-weight: 900;
-        margin-bottom: 0.44rem;
-    }}
-    .decision-verdict {{
-        font-family: 'Inter Tight','Inter',sans-serif;
-        font-size: 1.12rem;
-        font-weight: 900;
-        letter-spacing: -0.02em;
-        margin-bottom: 0.2rem;
-    }}
-    .decision-text {{
-        font-size: 0.82rem;
-        line-height: 1.55;
-        color: #6d5a68;
-    }}
-    .decision-grid {{
-        display: grid;
-        grid-template-columns: 0.9fr 0.9fr 1.2fr;
-        gap: 0.7rem;
-    }}
-    .decision-mini-card {{
-        padding: 0.85rem 0.9rem;
-        border-radius: 18px;
-        border: 1px solid #ead1c8;
-        background: rgba(255,255,255,0.88);
-    }}
-    .decision-mini-label {{
-        font-size: 0.62rem;
-        font-weight: 900;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: #8b6771;
-        margin-bottom: 0.28rem;
-    }}
-    .decision-mini-value {{
-        font-family: 'Inter Tight','Inter',sans-serif;
-        font-size: 0.98rem;
-        font-weight: 900;
-        color: #241226;
-        margin-bottom: 0.18rem;
-    }}
-    .decision-mini-text, .decision-action-text {{
-        font-size: 0.74rem;
-        line-height: 1.5;
-        color: #6d5a68;
-    }}
-    .decision-action-card {{
-        background: linear-gradient(135deg, #fff 0%, #fff4ef 100%);
-    }}
-    @media (max-width: 900px) {{
-        .decision-head {{ flex-direction: column; }}
-        .decision-grid {{ grid-template-columns: 1fr; }}
-        .decision-source-chip {{ white-space: normal; }}
-    }}
-    </style>
     """), unsafe_allow_html=True)
+
+def render_single_review_result_dashboard(bundle: dict):
+    final_match_score = safe_float(bundle.get("final_match_score"))
+    semantic_score = safe_float(bundle.get("semantic_score"))
+    lexical_score = safe_float(bundle.get("lexical_score"))
+    coverage_score = safe_float(bundle.get("coverage_score"))
+    mean_alignment = safe_float(bundle.get("mean_alignment"))
+    topic_label = str(bundle.get("topic_label", "-"))
+    specific_issue = str(bundle.get("specific_issue", "-"))
+    best_state = str(bundle.get("best_state_name", "-"))
+    recommendation_label = str(bundle.get("recommendation_label", "Moderate Alignment"))
+    recommendation_reason = str(bundle.get("recommendation_reason", ""))
+    compliance_level = str(bundle.get("compliance_level", "Unclear"))
+    confidence = str(bundle.get("confidence", "Unknown"))
+    fatwa_text = str(bundle.get("fatwa_text", "")).strip()
+    issue_name = str(bundle.get("issue_name", "")).strip() or topic_label or "N/A"
+    matched_list = bundle.get("matched_list", [])
+    missing_list = bundle.get("missing_list", [])
+    tone = score_status_color(final_match_score)
+    rfms3 = round(final_match_score)  # rounded for tier labels, consistent with display
+
+    preview_reference = html.escape((fatwa_text[:180] + "...") if fatwa_text and len(fatwa_text) > 180 else (fatwa_text or "No text available"))
+    result_title = "High Alignment" if rfms3 >= 70 else "Moderate Alignment" if rfms3 >= 50 else "Low Alignment"
+    result_summary = "This answer is generally close to the matched fatwa and covers the main ruling points." if rfms3 >= 70 else "This answer is partly correct, but some important ruling details still need human review." if rfms3 >= 50 else "This answer is still too far from the fatwa, so it needs careful checking before anyone relies on it."
+    action_label = "Good to Use" if rfms3 >= 70 else "Needs Review" if rfms3 >= 50 else "Not Reliable"
+    action_note = "Use as a strong draft, then do a quick final check." if rfms3 >= 70 else "Check the fatwa text before accepting this answer." if rfms3 >= 50 else "Rewrite or review this answer manually first."
+    confidence_copy = "The topic match looks clear." if confidence == "High" else "The topic match looks fairly clear." if confidence == "Medium" else "The topic match is less certain."
+    compliance_copy = "It follows the ruling well." if compliance_level == "Fully Compliant" else "Some parts fit, but it still needs review." if compliance_level == "Partially Compliant" else "It does not fit the ruling closely." if compliance_level == "Non-Compliant" else "The status is not clear yet and needs manual review."
+    recommendation_copy = html.escape(recommendation_reason) if recommendation_reason else html.escape(result_summary)
+    review_status_copy = html.escape("This final score means the answer is close to the fatwa and gets most important points right." if rfms3 >= 70 else "This final score means the answer is partly correct, but some important points still need checking." if rfms3 >= 50 else "This final score means the answer is not close enough to the fatwa yet and needs careful review.")
+
+    st.markdown(_html(f"""
+    <div class='result-hero-card'>
+        <div class='result-hero-main'>
+            <div class='result-hero-kicker'>Review result</div>
+            <div class='result-hero-title'>{html.escape(topic_label)}</div>
+            <div class='result-hero-copy'>{html.escape(specific_issue)}</div>
+            <div style='margin-top:0.9rem;display:flex;flex-wrap:wrap;gap:0.55rem;'>
+                <span style='display:inline-flex;align-items:center;padding:0.42rem 0.82rem;border-radius:999px;background:{tone}12;border:1px solid {tone};color:{tone};font-size:0.8rem;font-weight:800;'>{format_percent(final_match_score,1)} overall</span>
+                <span style='display:inline-flex;align-items:center;padding:0.42rem 0.82rem;border-radius:999px;background:#fff;border:1px solid #ead1c8;color:#6d5a68;font-size:0.8rem;font-weight:700;'>Confidence: {html.escape(confidence_copy)}</span>
+                <span style='display:inline-flex;align-items:center;padding:0.42rem 0.82rem;border-radius:999px;background:#fff;border:1px solid #ead1c8;color:#6d5a68;font-size:0.8rem;font-weight:700;'>Status: {html.escape(compliance_copy)}</span>
+            </div>
+        </div>
+    </div>
+    """), unsafe_allow_html=True)
+
+    # Use a properly formatted f-string without syntax errors
+    result_html = f"""
+    <div class="result-cards-grid">
+        <div style='background:linear-gradient(180deg,#fff8f4 0%,#fff2ef 100%);border:1px solid #ead1c8;border-top:5px solid {tone};border-radius:28px;padding:1.2rem 1.2rem 1.1rem 1.2rem;box-shadow:0 14px 28px rgba(25,14,36,0.05);min-width:0;'>
+            <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.11em;text-transform:uppercase;color:#a3195b;margin-bottom:0.65rem;'>Result summary</div>
+            <div style='display:flex;align-items:flex-start;justify-content:space-between;gap:0.8rem;margin-bottom:0.8rem;'>
+                <div>
+                    <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.55rem;font-weight:850;letter-spacing:-0.03em;line-height:1.04;color:#241226;margin-bottom:0.2rem;'>{html.escape(result_title)}</div>
+                    <div style='font-size:0.96rem;line-height:1.72;color:#6d5a68;max-width:95%;'>{html.escape(recommendation_copy)}</div>
+                </div>
+                <div style='min-width:88px;height:88px;border-radius:22px;background:linear-gradient(135deg,{tone} 0%,#ffffff 145%);padding:1px;box-shadow:0 10px 22px rgba(25,14,36,0.10);'>
+                    <div style='height:100%;border-radius:21px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;'>
+                        <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.7rem;font-weight:800;color:{tone};line-height:1;'>{int(round(final_match_score))}</div>
+                        <div style='font-size:0.72rem;color:#8b6771;margin-top:0.18rem;'>score</div>
+                    </div>
+                </div>
+            </div>
+            <div style='margin:0.15rem 0 0.75rem 0;padding:0.95rem 1rem;border-radius:20px;background:linear-gradient(135deg,#fff 0%,#fff6f2 100%);border:1px solid #ead1c8;box-shadow:0 8px 18px rgba(25,14,36,0.04);'>
+                <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.18rem;'>Review status</div>
+                <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.2rem;font-weight:800;line-height:1.15;color:{tone};margin-bottom:0.22rem;'>{html.escape(action_label)}</div>
+                <div style='font-size:0.9rem;line-height:1.7;color:#6d5a68;'>{review_status_copy}</div>
+            </div>
+            <div style='display:grid;gap:0.55rem;'>
+                <div style='padding:0.82rem 0.9rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;display:flex;gap:0.65rem;align-items:flex-start;'><div style='width:28px;height:28px;border-radius:10px;background:{tone}14;color:{tone};display:flex;align-items:center;justify-content:center;font-weight:900;'>1</div><div style='font-size:0.88rem;line-height:1.6;color:#6d5a68;'><strong style='color:#241226;'>What this means:</strong> {html.escape(result_summary)}</div></div>
+                <div style='padding:0.82rem 0.9rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;display:flex;gap:0.65rem;align-items:flex-start;'><div style='width:28px;height:28px;border-radius:10px;background:#f7ece7;color:#b24758;display:flex;align-items:center;justify-content:center;font-weight:900;'>2</div><div style='font-size:0.88rem;line-height:1.6;color:#6d5a68;'><strong style='color:#241226;'>What to do:</strong> {html.escape(action_note)}</div></div>
+                <div style='padding:0.82rem 0.9rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;display:flex;gap:0.65rem;align-items:flex-start;'><div style='width:28px;height:28px;border-radius:10px;background:#f7ece7;color:#b24758;display:flex;align-items:center;justify-content:center;font-weight:900;'>3</div><div style='font-size:0.88rem;line-height:1.6;color:#6d5a68;'><strong style='color:#241226;'>History label:</strong> {html.escape(recommendation_label)}</div></div>
+            </div>
+        </div>
+        <div style='background:linear-gradient(180deg,#fffdfb 0%,#faf3f7 100%);border:1px solid #ead1c8;border-top:5px solid #773344;border-radius:28px;padding:1.2rem 1.2rem 1.1rem 1.2rem;box-shadow:0 14px 28px rgba(25,14,36,0.05);min-width:0;'>
+            <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.11em;text-transform:uppercase;color:#a3195b;margin-bottom:0.65rem;'>Closest fatwa source</div>
+            <div style='display:flex;align-items:flex-start;justify-content:space-between;gap:0.75rem;margin-bottom:0.8rem;'>
+                <div style='min-width:0;'>
+                    <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.5rem;font-weight:800;letter-spacing:-0.03em;line-height:1.08;color:#241226;overflow-wrap:anywhere;'>{html.escape(best_state)}</div>
+                    <div style='margin-top:0.22rem;font-size:0.92rem;line-height:1.65;color:#6d5a68;'>This is the state fatwa source that matched the answer most closely.</div>
+                </div>
+                <div style='padding:0.42rem 0.8rem;border-radius:999px;background:#fff;border:1px solid #ead1c8;color:#773344;font-size:0.76rem;font-weight:800;white-space:nowrap;'>Best source</div>
+            </div>
+            <div style='display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;margin-bottom:0.7rem;'>
+                <div style='padding:0.9rem 0.95rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;'>
+                    <div style='font-size:0.7rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.22rem;'>Issue matched</div>
+                    <div style='font-size:0.98rem;line-height:1.58;color:#241226;font-weight:700;overflow-wrap:anywhere;'>{html.escape(issue_name)}</div>
+                </div>
+                <div style='padding:0.9rem 0.95rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;'>
+                    <div style='font-size:0.7rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.22rem;'>Why it matters</div>
+                    <div style='font-size:0.88rem;line-height:1.6;color:#6d5a68;'>Read this fatwa first when you want to confirm whether the AI answer can be accepted.</div>
+                </div>
+            </div>
+            <div style='padding:0.95rem 1rem;border-radius:20px;background:linear-gradient(135deg,#fff 0%,#fff8f4 100%);border:1px solid #ead1c8;'>
+                <div style='font-size:0.7rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.28rem;'>Reference preview</div>
+                <div style='font-size:0.92rem;line-height:1.72;color:#6d5a68;overflow-wrap:anywhere;'>{preview_reference}</div>
+            </div>
+        </div>
+        <div style='background:linear-gradient(180deg,#fffdf8 0%,#f9f1ec 100%);border:1px solid #ead1c8;border-top:5px solid #d98c3f;border-radius:28px;padding:1.2rem 1.2rem 1.1rem 1.2rem;box-shadow:0 14px 28px rgba(25,14,36,0.05);min-width:0;'>
+            <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.11em;text-transform:uppercase;color:#a3195b;margin-bottom:0.65rem;'>Easy score guide</div>
+            <div style='display:grid;gap:0.7rem;'>
+                <div style='padding:0.9rem 0.95rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;'><div style='display:flex;align-items:center;justify-content:space-between;gap:0.6rem;'><div><div style='font-size:0.82rem;font-weight:800;color:#8b6771;text-transform:uppercase;letter-spacing:0.06em;'>Meaning</div><div style='font-size:0.8rem;color:#6d5a68;margin-top:0.12rem;'>Same ruling idea</div></div><div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.4rem;font-weight:800;color:#241226;'>{format_percent(semantic_score,1)}</div></div><div style='height:8px;border-radius:999px;background:#f1e2da;overflow:hidden;margin-top:0.55rem;'><div style='height:100%;width:{max(0,min(100,safe_float(semantic_score)))}%;background:linear-gradient(90deg,#773344 0%,#b24758 100%);border-radius:999px;'></div></div></div>
+                <div style='padding:0.9rem 0.95rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;'><div style='display:flex;align-items:center;justify-content:space-between;gap:0.6rem;'><div><div style='font-size:0.82rem;font-weight:800;color:#8b6771;text-transform:uppercase;letter-spacing:0.06em;'>Text</div><div style='font-size:0.8rem;color:#6d5a68;margin-top:0.12rem;'>Similar wording</div></div><div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.4rem;font-weight:800;color:#241226;'>{format_percent(lexical_score,1)}</div></div><div style='height:8px;border-radius:999px;background:#f1e2da;overflow:hidden;margin-top:0.55rem;'><div style='height:100%;width:{max(0,min(100,safe_float(lexical_score)))}%;background:linear-gradient(90deg,#d98c3f 0%,#f1a208 100%);border-radius:999px;'></div></div></div>
+                <div style='padding:0.9rem 0.95rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;'><div style='display:flex;align-items:center;justify-content:space-between;gap:0.6rem;'><div><div style='font-size:0.82rem;font-weight:800;color:#8b6771;text-transform:uppercase;letter-spacing:0.06em;'>Key points</div><div style='font-size:0.8rem;color:#6d5a68;margin-top:0.12rem;'>Important conditions found</div></div><div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.4rem;font-weight:800;color:#241226;'>{format_percent(coverage_score,1)}</div></div><div style='height:8px;border-radius:999px;background:#f1e2da;overflow:hidden;margin-top:0.55rem;'><div style='height:100%;width:{max(0,min(100,safe_float(coverage_score)))}%;background:linear-gradient(90deg,#3a7f56 0%,#06A77D 100%);border-radius:999px;'></div></div></div>
+            </div>
+            <div style='margin-top:0.78rem;padding:0.95rem 1rem;border-radius:20px;background:linear-gradient(135deg,#fff 0%,#fff7f1 100%);border:1px solid #ead1c8;'>
+                <div style='display:flex;align-items:flex-end;justify-content:space-between;gap:0.6rem;'>
+                    <div>
+                        <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.22rem;'>Overall fit</div>
+                        <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:2rem;font-weight:800;line-height:1;color:#241226;'>{format_percent(mean_alignment,1)}</div>
+                    </div>
+                    <div style='padding:0.38rem 0.7rem;border-radius:999px;background:#fff;border:1px solid #ead1c8;color:#773344;font-size:0.76rem;font-weight:800;'>State average</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    """
+    st.markdown(result_html, unsafe_allow_html=True)
+
+    k1, k2 = st.columns(2, gap="medium")
+    with k1:
+        matched_html = "".join(f"<span class='keyword-match'>{html.escape(kw)}</span>" for kw in matched_list) if matched_list else "<div class='small-note'>No important fatwa points were clearly identified here.</div>"
+        st.markdown(_html(f"""
+        <div class='points-card coverage-card'>
+            <div class='points-card-header'>Mentioned by the AI</div>
+            <div class='keyword-container'>{matched_html}</div>
+        </div>
+        """), unsafe_allow_html=True)
+    with k2:
+        missing_html = "".join(f"<span class='keyword-miss'>{html.escape(kw)}</span>" for kw in missing_list) if missing_list else "<div class='small-note'>No major missing points were detected.</div>"
+        st.markdown(_html(f"""
+        <div class='points-card coverage-card'>
+            <div class='points-card-header'>Still missing</div>
+            <div class='keyword-container'>{missing_html}</div>
+        </div>
+        """), unsafe_allow_html=True)
 
 # =========================================================
 # COMPACT HEADER
@@ -3205,7 +3681,6 @@ with tab1:
             if load_btn:
                 if not selected_match.empty:
                     st.session_state["ai_input"] = selected_match.iloc[0]["ai_answer_raw"]
-                    st.session_state["current_model_source"] = selected_model
                     st.session_state["load_success_toast"] = True
                     st.rerun()
                 else:
@@ -3337,25 +3812,6 @@ with tab1:
 
         else:
             # ── CHECK AI ANSWER MODE: fully editable textarea ─────────────────
-            model_options_manual = [
-                "Manual / External AI",
-                "ChatGPT",
-                "Gemini",
-                "Claude",
-                "DeepSeek",
-                "Perplexity",
-                "Other AI Model",
-            ]
-            current_model_source = st.selectbox(
-                "Answer source",
-                options=model_options_manual,
-                index=model_options_manual.index(st.session_state.get("current_model_source", "Manual / External AI"))
-                if st.session_state.get("current_model_source", "Manual / External AI") in model_options_manual else 0,
-                key="manual_model_source",
-                help="This labels where the answer came from. The system still evaluates the answer; it does not need to generate the answer itself."
-            )
-            st.session_state["current_model_source"] = current_model_source
-
             st.markdown(_html(f"""
             <div class='ai-input-card {"ai-input-card--filled" if input_has_content else ""}'>
                 <div class='ai-input-card-header'>
@@ -3492,11 +3948,8 @@ with tab1:
                 compliance_level = compliance_result["level"]
                 compliance_reason = compliance_result["reason"]
 
-                ai_model_source = st.session_state.get("current_model_source", selected_model if research_active else "Manual / External AI")
-
                 analysis_record = {
                     "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    "ai_model_source": ai_model_source,
                     "topic_label": topic_label,
                     "specific_issue": specific_issue,
                     "detection_confidence": confidence,
@@ -3519,7 +3972,6 @@ with tab1:
 
                 st.session_state.current_analysis = {
                     "best_state_name": best_state.get("state", "-"),
-                    "ai_model_source": ai_model_source,
                     "topic_label": topic_label,
                     "specific_issue": specific_issue,
                     "confidence": confidence,
@@ -3907,12 +4359,8 @@ with tab3:
         export_df["meaning_match"] = export_df["semantic_similarity"].apply(lambda x: format_percent(x, 1))
         export_df["key_fatwa_points"] = export_df["coverage"].apply(lambda x: format_percent(x, 1))
 
-        if "ai_model_source" not in export_df.columns:
-            export_df["ai_model_source"] = "Manual / External AI"
-
         export_df = export_df.rename(columns={
             "timestamp": "Timestamp",
-            "ai_model_source": "AI Source",
             "topic_label": "Detected Topic",
             "specific_issue": "Specific Issue",
             "detection_confidence": "Topic Detection Confidence",
@@ -3928,7 +4376,6 @@ with tab3:
         export_df = export_df[
             [
                 "Timestamp",
-                "AI Source",
                 "Detected Topic",
                 "Specific Issue",
                 "Topic Detection Confidence",
