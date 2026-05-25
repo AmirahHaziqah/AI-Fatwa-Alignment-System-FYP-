@@ -3062,24 +3062,6 @@ with st.sidebar:
         build_sidebar_score_guide_html()
     )
 
-    # ── Session reset button ────────────────────────────────────────────
-    st.markdown(
-        "<div style='margin-top:1.1rem; padding-top:0.9rem; border-top:1px solid rgba(255,255,255,0.10);'></div>",
-        unsafe_allow_html=True,
-    )
-    if st.button(
-        "🔄 Reset Session",
-        use_container_width=True,
-        key="sidebar_session_reset",
-        help="Clear all in-memory state and reload the model. Use this if the app gets stuck or the scoring engine stops responding.",
-    ):
-        # Clear all session state keys
-        for _k in list(st.session_state.keys()):
-            del st.session_state[_k]
-        # Clear cached resources so the SBERT model reloads cleanly
-        st.cache_resource.clear()
-        st.rerun()
-
 
 # =========================================================
 # GLOBAL HEADER + TABS
@@ -4120,6 +4102,11 @@ with tab2:
             with st.spinner("🔍 Running batch analysis — please wait..."):
                 batch_results = []
                 batch_numeric = []
+                batch_errors = []
+
+                # Pre-load cached SBERT once before the loop. This avoids repeated
+                # model initialisation during 111-response batch analysis.
+                load_sbert_engine()
 
                 # Live placeholders make the long 111-response run visible and stable.
                 progress_ph = st.empty()
@@ -4172,10 +4159,26 @@ with tab2:
                             fatwa_df["question_id"].astype(str).str.strip() == current_question_id
                         ].copy()
 
-                    best_state_bundle, state_results_df = unpack_state_comparison(
-                        compare_states_within_question(response_text, state_subset)
-                    )
+                    try:
+                        best_state_bundle, state_results_df = unpack_state_comparison(
+                            compare_states_within_question(response_text, state_subset)
+                        )
+                    except Exception as exc:
+                        batch_errors.append({
+                            "index": idx,
+                            "model": model_name,
+                            "label": label,
+                            "error": str(exc),
+                        })
+                        continue
+
                     if state_results_df.empty or not best_state_bundle:
+                        batch_errors.append({
+                            "index": idx,
+                            "model": model_name,
+                            "label": label,
+                            "error": "No matching fatwa reference/state result",
+                        })
                         continue
 
                     best_state_row = state_results_df.sort_values("alignment_score", ascending=False).iloc[0]
@@ -4244,9 +4247,14 @@ with tab2:
 
                 st.session_state.batch_results_df = pd.DataFrame(batch_results) if batch_results else None
                 st.session_state.batch_numeric_df = pd.DataFrame(batch_numeric) if batch_numeric else None
+                st.session_state.batch_errors_df = pd.DataFrame(batch_errors) if batch_errors else None
 
                 if batch_numeric:
-                    st.success(f"✅ Batch analysis completed: {len(batch_numeric)} valid responses analysed.")
+                    skipped_count = max(0, total_items - len(batch_numeric))
+                    if skipped_count:
+                        st.warning(f"Batch completed with {len(batch_numeric)} valid responses analysed and {skipped_count} skipped rows. Skipped rows usually have empty answers or missing fatwa references.")
+                    else:
+                        st.success(f"✅ Batch analysis completed: {len(batch_numeric)} valid responses analysed.")
 
     if st.session_state.get("batch_results_df") is None:
         pass

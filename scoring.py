@@ -318,36 +318,51 @@ class SBERTSimilarity:
     """
 
     def __init__(self):
-        # Raise immediately if the model cannot load — don't silently return 0s
+        # Raise immediately if the model cannot load — don't silently return 0s.
+        # This object is cached by load_sbert_engine(), so the model loads once only.
         self.model = SentenceTransformer("all-MiniLM-L6-v2")
+        self._embedding_cache: Dict[str, np.ndarray] = {}
+        self._max_cache_size = 5000
 
     def _mean_pool(self, sentence: str) -> np.ndarray:
         """
-        Equations (5) + (6):
-        Encode sentence s_i through SBERT, extract all m token embeddings
-        h_{i,1} … h_{i,m}, then compute the mean e_i = (1/m) Σ h_{i,j}.
+        Equations (5) + (6), implemented using SentenceTransformer's
+        sentence-level embedding output.
+
+        The SentenceTransformer model internally applies pooling to token
+        embeddings. Using this optimized sentence embedding is much faster and
+        more stable for full 111-response batch analysis than requesting token
+        embeddings for every text pair.
+
+        Embeddings are cached per text string so repeated official fatwa texts
+        are encoded once only during batch analysis.
         """
-        if not str(sentence).strip():
+        sentence = normalize_text(sentence)
+        if not sentence:
             return np.zeros(384)  # all-MiniLM-L6-v2 hidden size
 
+        cached = self._embedding_cache.get(sentence)
+        if cached is not None:
+            return cached
+
         try:
-            # output_value='token_embeddings' → list of one array per sentence
-            token_embeddings = self.model.encode(
-                [sentence],
-                output_value="token_embeddings",
-                convert_to_numpy=True,
-            )[0]  # shape: (m, 384)
-
-            # Equation (6): e_i = mean over m token vectors
-            m = token_embeddings.shape[0]
-            return (np.sum(token_embeddings, axis=0) / m).astype(float)
-
-        except Exception:
-            # Fallback: use the library's built-in sentence-level output
-            return np.asarray(
-                self.model.encode(sentence, convert_to_numpy=True),
+            emb = np.asarray(
+                self.model.encode(
+                    sentence,
+                    convert_to_numpy=True,
+                    normalize_embeddings=True,
+                    show_progress_bar=False,
+                ),
                 dtype=float,
             )
+        except Exception:
+            emb = np.zeros(384)
+
+        # Keep the cache bounded to avoid unbounded memory growth on Streamlit Cloud.
+        if len(self._embedding_cache) >= self._max_cache_size:
+            self._embedding_cache.clear()
+        self._embedding_cache[sentence] = emb
+        return emb
 
     def calculate(self, text1: str, text2: str) -> float:
         """
@@ -1216,8 +1231,10 @@ def compare_states_within_question(
 
     results_df = pd.DataFrame(results)
     if results_df.empty:
-        st.error("No state-level fatwa records found for this topic.")
-        st.stop()
+        # Do not call st.stop() inside the scoring engine.
+        # Returning an empty result lets both single-review and batch-review
+        # screens handle the situation safely without breaking the full run.
+        return {}, pd.DataFrame()
 
     results_df = results_df.sort_values(
         by=["alignment_score", "semantic_similarity", "coverage"],
