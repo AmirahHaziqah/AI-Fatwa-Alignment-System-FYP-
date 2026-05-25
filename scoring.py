@@ -606,8 +606,15 @@ def interpret(score) -> Tuple[str, str]:
 # =========================================================
 
 @st.cache_resource
+@st.cache_resource(show_spinner=False)
 def load_sbert_engine() -> SBERTSimilarity:
-    """Load the SBERT model once and reuse it across all calls."""
+    """
+    Load the SBERT model once and reuse it across all calls.
+
+    This is critical for batch analysis. Without caching, the model is
+    reloaded repeatedly and a 111-response batch can become extremely slow
+    or unstable.
+    """
     return SBERTSimilarity()
 
 
