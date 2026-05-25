@@ -3062,6 +3062,24 @@ with st.sidebar:
         build_sidebar_score_guide_html()
     )
 
+    # ── Session reset button ────────────────────────────────────────────
+    st.markdown(
+        "<div style='margin-top:1.1rem; padding-top:0.9rem; border-top:1px solid rgba(255,255,255,0.10);'></div>",
+        unsafe_allow_html=True,
+    )
+    if st.button(
+        "🔄 Reset Session",
+        use_container_width=True,
+        key="sidebar_session_reset",
+        help="Clear all in-memory state and reload the model. Use this if the app gets stuck or the scoring engine stops responding.",
+    ):
+        # Clear all session state keys
+        for _k in list(st.session_state.keys()):
+            del st.session_state[_k]
+        # Clear cached resources so the SBERT model reloads cleanly
+        st.cache_resource.clear()
+        st.rerun()
+
 
 # =========================================================
 # GLOBAL HEADER + TABS

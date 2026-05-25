@@ -605,7 +605,6 @@ def interpret(score) -> Tuple[str, str]:
 # SBERT LOADER (cached so the model loads only once per session)
 # =========================================================
 
-@st.cache_resource
 @st.cache_resource(show_spinner=False)
 def load_sbert_engine() -> SBERTSimilarity:
     """
