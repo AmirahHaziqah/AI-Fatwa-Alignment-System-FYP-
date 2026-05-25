@@ -25,6 +25,7 @@ from utils import (
     get_score_color,
     get_score_css_class,
     get_score_tier,
+    history_file_location,
     load_history_from_file,
     recent_topics_summary,
     safe_read_csv,
@@ -3899,11 +3900,13 @@ with tab1:
         clear_btn = st.button("Clear", use_container_width=True, key="clear_all_single")
 
     if clear_btn:
-        clear_history()
-        # Reset in-memory history so the counter updates immediately
-        st.session_state.analysis_history = []
+        # Clear only the current input/result. Do NOT delete saved history here.
+        # The old behaviour made it too easy to wipe analysis_history.json by accident.
         st.session_state.current_analysis = None
-        show_success_toast_center("✓ History cleared successfully!", ["All saved analyses have been removed"])
+        st.session_state["show_detail_cards"] = False
+        if "ai_input" in st.session_state:
+            st.session_state["ai_input"] = ""
+        show_success_toast_center("✓ Current review cleared", ["Saved history was not deleted"])
         st.rerun()
 
     if analyze_btn:
@@ -3964,11 +3967,9 @@ with tab1:
                     "recommendation_label": recommendation_label,
                     "recommendation_reason": recommendation_reason,
                 }
-                add_to_history(analysis_record)
-                # ── Immediately resync in-memory history from disk so the
-                #    counter in Tab 3 (and the sidebar) reflects the new record
-                #    without requiring a full page reload.
-                st.session_state.analysis_history = load_history_from_file()
+                # Save and immediately resync in-memory history so total count
+                # and average score update in real time after every analysis.
+                st.session_state.analysis_history = add_to_history(analysis_record)
 
                 st.session_state.current_analysis = {
                     "best_state_name": best_state.get("state", "-"),
@@ -4301,6 +4302,7 @@ with tab3:
 
         st.markdown("<h3 class='section-subtitle'>History Overview</h3>", unsafe_allow_html=True)
         st.markdown("<div class='system-plain-note'>The history overview tracks how saved analyses move across the main fit score over time and how results distribute across alignment bands.</div>", unsafe_allow_html=True)
+        st.caption(f"History file: {history_file_location()}")
 
         render_history_overview(history_df)
 

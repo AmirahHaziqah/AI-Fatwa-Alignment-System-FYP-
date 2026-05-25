@@ -16,12 +16,29 @@ from typing import Iterable, List, Optional
 import pandas as pd
 
 # ── Where analysis history is persisted on disk ──────────
-# IMPORTANT: Use an absolute path anchored to this file's own directory.
-# A bare relative path like Path("analysis_history.json") resolves against
-# whatever the current working directory is at runtime — which can change
-# depending on how/where Streamlit is launched, causing history to silently
-# reset every time the CWD differs.  __file__ is always this module's location.
-HISTORY_FILE = Path(__file__).resolve().parent / "analysis_history.json"
+# IMPORTANT FIX:
+# History must not depend only on the folder where Streamlit is launched.
+# If the app is copied, renamed, or opened from a different working directory,
+# a local-only history file can make old records appear to disappear.
+#
+# Default location:
+#   ~/.fyp_fatwa_dashboard/analysis_history.json
+#
+# Optional override:
+#   set FYP_HISTORY_FILE=/full/path/analysis_history.json
+#
+# The loader below also migrates/merges any old local analysis_history.json
+# found beside this file, so existing records are not lost.
+MODULE_DIR = Path(__file__).resolve().parent
+LOCAL_HISTORY_FILE = MODULE_DIR / "analysis_history.json"
+_HISTORY_ENV = os.environ.get("FYP_HISTORY_FILE", "").strip()
+if _HISTORY_ENV:
+    HISTORY_FILE = Path(_HISTORY_ENV).expanduser().resolve()
+else:
+    try:
+        HISTORY_FILE = Path.home() / ".fyp_fatwa_dashboard" / "analysis_history.json"
+    except Exception:
+        HISTORY_FILE = LOCAL_HISTORY_FILE
 
 # ── Optional Excel export (needs openpyxl installed) ─────
 try:
@@ -182,50 +199,129 @@ def format_percent(value, digits: int = 1) -> str:
 # =========================================================
 
 def _history_path() -> Path:
-    """Return the path used for on-disk history storage."""
+    """Return the path used for stable on-disk history storage."""
     return HISTORY_FILE
+
+
+def _read_json_list(path: Path) -> List[dict]:
+    """Read a JSON list safely. Returns [] if the file is missing/corrupt."""
+    try:
+        if not path.exists():
+            return []
+        data = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(data, list):
+            return []
+        return [x for x in data if isinstance(x, dict)]
+    except Exception:
+        return []
+
+
+def _record_key(record: dict) -> str:
+    """Stable key used only to prevent accidental duplicate writes."""
+    if not isinstance(record, dict):
+        return ""
+    return "|".join([
+        normalize_text(record.get("timestamp", "")),
+        normalize_text(record.get("topic_label", record.get("detected_question_id", ""))),
+        normalize_text(record.get("best_state", "")),
+        str(record.get("final_match_score", record.get("alignment_score", ""))),
+        str(record.get("semantic_similarity", "")),
+        str(record.get("coverage", "")),
+    ])
+
+
+def _merge_history_records(*groups: Iterable[dict]) -> List[dict]:
+    """Merge history lists, migrate schemas, and avoid exact duplicate records."""
+    merged: List[dict] = []
+    seen = set()
+    for group in groups:
+        for raw in group or []:
+            if not isinstance(raw, dict):
+                continue
+            rec = _migrate_history_record(raw)
+            key = _record_key(rec)
+            # Empty timestamp records are still kept, but exact full duplicates are skipped.
+            if key and key in seen:
+                continue
+            if key:
+                seen.add(key)
+            merged.append(rec)
+    return merged
+
+
+def _ensure_history_parent(path: Path) -> None:
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+    except Exception:
+        pass
+
+
+def _migrate_local_history_if_needed() -> None:
+    """
+    Merge the old local history file into the stable history file.
+
+    This fixes the "I did 130+ analyses but only 120 appear after reopening"
+    problem when the app is launched from another folder or renamed copy.
+    """
+    stable = _history_path()
+    local = LOCAL_HISTORY_FILE
+    if stable == local:
+        return
+
+    stable_records = _read_json_list(stable)
+    local_records = _read_json_list(local)
+    if not local_records:
+        return
+
+    merged = _merge_history_records(stable_records, local_records)
+    if len(merged) > len(stable_records):
+        _save_history(merged)
 
 
 def load_history_from_file() -> List[dict]:
     """
     Load analysis history from disk.
 
-    Returns an empty list if the file does not exist or is corrupt —
-    never raises.
-
-    Schema migration: old records that used 'alignment_score' instead of
-    'final_match_score' are transparently upgraded on read so the rest of
-    the codebase never sees the old key.
+    Returns an empty list if the file does not exist or is corrupt.
+    Old records using 'alignment_score' are migrated to 'final_match_score'.
+    The function also merges older local history into the stable history path.
     """
-    path = _history_path()
-    if not path.exists():
-        return []
-    try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-        if not isinstance(data, list):
-            return []
-        return [_migrate_history_record(r) for r in data]
-    except Exception:
-        return []
+    _migrate_local_history_if_needed()
+    data = _read_json_list(_history_path())
+    return _merge_history_records(data)
 
 
 def _migrate_history_record(record: dict) -> dict:
     """
     Upgrade a single history record from the old schema to the current one.
-
-    Old schema (pre-April 2026) used 'alignment_score' as the primary score
-    key and did not include topic_label, compliance_level, or recommendation.
-    This function normalises those records so the rest of the codebase can
-    treat all history entries identically.
+    Also keeps newer records complete and fills missing optional fields.
     """
     if not isinstance(record, dict):
         return record
 
-    # Already new schema — nothing to do
+    # New or partially-new schema.
     if "final_match_score" in record:
-        return record
+        out = dict(record)
+        try:
+            out["final_match_score"] = round(float(out.get("final_match_score", 0.0)), 2)
+        except Exception:
+            out["final_match_score"] = 0.0
+        out.setdefault("timestamp", "")
+        out.setdefault("topic_label", out.get("detected_question_id", "Unknown"))
+        out.setdefault("specific_issue", "")
+        out.setdefault("detection_confidence", "Unknown")
+        out.setdefault("best_state", "")
+        out.setdefault("mean_alignment", out.get("final_match_score", 0.0))
+        out.setdefault("lexical_similarity", 0.0)
+        out.setdefault("semantic_similarity", 0.0)
+        out.setdefault("coverage", 0.0)
+        out.setdefault("compliance_level", "Unknown")
+        out.setdefault("compliance_reason", "")
+        out.setdefault("recommendation_label", "")
+        out.setdefault("recommendation_reason", "")
+        return out
 
-    # Old schema migration
+    # Old schema migration.
     raw_score = record.get("alignment_score", 0.0)
     try:
         score = round(float(raw_score), 2)
@@ -239,7 +335,7 @@ def _migrate_history_record(record: dict) -> dict:
         "detection_confidence": "Unknown",
         "best_state":           record.get("best_state", ""),
         "final_match_score":    score,
-        "mean_alignment":       score,   # no multi-state mean was stored; best is the only value
+        "mean_alignment":       score,
         "lexical_similarity":   round(float(record.get("lexical_similarity",  0.0)), 2),
         "semantic_similarity":  round(float(record.get("semantic_similarity", 0.0)), 2),
         "coverage":             round(float(record.get("coverage",            0.0)), 2),
@@ -253,52 +349,69 @@ def _migrate_history_record(record: dict) -> dict:
 def _save_history(history: Iterable[dict]) -> None:
     """
     Persist history to disk using an atomic write-then-rename pattern.
-
-    Why atomic?  A plain write_text() call can be interrupted mid-write
-    (Streamlit hot-reload, OS flush timing, unexpected crash), leaving a
-    truncated or empty file.  Writing to a .tmp file first and then calling
-    Path.replace() is atomic on all major OSes: the old file is never
-    touched until the new content is fully written and flushed.
-
-    If anything goes wrong the original file is left intact, so history
-    is never silently lost.
+    A backup copy is also written so records can be recovered if the main
+    file is interrupted during a Streamlit rerun or shutdown.
     """
     path = _history_path()
-    tmp  = path.with_suffix(".tmp")
+    _ensure_history_parent(path)
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    backup = path.with_suffix(path.suffix + ".bak")
+    records = _merge_history_records(history)
+    payload = json.dumps(records, ensure_ascii=False, indent=2)
+
     try:
-        tmp.write_text(
-            json.dumps(list(history), ensure_ascii=False, indent=2),
-            encoding="utf-8",
-        )
-        tmp.replace(path)   # atomic rename — safe on Windows and POSIX
+        with open(tmp, "w", encoding="utf-8") as f:
+            f.write(payload)
+            f.flush()
+            os.fsync(f.fileno())
+        if path.exists():
+            try:
+                backup.write_text(path.read_text(encoding="utf-8"), encoding="utf-8")
+            except Exception:
+                pass
+        tmp.replace(path)
     except Exception:
-        # Remove the partial temp file so it does not interfere next time
         try:
             tmp.unlink(missing_ok=True)
         except Exception:
             pass
+        # Last-resort fallback to the local file beside the app.
+        fallback = LOCAL_HISTORY_FILE
+        try:
+            fallback.write_text(payload, encoding="utf-8")
+        except Exception:
+            pass
 
 
-def add_to_history(record: dict) -> None:
-    """Append one analysis record to the on-disk history."""
-    history = load_history_from_file()
-    history.append(record)
-    _save_history(history)
+def add_to_history(record: dict) -> List[dict]:
+    """
+    Append one analysis record to the on-disk history and return fresh history.
+
+    Returning the fresh list lets the Streamlit UI update the total and average
+    immediately after a run instead of waiting for a manual refresh.
+    """
+    current = load_history_from_file()
+    updated = _merge_history_records(current, [record])
+    _save_history(updated)
+    return load_history_from_file()
 
 
 def clear_history() -> None:
-    """Delete the on-disk history file (or empty it if deletion fails)."""
-    path = _history_path()
-    if not path.exists():
-        return
-    try:
-        path.unlink()
-    except Exception:
-        # Fall back to emptying the file instead of deleting
+    """Delete the on-disk history file and its backup if possible."""
+    for path in {_history_path(), LOCAL_HISTORY_FILE, _history_path().with_suffix(_history_path().suffix + ".bak")}:
         try:
-            path.write_text("[]", encoding="utf-8")
+            if path.exists():
+                path.unlink()
         except Exception:
-            pass
+            try:
+                path.write_text("[]", encoding="utf-8")
+            except Exception:
+                pass
+
+
+def history_file_location() -> str:
+    """Expose the active history path for debugging inside the dashboard."""
+    return str(_history_path())
 
 
 # =========================================================

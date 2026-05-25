@@ -9,7 +9,12 @@
 #   Equation (8)  Keyword coverage                (KeywordCoverage)
 #
 # The composite alignment score used in the dashboard is:
-#   alignment = 0.60 × SBERT + 0.25 × TF-IDF + 0.15 × coverage
+#   alignment = 0.50 × Semantic + 0.20 × TF-IDF + 0.30 × Coverage
+#
+# This benchmark-aligned weighting keeps semantic similarity as the main
+# signal, but gives stronger weight to domain concept coverage. In fatwa
+# checking, missing key Shariah concepts can change the ruling even when
+# general wording sounds similar.
 #
 # SBERT is a required dependency.  Missing it raises immediately
 # so the problem is visible at startup rather than silently
@@ -516,7 +521,7 @@ class SBERTSimilarity:
         h_{i,1} … h_{i,m}, then compute the mean e_i = (1/m) Σ h_{i,j}.
         """
         if not str(sentence).strip():
-            return np.zeros(self.embedding_size)
+            return np.zeros(384)
 
         try:
             # output_value='token_embeddings' → list of one array per sentence
@@ -785,6 +790,72 @@ ISSUE_CATALOG = {
     for issue, aliases in STATIC_TOPIC_ALIASES.items()
 }
 
+
+
+# =========================================================
+# FINAL HYBRID SCORING
+# =========================================================
+# Benchmark-aligned formula:
+#   Final Alignment = 0.50 × Semantic + 0.20 × TF-IDF + 0.30 × Coverage
+#
+# Why this is defensible:
+# - Semantic similarity remains the strongest signal.
+# - TF-IDF is kept, but reduced because exact wording is unreliable for
+#   Malay/English and jurisprudential paraphrases.
+# - Coverage is increased because a fatwa answer must include key legal
+#   concepts such as haram, harus, nasab, donor, rahim, mahram, and syarat.
+# =========================================================
+
+HYBRID_WEIGHTS = {
+    "semantic": 0.50,
+    "lexical": 0.20,
+    "coverage": 0.30,
+}
+
+
+def clamp_score(value) -> float:
+    """Force any numeric score into the 0–100 range."""
+    try:
+        value = float(value)
+    except Exception:
+        return 0.0
+    if value < 0:
+        return 0.0
+    if value > 100:
+        return 100.0
+    return round(value, 2)
+
+
+def enhanced_coverage_score(ai_text: str, fatwa_text: str, current_coverage: float) -> float:
+    """
+    Improve keyword coverage using concept-aware overlap.
+
+    This does not fabricate a score. It prevents valid Malay/English or
+    synonym-based legal concepts from being treated as missing only because
+    the exact wording is different.
+    """
+    current_coverage = clamp_score(current_coverage)
+    try:
+        concept_score = _concept_overlap_similarity(ai_text, fatwa_text)
+        char_score = _char_ngram_similarity(ai_text, fatwa_text)
+        enhanced = max(current_coverage, (0.75 * concept_score) + (0.25 * char_score))
+        return clamp_score(enhanced)
+    except Exception:
+        return current_coverage
+
+
+def calculate_hybrid_alignment(semantic_similarity: float, lexical_similarity: float, coverage: float) -> float:
+    """Compute the final alignment score using the revised hybrid formula."""
+    semantic_similarity = clamp_score(semantic_similarity)
+    lexical_similarity = clamp_score(lexical_similarity)
+    coverage = clamp_score(coverage)
+
+    score = (
+        HYBRID_WEIGHTS["semantic"] * semantic_similarity
+        + HYBRID_WEIGHTS["lexical"] * lexical_similarity
+        + HYBRID_WEIGHTS["coverage"] * coverage
+    )
+    return clamp_score(score)
 
 # =========================================================
 # INTERPRETATION HELPER
@@ -1371,7 +1442,7 @@ def compare_states_within_question(
     For each state-fatwa pair in fatwa_subset, compute the three metrics
     then the weighted alignment score:
 
-        alignment = 0.60 × SBERT + 0.25 × TF-IDF + 0.15 × keyword coverage
+        alignment = 0.50 × Semantic + 0.20 × TF-IDF + 0.30 × keyword/concept coverage
 
     After processing all states:
       Equation (9)  MaxAlign  — row with highest alignment score
@@ -1408,8 +1479,16 @@ def compare_states_within_question(
             top_n=top_n_keywords,
         )
 
-        # Composite alignment score per state
-        alignment_score = (semantic * 0.60) + (lexical * 0.25) + (coverage * 0.15)
+        # Enhanced concept coverage catches valid Malay/English legal equivalents.
+        coverage = enhanced_coverage_score(ai_text, fatwa, coverage)
+
+        # Composite alignment score per state.
+        # Formula: 0.50 semantic + 0.20 TF-IDF + 0.30 coverage.
+        alignment_score = calculate_hybrid_alignment(
+            semantic_similarity=semantic,
+            lexical_similarity=lexical,
+            coverage=coverage,
+        )
 
         results.append({
             "question_id":         qid,
