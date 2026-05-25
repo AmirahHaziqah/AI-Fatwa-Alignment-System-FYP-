@@ -16,28 +16,12 @@ from typing import Iterable, List, Optional
 import pandas as pd
 
 # ── Where analysis history is persisted on disk ──────────
-# PRIMARY store  : analysis_history.json   (full fidelity, next to this file)
-# BACKUP  store  : analysis_history_persistent.csv  (same folder)
-#
-# On every save BOTH files are written.
-# On every load, BOTH files are read and merged by timestamp so that
-# records are never silently lost even if one file is missing, empty,
-# or out of date (e.g. after a re-deploy that copies only .py files).
-#
-# IMPORTANT: Paths are anchored to this module's own directory so they
-# resolve correctly regardless of the working directory Streamlit uses.
-_BASE_DIR    = Path(__file__).resolve().parent
-HISTORY_FILE = _BASE_DIR / "analysis_history.json"
-_CSV_BACKUP  = _BASE_DIR / "analysis_history_persistent.csv"
-
-# Columns that must be present in the CSV backup (in this order)
-_CSV_COLUMNS = [
-    "timestamp", "topic_label", "specific_issue", "detection_confidence",
-    "best_state", "final_match_score", "mean_alignment",
-    "lexical_similarity", "semantic_similarity", "coverage",
-    "compliance_level", "compliance_reason",
-    "recommendation_label", "recommendation_reason",
-]
+# IMPORTANT: Use an absolute path anchored to this file's own directory.
+# A bare relative path like Path("analysis_history.json") resolves against
+# whatever the current working directory is at runtime — which can change
+# depending on how/where Streamlit is launched, causing history to silently
+# reset every time the CWD differs.  __file__ is always this module's location.
+HISTORY_FILE = Path(__file__).resolve().parent / "analysis_history.json"
 
 # ── Optional Excel export (needs openpyxl installed) ─────
 try:
@@ -206,54 +190,23 @@ def load_history_from_file() -> List[dict]:
     """
     Load analysis history from disk.
 
-    Reads BOTH the JSON primary store and the CSV backup, merges them
-    by timestamp (deduplicating), and returns a single unified list
-    sorted oldest to newest.
-
-    This means history is never lost even if one of the two files is
-    missing, empty, or out of date after a re-deploy.
+    Returns an empty list if the file does not exist or is corrupt —
+    never raises.
 
     Schema migration: old records that used 'alignment_score' instead of
-    'final_match_score' are transparently upgraded on read.
+    'final_match_score' are transparently upgraded on read so the rest of
+    the codebase never sees the old key.
     """
-    records_by_ts: dict = {}
-
-    # 1. Load JSON primary
-    json_path = _history_path()
-    if json_path.exists():
-        try:
-            data = json.loads(json_path.read_text(encoding="utf-8"))
-            if isinstance(data, list):
-                for r in data:
-                    r = _migrate_history_record(r)
-                    ts = r.get("timestamp", "")
-                    if ts:
-                        records_by_ts[ts] = r
-        except Exception:
-            pass
-
-    # 2. Load CSV backup — adds any records missing from the JSON
-    if _CSV_BACKUP.exists():
-        try:
-            df = pd.read_csv(_CSV_BACKUP, encoding="utf-8")
-            for _, row in df.iterrows():
-                r = _migrate_history_record(row.to_dict())
-                ts = r.get("timestamp", "")
-                if ts and ts not in records_by_ts:
-                    records_by_ts[ts] = r
-        except Exception:
-            pass
-
-    if not records_by_ts:
+    path = _history_path()
+    if not path.exists():
         return []
-
-    # Sort ascending by timestamp (oldest first)
     try:
-        merged = sorted(records_by_ts.values(), key=lambda x: x.get("timestamp", ""))
+        data = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(data, list):
+            return []
+        return [_migrate_history_record(r) for r in data]
     except Exception:
-        merged = list(records_by_ts.values())
-
-    return merged
+        return []
 
 
 def _migrate_history_record(record: dict) -> dict:
@@ -301,44 +254,27 @@ def _save_history(history: Iterable[dict]) -> None:
     """
     Persist history to disk using an atomic write-then-rename pattern.
 
-    Writes BOTH:
-      - analysis_history.json        (primary, full fidelity)
-      - analysis_history_persistent.csv  (backup, survives re-deploys)
+    Why atomic?  A plain write_text() call can be interrupted mid-write
+    (Streamlit hot-reload, OS flush timing, unexpected crash), leaving a
+    truncated or empty file.  Writing to a .tmp file first and then calling
+    Path.replace() is atomic on all major OSes: the old file is never
+    touched until the new content is fully written and flushed.
 
-    The atomic write-then-rename pattern means the original file is never
-    touched until the new content is fully written, so history is never
-    silently truncated or lost on hot-reload / unexpected crash.
+    If anything goes wrong the original file is left intact, so history
+    is never silently lost.
     """
-    history_list = list(history)
-
-    # ── 1. JSON primary (atomic) ──────────────────────────
     path = _history_path()
     tmp  = path.with_suffix(".tmp")
     try:
         tmp.write_text(
-            json.dumps(history_list, ensure_ascii=False, indent=2),
+            json.dumps(list(history), ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
-        tmp.replace(path)
+        tmp.replace(path)   # atomic rename — safe on Windows and POSIX
     except Exception:
+        # Remove the partial temp file so it does not interfere next time
         try:
             tmp.unlink(missing_ok=True)
-        except Exception:
-            pass
-
-    # ── 2. CSV backup ─────────────────────────────────────
-    try:
-        rows = []
-        for r in history_list:
-            row = {col: r.get(col, "") for col in _CSV_COLUMNS}
-            rows.append(row)
-        df = pd.DataFrame(rows, columns=_CSV_COLUMNS)
-        csv_tmp = _CSV_BACKUP.with_suffix(".tmp")
-        df.to_csv(csv_tmp, index=False, encoding="utf-8")
-        csv_tmp.replace(_CSV_BACKUP)
-    except Exception:
-        try:
-            csv_tmp.unlink(missing_ok=True)  # type: ignore[possibly-undefined]
         except Exception:
             pass
 

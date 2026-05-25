@@ -17,6 +17,7 @@
 # =========================================================
 
 import math
+import os
 import re
 from typing import Dict, List, Set, Tuple
 
@@ -28,6 +29,179 @@ from sentence_transformers import SentenceTransformer
 from utils import normalize_text, get_score_tier, get_score_tier_colors, get_score_css_class
 
 SBERT_AVAILABLE = True  # Always True — import above raises if missing
+
+# =========================================================
+# ENHANCED DOMAIN NORMALISATION
+# =========================================================
+# These mappings do NOT fabricate scores. They make Malay/English
+# medical-fatwa terminology comparable before TF-IDF and keyword matching.
+# Example: "ibu tumpang", "surrogate mother", and "surrogacy" are treated
+# as the same concept token: "surrogacy".
+DOMAIN_CONCEPTS: Dict[str, Set[str]] = {
+    "surrogacy": {
+        "surrogacy", "surrogate", "surrogate mother", "gestational carrier",
+        "ibu tumpang", "khidmat ibu tumpang", "rahim tumpang", "sewa rahim",
+    },
+    "ivf": {
+        "ivf", "in vitro fertilization", "in-vitro fertilization",
+        "persenyawaan in vitro", "bayi tabung uji", "bayi tabung", "test tube baby",
+    },
+    "donor": {
+        "donor", "penderma", "pihak ketiga", "orang ketiga", "benih pihak ketiga",
+        "sperma penderma", "ovum penderma", "telur penderma",
+    },
+    "sperm": {"sperma", "air mani", "mani", "benih lelaki", "male gamete"},
+    "ovum": {"ovum", "telur", "benih perempuan", "female gamete"},
+    "embryo": {"embrio", "janin", "fetus", "foetus", "zygote", "blastocyst"},
+    "uterus": {"rahim", "uterus", "kandungan"},
+    "husband": {"suami", "husband"},
+    "wife": {"isteri", "istri", "wife"},
+    "marriage": {"nikah", "perkahwinan", "akad", "akad nikah", "married", "marriage"},
+    "lineage": {"nasab", "keturunan", "lineage", "parentage"},
+    "guardian": {"wali", "guardian"},
+    "inheritance": {"pusaka", "warisan", "harta pusaka", "inheritance"},
+    "mahram": {"mahram", "muhrim"},
+    "milk_bank": {"bank susu", "bank susu ibu", "milk bank", "human milk bank"},
+    "breastfeeding": {"susu ibu", "penyusuan", "susuan", "radhaah", "radaah", "breastfeeding"},
+    "abortion": {"pengguguran", "gugur kandungan", "menggugurkan", "abortion"},
+    "rape": {"rogol", "mangsa rogol", "rape"},
+    "zina": {"zina", "luar nikah", "illicit intercourse"},
+    "thalassemia": {"thalassemia", "talasemia"},
+    "contraceptive": {"kontraseptif", "contraceptive", "kondom", "pil perancang"},
+    "hiv_aids": {"hiv", "aids", "hiv/aids"},
+    "cloning": {"klon", "pengklonan", "cloning"},
+    "stem_cell": {"sel stem", "stem cell"},
+    "permissible": {"harus", "dibolehkan", "boleh", "permissible", "allowed"},
+    "prohibited": {"haram", "dilarang", "tidak dibenarkan", "prohibited", "forbidden"},
+    "condition": {"syarat", "keadaan", "condition", "conditions"},
+    "darurat": {"darurat", "necessity", "emergency"},
+}
+
+# Precompile phrase variants longest-first so multi-word concepts are replaced
+# before their shorter parts.
+_CONCEPT_PHRASES: List[Tuple[str, str]] = []
+for _concept, _variants in DOMAIN_CONCEPTS.items():
+    for _v in _variants:
+        _CONCEPT_PHRASES.append((_v.lower(), _concept))
+_CONCEPT_PHRASES.sort(key=lambda x: len(x[0]), reverse=True)
+
+
+def _normalise_domain_phrases(text: str) -> str:
+    """Replace known domain phrases with canonical concept tokens."""
+    text = normalize_text(text).lower()
+    if not text:
+        return ""
+    text = re.sub(r"[_]+", " ", text)
+    for phrase, concept in _CONCEPT_PHRASES:
+        pattern = r"(?<![a-z0-9])" + re.escape(phrase) + r"(?![a-z0-9])"
+        text = re.sub(pattern, f" {concept} ", text, flags=re.IGNORECASE)
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def _simple_malay_english_stem(token: str) -> str:
+    """
+    Conservative rule-based stemming for common Malay/English variants.
+    It reduces superficial wording differences without requiring extra packages.
+    """
+    t = token.lower().strip()
+    if len(t) <= 4:
+        return t
+    for pref in ("memper", "menge", "meng", "meny", "men", "mem", "ber", "ter", "per", "pe", "ke", "di"):
+        if t.startswith(pref) and len(t) - len(pref) >= 4:
+            if pref == "meny":
+                t = "s" + t[len(pref):]
+            else:
+                t = t[len(pref):]
+            break
+    for suf in ("kan", "annya", "nya", "lah", "kah", "pun"):
+        if t.endswith(suf) and len(t) - len(suf) >= 4:
+            t = t[:-len(suf)]
+            break
+    if t.endswith("ies") and len(t) > 5:
+        t = t[:-3] + "y"
+    elif t.endswith("es") and len(t) > 5:
+        t = t[:-2]
+    elif t.endswith("s") and len(t) > 4:
+        t = t[:-1]
+    return t
+
+
+def _concept_token_set(text: str) -> Set[str]:
+    """
+    Token set used for concept-aware overlap. Includes canonical concept tokens
+    plus preprocessed/stemmed tokens.
+    """
+    tokens = TextCleaner.preprocess(text)
+    out: Set[str] = set(tokens)
+    out.update(_simple_malay_english_stem(t) for t in tokens if t)
+    canonical_text = _normalise_domain_phrases(text)
+    for concept in DOMAIN_CONCEPTS:
+        if re.search(r"(?<![a-z0-9])" + re.escape(concept) + r"(?![a-z0-9])", canonical_text):
+            out.add(concept)
+    return {t for t in out if t}
+
+
+def _char_ngram_similarity(text1: str, text2: str, n: int = 4) -> float:
+    """Character n-gram Jaccard similarity for spelling/morphological variants. Returns 0–100."""
+    a = re.sub(r"\s+", " ", TextCleaner.clean(text1))
+    b = re.sub(r"\s+", " ", TextCleaner.clean(text2))
+    if len(a) < n or len(b) < n:
+        return 0.0
+    grams_a = {a[i:i+n] for i in range(len(a)-n+1)}
+    grams_b = {b[i:i+n] for i in range(len(b)-n+1)}
+    if not grams_a or not grams_b:
+        return 0.0
+    return round((len(grams_a & grams_b) / len(grams_a | grams_b)) * 100.0, 2)
+
+
+def _concept_overlap_similarity(text1: str, text2: str) -> float:
+    """Concept/token overlap similarity in [0,100]."""
+    a = _concept_token_set(text1)
+    b = _concept_token_set(text2)
+    if not a or not b:
+        return 0.0
+    precision = len(a & b) / len(a)
+    recall = len(a & b) / len(b)
+    if precision + recall == 0:
+        return 0.0
+    return round((2 * precision * recall / (precision + recall)) * 100.0, 2)
+
+
+def _split_semantic_chunks(text: str, max_words: int = 95, overlap: int = 18) -> List[str]:
+    """
+    Split long fatwa text into overlapping chunks. Comparing an AI answer to
+    the most relevant fatwa chunk is usually more accurate than comparing the
+    answer to a very long legal document all at once.
+    """
+    cleaned = normalize_text(text)
+    if not cleaned:
+        return []
+    sentences = [s.strip() for s in re.split(r"(?<=[.!?。؟])\s+", cleaned) if s.strip()]
+    chunks: List[str] = []
+    current: List[str] = []
+    current_len = 0
+    for sent in sentences if sentences else [cleaned]:
+        words = sent.split()
+        if current and current_len + len(words) > max_words:
+            chunks.append(" ".join(current))
+            tail = " ".join(current).split()[-overlap:] if overlap > 0 else []
+            current = tail.copy()
+            current_len = len(current)
+        current.extend(words)
+        current_len += len(words)
+    if current:
+        chunks.append(" ".join(current))
+    final_chunks: List[str] = []
+    for c in chunks:
+        words = c.split()
+        if len(words) <= max_words * 1.4:
+            final_chunks.append(c)
+        else:
+            step = max(1, max_words - overlap)
+            for i in range(0, len(words), step):
+                final_chunks.append(" ".join(words[i:i + max_words]))
+    return final_chunks[:8]
+
 
 
 # =========================================================
@@ -76,12 +250,16 @@ class TextCleaner:
         "talasemia", "genetic", "genetik", "kontraseptif", "contraceptive",
         "hiv", "aids", "oku", "janin", "foetus", "fetus", "kandungan",
         "maternal", "kesihatan", "kondom", "mahram", "pembiakan", "perubatan",
+        *set(DOMAIN_CONCEPTS.keys()),
     }
 
     @staticmethod
     def clean(text: str) -> str:
-        """Lower-case, strip URLs/punctuation, collapse whitespace."""
-        text = normalize_text(text).lower()
+        """
+        Lower-case, normalise domain phrases, strip URLs/punctuation,
+        and collapse whitespace.
+        """
+        text = _normalise_domain_phrases(text)
         text = re.sub(r"http\S+", " ", text)
         text = re.sub(r"[^a-zA-Z0-9\s\-/]", " ", text)
         text = re.sub(r"\s+", " ", text)
@@ -142,7 +320,7 @@ class TextCleaner:
                 continue
             # Remove general stopwords
             if token not in TextCleaner.DEFAULT_STOPWORDS:
-                filtered.append(token)
+                filtered.append(_simple_malay_english_stem(token))
         return filtered
 
     @staticmethod
@@ -295,8 +473,18 @@ class RealTFIDF:
         try:
             vec_a = vectorizer.transform(text1)
             vec_b = vectorizer.transform(text2)
-            raw   = ManualTFIDF.cosine_similarity_vectors(vec_a, vec_b)
-            return round(float(raw) * 100.0, 2)
+            raw_word = round(float(ManualTFIDF.cosine_similarity_vectors(vec_a, vec_b)) * 100.0, 2)
+
+            # Enhanced lexical evidence:
+            # - concept overlap catches Malay/English equivalents
+            # - character n-grams catch morphology/spelling variations
+            concept_score = _concept_overlap_similarity(text1, text2)
+            char_score = _char_ngram_similarity(text1, text2)
+
+            # Keep TF-IDF dominant, but prevent valid domain synonyms from
+            # being treated as zero lexical match.
+            enhanced = (raw_word * 0.70) + (concept_score * 0.22) + (char_score * 0.08)
+            return round(float(max(raw_word, enhanced)), 2)
         except Exception:
             return 0.0
 
@@ -318,51 +506,36 @@ class SBERTSimilarity:
     """
 
     def __init__(self):
-        # Raise immediately if the model cannot load — don't silently return 0s.
-        # This object is cached by load_sbert_engine(), so the model loads once only.
+        # Raise immediately if the model cannot load — don't silently return 0s
         self.model = SentenceTransformer("all-MiniLM-L6-v2")
-        self._embedding_cache: Dict[str, np.ndarray] = {}
-        self._max_cache_size = 5000
 
     def _mean_pool(self, sentence: str) -> np.ndarray:
         """
-        Equations (5) + (6), implemented using SentenceTransformer's
-        sentence-level embedding output.
-
-        The SentenceTransformer model internally applies pooling to token
-        embeddings. Using this optimized sentence embedding is much faster and
-        more stable for full 111-response batch analysis than requesting token
-        embeddings for every text pair.
-
-        Embeddings are cached per text string so repeated official fatwa texts
-        are encoded once only during batch analysis.
+        Equations (5) + (6):
+        Encode sentence s_i through SBERT, extract all m token embeddings
+        h_{i,1} … h_{i,m}, then compute the mean e_i = (1/m) Σ h_{i,j}.
         """
-        sentence = normalize_text(sentence)
-        if not sentence:
-            return np.zeros(384)  # all-MiniLM-L6-v2 hidden size
-
-        cached = self._embedding_cache.get(sentence)
-        if cached is not None:
-            return cached
+        if not str(sentence).strip():
+            return np.zeros(self.embedding_size)
 
         try:
-            emb = np.asarray(
-                self.model.encode(
-                    sentence,
-                    convert_to_numpy=True,
-                    normalize_embeddings=True,
-                    show_progress_bar=False,
-                ),
+            # output_value='token_embeddings' → list of one array per sentence
+            token_embeddings = self.model.encode(
+                [sentence],
+                output_value="token_embeddings",
+                convert_to_numpy=True,
+            )[0]  # shape: (m, 384)
+
+            # Equation (6): e_i = mean over m token vectors
+            m = token_embeddings.shape[0]
+            return (np.sum(token_embeddings, axis=0) / m).astype(float)
+
+        except Exception:
+            # Fallback: use the library's built-in sentence-level output
+            return np.asarray(
+                self.model.encode(sentence, convert_to_numpy=True),
                 dtype=float,
             )
-        except Exception:
-            emb = np.zeros(384)
-
-        # Keep the cache bounded to avoid unbounded memory growth on Streamlit Cloud.
-        if len(self._embedding_cache) >= self._max_cache_size:
-            self._embedding_cache.clear()
-        self._embedding_cache[sentence] = emb
-        return emb
 
     def calculate(self, text1: str, text2: str) -> float:
         """
@@ -383,8 +556,28 @@ class SBERTSimilarity:
         if mag_ai == 0.0 or mag_f == 0.0:
             return 0.0
 
-        similarity = dot / (mag_ai * mag_f)   # Equation (7)
-        return round(float(similarity) * 100.0, 2)
+        full_similarity = dot / (mag_ai * mag_f)   # Equation (7)
+        full_score = float(full_similarity) * 100.0
+
+        # Long official fatwa texts often contain background, conditions, and
+        # references. Chunk-level comparison finds the most relevant ruling
+        # portion while still keeping the full-document comparison.
+        chunk_scores: List[float] = []
+        for chunk in _split_semantic_chunks(text2):
+            e_chunk = self._mean_pool(chunk)
+            mag_c = float(np.linalg.norm(e_chunk))
+            if mag_c == 0.0:
+                continue
+            chunk_scores.append(float(np.dot(e_ai, e_chunk) / (mag_ai * mag_c)) * 100.0)
+
+        if chunk_scores:
+            best_chunk = max(chunk_scores)
+            # Blend full-context and best-ruling-chunk similarity.
+            score = (full_score * 0.55) + (best_chunk * 0.45)
+        else:
+            score = full_score
+
+        return round(float(max(0.0, min(100.0, score))), 2)
 
 
 # =========================================================
@@ -460,8 +653,8 @@ class KeywordCoverage:
         if vectorizer is None:
             vectorizer = RealTFIDF.fit_vectorizer([ai_text, fatwa_text])
 
-        # K_AI: set of pre-processed tokens from the AI response
-        ai_tokens: Set[str] = set(TextCleaner.preprocess(ai_text))
+        # K_AI: concept-aware token set from the AI response
+        ai_tokens: Set[str] = _concept_token_set(ai_text)
 
         # K_Fatwa: top-N TF-IDF keywords from the fatwa
         fatwa_keywords = KeywordCoverage.extract_keywords_from_fatwa(
@@ -470,8 +663,19 @@ class KeywordCoverage:
             top_n=top_n,
         )
 
-        matched   = [kw for kw in fatwa_keywords if kw in ai_tokens]
-        unmatched = [kw for kw in fatwa_keywords if kw not in ai_tokens]
+        def keyword_is_covered(keyword: str) -> bool:
+            kw_norm = _simple_malay_english_stem(keyword)
+            if kw_norm in ai_tokens or keyword in ai_tokens:
+                return True
+            # Treat canonical concepts as covered when any synonym appears.
+            for concept, variants in DOMAIN_CONCEPTS.items():
+                if keyword == concept or keyword in variants:
+                    if concept in ai_tokens:
+                        return True
+            return False
+
+        matched   = [kw for kw in fatwa_keywords if keyword_is_covered(kw)]
+        unmatched = [kw for kw in fatwa_keywords if not keyword_is_covered(kw)]
         coverage  = (len(matched) / len(fatwa_keywords)) * 100.0 if fatwa_keywords else 0.0
 
         return matched, unmatched, round(float(coverage), 2), fatwa_keywords
@@ -620,15 +824,9 @@ def interpret(score) -> Tuple[str, str]:
 # SBERT LOADER (cached so the model loads only once per session)
 # =========================================================
 
-@st.cache_resource(show_spinner=False)
+@st.cache_resource
 def load_sbert_engine() -> SBERTSimilarity:
-    """
-    Load the SBERT model once and reuse it across all calls.
-
-    This is critical for batch analysis. Without caching, the model is
-    reloaded repeatedly and a 111-response batch can become extremely slow
-    or unstable.
-    """
+    """Load the SBERT model once and reuse it across all calls."""
     return SBERTSimilarity()
 
 
@@ -1231,10 +1429,8 @@ def compare_states_within_question(
 
     results_df = pd.DataFrame(results)
     if results_df.empty:
-        # Do not call st.stop() inside the scoring engine.
-        # Returning an empty result lets both single-review and batch-review
-        # screens handle the situation safely without breaking the full run.
-        return {}, pd.DataFrame()
+        st.error("No state-level fatwa records found for this topic.")
+        st.stop()
 
     results_df = results_df.sort_values(
         by=["alignment_score", "semantic_similarity", "coverage"],

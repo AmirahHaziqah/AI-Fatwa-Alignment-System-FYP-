@@ -1760,21 +1760,96 @@ def resolve_banner_path():
 # =========================================================
 
 def show_success_toast_center(message: str, details: list = None):
-    """
-    Safe Streamlit-native success message.
-
-    The previous version injected JavaScript into the parent Streamlit document
-    through components.html(). During heavy batch runs, this can trigger the
-    Streamlit frontend error:
-        "Bad message format: Tried to use SessionInfo before it was initialized"
-
-    Using st.success avoids custom component/session-message conflicts and is
-    stable for full 111-response batch analysis.
-    """
-    detail_text = ""
+    """Display a centered success popup using components.html() — JS runs in a real document context."""
+    details_items = ""
     if details:
-        detail_text = "  " + " · ".join(str(d) for d in details)
-    st.success(f"{message}{detail_text}")
+        details_items = "".join(
+            f'<div class="at-pill">✓ {html.escape(d)}</div>'
+            for d in details
+        )
+
+    toast_html = f"""<!DOCTYPE html>
+<html><head><style>body{{margin:0;padding:0;background:transparent;}}</style></head>
+<body>
+<script>
+(function() {{
+    var parentDoc = window.parent.document;
+    var old = parentDoc.getElementById('amirahToast');
+    if (old) old.parentNode.removeChild(old);
+
+    if (!parentDoc.getElementById('amirahToastStyle')) {{
+        var style = parentDoc.createElement('style');
+        style.id = 'amirahToastStyle';
+        style.textContent = `
+            @keyframes atIn  {{ from{{opacity:0;transform:translate(-50%,-50%) scale(0.82)}} to{{opacity:1;transform:translate(-50%,-50%) scale(1)}} }}
+            @keyframes atOut {{ from{{opacity:1;transform:translate(-50%,-50%) scale(1)}} to{{opacity:0;transform:translate(-50%,-50%) scale(0.88)}} }}
+            @keyframes atBar {{ from{{transform:scaleX(1)}} to{{transform:scaleX(0)}} }}
+            #amirahToast {{
+                position:fixed; top:50%; left:50%;
+                transform:translate(-50%,-50%);
+                z-index:999999; min-width:340px; max-width:440px;
+                background:#fff; border-radius:18px; overflow:hidden;
+                box-shadow:0 20px 50px rgba(0,0,0,0.20),0 0 0 1px rgba(6,167,125,0.18);
+                animation:atIn 0.38s cubic-bezier(0.34,1.56,0.64,1) forwards;
+                font-family:'Inter',sans-serif;
+            }}
+            #amirahToast.at-hiding {{ animation:atOut 0.3s ease forwards; }}
+            .at-hdr {{
+                background:linear-gradient(135deg,#06A77D 0%,#049268 100%);
+                padding:0.85rem 1.05rem;
+                display:flex; align-items:center; gap:0.7rem;
+            }}
+            .at-check {{
+                width:34px; height:34px; background:rgba(255,255,255,0.22);
+                border-radius:50%; display:flex; align-items:center;
+                justify-content:center; font-size:0.98rem; font-weight:900;
+                color:#fff; flex-shrink:0;
+            }}
+            .at-ttl {{ flex:1; color:#fff; font-weight:800; font-size:0.92rem; letter-spacing:0.01em; }}
+            .at-cls {{
+                width:26px; height:26px; background:rgba(255,255,255,0.16);
+                border-radius:50%; display:flex; align-items:center;
+                justify-content:center; cursor:pointer; color:#fff;
+                font-size:1rem; line-height:1; flex-shrink:0;
+                transition:background 0.18s;
+            }}
+            .at-cls:hover {{ background:rgba(255,255,255,0.30); }}
+            .at-bdy {{ padding:0.9rem 1.1rem 1rem 1.1rem; background:#f6fefb; }}
+            .at-msg {{ color:#1a5c3e; font-size:0.86rem; font-weight:600; line-height:1.55; margin-bottom:0.5rem; }}
+            .at-pills {{ display:flex; flex-wrap:wrap; gap:0.35rem; }}
+            .at-pill {{
+                background:#dff2eb; color:#1a7a56;
+                font-size:0.7rem; font-weight:700;
+                padding:0.2rem 0.6rem; border-radius:999px;
+            }}
+            .at-prog {{ height:3px; background:rgba(6,167,125,0.15); overflow:hidden; }}
+            .at-prog-bar {{
+                height:3px; background:#06A77D; width:100%;
+                transform-origin:left; animation:atBar 4.2s linear forwards;
+            }}
+        `;
+        parentDoc.head.appendChild(style);
+    }}
+
+    var t = parentDoc.createElement('div');
+    t.id = 'amirahToast';
+    t.innerHTML = '<div class="at-hdr"><div class="at-check">✓</div><div class="at-ttl">Response Loaded Successfully</div><div class="at-cls" id="atClose">✕</div></div><div class="at-bdy"><div class="at-msg">{html.escape(message)}</div><div class="at-pills">{details_items}</div></div><div class="at-prog"><div class="at-prog-bar"></div></div>';
+    parentDoc.body.appendChild(t);
+
+    function dismiss() {{
+        var el = parentDoc.getElementById('amirahToast');
+        if (!el || el._d) return;
+        el._d = true;
+        el.classList.add('at-hiding');
+        setTimeout(function() {{ if (el.parentNode) el.parentNode.removeChild(el); }}, 320);
+    }}
+    parentDoc.getElementById('atClose').addEventListener('click', dismiss);
+    setTimeout(dismiss, 4500);
+}})();
+</script>
+</body></html>"""
+    components.html(toast_html, height=0)
+
 
 def show_success_toast(message: str, details: list = None):
     """Alias to the centered toast."""
@@ -4058,7 +4133,7 @@ with tab2:
         for _, row in filtered_df.iterrows():
             q_text = question_map_b[question_map_b["question_id"] == row["question_id"]]["question_text"]
             label = q_text.iloc[0][:60] if not q_text.empty else row["question_id"]
-            responses_to_run.append((label, row["model"], row["ai_answer_raw"], str(row["question_id"]).strip()))
+            responses_to_run.append((label, row["model"], row["ai_answer_raw"]))
 
         run_batch_btn = st.button(
             f"▶ Run Batch Analysis ({len(responses_to_run)} responses)",
@@ -4088,7 +4163,7 @@ with tab2:
 
         if batch_responses.strip():
             manual_texts = [r.strip() for r in batch_responses.split("---") if r.strip()]
-            responses_to_run = [(f"Response {i+1}", "Manual", t, None) for i, t in enumerate(manual_texts)]
+            responses_to_run = [(f"Response {i+1}", "Manual", t) for i, t in enumerate(manual_texts)]
 
         st.markdown(f"<div class='batch-selection-note'><strong>{len(responses_to_run)}</strong> responses are ready for batch review.</div>", unsafe_allow_html=True)
         run_batch_btn = st.button("▶  Run Batch Analysis", use_container_width=True, key="batch_analyze")
@@ -4102,88 +4177,17 @@ with tab2:
             with st.spinner("🔍 Running batch analysis — please wait..."):
                 batch_results = []
                 batch_numeric = []
-                batch_errors = []
-
-                # Pre-load cached SBERT once before the loop. This avoids repeated
-                # model initialisation during 111-response batch analysis.
-                load_sbert_engine()
-
-                # Live placeholders make the long 111-response run visible and stable.
-                progress_ph = st.empty()
-                live_metrics_ph = st.empty()
-                progress_bar = st.progress(0, text="Preparing batch analysis...")
-
-                total_items = len(responses_to_run)
-
-                for idx, item in enumerate(responses_to_run, start=1):
-                    # Backward-compatible tuple unpacking:
-                    # dataset mode = (label, model, response_text, question_id)
-                    # manual mode  = (label, model, response_text, None)
-                    if len(item) == 4:
-                        label, model_name, response_text, source_question_id = item
-                    else:
-                        label, model_name, response_text = item
-                        source_question_id = None
-
-                    response_text = str(response_text).strip()
-                    if not response_text:
+                for label, model_name, response_text in responses_to_run:
+                    best_question_row, question_scores_df = detect_best_question(response_text, fatwa_df)
+                    if best_question_row is None or question_scores_df.empty:
                         continue
-
-                    progress_bar.progress(
-                        idx / total_items,
-                        text=f"Analysing {idx}/{total_items}: {model_name} — {label}"
-                    )
-
-                    # IMPORTANT:
-                    # If the dataset already gives question_id, use it directly.
-                    # This is faster and more accurate than re-detecting the topic
-                    # for all 111 rows.
-                    question_scores_df = pd.DataFrame()
-                    if source_question_id:
-                        current_question_id = str(source_question_id).strip()
-                        state_subset = fatwa_df[
-                            fatwa_df["question_id"].astype(str).str.strip() == current_question_id
-                        ].copy()
-
-                        if state_subset.empty:
-                            continue
-
-                        best_question_row = state_subset.iloc[0].to_dict()
-                        best_question_row["confidence"] = "Dataset"
-                    else:
-                        best_question_row, question_scores_df = detect_best_question(response_text, fatwa_df)
-                        if best_question_row is None or question_scores_df.empty:
-                            continue
-                        current_question_id = str(best_question_row["question_id"]).strip()
-                        state_subset = fatwa_df[
-                            fatwa_df["question_id"].astype(str).str.strip() == current_question_id
-                        ].copy()
-
-                    try:
-                        best_state_bundle, state_results_df = unpack_state_comparison(
-                            compare_states_within_question(response_text, state_subset)
-                        )
-                    except Exception as exc:
-                        batch_errors.append({
-                            "index": idx,
-                            "model": model_name,
-                            "label": label,
-                            "error": str(exc),
-                        })
-                        continue
-
+                    current_question_id = str(best_question_row["question_id"])
+                    state_subset = fatwa_df[fatwa_df["question_id"].astype(str).str.strip() == current_question_id].copy()
+                    best_state_bundle, state_results_df = unpack_state_comparison(compare_states_within_question(response_text, state_subset))
                     if state_results_df.empty or not best_state_bundle:
-                        batch_errors.append({
-                            "index": idx,
-                            "model": model_name,
-                            "label": label,
-                            "error": "No matching fatwa reference/state result",
-                        })
                         continue
-
                     best_state_row = state_results_df.sort_values("alignment_score", ascending=False).iloc[0]
                     interp_label, _ = interpret(best_state_row["alignment_score"])
-
                     compliance = classify_shariah_compliance(
                         final_match_score=best_state_row["alignment_score"],
                         lexical_similarity=best_state_row.get("lexical_similarity", 0),
@@ -4194,18 +4198,10 @@ with tab2:
                         missing_keywords=best_state_row.get("missing_keywords", "-"),
                         ai_text=response_text,
                     )
-
-                    topic_value = (
-                        best_question_row.get("issue")
-                        or best_state_row.get("issue")
-                        or "Related Fatwa Topic"
-                    )
-
                     batch_results.append({
-                        "Question ID": current_question_id,
                         "Label": label,
                         "Model": model_name,
-                        "Detected Topic": short_topic_label(topic_value),
+                        "Detected Topic": short_topic_label(best_question_row.get("issue", "Related Fatwa Topic")),
                         "Best State": best_state_row.get("state", "-"),
                         "Final Match": format_percent(best_state_row.get("alignment_score", 0), 1),
                         "Meaning Match": format_percent(best_state_row.get("semantic_similarity", 0), 1),
@@ -4214,9 +4210,7 @@ with tab2:
                         "Recommendation": interp_label,
                         "Compliance": compliance.get("level", "Unclear"),
                     })
-
                     batch_numeric.append({
-                        "question_id": current_question_id,
                         "label": label,
                         "model": model_name,
                         "score": safe_float(best_state_row.get("alignment_score", 0)),
@@ -4225,36 +4219,8 @@ with tab2:
                         "coverage": safe_float(best_state_row.get("coverage", 0)),
                     })
 
-                    # Update averages while the batch is still running.
-                    live_df = pd.DataFrame(batch_numeric)
-                    if not live_df.empty:
-                        live_metrics_ph.markdown(
-                            f"""
-                            <div class='batch-selection-note'>
-                                <strong>Live progress:</strong>
-                                {len(live_df)}/{total_items} analysed ·
-                                Average fit <strong>{live_df['score'].mean():.1f}%</strong> ·
-                                Meaning <strong>{live_df['semantic'].mean():.1f}%</strong> ·
-                                Text <strong>{live_df['lexical'].mean():.1f}%</strong> ·
-                                Key points <strong>{live_df['coverage'].mean():.1f}%</strong>
-                            </div>
-                            """,
-                            unsafe_allow_html=True
-                        )
-
-                progress_bar.progress(1.0, text=f"Completed batch analysis for {len(batch_numeric)} valid responses.")
-                progress_ph.empty()
-
                 st.session_state.batch_results_df = pd.DataFrame(batch_results) if batch_results else None
                 st.session_state.batch_numeric_df = pd.DataFrame(batch_numeric) if batch_numeric else None
-                st.session_state.batch_errors_df = pd.DataFrame(batch_errors) if batch_errors else None
-
-                if batch_numeric:
-                    skipped_count = max(0, total_items - len(batch_numeric))
-                    if skipped_count:
-                        st.warning(f"Batch completed with {len(batch_numeric)} valid responses analysed and {skipped_count} skipped rows. Skipped rows usually have empty answers or missing fatwa references.")
-                    else:
-                        st.success(f"✅ Batch analysis completed: {len(batch_numeric)} valid responses analysed.")
 
     if st.session_state.get("batch_results_df") is None:
         pass
