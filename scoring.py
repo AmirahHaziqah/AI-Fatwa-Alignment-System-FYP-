@@ -1,3 +1,21 @@
+# =========================================================
+# scoring.py  —  NLP scoring engine for the FYP Dashboard
+# =========================================================
+# Implements the three similarity metrics described in the
+# Final-Year Project proposal:
+#
+#   Equation (4)  TF-IDF cosine similarity        (RealTFIDF)
+#   Equations (5–7)  SBERT mean-pooled cosine     (SBERTSimilarity)
+#   Equation (8)  Keyword coverage                (KeywordCoverage)
+#
+# The composite alignment score used in the dashboard is:
+#   alignment = 0.60 × SBERT + 0.25 × TF-IDF + 0.15 × coverage
+#
+# SBERT is a required dependency.  Missing it raises immediately
+# so the problem is visible at startup rather than silently
+# producing wrong (zero) scores.
+# =========================================================
+
 import math
 import os
 import re
@@ -205,14 +223,14 @@ class TextCleaner:
         "that", "this", "it", "as", "are", "was", "were", "be", "by", "or",
         "from", "at", "which", "can", "may", "should", "would", "will", "if",
         "about", "into", "than", "then", "also", "such", "their", "there",
-        "these", "those", "has", "have", "had", "but", "not", "no", "yes",
+        "these", "those", "has", "have", "had", "but", "yes",
         # Malay
         "dan", "atau", "yang", "di", "ke", "dengan", "untuk", "pada", "adalah",
         "ialah", "ini", "itu", "dalam", "oleh", "sebagai", "bagi", "jika",
         "maka", "sahaja", "agar", "supaya", "kerana", "daripada", "kepada",
-        "masih", "telah", "akan", "boleh", "tidak", "ya", "lebih", "kurang",
+        "masih", "telah", "akan", "boleh", "ya", "lebih", "kurang",
         "semasa", "selepas", "sebelum", "antara", "setelah", "serta", "juga",
-        "bukan", "lagi", "satu", "dua", "tiga", "rawatan", "proses",
+        "lagi", "satu", "dua", "tiga", "rawatan", "proses",
         "menurut", "islam", "hukum", "apakah", "ringkasnya", "kesimpulan",
         "contoh", "status", "menjadi", "berhak", "sah", "dibenarkan",
         "ulama", "fatwa", "malaysia", "jelas", "tegas",
@@ -220,7 +238,7 @@ class TextCleaner:
 
     # Domain-specific terms that must NOT be removed as stopwords
     DOMAIN_KEEPWORDS: Set[str] = {
-        "ivf", "iui", "icsi", "art", "fatwa", "hukum", "harus", "haram",
+        "ivf", "iui", "icsi", "art", "fatwa", "hukum", "harus", "haram", "not", "no", "tidak", "bukan", "dilarang", "forbidden", "prohibited", "impermissible",
         "bayi", "tabung", "uji", "sperma", "ovum", "embrio", "rahim",
         "surrogacy", "nasab", "ibu", "tumpang", "penderma", "suami", "isteri",
         "zuriat", "persenyawaan", "donor", "abortion", "pengguguran",
@@ -480,186 +498,123 @@ class RealTFIDF:
 
 class SBERTSimilarity:
     """
-    SBERT semantic similarity engine for long-form fatwa evaluation.
+    Fast, domain-aware SBERT scorer.
 
-    This version is more methodologically defensible than a plain full-text
-    comparison. It keeps the full answer-vs-fatwa cosine score, then adds
-    chunk-to-chunk matching so long rulings are not unfairly penalised when
-    the relevant ruling is only one part of the official fatwa text.
+    Improvements over the earlier version:
+    1. Uses the stable all-MiniLM-L6-v2 model for Streamlit Cloud speed.
+    2. Caches embeddings, so repeated fatwa/reference chunks are not encoded again.
+    3. Compares long answers using both full-text similarity and chunk-level matching.
+       This is fairer for fatwa texts because official rulings often include long
+       background details while AI answers usually paraphrase the main ruling.
     """
 
+    MODEL_NAME = os.getenv("SBERT_MODEL", "all-MiniLM-L6-v2")
+    MAX_CHUNKS_PER_TEXT = int(os.getenv("MAX_SEMANTIC_CHUNKS", "8"))
+
     def __init__(self):
-        # Stronger default model; fallback keeps the app usable on laptops.
-        requested_model = os.getenv("FYP_SBERT_MODEL", "all-MiniLM-L6-v2")
-        fallback_model = "all-MiniLM-L6-v2"
+        self.model = SentenceTransformer(self.MODEL_NAME)
         try:
-            self.model_name = requested_model
-            self.model = SentenceTransformer(requested_model)
+            self.embedding_size = int(self.model.get_embedding_dimension())
         except Exception:
-            self.model_name = fallback_model
-            self.model = SentenceTransformer(fallback_model)
-
-        try:
-            if hasattr(self.model, "get_embedding_dimension"):
-                self.embedding_size = int(self.model.get_embedding_dimension())
-            else:
-                self.embedding_size = int(self.model.get_sentence_embedding_dimension())
-        except Exception:
-            self.embedding_size = 768 if "mpnet" in self.model_name.lower() else 384
-
-        # In-memory caches are critical for Streamlit Cloud.
-        # Batch analysis compares many repeated official fatwa texts, so cached
-        # embeddings prevent the same reference text from being encoded again.
+            self.embedding_size = int(self.model.get_sentence_embedding_dimension())
         self._embedding_cache: Dict[str, np.ndarray] = {}
-        self._chunks_cache: Dict[str, List[str]] = {}
 
-    def _cache_key(self, sentence: str) -> str:
-        return normalize_text(sentence).strip()
+    def _prepare_for_embedding(self, text: str) -> str:
+        """Normalize domain phrases without over-cleaning semantic sentence structure."""
+        text = _normalise_domain_phrases(text)
+        text = re.sub(r"\s+", " ", str(text)).strip()
+        return text
 
-    def _encode_one(self, sentence: str) -> np.ndarray:
-        """
-        Encode text into a normalized sentence embedding.
-
-        Optimised for batch analysis:
-        - uses the lighter MiniLM model by default
-        - caches every unique text/reference embedding
-        - prevents repeated encoding of the same fatwa text
-        """
-        key = self._cache_key(sentence)
-        if not key:
+    def _embed(self, text: str) -> np.ndarray:
+        """Sentence embedding with in-memory cache."""
+        text = self._prepare_for_embedding(text)
+        if not text:
             return np.zeros(self.embedding_size, dtype=float)
 
+        key = text[:3000]
         cached = self._embedding_cache.get(key)
         if cached is not None:
             return cached
 
         try:
-            vec = self.model.encode(
-                key,
-                convert_to_numpy=True,
-                normalize_embeddings=True,
-                show_progress_bar=False,
-            )
-            vec = np.asarray(vec, dtype=float)
-        except TypeError:
-            vec = np.asarray(self.model.encode(key, convert_to_numpy=True), dtype=float)
-            mag = float(np.linalg.norm(vec))
-            vec = vec / mag if mag else vec
-        except Exception:
-            vec = np.zeros(self.embedding_size, dtype=float)
-
-        self._embedding_cache[key] = vec
-        return vec
-
-    def _encode_many(self, chunks: List[str]) -> np.ndarray:
-        """
-        Encode multiple chunks with caching.
-
-        The previous version encoded all chunks every time, which is too slow
-        for 111 responses on Streamlit Cloud. This version only sends uncached
-        chunks to SBERT and reuses cached embeddings.
-        """
-        valid_chunks = [self._cache_key(c) for c in chunks if self._cache_key(c)]
-        if not valid_chunks:
-            return np.zeros((0, self.embedding_size), dtype=float)
-
-        missing = [c for c in valid_chunks if c not in self._embedding_cache]
-        if missing:
-            try:
-                vecs = self.model.encode(
-                    missing,
+            emb = np.asarray(
+                self.model.encode(
+                    text,
                     convert_to_numpy=True,
                     normalize_embeddings=True,
                     show_progress_bar=False,
-                    batch_size=32,
-                )
-                vecs = np.asarray(vecs, dtype=float)
-                if vecs.ndim == 1:
-                    vecs = vecs.reshape(1, -1)
-                for text, vec in zip(missing, vecs):
-                    self._embedding_cache[text] = np.asarray(vec, dtype=float)
-            except Exception:
-                for text in missing:
-                    self._embedding_cache[text] = self._encode_one(text)
+                ),
+                dtype=float,
+            )
+        except TypeError:
+            emb = np.asarray(self.model.encode(text, convert_to_numpy=True), dtype=float)
+            norm = float(np.linalg.norm(emb))
+            if norm:
+                emb = emb / norm
 
-        vectors = [self._embedding_cache[c] for c in valid_chunks if c in self._embedding_cache]
-        if not vectors:
-            return np.zeros((0, self.embedding_size), dtype=float)
-        return np.vstack(vectors)
+        self._embedding_cache[key] = emb
+        return emb
 
     @staticmethod
-    def _cosine_normalized(vec_a: np.ndarray, vec_b: np.ndarray) -> float:
-        if vec_a.size == 0 or vec_b.size == 0:
+    def _cosine_from_normalized(a: np.ndarray, b: np.ndarray) -> float:
+        if a.size == 0 or b.size == 0:
             return 0.0
-        score = float(np.dot(vec_a, vec_b)) * 100.0
-        return max(0.0, min(100.0, score))
+        # vectors are normally normalized already; clip for safety
+        return float(np.clip(np.dot(a, b), -1.0, 1.0)) * 100.0
 
-    def _get_chunks(self, text: str) -> List[str]:
+    def _chunk_embeddings(self, text: str) -> Tuple[List[str], List[np.ndarray]]:
+        chunks = _split_semantic_chunks(text)
+        if not chunks:
+            chunks = [text]
+        # cap chunk count to keep batch analysis fast and stable
+        chunks = chunks[: self.MAX_CHUNKS_PER_TEXT]
+        return chunks, [self._embed(c) for c in chunks]
+
+    def _best_chunk_alignment(self, ai_text: str, fatwa_text: str) -> float:
         """
-        Cached semantic chunks. Limits chunk count to keep batch analysis fast.
-        First and last sections are kept because fatwa answers often contain
-        the ruling near the beginning and conditions/conclusion near the end.
+        Symmetric top-match chunk score:
+        - AI chunks to best fatwa chunks
+        - Fatwa chunks to best AI chunks
+        Average the two directions to avoid rewarding only one short matching sentence.
         """
-        key = self._cache_key(text)
-        if not key:
-            return []
-        cached = self._chunks_cache.get(key)
-        if cached is not None:
-            return cached
+        ai_chunks, ai_embs = self._chunk_embeddings(ai_text)
+        ref_chunks, ref_embs = self._chunk_embeddings(fatwa_text)
+        if not ai_embs or not ref_embs:
+            return 0.0
 
-        chunks = _split_semantic_chunks(key, max_words=95, overlap=10)
+        matrix = np.zeros((len(ai_embs), len(ref_embs)), dtype=float)
+        for i, ea in enumerate(ai_embs):
+            for j, er in enumerate(ref_embs):
+                matrix[i, j] = self._cosine_from_normalized(ea, er)
 
-        # Hard cap prevents Streamlit Cloud from hanging on very long texts.
-        max_chunks = int(os.getenv("FYP_MAX_SEMANTIC_CHUNKS", "6"))
-        if len(chunks) > max_chunks:
-            front = chunks[: max_chunks // 2]
-            back = chunks[-(max_chunks - len(front)) :]
-            chunks = front + back
+        ai_to_ref = float(np.mean(np.max(matrix, axis=1)))
+        ref_to_ai = float(np.mean(np.max(matrix, axis=0)))
 
-        self._chunks_cache[key] = chunks
-        return chunks
+        # Fatwa references are often longer than AI answers; make AI-to-reference
+        # slightly dominant but keep reference coverage in the score.
+        return (0.60 * ai_to_ref) + (0.40 * ref_to_ai)
 
     def calculate(self, text1: str, text2: str) -> float:
         """
-        Return semantic similarity in [0, 100].
+        Semantic similarity score in [0, 100].
 
-        Fast, defensible long-answer scoring:
-        - full-text SBERT cosine preserves overall context
-        - chunk matching handles long fatwa answers fairly
-        - caching avoids repeated reference embedding during batch runs
-
-        final = 0.55 full-text cosine
-              + 0.35 average best chunk match
-              + 0.10 top chunk match
+        Blend:
+        - full-text SBERT cosine: captures overall meaning
+        - chunk alignment: improves fairness for long official fatwa references
+        - concept overlap: small domain-aware correction for Malay/English variants
         """
-        text1 = normalize_text(text1)
-        text2 = normalize_text(text2)
-        if not text1 or not text2:
+        if not str(text1).strip() or not str(text2).strip():
             return 0.0
 
-        e1 = self._encode_one(text1)
-        e2 = self._encode_one(text2)
-        full_score = self._cosine_normalized(e1, e2)
+        e1 = self._embed(text1)
+        e2 = self._embed(text2)
+        full_score = self._cosine_from_normalized(e1, e2)
 
-        chunks1 = self._get_chunks(text1)
-        chunks2 = self._get_chunks(text2)
-        if not chunks1 or not chunks2:
-            return round(float(full_score), 2)
+        chunk_score = self._best_chunk_alignment(text1, text2)
+        concept_score = _concept_overlap_similarity(text1, text2)
 
-        v1 = self._encode_many(chunks1)
-        v2 = self._encode_many(chunks2)
-        if v1.size == 0 or v2.size == 0:
-            return round(float(full_score), 2)
-
-        sim_matrix = np.matmul(v1, v2.T) * 100.0
-        sim_matrix = np.clip(sim_matrix, 0.0, 100.0)
-
-        best_per_ai_chunk = sim_matrix.max(axis=1)
-        avg_best_chunk = float(np.mean(best_per_ai_chunk))
-        top_chunk_score = float(np.max(sim_matrix))
-
-        final_score = (0.55 * full_score) + (0.35 * avg_best_chunk) + (0.10 * top_chunk_score)
-        return round(float(max(0.0, min(100.0, final_score))), 2)
+        score = (0.50 * full_score) + (0.42 * chunk_score) + (0.08 * concept_score)
+        return round(float(max(0.0, min(100.0, score))), 2)
 
 
 # =========================================================
@@ -669,22 +624,43 @@ class SBERTSimilarity:
 
 class KeywordCoverage:
     """
-    Implements Equation (8):
-      K_Fatwa = top-N TF-IDF keywords extracted from the official fatwa
-      K_AI    = tokens present in the AI-generated response
-      Coverage = |K_AI ∩ K_Fatwa| / |K_Fatwa| × 100
+    Keyword/content coverage scorer.
+
+    This version is more domain-aware:
+    - extracts TF-IDF keywords from the reference fatwa;
+    - expands each keyword into Islamic/medical synonyms where available;
+    - treats Malay-English variants as the same concept;
+    - keeps negation/legal ruling words such as haram, harus, not, tidak.
     """
+
+    TOPIC_EXTRA_KEYWORDS: Dict[str, Set[str]] = {
+        "surrogacy": {"surrogacy", "surrogate", "ibu", "tumpang", "rahim", "nasab", "lineage", "haram", "prohibited", "donor", "third_party"},
+        "ivf": {"ivf", "bayi", "tabung", "uji", "sperma", "ovum", "embrio", "suami", "isteri", "rahim", "harus", "permissible"},
+        "abortion": {"abortion", "pengguguran", "janin", "fetus", "foetus", "nyawa", "mother", "danger", "medical", "haram", "harus"},
+        "thalassemia": {"thalassemia", "talasemia", "janin", "fetus", "foetus", "genetic", "kecacatan", "nyawa", "medical", "abortion"},
+        "rape": {"rape", "rogol", "zina", "victim", "mangsa", "pregnancy", "abortion", "trauma", "harus", "haram"},
+        "contraceptive": {"contraceptive", "kontraseptif", "family", "planning", "pregnancy", "rape", "adolescent", "harus", "medical"},
+        "gamete": {"gamete", "sperma", "ovum", "benih", "implantation", "divorce", "cerai", "iddah", "suami", "isteri", "nasab"},
+        "milk": {"milk", "susu", "susuan", "radhaah", "mahram", "bank", "nasab", "mother", "child"},
+        "cloning": {"cloning", "klon", "reproductive", "therapeutic", "stem", "cell", "sel", "haram", "harus"},
+    }
+
+    @staticmethod
+    def _infer_extra_keywords(text: str) -> Set[str]:
+        tokens = _concept_token_set(text)
+        extras: Set[str] = set()
+        lower = TextCleaner.clean(text)
+        for topic, kws in KeywordCoverage.TOPIC_EXTRA_KEYWORDS.items():
+            if topic in tokens or topic in lower:
+                extras.update(kws)
+        return {_simple_malay_english_stem(k) for k in extras if k}
 
     @staticmethod
     def extract_keywords_from_fatwa(
         fatwa_text: str,
         vectorizer,
-        top_n: int = 14,
+        top_n: int = 18,
     ) -> List[str]:
-        """
-        Extract the top-N highest-weighted terms from the fatwa TF-IDF vector.
-        These form the set K_Fatwa in Equation (8).
-        """
         if not TextCleaner.preprocess_to_string(fatwa_text) or vectorizer is None:
             return []
 
@@ -693,7 +669,6 @@ class KeywordCoverage:
             if fatwa_vec.size == 0 or not vectorizer.vocabulary:
                 return []
 
-            # Rank terms by their TF-IDF weight in this fatwa
             term_weights = [
                 (term, fatwa_vec[idx])
                 for term, idx in vectorizer.vocabulary.items()
@@ -701,11 +676,21 @@ class KeywordCoverage:
             ]
             term_weights.sort(key=lambda x: x[1], reverse=True)
 
-            # Deduplicate while preserving rank order
             keywords: List[str] = []
             seen: Set[str] = set()
+
+            # 1) Domain topic keywords first, because they are meaningful for fatwa coverage.
+            for term in KeywordCoverage._infer_extra_keywords(fatwa_text):
+                if term and term not in seen:
+                    seen.add(term)
+                    keywords.append(term)
+                    if len(keywords) >= top_n:
+                        return keywords
+
+            # 2) Then highest TF-IDF words from the reference fatwa.
             for term, _ in term_weights:
-                if term not in seen:
+                term = _simple_malay_english_stem(term)
+                if term and term not in seen:
                     seen.add(term)
                     keywords.append(term)
                 if len(keywords) >= top_n:
@@ -717,28 +702,47 @@ class KeywordCoverage:
             return []
 
     @staticmethod
+    def _keyword_variants(keyword: str) -> Set[str]:
+        """Return acceptable variants for a keyword/concept."""
+        k = _simple_malay_english_stem(keyword)
+        variants = {k, keyword}
+
+        for concept, forms in DOMAIN_CONCEPTS.items():
+            stemmed_forms = {_simple_malay_english_stem(x) for x in forms}
+            if k == concept or k in stemmed_forms:
+                variants.add(concept)
+                variants.update(stemmed_forms)
+
+        # Legal/ruling synonyms
+        ruling_groups = [
+            {"haram", "prohibit", "prohibited", "forbidden", "impermissible", "unlawful", "not_allowed", "dilarang", "tidak"},
+            {"harus", "permissible", "allowed", "dibolehkan", "boleh", "permitted"},
+            {"nasab", "lineage", "parentage", "keturunan"},
+            {"janin", "fetus", "foetus", "kandungan"},
+            {"sperma", "sperm", "mani", "benih"},
+            {"ovum", "egg", "telur"},
+            {"rahim", "womb", "uterus"},
+        ]
+        for group in ruling_groups:
+            if k in group:
+                variants.update(group)
+
+        return {_simple_malay_english_stem(v) for v in variants if v}
+
+    @staticmethod
     def calculate(
         ai_text: str,
         fatwa_text: str,
         vectorizer=None,
-        top_n: int = 14,
+        top_n: int = 18,
     ) -> Tuple[List[str], List[str], float, List[str]]:
-        """
-        Equation (8): Coverage = |K_AI ∩ K_Fatwa| / |K_Fatwa| × 100
-
-        Returns:
-            matched   — fatwa keywords found in the AI response
-            unmatched — fatwa keywords NOT found in the AI response
-            coverage  — percentage (0–100)
-            keywords  — full K_Fatwa list (for display)
-        """
         if vectorizer is None:
             vectorizer = RealTFIDF.fit_vectorizer([ai_text, fatwa_text])
 
-        # K_AI: concept-aware token set from the AI response
         ai_tokens: Set[str] = _concept_token_set(ai_text)
+        ai_clean = TextCleaner.clean(ai_text)
+        ai_tokens.update(TextCleaner.preprocess(ai_text))
 
-        # K_Fatwa: top-N TF-IDF keywords from the fatwa
         fatwa_keywords = KeywordCoverage.extract_keywords_from_fatwa(
             fatwa_text=fatwa_text,
             vectorizer=vectorizer,
@@ -746,19 +750,18 @@ class KeywordCoverage:
         )
 
         def keyword_is_covered(keyword: str) -> bool:
-            kw_norm = _simple_malay_english_stem(keyword)
-            if kw_norm in ai_tokens or keyword in ai_tokens:
+            variants = KeywordCoverage._keyword_variants(keyword)
+            if variants.intersection(ai_tokens):
                 return True
-            # Treat canonical concepts as covered when any synonym appears.
-            for concept, variants in DOMAIN_CONCEPTS.items():
-                if keyword == concept or keyword in variants:
-                    if concept in ai_tokens:
-                        return True
+            # phrase fallback: some variants are multiword before stemming
+            for v in variants:
+                if v and re.search(rf"\b{re.escape(v)}\b", ai_clean):
+                    return True
             return False
 
-        matched   = [kw for kw in fatwa_keywords if keyword_is_covered(kw)]
+        matched = [kw for kw in fatwa_keywords if keyword_is_covered(kw)]
         unmatched = [kw for kw in fatwa_keywords if not keyword_is_covered(kw)]
-        coverage  = (len(matched) / len(fatwa_keywords)) * 100.0 if fatwa_keywords else 0.0
+        coverage = (len(matched) / len(fatwa_keywords)) * 100.0 if fatwa_keywords else 0.0
 
         return matched, unmatched, round(float(coverage), 2), fatwa_keywords
 
@@ -907,8 +910,9 @@ def interpret(score) -> Tuple[str, str]:
 # =========================================================
 
 @st.cache_resource
+@st.cache_resource(show_spinner=False)
 def load_sbert_engine() -> SBERTSimilarity:
-    """Load the SBERT model once and reuse it across all calls."""
+    """Load the SBERT model once and reuse it across Streamlit reruns."""
     return SBERTSimilarity()
 
 
