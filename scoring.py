@@ -1,21 +1,3 @@
-# =========================================================
-# scoring.py  —  NLP scoring engine for the FYP Dashboard
-# =========================================================
-# Implements the three similarity metrics described in the
-# Final-Year Project proposal:
-#
-#   Equation (4)  TF-IDF cosine similarity        (RealTFIDF)
-#   Equations (5–7)  SBERT mean-pooled cosine     (SBERTSimilarity)
-#   Equation (8)  Keyword coverage                (KeywordCoverage)
-#
-# The composite alignment score used in the dashboard is:
-#   alignment = 0.60 × SBERT + 0.25 × TF-IDF + 0.15 × coverage
-#
-# SBERT is a required dependency.  Missing it raises immediately
-# so the problem is visible at startup rather than silently
-# producing wrong (zero) scores.
-# =========================================================
-
 import math
 import os
 import re
@@ -508,7 +490,7 @@ class SBERTSimilarity:
 
     def __init__(self):
         # Stronger default model; fallback keeps the app usable on laptops.
-        requested_model = os.getenv("FYP_SBERT_MODEL", "all-mpnet-base-v2")
+        requested_model = os.getenv("FYP_SBERT_MODEL", "all-MiniLM-L6-v2")
         fallback_model = "all-MiniLM-L6-v2"
         try:
             self.model_name = requested_model
@@ -518,54 +500,92 @@ class SBERTSimilarity:
             self.model = SentenceTransformer(fallback_model)
 
         try:
-            self.embedding_size = int(self.model.get_sentence_embedding_dimension())
+            if hasattr(self.model, "get_embedding_dimension"):
+                self.embedding_size = int(self.model.get_embedding_dimension())
+            else:
+                self.embedding_size = int(self.model.get_sentence_embedding_dimension())
         except Exception:
             self.embedding_size = 768 if "mpnet" in self.model_name.lower() else 384
 
+        # In-memory caches are critical for Streamlit Cloud.
+        # Batch analysis compares many repeated official fatwa texts, so cached
+        # embeddings prevent the same reference text from being encoded again.
+        self._embedding_cache: Dict[str, np.ndarray] = {}
+        self._chunks_cache: Dict[str, List[str]] = {}
+
+    def _cache_key(self, sentence: str) -> str:
+        return normalize_text(sentence).strip()
+
     def _encode_one(self, sentence: str) -> np.ndarray:
         """
-        Encode text into a normalized sentence embedding. SentenceTransformers
-        already applies the correct pooling layer for the selected model.
+        Encode text into a normalized sentence embedding.
+
+        Optimised for batch analysis:
+        - uses the lighter MiniLM model by default
+        - caches every unique text/reference embedding
+        - prevents repeated encoding of the same fatwa text
         """
-        if not str(sentence).strip():
+        key = self._cache_key(sentence)
+        if not key:
             return np.zeros(self.embedding_size, dtype=float)
+
+        cached = self._embedding_cache.get(key)
+        if cached is not None:
+            return cached
 
         try:
             vec = self.model.encode(
-                sentence,
+                key,
                 convert_to_numpy=True,
                 normalize_embeddings=True,
                 show_progress_bar=False,
             )
-            return np.asarray(vec, dtype=float)
+            vec = np.asarray(vec, dtype=float)
         except TypeError:
-            vec = np.asarray(self.model.encode(sentence, convert_to_numpy=True), dtype=float)
+            vec = np.asarray(self.model.encode(key, convert_to_numpy=True), dtype=float)
             mag = float(np.linalg.norm(vec))
-            return vec / mag if mag else vec
+            vec = vec / mag if mag else vec
         except Exception:
-            return np.zeros(self.embedding_size, dtype=float)
+            vec = np.zeros(self.embedding_size, dtype=float)
+
+        self._embedding_cache[key] = vec
+        return vec
 
     def _encode_many(self, chunks: List[str]) -> np.ndarray:
-        """Encode multiple chunks with normalized embeddings."""
-        valid_chunks = [c for c in chunks if str(c).strip()]
+        """
+        Encode multiple chunks with caching.
+
+        The previous version encoded all chunks every time, which is too slow
+        for 111 responses on Streamlit Cloud. This version only sends uncached
+        chunks to SBERT and reuses cached embeddings.
+        """
+        valid_chunks = [self._cache_key(c) for c in chunks if self._cache_key(c)]
         if not valid_chunks:
             return np.zeros((0, self.embedding_size), dtype=float)
 
-        try:
-            vecs = self.model.encode(
-                valid_chunks,
-                convert_to_numpy=True,
-                normalize_embeddings=True,
-                show_progress_bar=False,
-            )
-            return np.asarray(vecs, dtype=float)
-        except TypeError:
-            vecs = np.asarray(self.model.encode(valid_chunks, convert_to_numpy=True), dtype=float)
-            norms = np.linalg.norm(vecs, axis=1, keepdims=True)
-            norms[norms == 0] = 1.0
-            return vecs / norms
-        except Exception:
+        missing = [c for c in valid_chunks if c not in self._embedding_cache]
+        if missing:
+            try:
+                vecs = self.model.encode(
+                    missing,
+                    convert_to_numpy=True,
+                    normalize_embeddings=True,
+                    show_progress_bar=False,
+                    batch_size=32,
+                )
+                vecs = np.asarray(vecs, dtype=float)
+                if vecs.ndim == 1:
+                    vecs = vecs.reshape(1, -1)
+                for text, vec in zip(missing, vecs):
+                    self._embedding_cache[text] = np.asarray(vec, dtype=float)
+            except Exception:
+                for text in missing:
+                    self._embedding_cache[text] = self._encode_one(text)
+
+        vectors = [self._embedding_cache[c] for c in valid_chunks if c in self._embedding_cache]
+        if not vectors:
             return np.zeros((0, self.embedding_size), dtype=float)
+        return np.vstack(vectors)
 
     @staticmethod
     def _cosine_normalized(vec_a: np.ndarray, vec_b: np.ndarray) -> float:
@@ -574,16 +594,43 @@ class SBERTSimilarity:
         score = float(np.dot(vec_a, vec_b)) * 100.0
         return max(0.0, min(100.0, score))
 
+    def _get_chunks(self, text: str) -> List[str]:
+        """
+        Cached semantic chunks. Limits chunk count to keep batch analysis fast.
+        First and last sections are kept because fatwa answers often contain
+        the ruling near the beginning and conditions/conclusion near the end.
+        """
+        key = self._cache_key(text)
+        if not key:
+            return []
+        cached = self._chunks_cache.get(key)
+        if cached is not None:
+            return cached
+
+        chunks = _split_semantic_chunks(key, max_words=95, overlap=10)
+
+        # Hard cap prevents Streamlit Cloud from hanging on very long texts.
+        max_chunks = int(os.getenv("FYP_MAX_SEMANTIC_CHUNKS", "6"))
+        if len(chunks) > max_chunks:
+            front = chunks[: max_chunks // 2]
+            back = chunks[-(max_chunks - len(front)) :]
+            chunks = front + back
+
+        self._chunks_cache[key] = chunks
+        return chunks
+
     def calculate(self, text1: str, text2: str) -> float:
         """
         Return semantic similarity in [0, 100].
 
-        final = 0.45 full-text cosine
-              + 0.40 average best chunk match
-              + 0.15 top-3 chunk match
+        Fast, defensible long-answer scoring:
+        - full-text SBERT cosine preserves overall context
+        - chunk matching handles long fatwa answers fairly
+        - caching avoids repeated reference embedding during batch runs
 
-        This is not designed to inflate scores. It is designed to compare
-        long-form answers fairly while preserving full-context strictness.
+        final = 0.55 full-text cosine
+              + 0.35 average best chunk match
+              + 0.10 top chunk match
         """
         text1 = normalize_text(text1)
         text2 = normalize_text(text2)
@@ -594,8 +641,8 @@ class SBERTSimilarity:
         e2 = self._encode_one(text2)
         full_score = self._cosine_normalized(e1, e2)
 
-        chunks1 = _split_semantic_chunks(text1, max_words=85, overlap=15)
-        chunks2 = _split_semantic_chunks(text2, max_words=85, overlap=15)
+        chunks1 = self._get_chunks(text1)
+        chunks2 = self._get_chunks(text2)
         if not chunks1 or not chunks2:
             return round(float(full_score), 2)
 
@@ -609,12 +656,9 @@ class SBERTSimilarity:
 
         best_per_ai_chunk = sim_matrix.max(axis=1)
         avg_best_chunk = float(np.mean(best_per_ai_chunk))
+        top_chunk_score = float(np.max(sim_matrix))
 
-        flat = np.sort(sim_matrix.reshape(-1))
-        top_k = flat[-min(3, flat.size):]
-        topk_score = float(np.mean(top_k)) if top_k.size else avg_best_chunk
-
-        final_score = (0.45 * full_score) + (0.40 * avg_best_chunk) + (0.15 * topk_score)
+        final_score = (0.55 * full_score) + (0.35 * avg_best_chunk) + (0.10 * top_chunk_score)
         return round(float(max(0.0, min(100.0, final_score))), 2)
 
 
