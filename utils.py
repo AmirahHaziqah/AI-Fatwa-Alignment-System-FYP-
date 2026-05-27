@@ -23,6 +23,15 @@ import pandas as pd
 # reset every time the CWD differs.  __file__ is always this module's location.
 HISTORY_FILE = Path(__file__).resolve().parent / "analysis_history.json"
 
+# ── Startup confirmation — printed to the terminal so you can always verify
+# ── where analyses are being saved.  Remove this block once confirmed.
+import sys as _sys
+print(
+    f"[FYP Dashboard] History file → {HISTORY_FILE}",
+    file=_sys.stderr,
+    flush=True,
+)
+
 # ── Optional Excel export (needs openpyxl installed) ─────
 try:
     import openpyxl  # noqa: F401
