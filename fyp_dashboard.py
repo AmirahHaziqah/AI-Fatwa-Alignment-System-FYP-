@@ -1981,8 +1981,10 @@ def build_sidebar_latest_bundle():
 # =========================================================
 # SESSION STATE
 # =========================================================
-if "analysis_history" not in st.session_state:
-    st.session_state.analysis_history = load_history_from_file()
+# Always reload from disk — do NOT guard with "not in st.session_state".
+# Guarding it means reopening the browser tab or refreshing the page keeps
+# the old in-memory list (which may be stale) instead of reading the file.
+st.session_state.analysis_history = load_history_from_file()
 
 if "current_analysis" not in st.session_state:
     st.session_state.current_analysis = None
@@ -2115,7 +2117,7 @@ def ensure_analysis_dependencies() -> bool:
     if sbert_is_ready():
         return True
     st.error(
-        "⚠️ The semantic similarity model (SBERT) is not available. Please install sentence-transformers and ensure all-MiniLM-L6-v2 is downloaded before running the analysis."
+        "⚠️ The semantic similarity model (SBERT) is not available. Please install sentence-transformers and ensure paraphrase-multilingual-MiniLM-L12-v2 is downloaded before running the analysis."
     )
     st.info(
         "💡 The final alignment score relies heavily on semantic similarity. Without SBERT, results will be unreliable."
@@ -4231,16 +4233,27 @@ with tab2:
         num_df = st.session_state.batch_numeric_df.copy() if st.session_state.get("batch_numeric_df") is not None else pd.DataFrame()
 
         st.markdown("<div class='batch-results-shell'><div class='batch-results-title'>Batch analysis summary</div><div class='batch-results-copy'>See which model performed better, which state matched best, and how strong each answer was overall.</div></div>", unsafe_allow_html=True)
-        m1, m2, m3, m4 = st.columns(4)
+        m1, m2, m3, m4, m5 = st.columns(5)
+        avg_composite  = f"{num_df['score'].mean():.1f}%"    if not num_df.empty else "-"
+        avg_semantic   = f"{num_df['semantic'].mean():.1f}%" if not num_df.empty else "-"
+        avg_lexical    = f"{num_df['lexical'].mean():.1f}%"  if not num_df.empty else "-"
+        avg_coverage   = f"{num_df['coverage'].mean():.1f}%" if not num_df.empty else "-"
         summary_cards = [
-            ("Responses reviewed", str(len(batch_df))),
-            ("Average fit", f"{num_df['score'].mean():.1f}%" if not num_df.empty else "-"),
-            ("Average meaning match", f"{num_df['semantic'].mean():.1f}%" if not num_df.empty else "-"),
-            ("Average key points", f"{num_df['coverage'].mean():.1f}%" if not num_df.empty else "-"),
+            ("Responses reviewed",    str(len(batch_df)),  "📋"),
+            ("Average fit (composite)", avg_composite,     "⚖️"),
+            ("Avg meaning match (SBERT)", avg_semantic,    "🎯"),
+            ("Avg text match (TF-IDF)",   avg_lexical,     "🔤"),
+            ("Avg key points (coverage)", avg_coverage,    "✓"),
         ]
-        for col, (label, value) in zip([m1, m2, m3, m4], summary_cards):
+        for col, (label, value, icon) in zip([m1, m2, m3, m4, m5], summary_cards):
             with col:
-                st.markdown(f"<div class='metric-card'><div class='metric-label'>{label}</div><div class='metric-value' style='font-size:1.5rem'>{value}</div></div>", unsafe_allow_html=True)
+                st.markdown(
+                    f"<div class='metric-card'>"
+                    f"<div class='metric-label'>{label}</div>"
+                    f"<div class='metric-value' style='font-size:1.4rem'>{value}</div>"
+                    f"</div>",
+                    unsafe_allow_html=True
+                )
 
         render_batch_score_chart(num_df)
         st.markdown("<div class='batch-readable-note'><strong>Quick guide:</strong> final match is the overall result, meaning match shows how close the answer is in meaning, text match shows wording overlap, and key points shows how many important fatwa conditions were covered.</div>", unsafe_allow_html=True)
@@ -4265,10 +4278,20 @@ with tab3:
         "Review past results, spot score trends, and export your analysis records in one place."
     )
 
-    # Always check disk directly so reopening the page shows existing records
+    # Force a fresh disk read every single time this tab renders.
+    # Do NOT use the in-memory session_state version — it can be stale if
+    # analyses were added in another tab or a previous session.
     _history_live = load_history_from_file()
-    if _history_live:
-        st.session_state.analysis_history = _history_live
+    st.session_state.analysis_history = _history_live   # keep in-memory in sync
+
+    if not _history_live:
+        st.markdown("""
+        <div class="msg-box msg-warning" style="text-align:center; padding:3rem;">
+            <h3 style="margin-bottom:0.75rem;">📂 No History Yet</h3>
+            <p class="small-note">You haven't run any analyses yet. Go to <strong>Single Review</strong> or <strong>Batch Review</strong> and analyse some responses — they will appear here automatically.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    else:
         history_df = get_history_df()
 
         st.markdown("<h3 class='section-subtitle'>Performance Dashboard</h3>", unsafe_allow_html=True)
@@ -4461,13 +4484,6 @@ Lowest Score: {history_df['final_match_score'].min():.1f}%
             st.session_state.current_analysis = None
             show_success_toast_center("✓ History cleared successfully!", ["All saved analyses have been removed"])
             st.rerun()
-    else:
-        st.markdown("""
-        <div class="msg-box msg-warning" style="text-align:center; padding:3rem;">
-            <h3 style="margin-bottom:0.75rem;">📂 No History Yet</h3>
-            <p class="small-note">You haven't run any analyses yet. Go to <strong>Single Review</strong> or <strong>Batch Review</strong> and analyse some responses — they will appear here automatically.</p>
-        </div>
-        """, unsafe_allow_html=True)
 
 
 # =========================================================
