@@ -9,7 +9,7 @@
 #   Equation (8)  Keyword coverage                (KeywordCoverage)
 #
 # The composite alignment score used in the dashboard is:
-#   alignment = 0.55 × SBERT + 0.30 × TF-IDF + 0.15 × coverage
+#   alignment = 0.60 × SBERT + 0.25 × TF-IDF + 0.15 × coverage
 #
 # SBERT is a required dependency.  Missing it raises immediately
 # so the problem is visible at startup rather than silently
@@ -1461,13 +1461,13 @@ def compare_states_within_question(
     For each state-fatwa pair in fatwa_subset, compute the three metrics
     then the weighted alignment score:
 
-        alignment = 0.55 × SBERT + 0.30 × TF-IDF + 0.15 × keyword coverage
+        alignment = 0.60 × SBERT + 0.25 × TF-IDF + 0.15 × keyword coverage
 
     Weights rationale:
-      - SBERT (0.55): semantic backbone — reduced slightly from 0.60 because the
+      - SBERT (0.60): semantic backbone — reduced slightly from 0.60 because the
         multilingual model already captures cross-lingual meaning better, and
         over-weighting SBERT inflates scores from near-synonym phrasing.
-      - TF-IDF (0.30): raised from 0.25 because the enhanced lexical scorer
+      - TF-IDF (0.25): raised from 0.25 because the enhanced lexical scorer
         (concept overlap + char n-grams) is demonstrably strong on this domain
         (29% vs benchmark 16.27%), so giving it more weight improves the composite.
       - Coverage (0.15): unchanged — fatwa keyword presence is a reliable signal
@@ -1509,8 +1509,8 @@ def compare_states_within_question(
         )
 
         # Composite alignment score per state
-        # Equation: 0.55 × SBERT + 0.30 × TF-IDF + 0.15 × keyword coverage
-        alignment_score = (semantic * 0.55) + (lexical * 0.30) + (coverage * 0.15)
+        # Equation: 0.60 × SBERT + 0.25 × TF-IDF + 0.15 × keyword coverage
+        alignment_score = (semantic * 0.60) + (lexical * 0.25) + (coverage * 0.15)
 
         results.append({
             "question_id":         qid,
