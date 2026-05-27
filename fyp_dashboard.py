@@ -1981,9 +1981,8 @@ def build_sidebar_latest_bundle():
 # =========================================================
 # SESSION STATE
 # =========================================================
-# Always reload from disk — do NOT guard with "not in st.session_state".
-# Guarding it means reopening the browser tab or refreshing the page keeps
-# the old in-memory list (which may be stale) instead of reading the file.
+# Always reload from disk — removing the "not in" guard so reopening
+# the browser tab never shows a stale in-memory count.
 st.session_state.analysis_history = load_history_from_file()
 
 if "current_analysis" not in st.session_state:
@@ -4200,27 +4199,63 @@ with tab2:
                         missing_keywords=best_state_row.get("missing_keywords", "-"),
                         ai_text=response_text,
                     )
+                    _align_score  = safe_float(best_state_row.get("alignment_score", 0))
+                    _semantic     = safe_float(best_state_row.get("semantic_similarity", 0))
+                    _lexical      = safe_float(best_state_row.get("lexical_similarity", 0))
+                    _coverage     = safe_float(best_state_row.get("coverage", 0))
+                    _mean_align   = safe_float(best_state_bundle.get("mean_alignment", _align_score))
+                    _topic_label  = best_question_row.get("issue", "Related Fatwa Topic")
+                    _specific_iss = str(best_question_row.get("question_text", "") or best_question_row.get("issue", ""))[:200]
+                    _confidence   = str(best_question_row.get("confidence", "Unknown"))
+                    _best_state   = str(best_state_row.get("state", "-"))
+                    _rec          = get_recommendation(_semantic, _coverage, _align_score)
+
                     batch_results.append({
                         "Label": label,
                         "Model": model_name,
-                        "Detected Topic": short_topic_label(best_question_row.get("issue", "Related Fatwa Topic")),
-                        "Best State": best_state_row.get("state", "-"),
-                        "Final Match": format_percent(best_state_row.get("alignment_score", 0), 1),
-                        "Meaning Match": format_percent(best_state_row.get("semantic_similarity", 0), 1),
-                        "Text Match": format_percent(best_state_row.get("lexical_similarity", 0), 1),
-                        "Key Points": format_percent(best_state_row.get("coverage", 0), 1),
+                        "Detected Topic": short_topic_label(_topic_label),
+                        "Best State": _best_state,
+                        "Final Match": format_percent(_align_score, 1),
+                        "Meaning Match": format_percent(_semantic, 1),
+                        "Text Match": format_percent(_lexical, 1),
+                        "Key Points": format_percent(_coverage, 1),
                         "Recommendation": interp_label,
                         "Compliance": compliance.get("level", "Unclear"),
                     })
                     batch_numeric.append({
                         "label": label,
                         "model": model_name,
-                        "score": safe_float(best_state_row.get("alignment_score", 0)),
-                        "semantic": safe_float(best_state_row.get("semantic_similarity", 0)),
-                        "lexical": safe_float(best_state_row.get("lexical_similarity", 0)),
-                        "coverage": safe_float(best_state_row.get("coverage", 0)),
+                        "score": _align_score,
+                        "semantic": _semantic,
+                        "lexical": _lexical,
+                        "coverage": _coverage,
                     })
 
+                    # ── Persist to disk with a dedup key so re-running batch
+                    #    updates existing records instead of appending duplicates.
+                    #    Key = question_id + model — unique per response slot.
+                    _qid = str(best_question_row.get("question_id", label))
+                    add_to_history({
+                        "batch_key":             f"{_qid}__{model_name}",
+                        "timestamp":             datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                        "topic_label":           _topic_label,
+                        "specific_issue":        _specific_iss,
+                        "detection_confidence":  _confidence,
+                        "best_state":            _best_state,
+                        "final_match_score":     round(_align_score, 2),
+                        "mean_alignment":        round(_mean_align, 2),
+                        "lexical_similarity":    round(_lexical, 2),
+                        "semantic_similarity":   round(_semantic, 2),
+                        "coverage":              round(_coverage, 2),
+                        "compliance_level":      compliance.get("level", "Unclear"),
+                        "compliance_reason":     compliance.get("reason", ""),
+                        "recommendation_label":  _rec["label"],
+                        "recommendation_reason": _rec["reason"],
+                    })
+
+                # Resync in-memory history from disk so sidebar counter and
+                # average reflect all new records immediately.
+                st.session_state.analysis_history = load_history_from_file()
                 st.session_state.batch_results_df = pd.DataFrame(batch_results) if batch_results else None
                 st.session_state.batch_numeric_df = pd.DataFrame(batch_numeric) if batch_numeric else None
 
@@ -4234,24 +4269,22 @@ with tab2:
 
         st.markdown("<div class='batch-results-shell'><div class='batch-results-title'>Batch analysis summary</div><div class='batch-results-copy'>See which model performed better, which state matched best, and how strong each answer was overall.</div></div>", unsafe_allow_html=True)
         m1, m2, m3, m4, m5 = st.columns(5)
-        avg_composite  = f"{num_df['score'].mean():.1f}%"    if not num_df.empty else "-"
-        avg_semantic   = f"{num_df['semantic'].mean():.1f}%" if not num_df.empty else "-"
-        avg_lexical    = f"{num_df['lexical'].mean():.1f}%"  if not num_df.empty else "-"
-        avg_coverage   = f"{num_df['coverage'].mean():.1f}%" if not num_df.empty else "-"
+        avg_composite = f"{num_df['score'].mean():.1f}%"    if not num_df.empty else "-"
+        avg_semantic  = f"{num_df['semantic'].mean():.1f}%" if not num_df.empty else "-"
+        avg_lexical   = f"{num_df['lexical'].mean():.1f}%"  if not num_df.empty else "-"
+        avg_coverage  = f"{num_df['coverage'].mean():.1f}%" if not num_df.empty else "-"
         summary_cards = [
-            ("Responses reviewed",    str(len(batch_df)),  "📋"),
-            ("Average fit (composite)", avg_composite,     "⚖️"),
-            ("Avg meaning match (SBERT)", avg_semantic,    "🎯"),
-            ("Avg text match (TF-IDF)",   avg_lexical,     "🔤"),
-            ("Avg key points (coverage)", avg_coverage,    "✓"),
+            ("Responses reviewed",        str(len(batch_df))),
+            ("Average fit (composite)",   avg_composite),
+            ("Avg meaning match (SBERT)", avg_semantic),
+            ("Avg text match (TF-IDF)",   avg_lexical),
+            ("Avg key points (coverage)", avg_coverage),
         ]
-        for col, (label, value, icon) in zip([m1, m2, m3, m4, m5], summary_cards):
+        for col, (label, value) in zip([m1, m2, m3, m4, m5], summary_cards):
             with col:
                 st.markdown(
-                    f"<div class='metric-card'>"
-                    f"<div class='metric-label'>{label}</div>"
-                    f"<div class='metric-value' style='font-size:1.4rem'>{value}</div>"
-                    f"</div>",
+                    f"<div class='metric-card'><div class='metric-label'>{label}</div>"
+                    f"<div class='metric-value' style='font-size:1.35rem'>{value}</div></div>",
                     unsafe_allow_html=True
                 )
 
@@ -4278,11 +4311,10 @@ with tab3:
         "Review past results, spot score trends, and export your analysis records in one place."
     )
 
-    # Force a fresh disk read every single time this tab renders.
-    # Do NOT use the in-memory session_state version — it can be stale if
-    # analyses were added in another tab or a previous session.
+    # Force a fresh disk read every time this tab renders — never rely on
+    # in-memory session state which may lag behind new batch saves.
     _history_live = load_history_from_file()
-    st.session_state.analysis_history = _history_live   # keep in-memory in sync
+    st.session_state.analysis_history = _history_live
 
     if not _history_live:
         st.markdown("""
