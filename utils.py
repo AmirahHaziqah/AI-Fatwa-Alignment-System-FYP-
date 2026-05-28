@@ -1,11 +1,3 @@
-# =========================================================
-# utils.py  —  Shared helpers for the FYP Dashboard
-# =========================================================
-# All functions here are pure helpers: no Streamlit calls,
-# no side-effects.  Keep imports minimal so this module loads
-# fast in every context.
-# =========================================================
-
 import json
 import os
 import re
@@ -14,16 +6,6 @@ from pathlib import Path
 from typing import Iterable, List, Optional
 
 import pandas as pd
-
-# ── Where analysis history is persisted on disk ──────────
-# Priority order for the history file location:
-#   1. FYP_HISTORY_FILE environment variable (set this in your shell or .env
-#      to pin the path permanently, e.g.  export FYP_HISTORY_FILE=/home/you/project/analysis_history.json)
-#   2. A path anchored to THIS file's own directory (same folder as utils.py)
-#
-# Using an env-var as the primary source means the path never changes even if
-# Streamlit is launched from a different working directory, a virtualenv, or a
-# hot-reload cycle resolves __file__ differently.
 import sys as _sys
 
 _env_path = os.environ.get("FYP_HISTORY_FILE", "").strip()
@@ -32,8 +14,7 @@ if _env_path:
 else:
     HISTORY_FILE = Path(__file__).resolve().parent / "analysis_history.json"
 
-# ── Candidate locations to check during startup recovery ─
-# If Streamlit was ever launched from the CWD, a stale file may exist there too.
+
 _HISTORY_CANDIDATES: list = [
     HISTORY_FILE,
     Path.cwd() / "analysis_history.json",
