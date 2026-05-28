@@ -26,6 +26,7 @@ from utils import (
     get_score_css_class,
     get_score_tier,
     load_history_from_file,
+    merge_history_candidates,
     recent_topics_summary,
     safe_read_csv,
 )
@@ -1983,6 +1984,23 @@ def build_sidebar_latest_bundle():
 # =========================================================
 # Always reload from disk — removing the "not in" guard so reopening
 # the browser tab never shows a stale in-memory count.
+#
+# ── ONE-TIME STARTUP RECOVERY ─────────────────────────────────────────────────
+# On the very first run of a session, scan candidate history file locations
+# (e.g. the CWD if Streamlit was launched from a different folder) and merge
+# any records that are missing from the primary HISTORY_FILE.  This silently
+# recovers runs that were "lost" because the path resolved differently in a
+# prior session.  The guard ensures this only runs once per browser session,
+# not on every Streamlit rerun.
+if "history_recovery_done" not in st.session_state:
+    _recovered = merge_history_candidates()
+    st.session_state.history_recovery_done = True
+    if _recovered > 0:
+        st.toast(
+            f"✅ Recovered {_recovered} missing run(s) from a previous session.",
+            icon="🔄",
+        )
+
 st.session_state.analysis_history = load_history_from_file()
 
 if "current_analysis" not in st.session_state:

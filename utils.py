@@ -16,16 +16,30 @@ from typing import Iterable, List, Optional
 import pandas as pd
 
 # ── Where analysis history is persisted on disk ──────────
-# IMPORTANT: Use an absolute path anchored to this file's own directory.
-# A bare relative path like Path("analysis_history.json") resolves against
-# whatever the current working directory is at runtime — which can change
-# depending on how/where Streamlit is launched, causing history to silently
-# reset every time the CWD differs.  __file__ is always this module's location.
-HISTORY_FILE = Path(__file__).resolve().parent / "analysis_history.json"
-
-# ── Startup confirmation — printed to the terminal so you can always verify
-# ── where analyses are being saved.  Remove this block once confirmed.
+# Priority order for the history file location:
+#   1. FYP_HISTORY_FILE environment variable (set this in your shell or .env
+#      to pin the path permanently, e.g.  export FYP_HISTORY_FILE=/home/you/project/analysis_history.json)
+#   2. A path anchored to THIS file's own directory (same folder as utils.py)
+#
+# Using an env-var as the primary source means the path never changes even if
+# Streamlit is launched from a different working directory, a virtualenv, or a
+# hot-reload cycle resolves __file__ differently.
 import sys as _sys
+
+_env_path = os.environ.get("FYP_HISTORY_FILE", "").strip()
+if _env_path:
+    HISTORY_FILE = Path(_env_path).resolve()
+else:
+    HISTORY_FILE = Path(__file__).resolve().parent / "analysis_history.json"
+
+# ── Candidate locations to check during startup recovery ─
+# If Streamlit was ever launched from the CWD, a stale file may exist there too.
+_HISTORY_CANDIDATES: list = [
+    HISTORY_FILE,
+    Path.cwd() / "analysis_history.json",
+    Path.cwd().parent / "analysis_history.json",
+]
+
 print(
     f"[FYP Dashboard] History file → {HISTORY_FILE}",
     file=_sys.stderr,
@@ -293,6 +307,57 @@ def add_to_history(record: dict) -> None:
     history = load_history_from_file()
     history.append(record)
     _save_history(history)
+
+
+def merge_history_candidates() -> int:
+    """
+    Scan all known candidate paths, merge any records not already in the
+    primary HISTORY_FILE, save back to HISTORY_FILE, and return how many
+    new records were recovered.
+
+    Call this ONCE at app startup (guarded by a session-state flag so it
+    only runs on the very first load, not on every Streamlit rerun).
+
+    Returns the number of newly merged records (0 if nothing was recovered).
+    """
+    primary = load_history_from_file()
+    primary_ts = {r.get("timestamp", ""): True for r in primary}
+
+    recovered: list = []
+    for candidate in _HISTORY_CANDIDATES:
+        try:
+            if candidate.resolve() == HISTORY_FILE.resolve():
+                continue                        # skip the primary file itself
+        except Exception:
+            continue
+        if not candidate.exists():
+            continue
+        try:
+            raw = json.loads(candidate.read_text(encoding="utf-8"))
+            if not isinstance(raw, list):
+                continue
+            for rec in raw:
+                ts = rec.get("timestamp", "")
+                if ts and ts not in primary_ts:
+                    recovered.append(_migrate_history_record(rec))
+                    primary_ts[ts] = True       # prevent duplicates across candidates
+            print(
+                f"[FYP Dashboard] Recovery: found {len(raw)} records in {candidate}",
+                file=_sys.stderr, flush=True,
+            )
+        except Exception:
+            pass
+
+    if recovered:
+        merged = primary + recovered
+        merged.sort(key=lambda r: r.get("timestamp", ""))
+        _save_history(merged)
+        print(
+            f"[FYP Dashboard] Merged {len(recovered)} recovered record(s) into {HISTORY_FILE}",
+            file=_sys.stderr, flush=True,
+        )
+
+    return len(recovered)
 
 
 def clear_history() -> None:
