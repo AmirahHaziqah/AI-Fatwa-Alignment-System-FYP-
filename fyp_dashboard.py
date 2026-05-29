@@ -3915,14 +3915,19 @@ with tab1:
     with b1:
         analyze_btn = st.button("✨ Analyze Answer", use_container_width=True, key="analyze_single")
     with b2:
-        clear_btn = st.button("Clear", use_container_width=True, key="clear_all_single")
+        clear_btn = st.button("Clear Answer", use_container_width=True, key="clear_answer_single")
 
     if clear_btn:
-        clear_history()
-        # Reset in-memory history so the counter updates immediately
-        st.session_state.analysis_history = []
+        # IMPORTANT FIX:
+        # This button is inside Single Review, so it must only clear the
+        # currently loaded or pasted answer. It must NOT call clear_history(),
+        # otherwise one accidental click deletes all saved runs and the sidebar
+        # drops from 112 saved runs to 0.
+        st.session_state["ai_input"] = ""
         st.session_state.current_analysis = None
-        show_success_toast_center("✓ History cleared successfully!", ["All saved analyses have been removed"])
+        st.session_state.single_review_model_ready = False
+        st.session_state.load_success_toast = False
+        show_success_toast_center("✓ Current answer cleared", ["Saved history was not deleted"])
         st.rerun()
 
     if analyze_btn:

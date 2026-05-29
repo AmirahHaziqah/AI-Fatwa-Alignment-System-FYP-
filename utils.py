@@ -446,18 +446,57 @@ def get_history_debug_info() -> dict:
 
 
 def clear_history() -> None:
-    """Delete the on-disk history file (or empty it if deletion fails)."""
-    path = _history_path()
-    if not path.exists():
-        return
-    try:
-        path.unlink()
-    except Exception:
-        # Fall back to emptying the file instead of deleting
+    """
+    Clear saved history from every known history location.
+
+    This must clear ALL candidate files, not only the primary HISTORY_FILE.
+    Otherwise the next load_history_from_file() call can read an old backup
+    candidate and make deleted records appear again.
+
+    A timestamped backup is written beside the primary file before clearing,
+    so an accidental clear can still be recovered manually.
+    """
+    existing_records = load_history_from_file()
+
+    # Safety backup before wiping. Not included in _HISTORY_CANDIDATES, so it
+    # will not automatically reload after Clear All History.
+    if existing_records:
         try:
-            path.write_text("[]", encoding="utf-8")
-        except Exception:
-            pass
+            from datetime import datetime as _dt
+            backup_path = HISTORY_FILE.with_name(
+                f"analysis_history_backup_{_dt.now().strftime('%Y%m%d_%H%M%S')}.json"
+            )
+            _atomic_write_json(backup_path, existing_records)
+            print(
+                f"[FYP Dashboard] History backup written to {backup_path}",
+                file=_sys.stderr,
+                flush=True,
+            )
+        except Exception as exc:
+            print(
+                f"[FYP Dashboard] Could not create history backup: {exc}",
+                file=_sys.stderr,
+                flush=True,
+            )
+
+    for path in _HISTORY_CANDIDATES:
+        try:
+            _atomic_write_json(path, [])
+            print(
+                f"[FYP Dashboard] Cleared history file {path}",
+                file=_sys.stderr,
+                flush=True,
+            )
+        except Exception as exc:
+            print(
+                f"[FYP Dashboard] Could not clear history file {path}: {exc}",
+                file=_sys.stderr,
+                flush=True,
+            )
+            try:
+                path.unlink(missing_ok=True)
+            except Exception:
+                pass
 
 
 # =========================================================
