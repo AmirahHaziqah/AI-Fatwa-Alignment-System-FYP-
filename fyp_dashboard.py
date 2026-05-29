@@ -21,6 +21,7 @@ from utils import (
     clear_history,
     export_to_excel,
     format_percent,
+    get_history_debug_info,
     get_score_band_label,
     get_score_color,
     get_score_css_class,
@@ -3915,19 +3916,15 @@ with tab1:
     with b1:
         analyze_btn = st.button("✨ Analyze Answer", use_container_width=True, key="analyze_single")
     with b2:
-        clear_btn = st.button("Clear Answer", use_container_width=True, key="clear_answer_single")
+        clear_btn = st.button("Clear Answer", use_container_width=True, key="clear_single_answer")
 
     if clear_btn:
-        # IMPORTANT FIX:
-        # This button is inside Single Review, so it must only clear the
-        # currently loaded or pasted answer. It must NOT call clear_history(),
-        # otherwise one accidental click deletes all saved runs and the sidebar
-        # drops from 112 saved runs to 0.
+        # Clear only the current answer/result. Do NOT clear saved history here.
+        # The old code called clear_history() from this Single Review button,
+        # which caused Saved Runs and Average to reset to zero by accident.
         st.session_state["ai_input"] = ""
         st.session_state.current_analysis = None
-        st.session_state.single_review_model_ready = False
-        st.session_state.load_success_toast = False
-        show_success_toast_center("✓ Current answer cleared", ["Saved history was not deleted"])
+        show_success_toast_center("✓ Answer cleared", ["Saved history was not changed"])
         st.rerun()
 
     if analyze_btn:
@@ -3973,6 +3970,7 @@ with tab1:
                 compliance_reason = compliance_result["reason"]
 
                 analysis_record = {
+                    "record_id": f"single__{datetime.now().strftime('%Y%m%d%H%M%S%f')}",
                     "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     "topic_label": topic_label,
                     "specific_issue": specific_issue,
@@ -3988,11 +3986,9 @@ with tab1:
                     "recommendation_label": recommendation_label,
                     "recommendation_reason": recommendation_reason,
                 }
-                add_to_history(analysis_record)
-                # ── Immediately resync in-memory history from disk so the
-                #    counter in Tab 3 (and the sidebar) reflects the new record
-                #    without requiring a full page reload.
-                st.session_state.analysis_history = load_history_from_file()
+                st.session_state.analysis_history = add_to_history(analysis_record)
+                # add_to_history returns the freshly saved history, so Saved Runs
+                # and Average update immediately without relying on stale memory.
 
                 st.session_state.current_analysis = {
                     "best_state_name": best_state.get("state", "-"),
@@ -4334,6 +4330,16 @@ with tab3:
         "Review past results, spot score trends, and export your analysis records in one place."
     )
 
+    with st.expander("Storage status", expanded=False):
+        _history_debug = get_history_debug_info()
+        if _history_debug.get("backend") == "supabase" and _history_debug.get("supabase_ok"):
+            st.success("Persistent Supabase storage is active. Refreshing or closing the browser will not reset saved runs.")
+        elif _history_debug.get("backend") == "supabase":
+            st.warning("Supabase is configured, but the app could not read it. The dashboard is using local JSON fallback for now.")
+        else:
+            st.info("Local JSON storage is active. This is fine locally, but Streamlit Cloud can delete local files after restart. Use Supabase for proper permanent history.")
+        st.json(_history_debug)
+
     # Force a fresh disk read every time this tab renders — never rely on
     # in-memory session state which may lag behind new batch saves.
     _history_live = load_history_from_file()
@@ -4534,8 +4540,7 @@ Lowest Score: {history_df['final_match_score'].min():.1f}%
             )
 
         if st.button("🗑️ Clear All History", use_container_width=True, key="clear_history_tab"):
-            clear_history()
-            st.session_state.analysis_history = []
+            st.session_state.analysis_history = clear_history()
             st.session_state.current_analysis = None
             show_success_toast_center("✓ History cleared successfully!", ["All saved analyses have been removed"])
             st.rerun()

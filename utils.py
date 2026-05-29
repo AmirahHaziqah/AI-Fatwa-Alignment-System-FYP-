@@ -11,19 +11,7 @@ import sys as _sys
 # =========================================================
 # HISTORY FILE LOCATION
 # =========================================================
-# IMPORTANT:
-# A Streamlit app must read and write the SAME physical file every run.
-# Your old screenshots show the classic failure: yesterday's file existed in
-# one runtime/path, then today's app started from another runtime/path and saw
-# an empty history.
-#
-# Priority:
-#   1. FYP_HISTORY_FILE environment variable, if you set one.
-#   2. analysis_history.json beside this utils.py file.
-#
-# For local work, keep analysis_history.json in the same folder as utils.py.
-# For Streamlit Cloud, local files are NOT durable after the app restarts. Use
-# an external database/storage if you need permanent multi-day persistence.
+
 _env_path = os.environ.get("FYP_HISTORY_FILE", "").strip()
 if _env_path:
     HISTORY_FILE = Path(_env_path).expanduser().resolve()
@@ -212,47 +200,256 @@ def format_percent(value, digits: int = 1) -> str:
     except Exception:
         return "-"
 
+_HISTORY_ROW_ID = "default"
+_DEFAULT_SUPABASE_TABLE = "analysis_history_store"
 
-# =========================================================
-# HISTORY — PERSISTENCE
-# =========================================================
 
 def _history_path() -> Path:
-    """Return the path used for on-disk history storage."""
+    """Return the primary local history path."""
     return HISTORY_FILE
 
 
-def load_history_from_file() -> List[dict]:
+def _secret_value(*names: str) -> str:
     """
-    Load analysis history from disk.
+    Read a setting from environment variables or Streamlit secrets.
 
-    Reads all known candidate paths and merges them. This fixes the common
-    problem where yesterday's records were saved in ./analysis_history.json but
-    today's Streamlit process reads project_folder/analysis_history.json.
+    This function is intentionally defensive: missing secrets must not crash
+    local development. If no secret is found, an empty string is returned.
     """
+    for name in names:
+        value = os.environ.get(name, "")
+        if str(value).strip():
+            return str(value).strip()
+
+    try:
+        import streamlit as _st  # imported lazily so utils.py stays usable in scripts
+
+        for name in names:
+            try:
+                value = _st.secrets.get(name, "")
+                if str(value).strip():
+                    return str(value).strip()
+            except Exception:
+                pass
+
+        try:
+            supabase = _st.secrets.get("supabase", {})
+            lowered = {str(k).lower(): v for k, v in dict(supabase).items()}
+            for name in names:
+                short_name = name.lower().replace("supabase_", "")
+                value = lowered.get(short_name, "")
+                if str(value).strip():
+                    return str(value).strip()
+        except Exception:
+            pass
+    except Exception:
+        pass
+
+    return ""
+
+
+def _supabase_config() -> dict:
+    """Return Supabase configuration, if available."""
+    url = _secret_value("SUPABASE_URL", "supabase_url").rstrip("/")
+    key = _secret_value(
+        "SUPABASE_KEY",
+        "SUPABASE_SERVICE_ROLE_KEY",
+        "SUPABASE_ANON_KEY",
+        "supabase_key",
+        "supabase_service_role_key",
+        "supabase_anon_key",
+    )
+    table = _secret_value("SUPABASE_HISTORY_TABLE", "supabase_history_table") or _DEFAULT_SUPABASE_TABLE
+    return {
+        "enabled": bool(url and key),
+        "url": url,
+        "key": key,
+        "table": table,
+    }
+
+
+def history_backend_name() -> str:
+    """Return the active history backend name for debugging."""
+    return "supabase" if _supabase_config()["enabled"] else "local_json"
+
+
+def _supabase_headers(prefer: str = "") -> dict:
+    cfg = _supabase_config()
+    headers = {
+        "apikey": cfg["key"],
+        "Authorization": f"Bearer {cfg['key']}",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+    }
+    if prefer:
+        headers["Prefer"] = prefer
+    return headers
+
+
+def _supabase_request(method: str, endpoint: str, payload=None, prefer: str = ""):
+    """Minimal Supabase REST request using only the Python standard library."""
+    from urllib import request, error
+
+    cfg = _supabase_config()
+    if not cfg["enabled"]:
+        raise RuntimeError("Supabase is not configured.")
+
+    url = f"{cfg['url']}/rest/v1/{endpoint}"
+    body = None
+    if payload is not None:
+        body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+
+    req = request.Request(
+        url,
+        data=body,
+        method=method.upper(),
+        headers=_supabase_headers(prefer=prefer),
+    )
+
+    try:
+        with request.urlopen(req, timeout=12) as resp:
+            raw = resp.read().decode("utf-8")
+            if not raw:
+                return None
+            return json.loads(raw)
+    except error.HTTPError as exc:
+        detail = ""
+        try:
+            detail = exc.read().decode("utf-8")
+        except Exception:
+            pass
+        raise RuntimeError(f"Supabase {method} failed with HTTP {exc.code}: {detail}") from exc
+
+
+def _read_supabase_history() -> tuple:
+    """
+    Return (enabled, ok, row_exists, records).
+
+    row_exists matters. If Supabase has an explicit empty row, that empty row is
+    the source of truth and old local JSON must not be merged back in after a
+    cloud redeploy.
+    """
+    cfg = _supabase_config()
+    if not cfg["enabled"]:
+        return False, False, False, []
+
+    try:
+        table = cfg["table"]
+        endpoint = f"{table}?id=eq.{_HISTORY_ROW_ID}&select=history"
+        data = _supabase_request("GET", endpoint)
+        if not isinstance(data, list) or len(data) == 0:
+            return True, True, False, []
+
+        history = data[0].get("history", [])
+        if not isinstance(history, list):
+            history = []
+        return True, True, True, [_migrate_history_record(r) for r in history if isinstance(r, dict)]
+    except Exception as exc:
+        print(
+            f"[FYP Dashboard] Could not read Supabase history: {exc}",
+            file=_sys.stderr,
+            flush=True,
+        )
+        return True, False, False, []
+
+
+def _write_supabase_history(records: Iterable[dict]) -> bool:
+    """Write the complete history list to Supabase. Returns True on success."""
+    cfg = _supabase_config()
+    if not cfg["enabled"]:
+        return False
+
+    try:
+        table = cfg["table"]
+        payload = {
+            "id": _HISTORY_ROW_ID,
+            "history": _dedupe_history(records),
+            "updated_at": pd.Timestamp.utcnow().isoformat(),
+        }
+        _supabase_request(
+            "POST",
+            f"{table}?on_conflict=id",
+            payload=payload,
+            prefer="resolution=merge-duplicates,return=minimal",
+        )
+        print(
+            f"[FYP Dashboard] Saved {len(payload['history'])} history record(s) to Supabase table {table}",
+            file=_sys.stderr,
+            flush=True,
+        )
+        return True
+    except Exception as exc:
+        print(
+            f"[FYP Dashboard] Could not save Supabase history: {exc}",
+            file=_sys.stderr,
+            flush=True,
+        )
+        return False
+
+
+def _read_history_file(path: Path) -> List[dict]:
+    """Read one local history JSON file and return migrated records. Never raises."""
+    try:
+        if not path.exists():
+            return []
+        raw = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(raw, list):
+            return []
+        return [_migrate_history_record(r) for r in raw if isinstance(r, dict)]
+    except Exception as exc:
+        print(
+            f"[FYP Dashboard] Could not read local history file {path}: {exc}",
+            file=_sys.stderr,
+            flush=True,
+        )
+        return []
+
+
+def _read_local_history() -> List[dict]:
     all_records: List[dict] = []
     for candidate in _HISTORY_CANDIDATES:
         all_records.extend(_read_history_file(candidate))
     return _dedupe_history(all_records)
 
 
+def load_history_from_file() -> List[dict]:
+    """
+    Load analysis history from persistent storage.
+
+    Supabase mode:
+        If the Supabase row exists, Supabase is treated as the source of truth.
+        This prevents old committed analysis_history.json files from reappearing
+        after redeploy or after clearing history.
+
+    Local mode:
+        Reads and merges all known candidate JSON files to prevent path mismatch.
+    """
+    enabled, ok, row_exists, remote_records = _read_supabase_history()
+    if enabled and ok and row_exists:
+        return _dedupe_history(remote_records)
+
+    local_records = _read_local_history()
+
+    # First-time Supabase setup: if the row does not exist yet, allow migration
+    # from the local JSON file. The startup merge function will write it back.
+    if enabled and ok and not row_exists:
+        return _dedupe_history(local_records + remote_records)
+
+    # Supabase configured but temporarily unavailable: fall back to local JSON
+    # so the app still opens instead of losing the UI.
+    return local_records
+
+
 def _migrate_history_record(record: dict) -> dict:
     """
     Upgrade a single history record from the old schema to the current one.
-
-    Old schema (pre-April 2026) used 'alignment_score' as the primary score
-    key and did not include topic_label, compliance_level, or recommendation.
-    This function normalises those records so the rest of the codebase can
-    treat all history entries identically.
     """
     if not isinstance(record, dict):
         return record
 
-    # Already new schema — nothing to do
     if "final_match_score" in record:
         return record
 
-    # Old schema migration
     raw_score = record.get("alignment_score", 0.0)
     try:
         score = round(float(raw_score), 2)
@@ -266,7 +463,7 @@ def _migrate_history_record(record: dict) -> dict:
         "detection_confidence": "Unknown",
         "best_state":           record.get("best_state", ""),
         "final_match_score":    score,
-        "mean_alignment":       score,   # no multi-state mean was stored; best is the only value
+        "mean_alignment":       score,
         "lexical_similarity":   round(float(record.get("lexical_similarity",  0.0)), 2),
         "semantic_similarity":  round(float(record.get("semantic_similarity", 0.0)), 2),
         "coverage":             round(float(record.get("coverage",            0.0)), 2),
@@ -277,39 +474,29 @@ def _migrate_history_record(record: dict) -> dict:
     }
 
 
-def _read_history_file(path: Path) -> List[dict]:
-    """Read one history JSON file and return migrated records. Never raises."""
-    try:
-        if not path.exists():
-            return []
-        raw = json.loads(path.read_text(encoding="utf-8"))
-        if not isinstance(raw, list):
-            return []
-        return [_migrate_history_record(r) for r in raw if isinstance(r, dict)]
-    except Exception as exc:
-        print(
-            f"[FYP Dashboard] Could not read history file {path}: {exc}",
-            file=_sys.stderr,
-            flush=True,
-        )
-        return []
-
-
 def _record_identity(record: dict) -> Tuple[str, str]:
     """
     Stable identity for deduplication.
 
-    Batch runs may include batch_key. Single runs usually do not, so timestamp
-    is used. If neither exists, fall back to the meaningful fields.
+    Batch records use batch_key so rerunning a batch updates the same question
+    and model slot instead of inflating the run count. Single reviews use
+    record_id when available, then timestamp for older saved records.
     """
     if not isinstance(record, dict):
         return ("invalid", "")
+
     batch_key = normalize_text(record.get("batch_key", ""))
     if batch_key:
         return ("batch", batch_key)
+
+    record_id = normalize_text(record.get("record_id", ""))
+    if record_id:
+        return ("record", record_id)
+
     timestamp = normalize_text(record.get("timestamp", ""))
     if timestamp:
         return ("timestamp", timestamp)
+
     return (
         "content",
         "|".join([
@@ -322,9 +509,7 @@ def _record_identity(record: dict) -> Tuple[str, str]:
 
 
 def _dedupe_history(records: Iterable[dict]) -> List[dict]:
-    """
-    Deduplicate records while keeping the newest version of repeated batch runs.
-    """
+    """Deduplicate records and sort by timestamp ascending."""
     merged = {}
     order: List[Tuple[str, str]] = []
     for rec in records or []:
@@ -335,13 +520,14 @@ def _dedupe_history(records: Iterable[dict]) -> List[dict]:
         if key not in merged:
             order.append(key)
         merged[key] = migrated
+
     out = [merged[k] for k in order]
     out.sort(key=lambda r: normalize_text(r.get("timestamp", "")))
     return out
 
 
 def _atomic_write_json(path: Path, records: Iterable[dict]) -> None:
-    """Write JSON safely using tmp file, fsync, then atomic replace."""
+    """Write JSON safely using a tmp file, fsync, then atomic replace."""
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_name(path.name + ".tmp")
     payload = json.dumps(list(records), ensure_ascii=False, indent=2)
@@ -352,45 +538,54 @@ def _atomic_write_json(path: Path, records: Iterable[dict]) -> None:
     tmp.replace(path)
 
 
-def _save_history(history: Iterable[dict]) -> None:
-    """
-    Persist history to disk.
-
-    The primary file is HISTORY_FILE. A backup copy is also written to other
-    candidate locations that are writable. This protects you from launching
-    Streamlit from a different working directory later.
-    """
-    records = _dedupe_history(history)
-    write_errors = []
-
+def _write_local_history(records: Iterable[dict]) -> bool:
+    """Write history to every known local candidate path."""
+    records = _dedupe_history(records)
+    ok_count = 0
     for path in _HISTORY_CANDIDATES:
         try:
             _atomic_write_json(path, records)
+            ok_count += 1
             print(
                 f"[FYP Dashboard] Saved {len(records)} history record(s) to {path}",
                 file=_sys.stderr,
                 flush=True,
             )
         except Exception as exc:
-            write_errors.append(f"{path}: {exc}")
+            print(
+                f"[FYP Dashboard] Could not save local history {path}: {exc}",
+                file=_sys.stderr,
+                flush=True,
+            )
             try:
                 path.with_name(path.name + ".tmp").unlink(missing_ok=True)
             except Exception:
                 pass
-
-    if len(write_errors) == len(_HISTORY_CANDIDATES):
-        raise RuntimeError("Could not save analysis history. " + " | ".join(write_errors))
+    return ok_count > 0
 
 
-def add_to_history(record: dict) -> None:
+def _save_history(history: Iterable[dict]) -> List[dict]:
+    """Persist history to active storage and local fallback, then return records."""
+    records = _dedupe_history(history)
+
+    remote_ok = _write_supabase_history(records)
+    local_ok = _write_local_history(records)
+
+    if not remote_ok and not local_ok:
+        raise RuntimeError("Could not save analysis history to Supabase or local JSON.")
+
+    return records
+
+
+def add_to_history(record: dict) -> List[dict]:
     """
-    Append or update one analysis record, then persist it.
+    Append or update one analysis record, persist it, and return fresh history.
 
-    If record has batch_key, an old record with the same batch_key is replaced
-    instead of duplicated. Single-review records are appended by timestamp.
+    Returning the updated list lets Streamlit update Saved Runs and Average
+    immediately after analysis without waiting for a browser refresh.
     """
     if not isinstance(record, dict):
-        return
+        return load_history_from_file()
 
     history = load_history_from_file()
     new_record = _migrate_history_record(record)
@@ -408,63 +603,65 @@ def add_to_history(record: dict) -> None:
         updated.append(new_record)
 
     _save_history(updated)
+    return load_history_from_file()
 
 
 def merge_history_candidates() -> int:
     """
-    Merge records found in any candidate history file into the primary file.
-    Returns how many records were recovered compared with the primary file.
+    Merge recovered local records into persistent storage at startup.
+
+    If Supabase already has a row, Supabase remains the source of truth and old
+    committed local JSON is not merged back in. If the Supabase row does not
+    exist yet, local history is migrated into Supabase automatically.
     """
-    primary_before = _read_history_file(HISTORY_FILE)
-    primary_keys = {_record_identity(r) for r in primary_before}
+    enabled, ok, row_exists, remote_records = _read_supabase_history()
+    local_records = _read_local_history()
 
-    merged = load_history_from_file()
-    recovered = [r for r in merged if _record_identity(r) not in primary_keys]
+    if enabled and ok and row_exists:
+        # Remote source of truth. Keep the local cache aligned with remote.
+        _write_local_history(remote_records)
+        return 0
 
+    merged = _dedupe_history(remote_records + local_records)
     if merged:
         _save_history(merged)
 
-    if recovered:
-        print(
-            f"[FYP Dashboard] Recovered {len(recovered)} missing history record(s).",
-            file=_sys.stderr,
-            flush=True,
-        )
+    before_keys = {_record_identity(r) for r in remote_records}
+    recovered = [r for r in merged if _record_identity(r) not in before_keys]
     return len(recovered)
 
 
 def get_history_debug_info() -> dict:
-    """Return paths and record counts for troubleshooting in Streamlit."""
+    """Return storage paths, backend status, and record counts for debugging."""
+    enabled, ok, row_exists, remote_records = _read_supabase_history()
     return {
-        "primary": str(HISTORY_FILE),
-        "candidates": [
+        "backend": history_backend_name(),
+        "supabase_enabled": enabled,
+        "supabase_ok": ok,
+        "supabase_row_exists": row_exists,
+        "supabase_records": len(_dedupe_history(remote_records)),
+        "primary_local_path": str(HISTORY_FILE),
+        "local_candidates": [
             {"path": str(p), "exists": p.exists(), "records": len(_read_history_file(p))}
             for p in _HISTORY_CANDIDATES
         ],
-        "merged_records": len(load_history_from_file()),
+        "loaded_records": len(load_history_from_file()),
     }
 
 
-def clear_history() -> None:
+def clear_history() -> List[dict]:
     """
-    Clear saved history from every known history location.
+    Clear saved history from Supabase and every local candidate file.
 
-    This must clear ALL candidate files, not only the primary HISTORY_FILE.
-    Otherwise the next load_history_from_file() call can read an old backup
-    candidate and make deleted records appear again.
-
-    A timestamped backup is written beside the primary file before clearing,
-    so an accidental clear can still be recovered manually.
+    A local backup is written first. The backup filename is not included in
+    _HISTORY_CANDIDATES, so it will not be automatically reloaded.
     """
     existing_records = load_history_from_file()
 
-    # Safety backup before wiping. Not included in _HISTORY_CANDIDATES, so it
-    # will not automatically reload after Clear All History.
     if existing_records:
         try:
-            from datetime import datetime as _dt
             backup_path = HISTORY_FILE.with_name(
-                f"analysis_history_backup_{_dt.now().strftime('%Y%m%d_%H%M%S')}.json"
+                f"analysis_history_backup_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.json"
             )
             _atomic_write_json(backup_path, existing_records)
             print(
@@ -479,24 +676,20 @@ def clear_history() -> None:
                 flush=True,
             )
 
+    # Empty remote first. If Supabase row exists with [], future cloud redeploys
+    # will not resurrect a committed analysis_history.json file.
+    _write_supabase_history([])
+
     for path in _HISTORY_CANDIDATES:
         try:
             _atomic_write_json(path, [])
-            print(
-                f"[FYP Dashboard] Cleared history file {path}",
-                file=_sys.stderr,
-                flush=True,
-            )
-        except Exception as exc:
-            print(
-                f"[FYP Dashboard] Could not clear history file {path}: {exc}",
-                file=_sys.stderr,
-                flush=True,
-            )
+        except Exception:
             try:
-                path.unlink(missing_ok=True)
+                path.write_text("[]", encoding="utf-8")
             except Exception:
                 pass
+
+    return []
 
 
 # =========================================================
