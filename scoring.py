@@ -1556,17 +1556,16 @@ def compare_states_within_question(
     For each state-fatwa pair in fatwa_subset, compute the three metrics
     then the weighted alignment score:
 
-        alignment = 0.70 × SBERT + 0.10 × TF-IDF + 0.20 × ruling-aware coverage
+        alignment = 0.60 × SBERT + 0.25 × TF-IDF + 0.15 × coverage
 
-    Weights rationale:
-      - SBERT (0.60): semantic backbone — reduced slightly from 0.60 because the
-        multilingual model already captures cross-lingual meaning better, and
-        over-weighting SBERT inflates scores from near-synonym phrasing.
-      - TF-IDF (0.25): raised from 0.25 because the enhanced lexical scorer
-        (concept overlap + char n-grams) is demonstrably strong on this domain
-        (29% vs benchmark 16.27%), so giving it more weight improves the composite.
-      - Coverage (0.15): unchanged — fatwa keyword presence is a reliable signal
-        that must not crowd out the other metrics.
+    IMPORTANT:
+    The final score formula is intentionally kept the same as the FYP method.
+    This file improves the metric quality before aggregation:
+      - SBERT is improved using a stronger multilingual model with fallback.
+      - Semantic comparison uses full-text plus chunk-level matching.
+      - TF-IDF is improved with concept overlap and character n-grams.
+      - Coverage is improved with ruling-condition coverage, then blended into
+        the existing coverage component.
 
     After processing all states:
       Equation (9)  MaxAlign  — row with highest alignment score
@@ -1621,8 +1620,8 @@ def compare_states_within_question(
         keywords = sorted(set(keywords + rule_keywords))[:35]
 
         # Composite alignment score per state
-        # Equation: 0.70 × SBERT + 0.10 × TF-IDF + 0.20 × ruling-aware coverage
-        alignment_score = (semantic * 0.70) + (lexical * 0.10) + (coverage * 0.20)
+        # Equation: 0.60 × SBERT + 0.25 × TF-IDF + 0.15 × coverage
+        alignment_score = (semantic * 0.60) + (lexical * 0.25) + (coverage * 0.15)
 
         results.append({
             "question_id":         qid,
