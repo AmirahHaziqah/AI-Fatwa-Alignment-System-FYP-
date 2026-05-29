@@ -3,23 +3,55 @@ import os
 import re
 from io import BytesIO
 from pathlib import Path
-from typing import Iterable, List, Optional
+from typing import Iterable, List, Optional, Tuple
 
 import pandas as pd
 import sys as _sys
 
+# =========================================================
+# HISTORY FILE LOCATION
+# =========================================================
+# IMPORTANT:
+# A Streamlit app must read and write the SAME physical file every run.
+# Your old screenshots show the classic failure: yesterday's file existed in
+# one runtime/path, then today's app started from another runtime/path and saw
+# an empty history.
+#
+# Priority:
+#   1. FYP_HISTORY_FILE environment variable, if you set one.
+#   2. analysis_history.json beside this utils.py file.
+#
+# For local work, keep analysis_history.json in the same folder as utils.py.
+# For Streamlit Cloud, local files are NOT durable after the app restarts. Use
+# an external database/storage if you need permanent multi-day persistence.
 _env_path = os.environ.get("FYP_HISTORY_FILE", "").strip()
 if _env_path:
-    HISTORY_FILE = Path(_env_path).resolve()
+    HISTORY_FILE = Path(_env_path).expanduser().resolve()
 else:
     HISTORY_FILE = Path(__file__).resolve().parent / "analysis_history.json"
 
 
-_HISTORY_CANDIDATES: list = [
+def _unique_paths(paths: Iterable[Path]) -> List[Path]:
+    seen = set()
+    out: List[Path] = []
+    for p in paths:
+        try:
+            rp = p.expanduser().resolve()
+        except Exception:
+            rp = Path(p)
+        key = str(rp)
+        if key not in seen:
+            seen.add(key)
+            out.append(rp)
+    return out
+
+
+_HISTORY_CANDIDATES: List[Path] = _unique_paths([
     HISTORY_FILE,
+    Path(__file__).resolve().parent / "analysis_history.json",
     Path.cwd() / "analysis_history.json",
     Path.cwd().parent / "analysis_history.json",
-]
+])
 
 print(
     f"[FYP Dashboard] History file → {HISTORY_FILE}",
@@ -194,23 +226,14 @@ def load_history_from_file() -> List[dict]:
     """
     Load analysis history from disk.
 
-    Returns an empty list if the file does not exist or is corrupt —
-    never raises.
-
-    Schema migration: old records that used 'alignment_score' instead of
-    'final_match_score' are transparently upgraded on read so the rest of
-    the codebase never sees the old key.
+    Reads all known candidate paths and merges them. This fixes the common
+    problem where yesterday's records were saved in ./analysis_history.json but
+    today's Streamlit process reads project_folder/analysis_history.json.
     """
-    path = _history_path()
-    if not path.exists():
-        return []
-    try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-        if not isinstance(data, list):
-            return []
-        return [_migrate_history_record(r) for r in data]
-    except Exception:
-        return []
+    all_records: List[dict] = []
+    for candidate in _HISTORY_CANDIDATES:
+        all_records.extend(_read_history_file(candidate))
+    return _dedupe_history(all_records)
 
 
 def _migrate_history_record(record: dict) -> dict:
@@ -254,91 +277,172 @@ def _migrate_history_record(record: dict) -> dict:
     }
 
 
+def _read_history_file(path: Path) -> List[dict]:
+    """Read one history JSON file and return migrated records. Never raises."""
+    try:
+        if not path.exists():
+            return []
+        raw = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(raw, list):
+            return []
+        return [_migrate_history_record(r) for r in raw if isinstance(r, dict)]
+    except Exception as exc:
+        print(
+            f"[FYP Dashboard] Could not read history file {path}: {exc}",
+            file=_sys.stderr,
+            flush=True,
+        )
+        return []
+
+
+def _record_identity(record: dict) -> Tuple[str, str]:
+    """
+    Stable identity for deduplication.
+
+    Batch runs may include batch_key. Single runs usually do not, so timestamp
+    is used. If neither exists, fall back to the meaningful fields.
+    """
+    if not isinstance(record, dict):
+        return ("invalid", "")
+    batch_key = normalize_text(record.get("batch_key", ""))
+    if batch_key:
+        return ("batch", batch_key)
+    timestamp = normalize_text(record.get("timestamp", ""))
+    if timestamp:
+        return ("timestamp", timestamp)
+    return (
+        "content",
+        "|".join([
+            normalize_text(record.get("topic_label", "")),
+            normalize_text(record.get("specific_issue", "")),
+            normalize_text(record.get("best_state", "")),
+            normalize_text(record.get("final_match_score", "")),
+        ]),
+    )
+
+
+def _dedupe_history(records: Iterable[dict]) -> List[dict]:
+    """
+    Deduplicate records while keeping the newest version of repeated batch runs.
+    """
+    merged = {}
+    order: List[Tuple[str, str]] = []
+    for rec in records or []:
+        if not isinstance(rec, dict):
+            continue
+        migrated = _migrate_history_record(rec)
+        key = _record_identity(migrated)
+        if key not in merged:
+            order.append(key)
+        merged[key] = migrated
+    out = [merged[k] for k in order]
+    out.sort(key=lambda r: normalize_text(r.get("timestamp", "")))
+    return out
+
+
+def _atomic_write_json(path: Path, records: Iterable[dict]) -> None:
+    """Write JSON safely using tmp file, fsync, then atomic replace."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_name(path.name + ".tmp")
+    payload = json.dumps(list(records), ensure_ascii=False, indent=2)
+    with tmp.open("w", encoding="utf-8") as f:
+        f.write(payload)
+        f.flush()
+        os.fsync(f.fileno())
+    tmp.replace(path)
+
+
 def _save_history(history: Iterable[dict]) -> None:
     """
-    Persist history to disk using an atomic write-then-rename pattern.
+    Persist history to disk.
 
-    Why atomic?  A plain write_text() call can be interrupted mid-write
-    (Streamlit hot-reload, OS flush timing, unexpected crash), leaving a
-    truncated or empty file.  Writing to a .tmp file first and then calling
-    Path.replace() is atomic on all major OSes: the old file is never
-    touched until the new content is fully written and flushed.
-
-    If anything goes wrong the original file is left intact, so history
-    is never silently lost.
+    The primary file is HISTORY_FILE. A backup copy is also written to other
+    candidate locations that are writable. This protects you from launching
+    Streamlit from a different working directory later.
     """
-    path = _history_path()
-    tmp  = path.with_suffix(".tmp")
-    try:
-        tmp.write_text(
-            json.dumps(list(history), ensure_ascii=False, indent=2),
-            encoding="utf-8",
-        )
-        tmp.replace(path)   # atomic rename — safe on Windows and POSIX
-    except Exception:
-        # Remove the partial temp file so it does not interfere next time
+    records = _dedupe_history(history)
+    write_errors = []
+
+    for path in _HISTORY_CANDIDATES:
         try:
-            tmp.unlink(missing_ok=True)
-        except Exception:
-            pass
+            _atomic_write_json(path, records)
+            print(
+                f"[FYP Dashboard] Saved {len(records)} history record(s) to {path}",
+                file=_sys.stderr,
+                flush=True,
+            )
+        except Exception as exc:
+            write_errors.append(f"{path}: {exc}")
+            try:
+                path.with_name(path.name + ".tmp").unlink(missing_ok=True)
+            except Exception:
+                pass
+
+    if len(write_errors) == len(_HISTORY_CANDIDATES):
+        raise RuntimeError("Could not save analysis history. " + " | ".join(write_errors))
 
 
 def add_to_history(record: dict) -> None:
-    """Append one analysis record to the on-disk history."""
+    """
+    Append or update one analysis record, then persist it.
+
+    If record has batch_key, an old record with the same batch_key is replaced
+    instead of duplicated. Single-review records are appended by timestamp.
+    """
+    if not isinstance(record, dict):
+        return
+
     history = load_history_from_file()
-    history.append(record)
-    _save_history(history)
+    new_record = _migrate_history_record(record)
+    new_key = _record_identity(new_record)
+
+    replaced = False
+    updated: List[dict] = []
+    for old in history:
+        if _record_identity(old) == new_key:
+            updated.append(new_record)
+            replaced = True
+        else:
+            updated.append(old)
+    if not replaced:
+        updated.append(new_record)
+
+    _save_history(updated)
 
 
 def merge_history_candidates() -> int:
     """
-    Scan all known candidate paths, merge any records not already in the
-    primary HISTORY_FILE, save back to HISTORY_FILE, and return how many
-    new records were recovered.
-
-    Call this ONCE at app startup (guarded by a session-state flag so it
-    only runs on the very first load, not on every Streamlit rerun).
-
-    Returns the number of newly merged records (0 if nothing was recovered).
+    Merge records found in any candidate history file into the primary file.
+    Returns how many records were recovered compared with the primary file.
     """
-    primary = load_history_from_file()
-    primary_ts = {r.get("timestamp", ""): True for r in primary}
+    primary_before = _read_history_file(HISTORY_FILE)
+    primary_keys = {_record_identity(r) for r in primary_before}
 
-    recovered: list = []
-    for candidate in _HISTORY_CANDIDATES:
-        try:
-            if candidate.resolve() == HISTORY_FILE.resolve():
-                continue                        # skip the primary file itself
-        except Exception:
-            continue
-        if not candidate.exists():
-            continue
-        try:
-            raw = json.loads(candidate.read_text(encoding="utf-8"))
-            if not isinstance(raw, list):
-                continue
-            for rec in raw:
-                ts = rec.get("timestamp", "")
-                if ts and ts not in primary_ts:
-                    recovered.append(_migrate_history_record(rec))
-                    primary_ts[ts] = True       # prevent duplicates across candidates
-            print(
-                f"[FYP Dashboard] Recovery: found {len(raw)} records in {candidate}",
-                file=_sys.stderr, flush=True,
-            )
-        except Exception:
-            pass
+    merged = load_history_from_file()
+    recovered = [r for r in merged if _record_identity(r) not in primary_keys]
+
+    if merged:
+        _save_history(merged)
 
     if recovered:
-        merged = primary + recovered
-        merged.sort(key=lambda r: r.get("timestamp", ""))
-        _save_history(merged)
         print(
-            f"[FYP Dashboard] Merged {len(recovered)} recovered record(s) into {HISTORY_FILE}",
-            file=_sys.stderr, flush=True,
+            f"[FYP Dashboard] Recovered {len(recovered)} missing history record(s).",
+            file=_sys.stderr,
+            flush=True,
         )
-
     return len(recovered)
+
+
+def get_history_debug_info() -> dict:
+    """Return paths and record counts for troubleshooting in Streamlit."""
+    return {
+        "primary": str(HISTORY_FILE),
+        "candidates": [
+            {"path": str(p), "exists": p.exists(), "records": len(_read_history_file(p))}
+            for p in _HISTORY_CANDIDATES
+        ],
+        "merged_records": len(load_history_from_file()),
+    }
 
 
 def clear_history() -> None:
