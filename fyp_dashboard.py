@@ -1909,7 +1909,7 @@ def render_beautiful_metric_grid(lexical_score, semantic_score, coverage_score, 
         ("Text Match", lexical_score, "📝", "Words used", "Word overlap similarity"),
         ("Meaning Match", semantic_score, "🎯", "Same meaning", "Semantic understanding"),
         ("Key Points", coverage_score, "✓", "Main points", "Important conditions found"),
-        ("National Consensus", mean_alignment, "⚖️", "Across all states", "Average alignment across all Malaysian state fatwas — shows if the answer fits the national consensus, not just one state"),
+        ("All States Avg.", mean_alignment, "⚖️", "Across Malaysia", "Average score across all Malaysian state fatwas — the closer this is to the Final Score, the more the answer agrees with rulings nationwide"),
     ]
     
     for col, (label, score, icon, sub, desc) in zip(cols, metrics):
@@ -2821,7 +2821,7 @@ def render_similarity_breakdown(bundle: dict):
             if rv >= 50:
                 return "Some points missing."
             return "Many points missing."
-        if label == "National Consensus":
+        if label == "All States Avg.":
             if rv >= 70:
                 return "Aligns well across states."
             if rv >= 50:
@@ -2857,7 +2857,7 @@ def render_similarity_breakdown(bundle: dict):
         metric_card("Text Match", lexical_score, "AA", "Words used"),
         metric_card("Meaning Match", semantic_score, "🎯", "Same meaning"),
         metric_card("Key Points", coverage_score, "✓", "Main points"),
-        metric_card("National Consensus", mean_alignment, "⚖️", "Across all states"),
+        metric_card("All States Avg.", mean_alignment, "⚖️", "Across Malaysia"),
     ])
 
     st.markdown(_html(f"""
@@ -3034,13 +3034,9 @@ def render_single_review_result_dashboard(bundle: dict):
                 <div style='padding:0.9rem 0.95rem;border-radius:18px;background:#fff;border:1px solid #ead1c8;'><div style='display:flex;align-items:center;justify-content:space-between;gap:0.6rem;'><div><div style='font-size:0.82rem;font-weight:800;color:#8b6771;text-transform:uppercase;letter-spacing:0.06em;'>Key points</div><div style='font-size:0.8rem;color:#6d5a68;margin-top:0.12rem;'>Important conditions found</div></div><div style='font-family:"Inter Tight","Inter",sans-serif;font-size:1.4rem;font-weight:800;color:#241226;'>{format_percent(coverage_score,1)}</div></div><div style='height:8px;border-radius:999px;background:#f1e2da;overflow:hidden;margin-top:0.55rem;'><div style='height:100%;width:{max(0,min(100,safe_float(coverage_score)))}%;background:linear-gradient(90deg,#3a7f56 0%,#06A77D 100%);border-radius:999px;'></div></div></div>
             </div>
             <div style='margin-top:0.78rem;padding:0.95rem 1rem;border-radius:20px;background:linear-gradient(135deg,#fff 0%,#fff7f1 100%);border:1px solid #ead1c8;'>
-                <div style='display:flex;align-items:flex-end;justify-content:space-between;gap:0.6rem;'>
-                    <div>
-                        <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.22rem;'>National Consensus</div>
-                        <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:2rem;font-weight:800;line-height:1;color:#241226;'>{format_percent(mean_alignment,1)}</div>
-                        <div style='font-size:0.78rem;color:#6d5a68;margin-top:0.3rem;line-height:1.5;'>How well this answer aligns across <strong>all Malaysian states</strong> on average — not just the best one. A high score here means the answer fits the national fatwa consensus, not only one state&apos;s ruling.</div>
-                    </div>
-                </div>
+                <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.28rem;'>How it looks across Malaysia</div>
+                <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:2rem;font-weight:800;line-height:1;color:#241226;margin-bottom:0.35rem;'>{format_percent(mean_alignment,1)}</div>
+                <div style='font-size:0.82rem;color:#6d5a68;line-height:1.55;'>This is the average score when compared to fatwas from <strong>all states in Malaysia</strong>, not just the closest one. The closer this is to the Final Score above, the more the answer agrees with rulings nationwide.</div>
             </div>
         </div>
     </div>
