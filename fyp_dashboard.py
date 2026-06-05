@@ -1909,7 +1909,7 @@ def render_beautiful_metric_grid(lexical_score, semantic_score, coverage_score, 
         ("Text Match", lexical_score, "📝", "Words used", "Word overlap similarity"),
         ("Meaning Match", semantic_score, "🎯", "Same meaning", "Semantic understanding"),
         ("Key Points", coverage_score, "✓", "Main points", "Important conditions found"),
-        ("Overall Fit", mean_alignment, "⚖️", "State match", "Average across state rulings"),
+        ("National Consensus", mean_alignment, "⚖️", "Across all states", "Average alignment across all Malaysian state fatwas — shows if the answer fits the national consensus, not just one state"),
     ]
     
     for col, (label, score, icon, sub, desc) in zip(cols, metrics):
@@ -2821,11 +2821,12 @@ def render_similarity_breakdown(bundle: dict):
             if rv >= 50:
                 return "Some points missing."
             return "Many points missing."
-        if rv >= 70:
-            return "Fits the fatwa well."
-        if rv >= 50:
-            return "Acceptable, review."
-        return "Weak overall fit."
+        if label == "National Consensus":
+            if rv >= 70:
+                return "Aligns well across states."
+            if rv >= 50:
+                return "Mixed across states."
+            return "Weak across states."
 
     def metric_tone(value):
         value = safe_float(value)
@@ -2856,7 +2857,7 @@ def render_similarity_breakdown(bundle: dict):
         metric_card("Text Match", lexical_score, "AA", "Words used"),
         metric_card("Meaning Match", semantic_score, "🎯", "Same meaning"),
         metric_card("Key Points", coverage_score, "✓", "Main points"),
-        metric_card("Overall Fit", mean_alignment, "⚖️", "State match"),
+        metric_card("National Consensus", mean_alignment, "⚖️", "Across all states"),
     ])
 
     st.markdown(_html(f"""
@@ -2953,10 +2954,10 @@ def render_single_review_result_dashboard(bundle: dict):
     result_summary = "This answer is generally close to the matched fatwa and covers the main ruling points." if rfms3 >= 70 else "This answer is partly correct, but some important ruling details still need human review." if rfms3 >= 50 else "This answer is still too far from the fatwa, so it needs careful checking before anyone relies on it."
     action_label = "Good to Use" if rfms3 >= 70 else "Needs Review" if rfms3 >= 50 else "Not Reliable"
     action_note = "Use as a strong draft, then do a quick final check." if rfms3 >= 70 else "Check the fatwa text before accepting this answer." if rfms3 >= 50 else "Rewrite or review this answer manually first."
-    confidence_copy = "The topic match looks clear." if confidence == "High" else "The topic match looks fairly clear." if confidence == "Medium" else "The topic match is less certain."
-    compliance_copy = "It follows the ruling well." if compliance_level == "Fully Compliant" else "Some parts fit, but it still needs review." if compliance_level == "Partially Compliant" else "It does not fit the ruling closely." if compliance_level == "Non-Compliant" else "The status is not clear yet and needs manual review."
     recommendation_copy = html.escape(recommendation_reason) if recommendation_reason else html.escape(result_summary)
     review_status_copy = html.escape("This final score means the answer is close to the fatwa and gets most important points right." if rfms3 >= 70 else "This final score means the answer is partly correct, but some important points still need checking." if rfms3 >= 50 else "This final score means the answer is not close enough to the fatwa yet and needs careful review.")
+    # Alignment tier label for the hero pill
+    tier_label = "High Alignment" if rfms3 >= 70 else "Moderate Alignment" if rfms3 >= 50 else "Low Alignment"
 
     st.markdown(_html(f"""
     <div class='result-hero-card'>
@@ -2965,9 +2966,9 @@ def render_single_review_result_dashboard(bundle: dict):
             <div class='result-hero-title'>{html.escape(topic_label)}</div>
             <div class='result-hero-copy'>{html.escape(specific_issue)}</div>
             <div style='margin-top:0.9rem;display:flex;flex-wrap:wrap;gap:0.55rem;'>
-                <span style='display:inline-flex;align-items:center;padding:0.42rem 0.82rem;border-radius:999px;background:{tone}12;border:1px solid {tone};color:{tone};font-size:0.8rem;font-weight:800;'>{format_percent(final_match_score,1)} overall</span>
-                <span style='display:inline-flex;align-items:center;padding:0.42rem 0.82rem;border-radius:999px;background:#fff;border:1px solid #ead1c8;color:#6d5a68;font-size:0.8rem;font-weight:700;'>Confidence: {html.escape(confidence_copy)}</span>
-                <span style='display:inline-flex;align-items:center;padding:0.42rem 0.82rem;border-radius:999px;background:#fff;border:1px solid #ead1c8;color:#6d5a68;font-size:0.8rem;font-weight:700;'>Status: {html.escape(compliance_copy)}</span>
+                <span style='display:inline-flex;align-items:center;padding:0.42rem 0.82rem;border-radius:999px;background:{tone}12;border:1px solid {tone};color:{tone};font-size:0.8rem;font-weight:800;'>{format_percent(final_match_score,1)} Final Score</span>
+                <span style='display:inline-flex;align-items:center;padding:0.42rem 0.82rem;border-radius:999px;background:{tone}12;border:1px solid {tone};color:{tone};font-size:0.8rem;font-weight:700;'>{html.escape(tier_label)}</span>
+                <span style='display:inline-flex;align-items:center;padding:0.42rem 0.82rem;border-radius:999px;background:#fff;border:1px solid #ead1c8;color:#6d5a68;font-size:0.8rem;font-weight:700;'>Best match: {html.escape(best_state)}</span>
             </div>
         </div>
     </div>
@@ -3035,10 +3036,10 @@ def render_single_review_result_dashboard(bundle: dict):
             <div style='margin-top:0.78rem;padding:0.95rem 1rem;border-radius:20px;background:linear-gradient(135deg,#fff 0%,#fff7f1 100%);border:1px solid #ead1c8;'>
                 <div style='display:flex;align-items:flex-end;justify-content:space-between;gap:0.6rem;'>
                     <div>
-                        <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.22rem;'>Overall fit</div>
+                        <div style='font-size:0.72rem;font-weight:850;letter-spacing:0.08em;text-transform:uppercase;color:#8b6771;margin-bottom:0.22rem;'>National Consensus</div>
                         <div style='font-family:"Inter Tight","Inter",sans-serif;font-size:2rem;font-weight:800;line-height:1;color:#241226;'>{format_percent(mean_alignment,1)}</div>
+                        <div style='font-size:0.78rem;color:#6d5a68;margin-top:0.3rem;line-height:1.5;'>How well this answer aligns across <strong>all Malaysian states</strong> on average — not just the best one. A high score here means the answer fits the national fatwa consensus, not only one state&apos;s ruling.</div>
                     </div>
-                    <div style='padding:0.38rem 0.7rem;border-radius:999px;background:#fff;border:1px solid #ead1c8;color:#773344;font-size:0.76rem;font-weight:800;'>State average</div>
                 </div>
             </div>
         </div>
