@@ -26,17 +26,13 @@ import pandas as pd
 import streamlit as st
 from sentence_transformers import SentenceTransformer
 
-from utils import normalize_text, get_score_tier, get_score_tier_colors, get_score_css_class
+from utils import normalize_text, get_score_tier, get_score_tier_colors, get_score_css_class, format_state_label
 
 SBERT_AVAILABLE = True  # Always True — import above raises if missing
 
 # =========================================================
-# ENHANCED DOMAIN NORMALISATION
+# DOMAIN NORMALISATION
 # =========================================================
-# These mappings do NOT fabricate scores. They make Malay/English
-# medical-fatwa terminology comparable before TF-IDF and keyword matching.
-# Example: "ibu tumpang", "surrogate mother", and "surrogacy" are treated
-# as the same concept token: "surrogacy".
 DOMAIN_CONCEPTS: Dict[str, Set[str]] = {
     "surrogacy": {
         "surrogacy", "surrogate", "surrogate mother", "gestational carrier",
@@ -1579,7 +1575,7 @@ def compare_states_within_question(
 
     results = []
     for _, row in fatwa_subset.iterrows():
-        state        = normalize_text(row["state"])
+        state        = format_state_label(normalize_text(row["state"]))
         fatwa        = normalize_text(row["fatwa_text"])
         qid          = normalize_text(row["question_id"])
         issue        = normalize_text(row.get("issue",         ""))

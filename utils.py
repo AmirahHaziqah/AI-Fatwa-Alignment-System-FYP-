@@ -89,6 +89,43 @@ def _escape(value) -> str:
 
 
 # =========================================================
+# FATWA SOURCE LABELS
+# =========================================================
+# Maps long-form fatwa source / state names found in the raw dataset to
+# shorter, clearer labels for display on the dashboard.
+#
+# Added in response to expert validation feedback (Section 4.4.2): the
+# second evaluator, Noor Munirah binti Isa (Senior Lecturer, Bioethics),
+# suggested that the national-level fatwa body be referenced using the
+# short name "Fatwa Jawatankuasa Muzakarah MKI" for clearer attribution.
+# Reference: https://i-fiqh.islam.gov.my
+# =========================================================
+
+FATWA_SOURCE_SHORT_NAMES = {
+    "muzakarah majlis kebangsaan": "Fatwa Jawatankuasa Muzakarah MKI",
+    "majlis kebangsaan": "Fatwa Jawatankuasa Muzakarah MKI",
+    "jawatankuasa muzakarah majlis kebangsaan": "Fatwa Jawatankuasa Muzakarah MKI",
+    "jawatankuasa fatwa majlis kebangsaan": "Fatwa Jawatankuasa Muzakarah MKI",
+    "majlis kebangsaan bagi hal ehwal ugama islam malaysia": "Fatwa Jawatankuasa Muzakarah MKI",
+}
+
+
+def format_state_label(value) -> str:
+    """
+    Return a shortened, display-friendly fatwa source name.
+
+    Looks up the cleaned/lower-cased value against FATWA_SOURCE_SHORT_NAMES.
+    Falls back to the original (normalised) value when no short name is
+    defined, so unmapped state names are shown exactly as in the dataset.
+    """
+    text = normalize_text(value)
+    if not text:
+        return text
+    key = re.sub(r"\s+", " ", text).strip().lower()
+    return FATWA_SOURCE_SHORT_NAMES.get(key, text)
+
+
+# =========================================================
 # FILE I/O
 # =========================================================
 

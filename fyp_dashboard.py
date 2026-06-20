@@ -3625,6 +3625,14 @@ with tab1:
 
     st.markdown("</div>", unsafe_allow_html=True)
 
+    st.caption(
+        "⚠️ This dashboard is intended for evaluating AI-generated answers to questions about "
+        "Assisted Reproductive Technology (ART) under Malaysian medical fatwa rulings. If the "
+        "AI answer being checked is about an unrelated topic, the detected topic, similarity "
+        "scores, and alignment classification shown will not be meaningful — check the System "
+        "Confidence / Status indicator below before relying on the result."
+    )
+
     research_active = review_mode == "Research Mode"
 
     review_left, review_right = st.columns([0.56, 0.44], gap="medium")
