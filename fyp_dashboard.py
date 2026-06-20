@@ -3625,13 +3625,64 @@ with tab1:
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-    st.caption(
-        "⚠️ This dashboard is intended for evaluating AI-generated answers to questions about "
-        "Assisted Reproductive Technology (ART) under Malaysian medical fatwa rulings. If the "
-        "AI answer being checked is about an unrelated topic, the detected topic, similarity "
-        "scores, and alignment classification shown will not be meaningful — check the System "
-        "Confidence / Status indicator below before relying on the result."
-    )
+    st.markdown(_html("""
+    <style>
+    .scope-notice-box {
+        margin: 0.85rem 0 1.15rem 0;
+        border: 1px solid #f0ddb8;
+        border-radius: 16px;
+        padding: 0.75rem 0.95rem;
+        background: linear-gradient(135deg, #fffaf0 0%, #fff 100%);
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        box-shadow: 0 8px 18px rgba(25,14,36,0.035);
+    }
+    .scope-notice-icon {
+        flex: 0 0 auto;
+        width: 30px;
+        height: 30px;
+        border-radius: 11px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #fdf0d8;
+        color: #b7791f;
+        font-size: 0.9rem;
+    }
+    .scope-notice-label {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        padding: 0.22rem 0.62rem;
+        background: #fdf0d8;
+        color: #b7791f;
+        font-size: 0.6rem;
+        font-weight: 950;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 0.32rem;
+    }
+    .scope-notice-copy {
+        font-size: 0.74rem;
+        color: #715f6b;
+        line-height: 1.5;
+    }
+    </style>
+    <div class='scope-notice-box'>
+        <div class='scope-notice-icon'>⚠</div>
+        <div>
+            <div class='scope-notice-label'>Scope</div>
+            <div class='scope-notice-copy'>
+                This dashboard is intended for evaluating AI-generated answers to questions about
+                Assisted Reproductive Technology (ART) under Malaysian medical fatwa rulings. If the
+                AI answer being checked is about an unrelated topic, the detected topic, similarity
+                scores, and alignment classification shown will not be meaningful — check the System
+                Confidence / Status indicator below before relying on the result.
+            </div>
+        </div>
+    </div>
+    """), unsafe_allow_html=True)
 
     research_active = review_mode == "Research Mode"
 
