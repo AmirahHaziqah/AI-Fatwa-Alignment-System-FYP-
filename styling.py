@@ -724,6 +724,51 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
 }}
 
 /* ══════════════════════════════════════════════════════════
+   SCOPE / DISCLAIMER NOTICE
+══════════════════════════════════════════════════════════ */
+.scope-notice {{
+    display: grid;
+    grid-template-columns: 42px minmax(0,1fr);
+    gap: 0.78rem;
+    align-items: flex-start;
+    margin: 0 0 0.85rem 0;
+    padding: 0.82rem 1rem;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #fffaf0 0%, #fef6e0 100%);
+    border: 1px solid #f0ddab;
+    box-shadow: 0 8px 20px rgba(241,162,8,0.08);
+}}
+.scope-notice-icon {{
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #F1A208, #D4A04B);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.08rem;
+    box-shadow: 0 8px 16px rgba(241,162,8,0.28);
+    flex-shrink: 0;
+}}
+.scope-notice-tag {{
+    display: inline-block;
+    font-size: 0.62rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #a6720a;
+    margin-bottom: 0.32rem;
+}}
+.scope-notice-text {{
+    margin: 0;
+    font-size: 0.8rem;
+    line-height: 1.52;
+    color: #5c4a2a;
+}}
+.scope-notice-text strong {{ color: #3d2e10; font-weight: 800; }}
+@media (max-width: 900px) {{
+    .scope-notice {{ grid-template-columns: 1fr; padding: 0.7rem 0.85rem; }}
+    .scope-notice-icon {{ margin-bottom: 0.15rem; }}
+}}
+
+/* ══════════════════════════════════════════════════════════
    KEYWORD CHIPS
 ══════════════════════════════════════════════════════════ */
 .keyword-container {{ display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.55rem; }}
@@ -2509,6 +2554,31 @@ def render_fatwa_reference_card(
     )
 
     st.markdown(card_html, unsafe_allow_html=True)
+
+
+def render_scope_notice(
+    text: str = (
+        "This dashboard is intended for evaluating AI-generated answers to questions about "
+        "<strong>Assisted Reproductive Technology (ART)</strong> under Malaysian medical fatwa rulings. "
+        "If the AI answer being checked is about an unrelated topic, the detected topic, similarity "
+        "scores, and alignment classification shown will not be meaningful — check the "
+        "<strong>System Confidence / Status</strong> indicator below before relying on the result."
+    ),
+    tag: str = "Scope",
+    icon: str = "⚠️",
+):
+    """Amber-toned notice card flagging the dashboard's intended scope or limitations.
+    `text` accepts inline HTML (e.g. <strong>) for emphasis; `tag` is escaped."""
+    html_block = (
+        f'<div class="scope-notice">'
+        f'  <div class="scope-notice-icon">{icon}</div>'
+        f'  <div>'
+        f'      <div class="scope-notice-tag">{html.escape(tag)}</div>'
+        f'      <p class="scope-notice-text">{text}</p>'
+        f'  </div>'
+        f'</div>'
+    )
+    st.markdown(html_block, unsafe_allow_html=True)
 
 
 def render_surface_card(title: str, subtitle: str = "", body_html: str = "", soft: bool = False):

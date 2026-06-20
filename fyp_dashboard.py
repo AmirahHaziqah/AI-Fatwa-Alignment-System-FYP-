@@ -61,6 +61,7 @@ from styling import (
     render_sidebar_progress,
     render_fatwa_reference_card,
     render_review_workspace_header,
+    render_scope_notice,
 )
 
 # =========================================================
@@ -3637,6 +3638,8 @@ with tab1:
     st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
+    render_scope_notice()
 
     research_active = review_mode == "Research Mode"
 
