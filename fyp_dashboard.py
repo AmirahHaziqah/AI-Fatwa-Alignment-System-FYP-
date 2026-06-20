@@ -22,6 +22,7 @@ from utils import (
     export_to_excel,
     format_percent,
     get_history_debug_info,
+    get_match_signal,
     get_score_band_label,
     get_score_color,
     get_score_css_class,
@@ -2942,6 +2943,7 @@ def render_single_review_result_dashboard(bundle: dict):
     recommendation_reason = str(bundle.get("recommendation_reason", ""))
     compliance_level = str(bundle.get("compliance_level", "Unclear"))
     confidence = str(bundle.get("confidence", "Unknown"))
+    signal = get_match_signal(confidence)
     fatwa_text = str(bundle.get("fatwa_text", "")).strip()
     issue_name = str(bundle.get("issue_name", "")).strip() or topic_label or "N/A"
     matched_list = bundle.get("matched_list", [])
@@ -2969,7 +2971,16 @@ def render_single_review_result_dashboard(bundle: dict):
                 <span style='display:inline-flex;align-items:center;padding:0.42rem 0.82rem;border-radius:999px;background:{tone}12;border:1px solid {tone};color:{tone};font-size:0.8rem;font-weight:800;'>{format_percent(final_match_score,1)} Final Score</span>
                 <span style='display:inline-flex;align-items:center;padding:0.42rem 0.82rem;border-radius:999px;background:{tone}12;border:1px solid {tone};color:{tone};font-size:0.8rem;font-weight:700;'>{html.escape(tier_label)}</span>
                 <span style='display:inline-flex;align-items:center;padding:0.42rem 0.82rem;border-radius:999px;background:#fff;border:1px solid #ead1c8;color:#6d5a68;font-size:0.8rem;font-weight:700;'>Best match: {html.escape(best_state)}</span>
+                <span title='How strongly the system detected this topic' style='display:inline-flex;align-items:center;gap:0.32rem;padding:0.42rem 0.82rem;border-radius:999px;background:{signal["tone"]}12;border:1px solid {signal["tone"]};color:{signal["tone"]};font-size:0.8rem;font-weight:800;'>
+                    <span style='display:inline-flex;align-items:flex-end;gap:1.5px;height:0.7rem;'>
+                        <span style='width:3px;height:35%;border-radius:1px;background:{signal["tone"]};opacity:{1 if signal["bars"]>=1 else 0.25};'></span>
+                        <span style='width:3px;height:65%;border-radius:1px;background:{signal["tone"]};opacity:{1 if signal["bars"]>=2 else 0.25};'></span>
+                        <span style='width:3px;height:100%;border-radius:1px;background:{signal["tone"]};opacity:{1 if signal["bars"]>=3 else 0.25};'></span>
+                    </span>
+                    {html.escape(signal["label"])}
+                </span>
             </div>
+            <div style='margin-top:0.75rem;font-size:0.82rem;line-height:1.55;color:#6d5a68;'>{html.escape(signal["note"])}</div>
         </div>
     </div>
     """), unsafe_allow_html=True)
@@ -3625,64 +3636,7 @@ with tab1:
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-    st.markdown(_html("""
-    <style>
-    .scope-notice-box {
-        margin: 0.85rem 0 1.15rem 0;
-        border: 1px solid #f0ddb8;
-        border-radius: 16px;
-        padding: 0.75rem 0.95rem;
-        background: linear-gradient(135deg, #fffaf0 0%, #fff 100%);
-        display: flex;
-        align-items: flex-start;
-        gap: 0.75rem;
-        box-shadow: 0 8px 18px rgba(25,14,36,0.035);
-    }
-    .scope-notice-icon {
-        flex: 0 0 auto;
-        width: 30px;
-        height: 30px;
-        border-radius: 11px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        background: #fdf0d8;
-        color: #b7791f;
-        font-size: 0.9rem;
-    }
-    .scope-notice-label {
-        display: inline-flex;
-        align-items: center;
-        border-radius: 999px;
-        padding: 0.22rem 0.62rem;
-        background: #fdf0d8;
-        color: #b7791f;
-        font-size: 0.6rem;
-        font-weight: 950;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        margin-bottom: 0.32rem;
-    }
-    .scope-notice-copy {
-        font-size: 0.74rem;
-        color: #715f6b;
-        line-height: 1.5;
-    }
-    </style>
-    <div class='scope-notice-box'>
-        <div class='scope-notice-icon'>⚠</div>
-        <div>
-            <div class='scope-notice-label'>Scope</div>
-            <div class='scope-notice-copy'>
-                This dashboard is intended for evaluating AI-generated answers to questions about
-                Assisted Reproductive Technology (ART) under Malaysian medical fatwa rulings. If the
-                AI answer being checked is about an unrelated topic, the detected topic, similarity
-                scores, and alignment classification shown will not be meaningful — check the System
-                Confidence / Status indicator below before relying on the result.
-            </div>
-        </div>
-    </div>
-    """), unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
     research_active = review_mode == "Research Mode"
 
