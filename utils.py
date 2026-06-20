@@ -126,6 +126,64 @@ def format_state_label(value) -> str:
 
 
 # =========================================================
+# MATCH SIGNAL LABELS
+# =========================================================
+# Friendly, dashboard-specific replacement for the generic "Confidence"
+# wording used by most similarity dashboards. Reuses the High / Medium /
+# Low value already produced by topic detection in scoring.py and maps
+# it to a "signal strength" metaphor (like a phone or wifi signal),
+# which reads at a glance and keeps this dashboard's wording distinct
+# from other students' systems that show a plain "Confidence" label.
+#
+# Also carries a short, ready-to-display explanation, so the same value
+# can both label the result (e.g. "Strong Signal") and explain what it
+# means in plain language, without needing a separate static disclaimer
+# elsewhere on the page.
+# =========================================================
+
+MATCH_SIGNAL_LEVELS = {
+    "high": {
+        "label": "Strong Signal",
+        "tone": "#2E8B57",
+        "bars": 3,
+        "note": "This looks like a solid match for ART — the score below should be reliable.",
+    },
+    "medium": {
+        "label": "Fair Signal",
+        "tone": "#B7791F",
+        "bars": 2,
+        "note": "This is a reasonable match, but double-check the matched topic below before relying on the score.",
+    },
+    "low": {
+        "label": "Weak Signal",
+        "tone": "#B33A4A",
+        "bars": 1,
+        "note": "This topic match is weak. If the AI answer wasn't really about ART, this score is not meaningful — check the matched topic below first.",
+    },
+}
+
+MATCH_SIGNAL_DEFAULT = {
+    "label": "No Signal",
+    "tone": "#8B6771",
+    "bars": 0,
+    "note": "The system could not confidently detect a topic for this answer — treat the score below as a rough estimate only.",
+}
+
+
+def get_match_signal(confidence) -> dict:
+    """
+    Return a dict with 'label', 'tone' (hex colour), 'bars' (0-3), and
+    'note' (short plain-language explanation) for a given confidence
+    value ('High' / 'Medium' / 'Low', as produced by scoring.py).
+
+    Falls back to a neutral "No Signal" entry for unrecognised or
+    missing values, so the caller never has to special-case 'Unknown'.
+    """
+    key = normalize_text(confidence).strip().lower()
+    return MATCH_SIGNAL_LEVELS.get(key, MATCH_SIGNAL_DEFAULT)
+
+
+# =========================================================
 # FILE I/O
 # =========================================================
 
