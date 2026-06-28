@@ -731,8 +731,8 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
     grid-template-columns: 42px minmax(0,1fr);
     gap: 0.78rem;
     align-items: flex-start;
-    margin: 0 0 0.85rem 0;
-    padding: 0.82rem 1rem;
+    margin: 0 0 0.4rem 0;
+    padding: 0.55rem 1rem;
     border-radius: 16px;
     background: linear-gradient(135deg, #fffaf0 0%, #fef6e0 100%);
     border: 1px solid #f0ddab;

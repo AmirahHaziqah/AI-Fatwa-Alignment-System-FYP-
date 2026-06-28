@@ -3236,26 +3236,26 @@ with tab1:
     .tab1-section-rule { flex: 1; height: 1px; background: linear-gradient(90deg, #e5d5dc, transparent); }
 
     /* Make the mode chooser feel like two clean cards instead of a crowded segmented bar */
-    .mode-choice-wrap { margin-bottom: 0.55rem; }
+    .mode-choice-wrap { margin-bottom: 0.3rem; }
     [data-testid="stRadio"] [role="radiogroup"] {
         display: grid !important;
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        gap: 0.55rem !important;
+        gap: 0.4rem !important;
         background: transparent !important;
         border: none !important;
         padding: 0 !important;
         box-shadow: none !important;
     }
     [data-testid="stRadio"] [role="radiogroup"] > label {
-        min-height: 58px !important;
-        border-radius: 14px !important;
+        min-height: 38px !important;
+        border-radius: 10px !important;
         border: 1px solid #eadde5 !important;
         background: rgba(255,255,255,0.82) !important;
-        box-shadow: 0 8px 22px rgba(25,14,36,0.045) !important;
+        box-shadow: 0 4px 10px rgba(25,14,36,0.04) !important;
         display: flex !important;
         align-items: center !important;
         justify-content: flex-start !important;
-        padding: 0.55rem 0.9rem !important;
+        padding: 0.35rem 0.75rem !important;
         transition: all 0.22s ease !important;
     }
     [data-testid="stRadio"] [role="radiogroup"] > label:hover {
