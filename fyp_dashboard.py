@@ -3892,19 +3892,19 @@ with tab1:
     # ── Right column: score summary ───────────────────────────────────────────
     with review_right:
         st.markdown("""
-        <div class="tab1-section">
-            <div class="tab1-section-header">
-                <div class="tab1-section-step">2</div>
-                <div class="tab1-section-title">Score summary</div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        st.markdown("""
         <div class="scope-notice" style="margin-bottom:0.5rem;">
             <div class="scope-notice-icon">⚠️</div>
             <div>
                 <div class="scope-notice-tag">Scope</div>
                 <p class="scope-notice-text">Evaluates AI answers on <strong>Malaysian ART fatwas only</strong>. Scores for unrelated topics will not be meaningful.</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        st.markdown("""
+        <div class="tab1-section">
+            <div class="tab1-section-header">
+                <div class="tab1-section-step">2</div>
+                <div class="tab1-section-title">Score summary</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
