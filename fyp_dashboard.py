@@ -1534,8 +1534,8 @@ def apply_premium_compact_polish():
     /* Guided flow: calm, aligned, readable */
     .flow-steps-line {
         grid-template-columns: minmax(0, 1fr) minmax(0, 0.74fr) minmax(0, 0.72fr) !important;
-        gap: 1.1rem !important;
-        margin-bottom: 0.65rem !important;
+        gap: 0.6rem !important;
+        margin-bottom: 0.5rem !important;
         border-bottom: none !important;
         position: relative !important;
     }
@@ -1544,9 +1544,9 @@ def apply_premium_compact_polish():
         position: absolute;
         left: 1.4rem;
         right: 1.4rem;
-        top: 15px;
+        top: 12px;
         height: 1px;
-        background: linear-gradient(90deg, rgba(157,31,85,0.28), rgba(234,216,226,0.95), rgba(234,216,226,0.4));
+        background: linear-gradient(90deg, rgba(157,31,85,0.20), rgba(234,216,226,0.80), rgba(234,216,226,0.2));
         z-index: 0;
     }
     .flow-step-mini {
@@ -1554,47 +1554,47 @@ def apply_premium_compact_polish():
         z-index: 1 !important;
         background: #f8f9fc !important;
         width: fit-content !important;
-        padding: 0 0.45rem 0.15rem 0 !important;
-        font-size: 0.76rem !important;
+        padding: 0 0.35rem 0.1rem 0 !important;
+        font-size: 0.68rem !important;
         color: var(--ink-500) !important;
-        font-weight: 850 !important;
-        gap: 0.5rem !important;
+        font-weight: 800 !important;
+        gap: 0.4rem !important;
     }
     .flow-step-dot {
-        width: 30px !important;
-        height: 30px !important;
-        font-size: 0.74rem !important;
-        box-shadow: 0 6px 14px rgba(32,16,31,0.06) !important;
+        width: 24px !important;
+        height: 24px !important;
+        font-size: 0.66rem !important;
+        box-shadow: 0 4px 8px rgba(32,16,31,0.06) !important;
     }
     .flow-step-mini.is-active .flow-step-dot {
         background: linear-gradient(135deg, var(--rose-700), var(--rose-500)) !important;
-        box-shadow: 0 8px 18px rgba(157,31,85,0.22) !important;
+        box-shadow: 0 6px 12px rgba(157,31,85,0.20) !important;
     }
     .flow-field-label {
-        margin-bottom: 0.36rem !important;
-        font-size: 0.66rem !important;
+        margin-bottom: 0.28rem !important;
+        font-size: 0.62rem !important;
         color: #8a6879 !important;
     }
     [data-testid="stSelectbox"] [data-baseweb="select"] > div,
     [data-testid="stTextInputRootElement"],
     .stTextInput > div > div {
-        min-height: 48px !important;
-        border-radius: 15px !important;
+        min-height: 42px !important;
+        border-radius: 12px !important;
         border: 1.35px solid #e4d4de !important;
         background: rgba(255,255,255,0.95) !important;
-        box-shadow: 0 8px 18px rgba(32,16,31,0.035) !important;
+        box-shadow: 0 4px 10px rgba(32,16,31,0.03) !important;
     }
     [data-testid="stSelectbox"] *, [data-testid="stMultiSelect"] *, .stSelectbox * {
-        font-size: 0.96rem !important;
+        font-size: 0.88rem !important;
         color: var(--ink-950) !important;
     }
     .flow-action-cell .stButton > button {
-        min-height: 48px !important;
-        border-radius: 15px !important;
-        font-size: 0.93rem !important;
+        min-height: 42px !important;
+        border-radius: 12px !important;
+        font-size: 0.84rem !important;
         font-weight: 900 !important;
         background: linear-gradient(135deg, #8d164f 0%, #c64662 100%) !important;
-        box-shadow: 0 12px 22px rgba(157,31,85,0.22) !important;
+        box-shadow: 0 8px 16px rgba(157,31,85,0.18) !important;
     }
 
     /* Selected question preview: useful, not noisy */
@@ -3205,29 +3205,32 @@ with tab1:
         border: 1px solid #eadde5 !important;
         box-shadow: 0 10px 26px rgba(25,14,36,0.04) !important;
     }
-    .tab1-section { margin: 0 0 0.62rem 0; }
+    .tab1-section { margin: 0 0 0.45rem 0; }
     .tab1-section-header {
-        display: flex; align-items: center; gap: 0.68rem;
-        margin: 0.35rem 0 0.72rem 0;
+        display: flex; align-items: center; gap: 0.55rem;
+        margin: 0.2rem 0 0.5rem 0;
+        padding: 0.45rem 0.75rem;
+        background: linear-gradient(180deg, #ffffff 0%, #fdf8fc 100%);
+        border: 1px solid #e8dced;
+        border-left: 3px solid #773344;
+        border-radius: 10px;
     }
     .tab1-section-step {
-        width: 26px; height: 26px; border-radius: 8px;
+        width: 22px; height: 22px; border-radius: 6px;
         background: linear-gradient(135deg, #7f244e, #b6465f);
-        color: #fff; font-size: 0.72rem; font-weight: 900;
+        color: #fff; font-size: 0.68rem; font-weight: 900;
         display: flex; align-items: center; justify-content: center;
-        box-shadow: 0 8px 18px rgba(127,36,78,0.18);
         flex-shrink: 0;
     }
     .tab1-section-title {
         font-family: 'Inter Tight','Inter',sans-serif;
-        font-size: 1rem; font-weight: 900;
+        font-size: 0.88rem; font-weight: 800;
         letter-spacing: -0.01em; color: #241226;
         text-transform: none;
         white-space: nowrap;
     }
     .tab1-section-subtitle {
-        font-size: 0.86rem; color: #7b6874; font-weight: 500;
-        padding-left: 0.65rem; border-left: 1px solid #dacbd5;
+        font-size: 0.78rem; color: #7b6874; font-weight: 500;
         line-height: 1.2;
     }
     .tab1-section-rule { flex: 1; height: 1px; background: linear-gradient(90deg, #e5d5dc, transparent); }
@@ -3619,7 +3622,6 @@ with tab1:
             <div class="tab1-section-step">1</div>
             <div class="tab1-section-title">Review Mode</div>
             <div class="tab1-section-subtitle">Choose how you want to review the AI answer</div>
-            <div class="tab1-section-rule"></div>
         </div>
     </div>
     <div class="mode-choice-wrap">
@@ -3886,7 +3888,6 @@ with tab1:
             <div class="tab1-section-header">
                 <div class="tab1-section-step">2</div>
                 <div class="tab1-section-title">Score summary</div>
-                <div class="tab1-section-rule"></div>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -4055,7 +4056,6 @@ with tab1:
             <div class='tab1-section-header'>
                 <div class='tab1-section-step'>3</div>
                 <div class='tab1-section-title'>Detailed review</div>
-                <div class='tab1-section-rule'></div>
             </div>
         </div>
         """), unsafe_allow_html=True)
