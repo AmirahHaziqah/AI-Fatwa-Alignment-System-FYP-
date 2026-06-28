@@ -3639,22 +3639,33 @@ with tab1:
             <div class="tab1-section-subtitle">Choose how you want to review the AI answer</div>
         </div>
     </div>
-    <div class="mode-choice-wrap">
     """, unsafe_allow_html=True)
 
-    mode_options = ["Research Mode", "Check AI Answer"]
-    review_mode = st.radio(
-        "Choose review mode",
-        options=mode_options,
-        horizontal=True,
-        key="single_review_mode",
-        label_visibility="collapsed",
-        help="Research Mode loads saved AI answers. Check AI Answer is for answers you paste manually."
-    )
+    mode_col, scope_col = st.columns([0.45, 0.55], gap="medium")
 
-    st.markdown("</div>", unsafe_allow_html=True)
+    with mode_col:
+        st.markdown("<div class='mode-choice-wrap'>", unsafe_allow_html=True)
+        mode_options = ["Research Mode", "Check AI Answer"]
+        review_mode = st.radio(
+            "Choose review mode",
+            options=mode_options,
+            horizontal=True,
+            key="single_review_mode",
+            label_visibility="collapsed",
+            help="Research Mode loads saved AI answers. Check AI Answer is for answers you paste manually."
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
 
-    st.markdown("</div>", unsafe_allow_html=True)
+    with scope_col:
+        st.markdown("""
+        <div class="scope-notice" style="margin-top:0;margin-bottom:0;">
+            <div class="scope-notice-icon">⚠️</div>
+            <div>
+                <div class="scope-notice-tag">Scope</div>
+                <p class="scope-notice-text">Evaluates AI answers on <strong>Malaysian ART fatwas only</strong>. Scores for unrelated topics will not be meaningful.</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
     research_active = review_mode == "Research Mode"
 
@@ -3896,20 +3907,6 @@ with tab1:
 
     # ── Right column: score summary ───────────────────────────────────────────
     with review_right:
-        st.markdown("""
-        <style>
-        .single-review-right-col-wrap > div:first-child { margin-top: 0 !important; padding-top: 0 !important; }
-        </style>
-        <div class="single-review-right-col-wrap">
-        <div class="scope-notice" style="margin-top:0;margin-bottom:0.5rem;">
-            <div class="scope-notice-icon">⚠️</div>
-            <div>
-                <div class="scope-notice-tag">Scope</div>
-                <p class="scope-notice-text">Evaluates AI answers on <strong>Malaysian ART fatwas only</strong>. Scores for unrelated topics will not be meaningful.</p>
-            </div>
-        </div>
-        </div>
-        """, unsafe_allow_html=True)
         st.markdown("""
         <div class="tab1-section">
             <div class="tab1-section-header">
