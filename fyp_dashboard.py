@@ -3188,22 +3188,32 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
 # TAB 1 - Single Review
 # =========================================================
 with tab1:
-    render_minimal_tab_intro(
-        "Single review",
-        "Closest fatwa alignment",
-        "Check one answer and see how closely it matches the most relevant fatwa.",
-        extra_class="single-review-hero"
-    )
-
     # ── Modern Single Review layout style ───────────────────────────────────
     st.markdown("""
     <style>
     .single-review-hero {
-        margin-bottom: 1rem !important;
-        border-radius: 18px !important;
+        margin-bottom: 0.4rem !important;
+        border-radius: 12px !important;
         background: rgba(255,255,255,0.74) !important;
         border: 1px solid #eadde5 !important;
-        box-shadow: 0 10px 26px rgba(25,14,36,0.04) !important;
+        box-shadow: 0 4px 12px rgba(25,14,36,0.04) !important;
+        padding: 0.5rem 1rem !important;
+    }
+    .single-review-hero .tab-minimal-title {
+        font-size: 1rem !important;
+        margin-bottom: 0.1rem !important;
+    }
+    .single-review-hero .tab-minimal-copy {
+        font-size: 0.76rem !important;
+        margin-top: 0.1rem !important;
+    }
+    /* Kill Streamlit's default element-container gaps in this tab */
+    [data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] > div[data-testid="element-container"] {
+        margin-bottom: 0 !important;
+    }
+    div[data-testid="stRadio"] {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
     }
     .tab1-section { margin: 0 0 0.45rem 0; }
     .tab1-section-header {
