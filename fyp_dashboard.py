@@ -3166,6 +3166,14 @@ with st.sidebar:
         build_sidebar_score_guide_html()
     )
 
+    st.markdown("""
+    <div class="sidebar-mini-note" style="margin-top:0.6rem;">
+        <strong>⚠️ Scope notice</strong><br>
+        This dashboard evaluates AI answers on <strong>Malaysian ART fatwas only</strong>.
+        Scores for unrelated topics will not be meaningful.
+    </div>
+    """, unsafe_allow_html=True)
+
 
 # =========================================================
 # GLOBAL HEADER + TABS
@@ -3650,8 +3658,6 @@ with tab1:
     st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown("</div>", unsafe_allow_html=True)
-
-    render_scope_notice()
 
     research_active = review_mode == "Research Mode"
 
