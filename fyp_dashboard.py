@@ -3215,6 +3215,11 @@ with tab1:
         margin-top: 0 !important;
         margin-bottom: 0 !important;
     }
+    /* Remove top padding from right column first element */
+    div[data-testid="stHorizontalBlock"] > div:nth-child(2) > div[data-testid="stVerticalBlock"] > div:first-child {
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }
     .tab1-section { margin: 0 0 0.45rem 0; }
     .tab1-section-header {
         display: flex; align-items: center; gap: 0.55rem;
@@ -3892,12 +3897,17 @@ with tab1:
     # ── Right column: score summary ───────────────────────────────────────────
     with review_right:
         st.markdown("""
-        <div class="scope-notice" style="margin-bottom:0.5rem;">
+        <style>
+        .single-review-right-col-wrap > div:first-child { margin-top: 0 !important; padding-top: 0 !important; }
+        </style>
+        <div class="single-review-right-col-wrap">
+        <div class="scope-notice" style="margin-top:0;margin-bottom:0.5rem;">
             <div class="scope-notice-icon">⚠️</div>
             <div>
                 <div class="scope-notice-tag">Scope</div>
                 <p class="scope-notice-text">Evaluates AI answers on <strong>Malaysian ART fatwas only</strong>. Scores for unrelated topics will not be meaningful.</p>
             </div>
+        </div>
         </div>
         """, unsafe_allow_html=True)
         st.markdown("""
