@@ -3641,7 +3641,7 @@ with tab1:
     </div>
     """, unsafe_allow_html=True)
 
-    mode_col, scope_col = st.columns([0.45, 0.42], gap="small")
+    mode_col, scope_col = st.columns([0.45, 0.35], gap="small")
 
     with mode_col:
         st.markdown("<div class='mode-choice-wrap'>", unsafe_allow_html=True)
