@@ -3662,7 +3662,7 @@ with tab1:
             <div class="scope-notice-icon">⚠️</div>
             <div>
                 <div class="scope-notice-tag">Scope</div>
-                <p class="scope-notice-text">Evaluates AI answers on <strong>Malaysian ART fatwas only</strong>. Scores for unrelated topics will not be meaningful.</p>
+                <p class="scope-notice-text">Evaluates AI answers on <strong>Malaysian ART fatwas only</strong>. <br>Scores for unrelated topics will not be meaningful.</p>
             </div>
         </div>
         """, unsafe_allow_html=True)
