@@ -417,22 +417,29 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
 /* ══════════════════════════════════════════════════════════
    TABS — REDESIGNED PROFESSIONAL
 ══════════════════════════════════════════════════════════ */
+/* Tab strip + panel now read as ONE white card (border #eadde5,
+   soft shadow) matching every other card in the dashboard,
+   instead of floating bare with no background. */
+.stTabs {{
+    background: transparent !important;
+}}
+
 /* Tab list container */
 .stTabs [data-baseweb="tab-list"] {{
     background: #ffffff !important;
-    border-radius: 0 0 0 0 !important;
-    padding: 0 0.2rem !important;
-    gap: 0 !important;
-    border: none !important;
+    border-radius: 16px 16px 0 0 !important;
+    padding: 0.5rem 0.6rem 0 0.6rem !important;
+    gap: 0.15rem !important;
+    border: 1px solid #eadde5 !important;
     border-bottom: 2px solid #e8dced !important;
-    box-shadow: none !important;
+    box-shadow: 0 4px 14px rgba(25,14,36,0.05) !important;
     margin-bottom: 0 !important;
 }}
 
 /* Each tab */
 .stTabs [data-baseweb="tab"] {{
     background: transparent !important;
-    border-radius: 0 !important;
+    border-radius: 10px 10px 0 0 !important;
     color: #8a6a7a !important;
     font-weight: 600 !important;
     font-size: 0.84rem !important;
@@ -447,14 +454,14 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
 
 /* Tab hover */
 .stTabs [data-baseweb="tab"]:hover {{
-    background: rgba(212,77,92,0.05) !important;
+    background: rgba(212,77,92,0.06) !important;
     color: #c04060 !important;
     border-bottom-color: rgba(212,77,92,0.3) !important;
 }}
 
 /* Active tab */
 .stTabs [aria-selected="true"] {{
-    background: transparent !important;
+    background: rgba(212,77,92,0.06) !important;
     color: #c94a5c !important;
     font-weight: 800 !important;
     border-bottom: 3px solid #c94a5c !important;
@@ -469,13 +476,19 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
 
 /* Tab border override (Streamlit internal) */
 .stTabs [data-baseweb="tab-border"] {{
-    background: #e8dced !important;
-    height: 2px !important;
+    background: transparent !important;
+    height: 0 !important;
 }}
 
-/* Tab panel */
+/* Tab panel — closes the card underneath the tab strip */
 .stTabs [data-baseweb="tab-panel"] {{
-    padding-top: 1rem !important;
+    background: #ffffff !important;
+    border: 1px solid #eadde5 !important;
+    border-top: none !important;
+    border-radius: 0 0 16px 16px !important;
+    box-shadow: 0 4px 14px rgba(25,14,36,0.05) !important;
+    padding: 1.2rem 1.3rem 1.4rem 1.3rem !important;
+    margin-bottom: 1rem !important;
     animation: fadeInUp 0.38s ease-out;
 }}
 
