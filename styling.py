@@ -419,13 +419,20 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
 ══════════════════════════════════════════════════════════ */
 /* Tab strip + panel now read as ONE white card (border #eadde5,
    soft shadow) matching every other card in the dashboard,
-   instead of floating bare with no background. */
-.stTabs {{
+   instead of floating bare with no background.
+   NOTE: selectors are duplicated across data-baseweb, data-testid
+   and role= attributes because different Streamlit versions render
+   tabs with different markup. Keeping all three makes this resilient
+   to version upgrades instead of silently matching nothing. */
+.stTabs,
+div[data-testid="stTabs"] {{
     background: transparent !important;
 }}
 
 /* Tab list container */
-.stTabs [data-baseweb="tab-list"] {{
+.stTabs [data-baseweb="tab-list"],
+div[data-testid="stTabs"] [data-testid="stTabsHeader"],
+div[data-testid="stTabs"] [role="tablist"] {{
     background: #ffffff !important;
     border-radius: 16px 16px 0 0 !important;
     padding: 0.5rem 0.6rem 0 0.6rem !important;
@@ -437,7 +444,9 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
 }}
 
 /* Each tab */
-.stTabs [data-baseweb="tab"] {{
+.stTabs [data-baseweb="tab"],
+div[data-testid="stTabs"] button[data-testid="stTab"],
+div[data-testid="stTabs"] button[role="tab"] {{
     background: transparent !important;
     border-radius: 10px 10px 0 0 !important;
     color: #8a6a7a !important;
@@ -453,14 +462,16 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
 }}
 
 /* Tab hover */
-.stTabs [data-baseweb="tab"]:hover {{
+.stTabs [data-baseweb="tab"]:hover,
+div[data-testid="stTabs"] button[role="tab"]:hover {{
     background: rgba(212,77,92,0.06) !important;
     color: #c04060 !important;
     border-bottom-color: rgba(212,77,92,0.3) !important;
 }}
 
 /* Active tab */
-.stTabs [aria-selected="true"] {{
+.stTabs [aria-selected="true"],
+div[data-testid="stTabs"] button[aria-selected="true"] {{
     background: rgba(212,77,92,0.06) !important;
     color: #c94a5c !important;
     font-weight: 800 !important;
@@ -481,7 +492,9 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
 }}
 
 /* Tab panel — closes the card underneath the tab strip */
-.stTabs [data-baseweb="tab-panel"] {{
+.stTabs [data-baseweb="tab-panel"],
+div[data-testid="stTabs"] [data-testid="stTabsContent"],
+div[data-testid="stTabs"] > div:last-child {{
     background: #ffffff !important;
     border: 1px solid #eadde5 !important;
     border-top: none !important;
